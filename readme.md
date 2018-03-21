@@ -1,9 +1,9 @@
 ## Junket CMS and Mobile API
 
 ### Code Documentation
-[AccessPoints](docs/AccessPoints.md)
-[Authentication](docs/Authentication.md)
-[Development Setup](docs/Development.md)
+- [AccessPoints](docs/AccessPoints.md)
+- [Authentication](docs/Authentication.md)
+- [Development Setup](docs/Development.md)
 
 
 ### Database questions
