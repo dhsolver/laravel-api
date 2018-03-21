@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Controllers\Cms;
-
-use App\Http\Controllers\AuthController;
+namespace App\Http\Controllers\Auth;
 
 class CmsAuthController extends AuthController
 {
     protected $role = "business";
+
+    protected $allowsRegistration = true;
 }

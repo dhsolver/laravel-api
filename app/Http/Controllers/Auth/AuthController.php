@@ -1,16 +1,18 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Auth;
 
 use App\Http\Requests\LoginRequest;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use App\User;
 use App\Http\Requests\SignupRequest;
+use App\Http\Controllers\Controller;
 
 class AuthController extends Controller
 {
     protected $role = null;
+    protected $allowsRegistration = false;
 
     /**
      * Validate user credentials and return JWT token
@@ -42,6 +44,10 @@ class AuthController extends Controller
      */
     public function signup(SignupRequest $req)
     {
+        if (!$this->allowsRegistration) {
+            return response('Unauthorized', 401);
+        }
+
         $data = $req->validated();
 
         $user = User::create([
@@ -70,7 +76,7 @@ class AuthController extends Controller
     }
 
     /**
-     * Get current user session
+     * Get the current user session
      *
      * @return void
      */

@@ -8,16 +8,16 @@
 
 // --------------------------------------------------------------------------
 // GUEST ROUTES
-Route::post('auth/login', 'Auth\CmsAuthController@login');
-Route::post('auth/signup', 'Auth\CmsAuthController@signup');
+Route::post('auth/login', 'Auth\MobileAuthController@login');
+Route::post('auth/signup', 'Auth\MobileAuthController@signup');
 
 // --------------------------------------------------------------------------
 // PROTECTED ROUTES
-Route::middleware(['jwt.auth', 'role:business|admin'])->group(function () {
-    Route::get('auth/session', 'Auth\CmsAuthController@userSession');
+Route::middleware(['jwt.auth', 'role:user|business|admin'])->group(function () {
+    Route::get('auth/session', 'Auth\MobileAuthController@userSession');
 });
 
-Route::middleware(['jwt.refresh', 'role:business|admin'])->group(function () {
+Route::middleware(['jwt.refresh', 'role:user|business|admin'])->group(function () {
     Route::get('auth/refresh', function () {
         return response(null, 204);
     });
