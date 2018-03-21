@@ -1,5 +1,11 @@
 ## Junket CMS and Mobile API
 
+### Database questions
+- Safe to hard code tour pricing type ?
+- Safe to hard code tour type ?
+- Shouldn't start / end point get set on the tour manager?  That way message and media is done once
+
+
 ### Development Setup
 
 Clone repo
