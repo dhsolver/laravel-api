@@ -10,6 +10,8 @@ use App\Http\Requests\SignupRequest;
 
 class AuthController extends Controller
 {
+    protected $role = null;
+
     /**
      * Validate user credentials and return JWT token
      *
@@ -47,6 +49,10 @@ class AuthController extends Controller
             'email' => $data['email'],
             'password' => bcrypt($data['password']),
         ]);
+
+        if (!empty($this->role)) {
+            $user->assignRole($this->role);
+        }
 
         try {
             if (!$token = JWTAuth::fromUser($user)) {
