@@ -18,7 +18,7 @@ class CreateToursTable extends Migration
 
             $table->unsignedInteger('user_id');
 
-            $table->string('title');
+            $table->string('title', 100);
             $table->string('description', 2000);
             $table->string('pricing_type', 10);
             $table->string('type', 10);
@@ -37,7 +37,7 @@ class CreateToursTable extends Migration
             $table->string('intro_audio')->nullable();
             $table->string('background_audio')->nullable();
 
-            $table->string('main_image');
+            $table->string('main_image')->nullable();
             $table->string('image_1')->nullable();
             $table->string('image_2')->nullable();
             $table->string('image_3')->nullable();

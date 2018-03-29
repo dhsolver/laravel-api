@@ -14,12 +14,12 @@ class PermissionsSeeder extends Seeder
     public function run()
     {
         // Reset cached roles and permissions
-        app()['cache']->forget('spatie.permission.cache');
+        // app()['cache']->forget('spatie.permission.cache');
 
-        $superAdmin = Role::create(['name' => 'superadmin']);
-        $admin = Role::create(['name' => 'admin']);
-        $user = Role::create(['name' => 'user']);
-        $business = Role::create(['name' => 'business']);
+        // $superAdmin = Role::create(['name' => 'superadmin']);
+        // $admin = Role::create(['name' => 'admin']);
+        // $user = Role::create(['name' => 'user']);
+        // $business = Role::create(['name' => 'business']);
 
         // $useCms = Permission::create(['name' => 'use-cms']);
         // $useMobile = Permission::create(['name' => 'use-mobile']);

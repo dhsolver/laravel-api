@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Spatie\Permission\Models\Role;
 
 class CreatePermissionTables extends Migration
 {
@@ -71,6 +72,13 @@ class CreatePermissionTables extends Migration
 
             app('cache')->forget('spatie.permission.cache');
         });
+
+        // create default roles
+        app()['cache']->forget('spatie.permission.cache');
+        Role::create(['name' => 'superadmin']);
+        Role::create(['name' => 'admin']);
+        Role::create(['name' => 'user']);
+        Role::create(['name' => 'business']);
     }
 
     /**

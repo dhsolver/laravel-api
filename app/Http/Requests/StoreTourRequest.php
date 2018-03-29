@@ -3,9 +3,10 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use App\Tour;
 use Illuminate\Validation\Rule;
 
-class SignupRequest extends FormRequest
+class StoreTourRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -14,7 +15,7 @@ class SignupRequest extends FormRequest
      */
     public function authorize()
     {
-        return true;
+        return auth()->user()->hasAnyRole(['business', 'admin', 'superadmin']);
     }
 
     /**
@@ -25,13 +26,16 @@ class SignupRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:6|confirmed',
-            'role' => [
+            'title' => 'required|string|max:255|min:3',
+            'description' => 'required|string|max:2000|min:3',
+            'pricing_type' => [
                 'required',
-                Rule::in(['business', 'user']),
-            ]
+                Rule::in(Tour::$PRICING_TYPES),
+            ],
+            'type' => [
+                'required',
+                Rule::in(Tour::$TOUR_TYPES),
+            ],
         ];
     }
 }

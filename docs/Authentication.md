@@ -16,3 +16,8 @@ Mobile : https://api.wejunket.com/mobile/auth/login
 | admin      |       Yes      |        Yes        |        Yes       |
 | business   |       Yes      |        Yes        |        No        |
 | user       |       Yes      |         No        |        No        |
+
+### 3rd Party
+
+- Roles and permissions provided by [spatie/laravel-permission](https://github.com/spatie/laravel-permission)
+- All auth is based on JWT tokens using [tymondesigns/jwt-auth](https://github.com/tymondesigns/jwt-auth)

@@ -27,4 +27,24 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+    protected $appends = ['role'];
+
+    /**
+     * A user has many tours
+     *
+     * @return void
+     */
+    public function tours()
+    {
+        return $this->hasMany(Tour::class);
+    }
+
+    /**
+     * Gets the users role
+     */
+    public function getRoleAttribute()
+    {
+        return $this->roles()->pluck('name')->first();
+    }
 }
