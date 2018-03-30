@@ -6,6 +6,7 @@
 |
 */
 
-Route::middleware(['jwt.auth', 'role:business|admin'])->group(function () {
-    Route::resource('tours', 'TourController');
+Route::middleware(['jwt.auth', 'role:business|admin|superadmin'])->group(function () {
+    Route::get('session', 'AuthController@userSession');
+    Route::resource('tours', 'TourController', ['as' => 'cms']);
 });

@@ -18,15 +18,12 @@ abstract class TestCase extends BaseTestCase
         // DB::statement('PRAGMA foreign_keys=on;');
 
         $this->disableExceptionHandling();
+        $this->withExceptionHandling();
     }
 
-    protected function signIn($userOrRole = 'user')
+    protected function signIn($role = 'user')
     {
-        if (is_object($userOrRole)) {
-            $user = $userOrRole;
-        } else {
-            $user = createUser($userOrRole);
-        }
+        $user = createUser($role);
 
         $this->loginAs($user);
 

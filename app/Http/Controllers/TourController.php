@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Http\Requests\StoreTourRequest;
 use App\Http\Resources\TourResource;
 use App\Tour;
+use App\Http\Requests\Cms\CreateTourRequest;
+use App\Http\Requests\Cms\UpdateTourRequest;
 
 class TourController extends Controller
 {
@@ -16,7 +16,7 @@ class TourController extends Controller
      */
     public function index()
     {
-        return response()->json(Tour::all());
+        return response()->json(auth()->user()->tours);
     }
 
     /**
@@ -34,7 +34,7 @@ class TourController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreTourRequest $request)
+    public function store(CreateTourRequest $request)
     {
         return new TourResource(
             auth()->user()->tours()->create($request->validated())
@@ -70,9 +70,11 @@ class TourController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UpdateTourRequest $request, Tour $tour)
     {
-        //
+        $tour->update($request->validated());
+
+        return response()->json($tour);
     }
 
     /**

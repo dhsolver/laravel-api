@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Cms;
 
 use Illuminate\Foundation\Http\FormRequest;
 use App\Tour;
 use Illuminate\Validation\Rule;
 
-class StoreTourRequest extends FormRequest
+class CreateTourRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -15,7 +15,7 @@ class StoreTourRequest extends FormRequest
      */
     public function authorize()
     {
-        return auth()->user()->hasAnyRole(['business', 'admin', 'superadmin']);
+        return true;
     }
 
     /**

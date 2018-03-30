@@ -11,6 +11,7 @@ trait AttachJwtToken
      * @var User
      */
     protected $loginUser;
+    protected $userId;
 
     /**
      * @param User $user
@@ -19,6 +20,7 @@ trait AttachJwtToken
     public function loginAs(User $user)
     {
         $this->loginUser = $user;
+        $this->userId = $user->id;
 
         return $this;
     }
@@ -28,11 +30,11 @@ trait AttachJwtToken
      */
     protected function getJwtToken()
     {
-        $user = $this->loginUser ?: factory(User::class)->create([
-            'company_id' => null,
-        ]);
+        if (empty($this->loginUser)) {
+            return '';
+        }
 
-        return JWTAuth::fromUser($user);
+        return JWTAuth::fromUser($this->loginUser);
     }
 
     /**

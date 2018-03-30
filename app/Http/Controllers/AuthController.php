@@ -75,6 +75,8 @@ class AuthController extends Controller
      */
     public function userSession()
     {
+        // print_r(auth()->user()->toArray());
+
         return response()->json(auth()->user());
     }
 }

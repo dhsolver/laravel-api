@@ -42,6 +42,8 @@ class User extends Authenticatable
 
     /**
      * Gets the users role
+     *
+     * @return String
      */
     public function getRoleAttribute()
     {
