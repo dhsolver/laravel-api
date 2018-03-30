@@ -16,11 +16,10 @@ class CreateQuestionChoicesTable extends Migration
         Schema::create('question_choices', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('tour_stop_id');
-
-            $table->tinyInteger('order');
+            $table->unsignedTinyInteger('order');
             $table->string('answer');
-            $table->string('next_stop_id')->nullable();
-            
+            $table->unsignedInteger('next_stop_id')->nullable();
+
             $table->timestamps();
         });
     }

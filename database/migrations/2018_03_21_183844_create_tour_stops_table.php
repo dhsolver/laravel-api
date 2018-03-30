@@ -17,16 +17,17 @@ class CreateTourStopsTable extends Migration
             $table->increments('id');
 
             $table->unsignedInteger('tour_id');
+            $table->unsignedTinyInteger('order');
 
-            $table->string('title');
+            $table->string('title', 255);
             $table->string('description', 2000);
-            $table->string('location_type'); // map/address/gps
+            $table->string('location_type', 10); // map/address/gps
 
             $table->string('address1')->nullable();
             $table->string('address2')->nullable();
-            $table->string('city')->nullable();
+            $table->string('city', 100)->nullable();
             $table->string('state', 2)->nullable();
-            $table->string('zipcode')->nullable();
+            $table->string('zipcode', 12)->nullable();
 
             // media
             // $table->string('play_radius');
