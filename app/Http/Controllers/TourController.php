@@ -74,7 +74,7 @@ class TourController extends Controller
     {
         $tour->update($request->validated());
 
-        return response()->json($tour);
+        return new TourResource($tour);
     }
 
     /**
@@ -83,8 +83,14 @@ class TourController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Tour $tour)
     {
-        //
+        if ($tour->user_id != auth()->user()->id) {
+            return response(null, 403);
+        }
+
+        $tour->delete();
+
+        return response(null, 204);
     }
 }

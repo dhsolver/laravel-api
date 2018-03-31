@@ -81,4 +81,30 @@ class ManageToursTest extends TestCase
             ->assertSee($this->tour->title)
             ->assertDontSee($otherTour->title);
     }
+
+    /** @test */
+    public function a_tour_can_be_deleted_by_its_creator()
+    {
+        $this->loginAs($this->business);
+
+        $this->assertCount(1, $this->business->tours);
+
+        $this->json('DELETE', route('cms.tours.destroy', $this->tour->id))
+            ->assertStatus(204);
+
+        $this->assertCount(0, $this->business->fresh()->tours);
+    }
+
+    /** @test */
+    public function a_tour_cannot_be_deleted_by_another_user()
+    {
+        $this->signIn('business');
+
+        $this->assertCount(1, $this->business->tours);
+
+        $this->json('DELETE', route('cms.tours.destroy', $this->tour->id))
+            ->assertStatus(403);
+
+        $this->assertCount(1, $this->business->fresh()->tours);
+    }
 }

@@ -13,12 +13,8 @@ class UpdateTourRequest extends CreateTourRequest
      */
     public function authorize()
     {
-        $isAdmin = auth()->user()->hasAnyRole(['admin', 'superadmin']);
-
-        $isOwner = Tour::where('id', $this->route('tour')->id)
+        return Tour::where('id', $this->route('tour')->id)
             ->where('user_id', auth()->user()->id)
             ->exists();
-
-        return $isAdmin || $isOwner;
     }
 }
