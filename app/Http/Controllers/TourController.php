@@ -6,6 +6,7 @@ use App\Http\Resources\TourResource;
 use App\Tour;
 use App\Http\Requests\Cms\CreateTourRequest;
 use App\Http\Requests\Cms\UpdateTourRequest;
+use App\Http\Resources\TourCollection;
 
 class TourController extends Controller
 {
@@ -16,16 +17,7 @@ class TourController extends Controller
      */
     public function index()
     {
-        return response()->json(auth()->user()->tours);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
+        return new TourCollection(auth()->user()->tours);
     }
 
     /**
@@ -47,20 +39,13 @@ class TourController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Tour $tour)
     {
-        //
-    }
+        if ($tour->user_id != auth()->user()->id) {
+            return response(null, 403);
+        }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
+        return new TourResource($tour);
     }
 
     /**

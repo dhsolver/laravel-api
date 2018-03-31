@@ -4,7 +4,7 @@ namespace App\Http\Requests\Cms;
 
 use App\Tour;
 
-class UpdateTourRequest extends CreateTourRequest
+class UpdateStopRequest extends CreateStopRequest
 {
     /**
      * Determine if the user is authorized to make this request.

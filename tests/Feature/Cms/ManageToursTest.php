@@ -71,7 +71,9 @@ class ManageToursTest extends TestCase
     /** @test */
     public function a_user_can_get_a_list_of_only_their_tours()
     {
-        $otherTour = create('App\Tour', []);
+        $this->withExceptionHandling();
+
+        $otherTour = create('App\Tour', ['title' => md5('unique title string')]);
 
         $this->assertCount(2, Tour::all());
 
@@ -106,5 +108,23 @@ class ManageToursTest extends TestCase
             ->assertStatus(403);
 
         $this->assertCount(1, $this->business->fresh()->tours);
+    }
+
+    /** @test */
+    public function a_tour_can_be_seen_by_its_creator()
+    {
+        $this->loginAs($this->business);
+
+        $this->json('GET', route('cms.tours.show', $this->tour->id))
+            ->assertSee($this->tour->title);
+    }
+
+    /** @test */
+    public function a_tour_cannot_be_seen_by_another_user()
+    {
+        $this->signIn('business');
+
+        $this->json('GET', route('cms.tours.show', $this->tour->id))
+            ->assertStatus(403);
     }
 }

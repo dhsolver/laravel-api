@@ -49,4 +49,17 @@ class User extends Authenticatable
     {
         return $this->roles()->pluck('name')->first();
     }
+
+    /**
+     * Determines if the user owns the given Tour id.
+     *
+     * @param [int] $tourId
+     * @return bool
+     */
+    public function ownsTour($tourId)
+    {
+        return Tour::where('id', $tourId)
+            ->where('user_id', $this->id)
+            ->exists();
+    }
 }
