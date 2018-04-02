@@ -8,8 +8,8 @@ $factory->define(App\Tour::class, function (Faker $faker) {
     $user->assignRole('business');
     return [
         'user_id' => $user->id,
-        'title' => $faker->title(),
-        'description' => $faker->sentence(),
+        'title' => $faker->sentence(),
+        'description' => $faker->paragraph(),
         'pricing_type' => Tour::$PRICING_TYPES[array_rand(Tour::$PRICING_TYPES)],
         'type' => Tour::$TOUR_TYPES[array_rand(Tour::$TOUR_TYPES)],
     ];

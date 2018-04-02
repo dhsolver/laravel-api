@@ -17,7 +17,9 @@ class TourController extends Controller
      */
     public function index()
     {
-        return new TourCollection(auth()->user()->tours);
+        return new TourCollection(
+            auth()->user()->tours
+        );
     }
 
     /**

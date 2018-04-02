@@ -29,4 +29,15 @@ class TourStop extends Model
     {
         return $this->belongsTo(Tour::class);
     }
+
+    /**
+     * Defines the default ordering for stops using order column.
+     *
+     * @param [type] $query
+     * @return void
+     */
+    public function scopeOrdered($query)
+    {
+        return $query->orderBy('order', 'ASC');
+    }
 }

@@ -29,7 +29,7 @@ class CreateStopTest extends TestCase
 
     public function publishStop()
     {
-        return $this->json('POST', route('cms.stop.store', ['tour' => $this->tour->id]), $this->stop);
+        return $this->json('POST', route('cms.stops.store', ['tour' => $this->tour->id]), $this->stop);
     }
 
     /** @test */
@@ -43,7 +43,7 @@ class CreateStopTest extends TestCase
     }
 
     /** @test */
-    public function only_the_tour_owner_can_add_a_stop()
+    public function a_stop_can_only_by_added_by_the_tour_creator()
     {
         $this->signIn('business');
 

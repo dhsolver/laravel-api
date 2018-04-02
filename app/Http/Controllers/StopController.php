@@ -2,71 +2,86 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Http\Requests\Cms\CreateStopRequest;
 use App\Tour;
+use App\Http\Resources\StopResource;
+use App\TourStop;
+use App\Http\Requests\Cms\UpdateStopRequest;
 use App\Http\Resources\StopCollection;
 
 class StopController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(CreateStopRequest $request, Tour $tour)
+    public function index(Tour $tour)
     {
         if ($tour->user_id != auth()->user()->id) {
             return response(null, 403);
         }
 
         return new StopCollection(
+            $tour->stops
+        );
+    }
+
+    public function store(CreateStopRequest $request, Tour $tour)
+    {
+        if ($tour->user_id != auth()->user()->id) {
+            return response(null, 403);
+        }
+
+        $order = $tour->getNextStopOrder();
+
+        return new StopResource(
+            $tour->stops()->create(array_merge($request->validated(), ['order' => $order]))
+        );
+    }
+
+    public function show(Tour $tour, TourStop $stop)
+    {
+        if ($tour->user_id != auth()->user()->id) {
+            return response(null, 403);
+        }
+
+        return new StopResource($stop);
+    }
+
+    public function update(UpdateStopRequest $request, Tour $tour, TourStop $stop)
+    {
+        if ($tour->user_id != auth()->user()->id) {
+            return response(null, 403);
+        }
+
+        return new StopResource(
             $tour->stops()->create($request->validated())
         );
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
+    public function destroy(Tour $tour, TourStop $stop)
     {
-        //
+        if ($tour->user_id != auth()->user()->id) {
+            return response(null, 403);
+        }
+
+        $stop->delete();
+
+        return response(null, 204);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
+    public function changeOrder(Tour $tour, TourStop $stop)
     {
-        //
-    }
+        request()->validate([
+            'order' => 'required|numeric'
+        ]);
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
+        $stop->order = abs(request()->order);
+
+        // get all objects with that order or higher
+        // increase them all by one
+        TourStop::where('tour_id', $tour->id)
+            ->where('order', '>=', $stop->order)
+            ->increment('order');
+
+        $stop->save();
+
+        return new StopCollection($tour->stops()->ordered()->get());
     }
 }

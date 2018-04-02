@@ -33,7 +33,7 @@ class CreateTourStopsTable extends Migration
             // $table->string('play_radius');
             $table->string('audio')->nullable();
 
-            $table->string('main_image');
+            $table->string('main_image')->nullable();
             $table->string('image_1')->nullable();
             $table->string('image_2')->nullable();
             $table->string('image_3')->nullable();
@@ -47,6 +47,8 @@ class CreateTourStopsTable extends Migration
 
             $table->timestamps();
             $table->softDeletes();
+
+            // $table->unique(['tour_id', 'order']);
         });
     }
 

@@ -36,4 +36,19 @@ class Tour extends Model
     {
         return $this->hasMany(TourStop::class);
     }
+
+    /**
+     * Returns the next free number in the order sequence
+     * for the Tour's stops.
+     *
+     * @return void
+     */
+    public function getNextStopOrder()
+    {
+        return $this->stops()
+            ->select(\DB::raw('coalesce(max(`order`), 0) as max_order'))
+            ->get()
+            ->first()
+            ->max_order + 1;
+    }
 }
