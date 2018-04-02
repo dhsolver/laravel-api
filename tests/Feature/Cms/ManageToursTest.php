@@ -6,6 +6,7 @@ use Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\Concerns\AttachJwtToken;
 use App\Tour;
+use Illuminate\Http\UploadedFile;
 
 class ManageToursTest extends TestCase
 {
@@ -126,5 +127,18 @@ class ManageToursTest extends TestCase
 
         $this->json('GET', route('cms.tours.show', $this->tour->id))
             ->assertStatus(403);
+    }
+
+    /** @test */
+    public function a_tour_can_update_its_main_image()
+    {
+        $this->loginAs($this->business);
+
+        $data = array_merge($this->tour->toArray(), [
+            'main_image' => UploadedFile::fake()->image('main.jpg'),
+        ]);
+
+        $this->json('PUT', route('cms.tours.images', $this->tour->id), $data)
+            ->assertStatus(200);
     }
 }

@@ -80,4 +80,11 @@ class TourController extends Controller
 
         return response(null, 204);
     }
+
+    public function uploadImages(Tour $tour)
+    {
+        if ($tour->user_id != auth()->user()->id) {
+            return response(null, 403);
+        }
+    }
 }

@@ -11,4 +11,5 @@ Route::middleware(['jwt.auth', 'role:business|admin|superadmin'])->group(functio
     Route::resource('tours', 'TourController', ['as' => 'cms']);
     Route::resource('tours/{tour}/stops', 'StopController', ['as' => 'cms']);
     Route::put('tours/{tour}/stops/{stop}', 'StopController@changeOrder')->name('cms.stops.order');
+    Route::put('tours/{tour}/images', 'TourController@uploadImages')->name('cms.tours.images');
 });
