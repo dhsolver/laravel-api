@@ -51,4 +51,18 @@ class Tour extends Model
             ->first()
             ->max_order + 1;
     }
+
+    /**
+     * Increases the order at the given index for all stops
+     * that belong to this tour.
+     *
+     * @param [type] $order
+     * @return void
+     */
+    public function increaseOrderAt($order)
+    {
+        TourStop::where('tour_id', $this->id)
+            ->where('order', '>=', $order)
+            ->increment('order');
+    }
 }

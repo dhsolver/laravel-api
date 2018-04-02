@@ -11,6 +11,12 @@ use App\Http\Resources\StopCollection;
 
 class StopController extends Controller
 {
+    /**
+     * Lists all stops for a given tour.
+     *
+     * @param Tour $tour
+     * @return StopCollection
+     */
     public function index(Tour $tour)
     {
         if ($tour->user_id != auth()->user()->id) {
@@ -22,6 +28,13 @@ class StopController extends Controller
         );
     }
 
+    /**
+     * Stores a new stop for the given tour.
+     *
+     * @param CreateStopRequest $request
+     * @param Tour $tour
+     * @return StopResource
+     */
     public function store(CreateStopRequest $request, Tour $tour)
     {
         if ($tour->user_id != auth()->user()->id) {
@@ -35,6 +48,13 @@ class StopController extends Controller
         );
     }
 
+    /**
+     * Gets the details of a given tour stop.
+     *
+     * @param Tour $tour
+     * @param TourStop $stop
+     * @return StopResource
+     */
     public function show(Tour $tour, TourStop $stop)
     {
         if ($tour->user_id != auth()->user()->id) {
@@ -44,6 +64,14 @@ class StopController extends Controller
         return new StopResource($stop);
     }
 
+    /**
+     * Updates a tour stop with the given data.
+     *
+     * @param UpdateStopRequest $request
+     * @param Tour $tour
+     * @param TourStop $stop
+     * @return StopResource
+     */
     public function update(UpdateStopRequest $request, Tour $tour, TourStop $stop)
     {
         if ($tour->user_id != auth()->user()->id) {
@@ -55,6 +83,13 @@ class StopController extends Controller
         );
     }
 
+    /**
+     * Deletes the given tour stop.
+     *
+     * @param Tour $tour
+     * @param TourStop $stop
+     * @return Response
+     */
     public function destroy(Tour $tour, TourStop $stop)
     {
         if ($tour->user_id != auth()->user()->id) {
@@ -66,6 +101,13 @@ class StopController extends Controller
         return response(null, 204);
     }
 
+    /**
+     * Sets the order of the given tour stop.
+     *
+     * @param Tour $tour
+     * @param TourStop $stop
+     * @return StopCollection
+     */
     public function changeOrder(Tour $tour, TourStop $stop)
     {
         request()->validate([
@@ -74,11 +116,7 @@ class StopController extends Controller
 
         $stop->order = abs(request()->order);
 
-        // get all objects with that order or higher
-        // increase them all by one
-        TourStop::where('tour_id', $tour->id)
-            ->where('order', '>=', $stop->order)
-            ->increment('order');
+        $tour->increaseOrderAt($stop->order);
 
         $stop->save();
 
