@@ -7,8 +7,8 @@ use App\Tour;
 use App\Http\Requests\Cms\CreateTourRequest;
 use App\Http\Requests\Cms\UpdateTourRequest;
 use App\Http\Resources\TourCollection;
-use App\Http\Requests\Cms\UpdateTourImageRequest;
 use App\Http\Controllers\Traits\UploadsMedia;
+use App\Http\Requests\Cms\UploadTourMediaRequest;
 
 class TourController extends Controller
 {
@@ -86,13 +86,13 @@ class TourController extends Controller
     }
 
     /**
-     * Handles image uploads for all slots.
+     * Handles all media uploads.
      *
-     * @param UpdateTourImageRequest $request
+     * @param UploadTourMediaRequest $request
      * @param Tour $tour
      * @return mixed
      */
-    public function uploadImages(UpdateTourImageRequest $request, Tour $tour)
+    public function uploadMedia(UploadTourMediaRequest $request, Tour $tour)
     {
         if ($request->has('main_image')) {
             $tour->main_image = $this->storeFile($request->file('main_image'), 'images');
@@ -102,6 +102,12 @@ class TourController extends Controller
             $tour->image_2 = $this->storeFile($request->file('image_2'), 'images');
         } elseif ($request->has('image_3')) {
             $tour->image_3 = $this->storeFile($request->file('image_3'), 'images');
+        } elseif ($request->has('trophy_image')) {
+            $tour->trophy_image = $this->storeFile($request->file('trophy_image'), 'images');
+        } elseif ($request->has('intro_audio')) {
+            $tour->intro_audio = $this->storeFile($request->file('intro_audio'), 'audio');
+        } elseif ($request->has('background_audio')) {
+            $tour->background_audio = $this->storeFile($request->file('background_audio'), 'audio');
         } else {
             return response('No images found.', 422);
         }
