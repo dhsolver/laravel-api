@@ -8,5 +8,6 @@ $factory->define(App\TourStop::class, function (Faker $faker) {
         'title' => $faker->sentence(),
         'description' => $faker->paragraph(),
         'location_type' => TourStop::$LOCATION_TYPES[array_rand(TourStop::$LOCATION_TYPES)],
+        'order' => 1,
     ];
 });

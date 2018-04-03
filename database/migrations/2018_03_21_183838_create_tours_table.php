@@ -32,6 +32,7 @@ class CreateToursTable extends Migration
             $table->string('facebook_url')->nullable();
             $table->string('twitter_url')->nullable();
             $table->string('instagram_url')->nullable();
+            $table->string('video_url')->nullable();
 
             // media
             $table->string('intro_audio')->nullable();
@@ -41,19 +42,17 @@ class CreateToursTable extends Migration
             $table->string('image_1')->nullable();
             $table->string('image_2')->nullable();
             $table->string('image_3')->nullable();
-
-            $table->string('video_url')->nullable();
-
             $table->string('trophy_image')->nullable();
-            $table->string('price_details')->nullable();
-            $table->string('price_instructions')->nullable();
+            $table->string('start_image')->nullable();
+            $table->string('end_image')->nullable();
+
+            $table->string('prize_details')->nullable();
+            $table->string('prize_instructions')->nullable();
+            $table->string('start_message', 1000)->nullable();
+            $table->string('end_message', 1000)->nullable();
 
             $table->unsignedInteger('start_point')->nullable();
             $table->unsignedInteger('end_point')->nullable();
-            $table->string('start_message', 1000)->nullable();
-            $table->string('start_image')->nullable();
-            $table->string('end_message', 1000)->nullable();
-            $table->string('end_image')->nullable();
 
             $table->timestamps();
             $table->softDeletes();

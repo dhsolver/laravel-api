@@ -146,7 +146,7 @@ class StopMediaTest extends TestCase
         $resp = $this->json('PUT', $this->stopRoute('media'), [$key => $file]);
 
         try {
-            $filename = $resp->getData()->data->$key;
+            $filename = $resp->getData()->$key;
         } catch (\Exception $ex) {
             $filename = null;
         }

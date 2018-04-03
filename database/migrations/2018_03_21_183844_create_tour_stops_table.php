@@ -21,6 +21,8 @@ class CreateTourStopsTable extends Migration
 
             $table->string('title', 255);
             $table->string('description', 2000);
+
+            // location
             $table->string('location_type', 10); // map/address/gps
 
             $table->string('address1')->nullable();
@@ -28,6 +30,9 @@ class CreateTourStopsTable extends Migration
             $table->string('city', 100)->nullable();
             $table->string('state', 2)->nullable();
             $table->string('zipcode', 12)->nullable();
+
+            $table->decimal('latitude', 10, 8)->nullable();
+            $table->decimal('longitude', 11, 8)->nullable();
 
             // media
             // $table->string('play_radius');

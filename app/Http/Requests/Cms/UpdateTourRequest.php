@@ -45,6 +45,28 @@ class UpdateTourRequest extends FormRequest
             'facebook_url' => 'nullable|string',
             'twitter_url' => 'nullable|string',
             'instagram_url' => 'nullable|string',
+
+            'video_url' => 'nullable|url|regex:/(youtube.com)/u',
+
+            'start_message' => 'nullable|string|max:1000',
+            'end_message' => 'nullable|string|max:1000',
+            'prize_details' => 'nullable|string|max:1000',
+            'prize_instructions' => 'nullable|string|max:1000',
+
+            'start_point' => [
+                'nullable',
+                'numeric',
+                Rule::exists('tour_stops', 'id')->where(function ($query) {
+                    $query->where('tour_id', $this->route('tour')->id);
+                }),
+            ],
+            'end_point' => [
+                'nullable',
+                'numeric',
+                Rule::exists('tour_stops', 'id')->where(function ($query) {
+                    $query->where('tour_id', $this->route('tour')->id);
+                }),
+            ],
         ];
     }
 }
