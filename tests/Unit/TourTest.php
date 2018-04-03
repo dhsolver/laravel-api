@@ -5,6 +5,7 @@ namespace Tests\Unit;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use App\TourStop;
+use App\Tour;
 
 class TourTest extends TestCase
 {
@@ -35,26 +36,56 @@ class TourTest extends TestCase
 
         $tour = create('App\Tour', ['user_id' => $business->id]);
 
-        $this->assertNull($tour->main_image_path);
-        $this->assertNull($tour->image_1);
-        $this->assertNull($tour->image_2);
-        $this->assertNull($tour->image_3);
+        foreach (Tour::$imageAttributes as $key) {
+            $this->assertNull($tour->key);
 
-        $tour->main_image = 'test.jpg';
-        $tour->image_1 = 'test1.jpg';
-        $tour->image_2 = 'test2.jpg';
-        $tour->image_3 = 'test3.jpg';
+            $tour->$key = 'test.jpg';
+            $pathAttribute = $key . '_path';
 
-        $this->assertContains('http', $tour->main_image_path);
-        $this->assertContains('test.jpg', $tour->main_image_path);
+            $this->assertStringStartsWith('http', $tour->$pathAttribute);
+            $this->assertContains('test.jpg', $tour->$pathAttribute);
+        }
+    }
 
-        $this->assertContains('http', $tour->image_1_path);
-        $this->assertContains('test1.jpg', $tour->image_1_path);
+    /** @test */
+    public function it_gets_the_full_facebook_url()
+    {
+        $business = createUser('business');
 
-        $this->assertContains('http', $tour->image_2_path);
-        $this->assertContains('test2.jpg', $tour->image_2_path);
+        $tour = create('App\Tour', ['user_id' => $business->id]);
 
-        $this->assertContains('http', $tour->image_3_path);
-        $this->assertContains('test3.jpg', $tour->image_3_path);
+        $tour->facebook_url = 'new_social_url';
+
+        $this->assertStringStartsWith('http', $tour->facebook_url_path);
+        $this->assertContains('facebook.com', $tour->facebook_url_path);
+        $this->assertContains('new_social_url', $tour->facebook_url_path);
+    }
+
+    /** @test */
+    public function it_gets_the_full_twitter_url()
+    {
+        $business = createUser('business');
+
+        $tour = create('App\Tour', ['user_id' => $business->id]);
+
+        $tour->twitter_url = 'new_social_url';
+
+        $this->assertStringStartsWith('http', $tour->twitter_url_path);
+        $this->assertContains('twitter.com', $tour->twitter_url_path);
+        $this->assertContains('new_social_url', $tour->twitter_url_path);
+    }
+
+    /** @test */
+    public function it_gets_the_full_instagram_url()
+    {
+        $business = createUser('business');
+
+        $tour = create('App\Tour', ['user_id' => $business->id]);
+
+        $tour->instagram_url = 'new_social_url';
+
+        $this->assertStringStartsWith('http', $tour->instagram_url_path);
+        $this->assertContains('instagram.com', $tour->instagram_url_path);
+        $this->assertContains('new_social_url', $tour->instagram_url_path);
     }
 }

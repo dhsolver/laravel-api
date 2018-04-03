@@ -51,9 +51,9 @@ class CreateToursTable extends Migration
             $table->unsignedInteger('start_point')->nullable();
             $table->unsignedInteger('end_point')->nullable();
             $table->string('start_message', 1000)->nullable();
-            $table->string('start_media')->nullable();
+            $table->string('start_image')->nullable();
             $table->string('end_message', 1000)->nullable();
-            $table->string('end_media')->nullable();
+            $table->string('end_image')->nullable();
 
             $table->timestamps();
             $table->softDeletes();

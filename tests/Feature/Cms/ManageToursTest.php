@@ -130,6 +130,45 @@ class ManageToursTest extends TestCase
             ->assertStatus(403);
     }
 
+    /** @test */
+    public function a_user_can_update_a_tours_address()
+    {
+        $this->loginAs($this->business);
+
+        $data = [
+            'address1' => md5('123 Elm St.'),
+            'address2' => md5('APT 805'),
+            'city' => md5('New York'),
+            'state' => 'NY',
+            'zipcode' => '10001',
+        ];
+
+        $this->updateTour($data)
+            ->assertStatus(200)
+            ->assertSee($data['address1'])
+            ->assertSee($data['address2'])
+            ->assertSee($data['city'])
+            ->assertSee($data['state'])
+            ->assertSee($data['zipcode']);
+    }
+
+    /** @test */
+    public function a_user_can_update_the_tours_social_url()
+    {
+        $this->loginAs($this->business);
+
+        $this->updateTour([
+            'facebook_url' => 'fb_name',
+            'twitter_url' => 'twitter_name',
+            'instagram_url' => 'insta_name',
+        ])->assertStatus(200);
+
+        $t = $this->tour->fresh();
+        $this->assertEquals($t->facebook_url, 'fb_name');
+        $this->assertEquals($t->twitter_url, 'twitter_name');
+        $this->assertEquals($t->instagram_url, 'insta_name');
+    }
+
     /**
      * Helper to provide route to the class tour based on named routes.
      *

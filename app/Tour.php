@@ -39,7 +39,7 @@ class Tour extends Model
      *
      * @var array
      */
-    public static $imageAttributes = ['main_image', 'image_1', 'image_2', 'image_3', 'trophy_image'];
+    public static $imageAttributes = ['main_image', 'image_1', 'image_2', 'image_3', 'trophy_image', 'start_image', 'end_image'];
 
     /**
      * Defines the attributes that are images.
@@ -141,5 +141,89 @@ class Tour extends Model
         }
 
         return config('filesystems.disks.s3.url') . $this->image_3;
+    }
+
+    /**
+     * Returns the full qualified http path for the tour's trophy image.
+     *
+     * @return void
+     */
+    public function getTrophyImagePathAttribute()
+    {
+        if (empty($this->trophy_image)) {
+            return null;
+        }
+
+        return config('filesystems.disks.s3.url') . $this->trophy_image;
+    }
+
+    /**
+     * Returns the full qualified http path for the tour's start image.
+     *
+     * @return void
+     */
+    public function getStartImagePathAttribute()
+    {
+        if (empty($this->start_image)) {
+            return null;
+        }
+
+        return config('filesystems.disks.s3.url') . $this->start_image;
+    }
+
+    /**
+     * Returns the full qualified http path for the tour's third image.
+     *
+     * @return void
+     */
+    public function getEndImagePathAttribute()
+    {
+        if (empty($this->end_image)) {
+            return null;
+        }
+
+        return config('filesystems.disks.s3.url') . $this->end_image;
+    }
+
+    /**
+     * Returns the full facebook url.
+     *
+     * @return void
+     */
+    public function getFacebookUrlPathAttribute()
+    {
+        if (empty($this->facebook_url)) {
+            return null;
+        }
+
+        return 'https://www.facebook.com/' . $this->facebook_url;
+    }
+
+    /**
+     * Returns the full twitter url.
+     *
+     * @return void
+     */
+    public function getTwitterUrlPathAttribute()
+    {
+        if (empty($this->twitter_url)) {
+            return null;
+        }
+
+        return 'https://www.twitter.com/' . $this->twitter_url;
+    }
+
+    /**
+     * Returns the full instagram url.
+     *
+     * @return void
+     */
+    public function getInstagramUrlPathAttribute()
+    {
+        if (empty($this->instagram_url)) {
+            return null;
+        }
+
+        return 'https://www.instagram.com/' . $this->instagram_url;
     }
 }
