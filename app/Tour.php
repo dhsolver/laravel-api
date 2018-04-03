@@ -35,6 +35,20 @@ class Tour extends Model
     protected $appends = ['main_image_path', 'image_1_path', 'image_2_path', 'image_3_path'];
 
     /**
+     * Defines the attributes that are images.
+     *
+     * @var array
+     */
+    public static $imageAttributes = ['main_image', 'image_1', 'image_2', 'image_3', 'trophy_image'];
+
+    /**
+     * Defines the attributes that are images.
+     *
+     * @var array
+     */
+    public static $audioAttributes = ['intro_audio', 'background_audio'];
+
+    /**
      * Defines the relatioship of all the tours stops
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany

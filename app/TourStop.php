@@ -21,6 +21,20 @@ class TourStop extends Model
     protected $guarded = ['id'];
 
     /**
+     * Defines the attributes that are images.
+     *
+     * @var array
+     */
+    public static $imageAttributes = ['main_image', 'image_1', 'image_2', 'image_3'];
+
+    /**
+     * Defines the attributes that are images.
+     *
+     * @var array
+     */
+    public static $audioAttributes = ['audio'];
+
+    /**
      * Returns the relationship of the tour that the stop belongs to.
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo

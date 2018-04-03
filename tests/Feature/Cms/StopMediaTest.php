@@ -5,10 +5,10 @@ namespace Tests\Feature\Cms;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\Concerns\AttachJwtToken;
-use App\Tour;
 use Illuminate\Http\UploadedFile;
+use App\TourStop;
 
-class TourMediaTest extends TestCase
+class StopMediaTest extends TestCase
 {
     use DatabaseMigrations;
     use AttachJwtToken;
@@ -25,27 +25,27 @@ class TourMediaTest extends TestCase
         $this->business = createUser('business');
 
         $this->tour = create('App\Tour', ['user_id' => $this->business->id]);
+
+        $this->stop = create('App\TourStop', ['tour_id' => $this->tour->id, 'order' => 1]);
     }
 
     /** @test */
-    public function a_user_can_update_a_tours_images()
+    public function a_user_can_update_a_stops_images()
     {
-        $this->withoutExceptionHandling();
-
         $this->loginAs($this->business);
 
-        foreach (Tour::$imageAttributes as $key) {
+        foreach (TourStop::$imageAttributes as $key) {
             $this->uploadMedia($key, $file)
                ->assertStatus(200);
 
             \Storage::disk('s3')->assertExists($file);
 
-            $this->assertNotEmpty($this->tour->fresh()->toArray()[$key]);
+            $this->assertNotEmpty($this->stop->fresh()->toArray()[$key]);
         }
     }
 
     /** @test */
-    public function tour_images_have_a_max_file_size()
+    public function stop_images_must_be_of_valid_type_and_size()
     {
         $this->loginAs($this->business);
 
@@ -53,67 +53,59 @@ class TourMediaTest extends TestCase
             ->image('main.jpg')
             ->size(config('junket.imaging.max_file_size') + 1);
 
-        foreach (Tour::$imageAttributes as $key) {
+        $pdfFile = UploadedFile::fake()
+            ->create('document', 5000);
+
+        foreach (TourStop::$imageAttributes as $key) {
             $this->uploadMedia($key, $file, $largeImage)
                 ->assertStatus(422)
                 ->assertSee('may not be greater than');
-        }
-    }
 
-    /** @test */
-    public function tour_images_must_be_images()
-    {
-        $this->loginAs($this->business);
-
-        $pdfFile = UploadedFile::fake()
-            ->create('document.pdf', 5000);
-
-        foreach (Tour::$imageAttributes as $key) {
             $this->uploadMedia($key, $file, $pdfFile)
-            ->assertStatus(422)
-            ->assertSee('must be an image');
+                ->assertStatus(422)
+                ->assertSee('must be an image');
         }
     }
 
     /** @test */
-    public function only_the_creator_can_upload_media()
+    public function stop_media_can_not_be_updated_by_another_user()
     {
         $this->signIn('business');
 
-        $this->json('PUT', $this->tourRoute('media'), [])
+        $this->json('PUT', $this->stopRoute('media'), [])
             ->assertStatus(403);
     }
 
     /** @test */
-    public function the_creator_can_update_a_tours_audio()
+    public function the_creator_can_update_a_stops_audio()
     {
         $this->loginAs($this->business);
 
         $audioFile = UploadedFile::fake()
             ->create('audio.mp3', 5000);
 
-        foreach (Tour::$audioAttributes as $key) {
+        foreach (TourStop::$audioAttributes as $key) {
             $this->uploadMedia($key, $file, $audioFile)
             ->assertStatus(200);
 
-            $this->assertNotEmpty($this->tour->fresh()->$key);
+            $this->assertNotEmpty($this->stop->fresh()->$key);
 
             \Storage::disk('s3')->assertExists($file);
         }
     }
 
     /** @test */
-    public function tour_audio_uploads_must_be_of_valid_type_and_size()
+    public function stop_audio_must_be_of_valid_type_and_size()
     {
         $this->loginAs($this->business);
 
         $pdfFile = UploadedFile::fake()
-            ->create('audio.pdf', 5000);
+            ->create('audio.pdf');
 
         $largeFile = UploadedFile::fake()
             ->create('audio.mp3', config('junket.audio.max_file_size') + 1);
 
-        foreach (Tour::$audioAttributes as $key) {
+        foreach (TourStop::$audioAttributes as $key) {
             $this->uploadMedia($key, $file, $pdfFile)
                 ->assertStatus(422)
                 ->assertSee('file of type:');
@@ -130,9 +122,9 @@ class TourMediaTest extends TestCase
      * @param String $name
      * @return void
      */
-    public function tourRoute($name)
+    public function stopRoute($name)
     {
-        return route("cms.tours.$name", $this->tour->id);
+        return route("cms.stops.$name", ['tour' => $this->tour->id, 'stop' => $this->stop->id]);
     }
 
     /**
@@ -143,15 +135,15 @@ class TourMediaTest extends TestCase
      * @param [type] $image
      * @return \Illuminate\Foundation\Testing\TestResponse
      */
-    public function uploadMedia($key, &$filename, $image = null)
+    public function uploadMedia($key, &$filename, $file = null)
     {
-        if (empty($image)) {
-            $image = UploadedFile::fake()
+        if (empty($file)) {
+            $file = UploadedFile::fake()
                 ->image('main.jpg', 500, 500)
                 ->size(config('junket.imaging.max_file_size') - 1);
         }
 
-        $resp = $this->json('PUT', $this->tourRoute('media'), [$key => $image]);
+        $resp = $this->json('PUT', $this->stopRoute('media'), [$key => $file]);
 
         try {
             $filename = $resp->getData()->data->$key;

@@ -35,6 +35,7 @@ class UploadTourMediaRequest extends FormRequest
             'image_3' => "nullable|file|image|max:$max",
             'trophy_image' => "nullable|file|image|max:$max",
 
+            'audio' => "nullable|file|mimetypes:audio/mpeg|max:$audioMax",
             'intro_audio' => "nullable|file|mimetypes:audio/mpeg|max:$audioMax",
             'background_audio' => "nullable|file|mimetypes:audio/mpeg|max:$audioMax",
         ];
