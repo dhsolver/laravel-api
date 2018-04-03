@@ -28,6 +28,13 @@ class Tour extends Model
     protected $guarded = ['id'];
 
     /**
+     * The custom attributes that are automatically appended to the model.
+     *
+     * @var array
+     */
+    protected $appends = ['main_image_path'];
+
+    /**
      * Defines the relatioship of all the tours stops
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
@@ -64,5 +71,15 @@ class Tour extends Model
         TourStop::where('tour_id', $this->id)
             ->where('order', '>=', $order)
             ->increment('order');
+    }
+
+    /**
+     * Returns the full qualified http path for the tour's main image.
+     *
+     * @return void
+     */
+    public function getMainImagePathAttribute()
+    {
+        return config('filesystems.disks.s3.url') . $this->main_image;
     }
 }

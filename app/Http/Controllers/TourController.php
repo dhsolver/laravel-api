@@ -7,9 +7,13 @@ use App\Tour;
 use App\Http\Requests\Cms\CreateTourRequest;
 use App\Http\Requests\Cms\UpdateTourRequest;
 use App\Http\Resources\TourCollection;
+use App\Http\Requests\Cms\UpdateTourImageRequest;
+use App\Http\Controllers\Traits\UploadsMedia;
 
 class TourController extends Controller
 {
+    use UploadsMedia;
+
     /**
      * Display a listing of the resource.
      *
@@ -81,10 +85,20 @@ class TourController extends Controller
         return response(null, 204);
     }
 
-    public function uploadImages(Tour $tour)
+    public function uploadImages(UpdateTourImageRequest $request, Tour $tour)
     {
         if ($tour->user_id != auth()->user()->id) {
             return response(null, 403);
         }
+
+        if ($request->has('main_image')) {
+            $tour->main_image = $this->storeFile($request->file('main_image'), 'images');
+        } else {
+            return response('No images found.', 422);
+        }
+
+        $tour->save();
+
+        return new TourResource($tour->fresh());
     }
 }

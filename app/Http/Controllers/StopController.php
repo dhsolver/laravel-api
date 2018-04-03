@@ -6,8 +6,8 @@ use App\Http\Requests\Cms\CreateStopRequest;
 use App\Tour;
 use App\Http\Resources\StopResource;
 use App\TourStop;
-use App\Http\Requests\Cms\UpdateStopRequest;
 use App\Http\Resources\StopCollection;
+use App\Http\Requests\Cms\UpdateStopRequest;
 
 class StopController extends Controller
 {
@@ -37,10 +37,6 @@ class StopController extends Controller
      */
     public function store(CreateStopRequest $request, Tour $tour)
     {
-        if ($tour->user_id != auth()->user()->id) {
-            return response(null, 403);
-        }
-
         $order = $tour->getNextStopOrder();
 
         return new StopResource(
@@ -74,12 +70,10 @@ class StopController extends Controller
      */
     public function update(UpdateStopRequest $request, Tour $tour, TourStop $stop)
     {
-        if ($tour->user_id != auth()->user()->id) {
-            return response(null, 403);
-        }
+        $stop->update($request->validated());
 
         return new StopResource(
-            $tour->stops()->create($request->validated())
+            $stop->fresh()
         );
     }
 

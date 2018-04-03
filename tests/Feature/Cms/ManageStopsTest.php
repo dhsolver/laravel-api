@@ -23,7 +23,8 @@ class ManageStopTest extends TestCase
         $this->business = createUser('business');
 
         $this->tour = create('App\Tour', ['user_id' => $this->business->id]);
-        $this->stop = create(TourStop::class, ['tour_id' => $this->tour->id, 'order' => 1]);
+
+        $this->stop = create('App\TourStop', ['tour_id' => $this->tour->id, 'order' => 1]);
     }
 
     public function stopRoute($name, $withStop = false)
@@ -45,18 +46,21 @@ class ManageStopTest extends TestCase
     {
         $data = array_merge($this->stop->toArray(), $overrides);
 
-        return $this->json('PATCH', route('cms.stops.update', ['tour' => $this->tour->id, 'stop' => $this->stop->id]), $data);
+        return $this->json('PATCH', $this->stopRoute('update', true), $data);
     }
 
     /** @test */
     public function a_stop_can_be_updated_by_its_creator()
     {
+        $this->withoutExceptionHandling();
+
         $this->loginAs($this->business);
 
-        $this->updateStop([
+        $data = $this->updateStop([
             'title' => 'new title',
             'description' => 'new description',
-        ])->assertSee('new title')
+        ])->assertStatus(200)
+            ->assertSee('new title')
             ->assertSee('new description');
     }
 

@@ -36,7 +36,7 @@ trait UploadsMedia
      * @param [type] $dir
      * @return void
      */
-    public function storeFile($file, $dir)
+    public function storeFile($file, $dir = '')
     {
         $filename = $this->generateFilename($file->extension());
 

@@ -2,9 +2,11 @@
 
 namespace App\Http\Requests\Cms;
 
-use App\Tour;
+use Illuminate\Foundation\Http\FormRequest;
+use App\TourStop;
+use Illuminate\Validation\Rule;
 
-class UpdateStopRequest extends CreateStopRequest
+class UpdateStopRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -13,6 +15,25 @@ class UpdateStopRequest extends CreateStopRequest
      */
     public function authorize()
     {
-        return auth()->user()->ownsTour($this->route('tour')->id);
+        return auth()->user()->ownsTour(
+            $this->route('tour')->id
+        );
+    }
+
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array
+     */
+    public function rules()
+    {
+        return [
+            'title' => 'required|string|max:255|min:3',
+            'description' => 'required|string|max:2000|min:3',
+            'location_type' => [
+                'required',
+                Rule::in(TourStop::$LOCATION_TYPES),
+            ],
+        ];
     }
 }

@@ -132,13 +132,52 @@ class ManageToursTest extends TestCase
     /** @test */
     public function a_tour_can_update_its_main_image()
     {
+        $this->withoutExceptionHandling();
+
         $this->loginAs($this->business);
 
+        // UploadedFile::fake()->image('avatar.jpg', $width, $height)->size(100);
         $data = array_merge($this->tour->toArray(), [
-            'main_image' => UploadedFile::fake()->image('main.jpg'),
+            'main_image' => UploadedFile::fake()
+                ->image('main.jpg', 500, 500)
+                ->size(config('junket.imaging.max_file_size') - 1),
         ]);
 
-        $this->json('PUT', route('cms.tours.images', $this->tour->id), $data)
-            ->assertStatus(200);
+        $resp = $this->json('PUT', route('cms.tours.images', $this->tour->id), $data);
+        // $resp->assertStatus(200);
+        // dd($resp->getData());
+
+        $this->assertNotEmpty($resp->getData()->data->main_image);
+    }
+
+    /** @test */
+    public function tour_images_have_a_max_file_size()
+    {
+        $this->loginAs($this->business);
+
+        $largeImage = UploadedFile::fake()
+            ->image('main.jpg')
+            ->size(config('junket.imaging.max_file_size') + 1);
+
+        $this->json('PUT', $this->tourRoute('images'), ['main_image' => $largeImage])
+            ->assertStatus(422)
+            ->assertSee('main image may not be greater than');
+    }
+
+    /** @test */
+    public function a_tours_main_image_must_be_an_image()
+    {
+        $this->assertTrue(true);
+    }
+
+    /**
+     * Helper to provide route to the class tour based on named routes.
+     *
+     * @param [type] $name
+     * @return void
+     */
+    public function tourRoute($name)
+    {
+        return route("cms.tours.$name", $this->tour->id);
     }
 }

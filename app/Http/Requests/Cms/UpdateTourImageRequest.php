@@ -3,10 +3,8 @@
 namespace App\Http\Requests\Cms;
 
 use Illuminate\Foundation\Http\FormRequest;
-use App\TourStop;
-use Illuminate\Validation\Rule;
 
-class CreateStopRequest extends FormRequest
+class UpdateTourImageRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -27,13 +25,13 @@ class CreateStopRequest extends FormRequest
      */
     public function rules()
     {
+        $max = config('junket.imaging.max_file_size');
+
         return [
-            'title' => 'required|string|max:255|min:3',
-            'description' => 'required|string|max:2000|min:3',
-            'location_type' => [
-                'required',
-                Rule::in(TourStop::$LOCATION_TYPES),
-            ],
+            'main_image' => "nullable|file|image|max:$max",
+            'image_1' => "nullable|file|image|max:$max",
+            'image_2' => "nullable|file|image|max:$max",
+            'image_3' => "nullable|file|image|max:$max",
         ];
     }
 }

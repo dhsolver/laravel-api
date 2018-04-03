@@ -2,8 +2,6 @@
 
 namespace App\Http\Requests\Cms;
 
-use App\Tour;
-
 class UpdateTourRequest extends CreateTourRequest
 {
     /**
