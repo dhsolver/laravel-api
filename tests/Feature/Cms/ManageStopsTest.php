@@ -102,6 +102,7 @@ class ManageStopTest extends TestCase
         $this->assertCount(4, TourStop::all());
 
         $this->json('GET', route('cms.stops.index', $this->tour->id))
+            ->assertStatus(200)
             ->assertSee($this->stop->title)
             ->assertSee($stop2->title)
             ->assertSee($stop3->title)
@@ -144,6 +145,7 @@ class ManageStopTest extends TestCase
         $this->loginAs($this->business);
 
         $this->json('GET', $this->stopRoute('show', true))
+            ->assertStatus(200)
             ->assertSee($this->stop->description);
     }
 
@@ -165,6 +167,7 @@ class ManageStopTest extends TestCase
         $stop3 = create('App\TourStop', ['tour_id' => $this->tour->id, 'order' => 3]);
 
         $this->json('GET', $this->stopRoute('index'))
+            ->assertStatus(200)
             ->assertSeeInOrder([$this->stop->title, $stop2->title, $stop3->title]);
 
         $result = $this->json('PUT', $this->stopRoute('order', $stop3), ['order' => 1]);

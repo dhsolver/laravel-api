@@ -46,7 +46,7 @@ class ManageToursTest extends TestCase
             'description' => 'test desc',
             'pricing_type' => Tour::$PRICING_TYPES[0],
             'type' => Tour::$TOUR_TYPES[0],
-            ])
+            ])->assertStatus(200)
             ->assertSee('test title')
             ->assertSee('test desc');
     }
@@ -81,6 +81,7 @@ class ManageToursTest extends TestCase
         $this->loginAs($this->business);
 
         $this->json('GET', route('cms.tours.index'))
+            ->assertStatus(200)
             ->assertSee($this->tour->title)
             ->assertDontSee($otherTour->title);
     }
@@ -117,6 +118,7 @@ class ManageToursTest extends TestCase
         $this->loginAs($this->business);
 
         $this->json('GET', route('cms.tours.show', $this->tour->id))
+            ->assertStatus(200)
             ->assertSee($this->tour->title);
     }
 
@@ -130,24 +132,32 @@ class ManageToursTest extends TestCase
     }
 
     /** @test */
-    public function a_tour_can_update_its_main_image()
+    public function a_user_can_update_a_tours_its_main_image()
     {
+        \Storage::fake('s3');
+
         $this->withoutExceptionHandling();
 
         $this->loginAs($this->business);
 
-        // UploadedFile::fake()->image('avatar.jpg', $width, $height)->size(100);
-        $data = array_merge($this->tour->toArray(), [
-            'main_image' => UploadedFile::fake()
-                ->image('main.jpg', 500, 500)
-                ->size(config('junket.imaging.max_file_size') - 1),
-        ]);
+        $file = $this->uploadImage('main_image');
 
-        $resp = $this->json('PUT', route('cms.tours.images', $this->tour->id), $data);
-        // $resp->assertStatus(200);
-        // dd($resp->getData());
+        \Storage::disk('s3')->assertExists($file);
+    }
 
-        $this->assertNotEmpty($resp->getData()->data->main_image);
+    /** @test */
+    public function a_user_can_update_a_tours_sub_images()
+    {
+        $this->loginAs($this->business);
+
+        $file = $this->uploadImage('image_1');
+        \Storage::disk('s3')->assertExists($file);
+
+        $file = $this->uploadImage('image_2');
+        \Storage::disk('s3')->assertExists($file);
+
+        $file = $this->uploadImage('image_3');
+        \Storage::disk('s3')->assertExists($file);
     }
 
     /** @test */
@@ -159,25 +169,70 @@ class ManageToursTest extends TestCase
             ->image('main.jpg')
             ->size(config('junket.imaging.max_file_size') + 1);
 
-        $this->json('PUT', $this->tourRoute('images'), ['main_image' => $largeImage])
-            ->assertStatus(422)
-            ->assertSee('main image may not be greater than');
+        $file = $this->uploadImage('main_image', $largeImage, '422');
+        $file = $this->uploadImage('image_1', $largeImage, '422');
+        $file = $this->uploadImage('image_2', $largeImage, '422');
+        $file = $this->uploadImage('image_3', $largeImage, '422');
     }
 
     /** @test */
-    public function a_tours_main_image_must_be_an_image()
+    public function tour_images_must_be_images()
     {
-        $this->assertTrue(true);
+        $this->loginAs($this->business);
+
+        $pdfFile = UploadedFile::fake()
+            ->create('document.pdf', 5000);
+
+        $this->json('PUT', $this->tourRoute('images'), ['main_image' => $pdfFile])
+            ->assertStatus(422)
+            ->assertSee('main image must be an image');
+    }
+
+    /** @test */
+    public function other_users_cannot_upload_images()
+    {
+        $this->signIn('business');
+
+        $this->json('PUT', $this->tourRoute('images'), [])
+            ->assertStatus(403);
     }
 
     /**
      * Helper to provide route to the class tour based on named routes.
      *
-     * @param [type] $name
+     * @param String $name
      * @return void
      */
     public function tourRoute($name)
     {
         return route("cms.tours.$name", $this->tour->id);
+    }
+
+    /**
+     * Helper to upload a tour image and return the filename.
+     *
+     * @param String $key
+     * @param [type] $image
+     * @param integer $expectedStatus
+     * @return String
+     */
+    public function uploadImage($key, $image = null, $expectedStatus = 200)
+    {
+        \Storage::fake('s3');
+
+        if (empty($image)) {
+            $image = UploadedFile::fake()
+                ->image('main.jpg', 500, 500)
+                ->size(config('junket.imaging.max_file_size') - 1);
+        }
+
+        $resp = $this->json('PUT', $this->tourRoute('images'), [$key => $image]);
+        $resp->assertStatus(intval($expectedStatus));
+
+        try {
+            return $resp->getData()->data->$key;
+        } catch (\Exception $ex) {
+            return null;
+        }
     }
 }

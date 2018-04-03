@@ -32,7 +32,7 @@ class Tour extends Model
      *
      * @var array
      */
-    protected $appends = ['main_image_path'];
+    protected $appends = ['main_image_path', 'image_1_path', 'image_2_path', 'image_3_path'];
 
     /**
      * Defines the relatioship of all the tours stops
@@ -80,6 +80,52 @@ class Tour extends Model
      */
     public function getMainImagePathAttribute()
     {
+        if (empty($this->main_image)) {
+            return null;
+        }
+
         return config('filesystems.disks.s3.url') . $this->main_image;
+    }
+
+    /**
+     * Returns the full qualified http path for the tour's first image.
+     *
+     * @return void
+     */
+    public function getImage1PathAttribute()
+    {
+        if (empty($this->image_1)) {
+            return null;
+        }
+
+        return config('filesystems.disks.s3.url') . $this->image_1;
+    }
+
+    /**
+     * Returns the full qualified http path for the tour's second image.
+     *
+     * @return void
+     */
+    public function getImage2PathAttribute()
+    {
+        if (empty($this->image_2)) {
+            return null;
+        }
+
+        return config('filesystems.disks.s3.url') . $this->image_2;
+    }
+
+    /**
+     * Returns the full qualified http path for the tour's third image.
+     *
+     * @return void
+     */
+    public function getImage3PathAttribute()
+    {
+        if (empty($this->image_3)) {
+            return null;
+        }
+
+        return config('filesystems.disks.s3.url') . $this->image_3;
     }
 }

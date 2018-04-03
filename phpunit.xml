@@ -29,5 +29,7 @@
         <env name="CACHE_DRIVER" value="array"/>
         <env name="SESSION_DRIVER" value="array"/>
         <env name="QUEUE_DRIVER" value="sync"/>
+        <!-- <env name="AWS_BUCKET" value="testing.wejunket.com"/>
+        <env name="AWS_URL" value="http://testing.wejunket.com/"/> -->
     </php>
 </phpunit>

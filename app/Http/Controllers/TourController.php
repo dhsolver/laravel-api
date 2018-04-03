@@ -85,14 +85,23 @@ class TourController extends Controller
         return response(null, 204);
     }
 
+    /**
+     * Handles image uploads for all slots.
+     *
+     * @param UpdateTourImageRequest $request
+     * @param Tour $tour
+     * @return mixed
+     */
     public function uploadImages(UpdateTourImageRequest $request, Tour $tour)
     {
-        if ($tour->user_id != auth()->user()->id) {
-            return response(null, 403);
-        }
-
         if ($request->has('main_image')) {
             $tour->main_image = $this->storeFile($request->file('main_image'), 'images');
+        } elseif ($request->has('image_1')) {
+            $tour->image_1 = $this->storeFile($request->file('image_1'), 'images');
+        } elseif ($request->has('image_2')) {
+            $tour->image_2 = $this->storeFile($request->file('image_2'), 'images');
+        } elseif ($request->has('image_3')) {
+            $tour->image_3 = $this->storeFile($request->file('image_3'), 'images');
         } else {
             return response('No images found.', 422);
         }
