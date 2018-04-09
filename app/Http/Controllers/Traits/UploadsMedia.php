@@ -36,11 +36,11 @@ trait UploadsMedia
      * @param [type] $dir
      * @return void
      */
-    public function storeFile($file, $dir = '')
+    public function storeFile($file, $dir)
     {
         $filename = $this->generateFilename($file->extension());
 
-        if (!\Storage::disk('s3')->putFileAs($dir, $file, $filename)) {
+        if (!\Storage::putFileAs($dir, $file, $filename)) {
             // error saving image -> quit
             return false;
         }
