@@ -5,7 +5,7 @@
 - [AccessPoints](docs/AccessPoints.md)
 - [Authentication](docs/Authentication.md)
 - [Development Setup](docs/Development.md)
-
+- [Testing](docs/Testing.md)
 
 ### 3rd Party 
 
