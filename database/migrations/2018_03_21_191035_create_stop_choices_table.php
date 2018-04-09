@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateQuestionChoicesTable extends Migration
+class CreateStopChoicesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateQuestionChoicesTable extends Migration
      */
     public function up()
     {
-        Schema::create('question_choices', function (Blueprint $table) {
+        Schema::create('stop_choices', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('tour_stop_id');
             $table->unsignedTinyInteger('order');
@@ -31,6 +31,6 @@ class CreateQuestionChoicesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('question_choices');
+        Schema::dropIfExists('stop_choices');
     }
 }

@@ -74,7 +74,9 @@ class StopController extends Controller
      */
     public function update(UpdateStopRequest $request, Tour $tour, TourStop $stop)
     {
-        $stop->update($request->validated());
+        $stop->update(array_except($request->validated(), ['choices']));
+
+        $stop->updateChoices($request->choices);
 
         return new StopResource(
             $stop->fresh()

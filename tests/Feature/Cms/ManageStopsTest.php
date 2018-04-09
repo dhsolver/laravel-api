@@ -6,6 +6,7 @@ use Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\Concerns\AttachJwtToken;
 use App\TourStop;
+use App\StopChoice;
 
 class ManageStopTest extends TestCase
 {
@@ -247,7 +248,7 @@ class ManageStopTest extends TestCase
     }
 
     /** @test */
-    public function a_stop_can_be_multiple_chocie()
+    public function a_stop_can_be_multiple_choice()
     {
         $this->loginAs($this->business);
 
@@ -258,5 +259,246 @@ class ManageStopTest extends TestCase
         $this->updateStop(array_merge($this->stop->toArray(), $data))
             ->assertStatus(200)
             ->assertJson($data);
+    }
+
+    /** @test */
+    public function a_choice_can_be_added_to_a_stop()
+    {
+        $this->loginAs($this->business);
+
+        $choice = make(StopChoice::class, ['tour_stop_id' => $this->stop->id]);
+
+        $data = [
+            'choices' => [
+                $choice->toArray(),
+            ],
+        ];
+
+        $this->updateStop($data)
+            ->assertStatus(200)
+            ->assertJson($data);
+    }
+
+    /** @test */
+    public function a_choice_requires_an_answer()
+    {
+        $this->loginAs($this->business);
+
+        $choice = make(StopChoice::class, ['tour_stop_id' => $this->stop->id]);
+
+        unset($choice->answer);
+
+        $data = [
+            'choices' => [
+                $choice->toArray(),
+            ],
+        ];
+
+        $this->updateStop($data)
+            ->assertStatus(422)
+            ->assertJson(['errors' => ['choices.0.answer' => ['The choices.0.answer field is required.']]]);
+    }
+
+    /** @test */
+    public function a_choices_next_stop_must_be_exist()
+    {
+        $this->loginAs($this->business);
+
+        $choice = make(StopChoice::class, ['tour_stop_id' => $this->stop->id]);
+
+        $choice->next_stop_id = 999;
+
+        $data = [
+            'choices' => [
+                $choice->toArray(),
+            ],
+        ];
+
+        $this->updateStop($data)
+            ->assertStatus(422)
+            ->assertJson(['errors' => ['choices.0.next_stop_id' => ['The selected choices.0.next_stop_id is invalid.']]]);
+    }
+
+    /** @test */
+    public function a_choice_can_be_updated()
+    {
+        $this->disableExceptionHandling();
+
+        $this->loginAs($this->business);
+
+        $choice = create(StopChoice::class, ['tour_stop_id' => $this->stop->id]);
+
+        $this->assertEquals($choice->answer, $this->stop->choices->first()->answer);
+
+        $choice->answer = 'new answer';
+
+        $data = [
+            'choices' => [
+                $choice->toArray(),
+            ],
+        ];
+
+        $this->updateStop($data)
+            ->assertStatus(200)
+            ->assertJson($data);
+    }
+
+    /** @test */
+    public function a_choice_can_be_removed()
+    {
+        $this->disableExceptionHandling();
+
+        $this->loginAs($this->business);
+
+        $choice1 = create(StopChoice::class, ['tour_stop_id' => $this->stop->id]);
+        $choice2 = create(StopChoice::class, ['tour_stop_id' => $this->stop->id]);
+
+        $this->assertCount(2, $this->stop->choices);
+
+        $data = [
+            'choices' => [
+                $choice1->toArray(),
+            ],
+        ];
+
+        $this->updateStop($data)
+            ->assertStatus(200)
+            ->assertJson($data);
+
+        $this->assertCount(1, $this->stop->fresh()->choices);
+    }
+
+    /** @test */
+    public function choices_should_order_themselves()
+    {
+        $this->loginAs($this->business);
+
+        $choice1 = create(StopChoice::class, ['tour_stop_id' => $this->stop->id]);
+        $choice2 = create(StopChoice::class, ['tour_stop_id' => $this->stop->id]);
+
+        $this->assertEquals(
+            [$choice1->id, $choice2->id],
+            $this->stop->fresh()->choices()->ordered()->pluck('id')->toArray()
+        );
+
+        $newChoice = make(StopChoice::class, ['tour_stop_id' => $this->stop->id]);
+
+        $data = [
+            'choices' => [
+                $choice1,
+                $choice2,
+                $newChoice->toArray(),
+            ],
+        ];
+
+        $resp = $this->updateStop($data)
+            ->assertStatus(200);
+
+        $choices = $this->stop->fresh()->choices()->ordered();
+        $this->assertEquals(['1', '2', '3'], $choices->pluck('id')->toArray());
+        $this->assertEquals(['1', '2', '3'], $choices->pluck('order')->toArray());
+    }
+
+    /** @test */
+    public function choices_should_respect_the_submitted_order()
+    {
+        // $this->disableExceptionHandling();
+
+        $this->loginAs($this->business);
+
+        $choice1 = create(StopChoice::class, ['tour_stop_id' => $this->stop->id]);
+        $choice2 = create(StopChoice::class, ['tour_stop_id' => $this->stop->id]);
+        $choice3 = create(StopChoice::class, ['tour_stop_id' => $this->stop->id]);
+
+        $this->assertEquals(
+            [$choice1->id, $choice2->id, $choice3->id],
+            $this->stop->fresh()->choices()->ordered()->pluck('id')->toArray()
+        );
+
+        $choice2->order = 1;
+        $choice1->order = 6;
+
+        $data = [
+            'choices' => [
+                $choice1,
+                $choice2,
+                $choice3,
+            ],
+        ];
+
+        $this->updateStop($data)
+            ->assertStatus(200);
+
+        $this->assertEquals(
+            [$choice2->id, $choice3->id, $choice1->id],
+            $this->stop->fresh()->choices()->ordered()->pluck('id')->toArray()
+        );
+    }
+
+    /** @test */
+    public function a_choice_can_have_a_next_stop()
+    {
+        $this->loginAs($this->business);
+
+        $nextStop = create('App\TourStop', ['tour_id' => $this->tour->id, 'order' => 2]);
+
+        $choice = create(StopChoice::class, ['tour_stop_id' => $this->stop->id]);
+
+        $choice->next_stop_id = $nextStop->id;
+
+        $data = [
+            'choices' => [
+                $choice->toArray(),
+            ],
+        ];
+
+        $resp = $this->updateStop($data)
+            ->assertStatus(200)
+            ->assertJson($data);
+
+        $this->assertEquals($nextStop->id, $choice->fresh()->next_stop_id);
+    }
+
+    /** @test */
+    public function a_choice_cannot_have_invalid_next_stops()
+    {
+        $this->loginAs($this->business);
+
+        $otherTour = create('App\Tour', ['user_id' => $this->business->id]);
+        $otherStop = create('App\TourStop', ['tour_id' => $otherTour->id, 'order' => 1]);
+
+        $choice = create(StopChoice::class, ['tour_stop_id' => $this->stop->id]);
+
+        $choice->next_stop_id = $otherStop->id;
+
+        $data = [
+            'choices' => [
+                $choice->toArray(),
+            ],
+        ];
+
+        $resp = $this->updateStop($data)
+            ->assertStatus(422)
+            ->assertJsonValidationErrors(['choices.0.next_stop_id']);
+    }
+
+    /** @test */
+    public function a_choices_next_stop_cannot_be_the_current_stop()
+    {
+        $this->loginAs($this->business);
+
+        $choice = create(StopChoice::class, ['tour_stop_id' => $this->stop->id]);
+
+        $choice->next_stop_id = $this->stop->id;
+
+        $data = [
+            'choices' => [
+                $choice->toArray(),
+            ],
+        ];
+
+        $resp = $this->updateStop($data)
+            ->assertStatus(422)
+            ->assertJsonValidationErrors(['choices.0.next_stop_id']);
     }
 }
