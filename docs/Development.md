@@ -21,10 +21,25 @@ php artisan key:generate
 php artisan jwt:generate
 ```
 
-5. Configure enviornment (database/redis)
+5. Setup database credentials in .env file
 
 6. Migrate & seed database
 ```
 php artisan migrate:fresh --seed
 ```
 
+7. Storage config
+By default the .env is set to use the local storage driver, which you may need to create a symlink for by running the following on your homestead box:
+```
+php artisan storage:link
+```
+
+You can also set up S3 storage by getting an S3 API key and changing the following vars in the .env:
+```
+FILESYSTEM_DRIVER=s3
+AWS_ACCESS_KEY_ID={access_key_id_here}
+AWS_SECRET_ACCESS_KEY={secret_key_here}
+AWS_DEFAULT_REGION=us-east-1
+AWS_BUCKET=staging.wejunket.com
+AWS_URL=http://staging.wejunket.com/
+```
