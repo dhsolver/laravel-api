@@ -378,7 +378,7 @@ class ManageStopTest extends TestCase
 
         $this->assertEquals(
             [$choice1->id, $choice2->id],
-            $this->stop->fresh()->choices()->ordered()->pluck('id')->toArray()
+            $this->stop->fresh()->choices()->pluck('id')->toArray()
         );
 
         $newChoice = make(StopChoice::class, ['tour_stop_id' => $this->stop->id]);
@@ -394,7 +394,7 @@ class ManageStopTest extends TestCase
         $resp = $this->updateStop($data)
             ->assertStatus(200);
 
-        $choices = $this->stop->fresh()->choices()->ordered();
+        $choices = $this->stop->fresh()->choices();
         $this->assertEquals(['1', '2', '3'], $choices->pluck('id')->toArray());
         $this->assertEquals(['1', '2', '3'], $choices->pluck('order')->toArray());
     }
@@ -412,7 +412,7 @@ class ManageStopTest extends TestCase
 
         $this->assertEquals(
             [$choice1->id, $choice2->id, $choice3->id],
-            $this->stop->fresh()->choices()->ordered()->pluck('id')->toArray()
+            $this->stop->fresh()->choices()->pluck('id')->toArray()
         );
 
         $choice2->order = 1;
@@ -431,7 +431,7 @@ class ManageStopTest extends TestCase
 
         $this->assertEquals(
             [$choice2->id, $choice3->id, $choice1->id],
-            $this->stop->fresh()->choices()->ordered()->pluck('id')->toArray()
+            $this->stop->fresh()->choices()->pluck('id')->toArray()
         );
     }
 

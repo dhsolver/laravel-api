@@ -120,7 +120,7 @@ class StopController extends Controller
 
         $stop->save();
 
-        return new StopCollection($tour->stops()->ordered()->get());
+        return new StopCollection($tour->stops()->get());
     }
 
     /**

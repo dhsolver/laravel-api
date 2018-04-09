@@ -56,7 +56,8 @@ class Tour extends Model
      */
     public function stops()
     {
-        return $this->hasMany(TourStop::class);
+        return $this->hasMany(TourStop::class)
+            ->ordered();
     }
 
     /**
@@ -246,5 +247,16 @@ class Tour extends Model
     public function getIsPublishedAttribute()
     {
         return !empty($this->published_at);
+    }
+
+    /**
+     * Defines the default ordering for stops using order column.
+     *
+     * @param [type] $query
+     * @return void
+     */
+    public function scopeOrdered($query)
+    {
+        return $query->orderBy('order', 'ASC');
     }
 }

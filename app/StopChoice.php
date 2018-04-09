@@ -56,15 +56,4 @@ class StopChoice extends Model
             ->first()
             ->max_order + 1;
     }
-
-    /**
-     * Sorts the results by the StopChoice order.
-     *
-     * @param [type] $query
-     * @return void
-     */
-    public function scopeOrdered($query)
-    {
-        $query->orderBy('order');
-    }
 }

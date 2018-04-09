@@ -50,7 +50,7 @@ class TourStop extends Model
     {
         return $this->belongsTo(Tour::class);
     }
-
+    
     /**
      * Defines the default ordering for stops using order column.
      *
@@ -63,13 +63,14 @@ class TourStop extends Model
     }
 
     /**
-     * A tour stop can have many choices.
+     * A tour stop can have many choices, always in order.
      *
      * @return void
      */
     public function choices()
     {
-        return $this->hasMany(StopChoice::class)->orderBy('order');
+        return $this->hasMany(StopChoice::class)
+            ->orderBy('order');
     }
 
     /**
