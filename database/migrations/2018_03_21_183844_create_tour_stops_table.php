@@ -47,8 +47,8 @@ class CreateTourStopsTable extends Migration
 
             $table->tinyInteger('is_multiple_choice')->default(0);
             $table->string('question', 500)->nullable();
-            $table->string('question_answer')->nullable();
-            $table->string('question_success')->nullable();
+            $table->string('question_answer', 500)->nullable();
+            $table->string('question_success', 500)->nullable();
 
             $table->timestamps();
             $table->softDeletes();

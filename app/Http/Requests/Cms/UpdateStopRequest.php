@@ -34,6 +34,21 @@ class UpdateStopRequest extends FormRequest
                 'required',
                 Rule::in(TourStop::$LOCATION_TYPES),
             ],
+
+            'address1' => 'nullable|string|max:255',
+            'address2' => 'nullable|string|max:255',
+            'city' => 'nullable|string|max:100',
+            'state' => 'nullable|string|max:2',
+            'zipcode' => 'nullable|string|max:12',
+
+            'latitude' => ['nullable', 'regex:/^[-]?(([0-8]?[0-9])\.(\d+))|(90(\.0+)?)$/'],
+            'longitude' => ['nullable', 'regex:/^[-]?((((1[0-7][0-9])|([0-9]?[0-9]))\.(\d+))|180(\.0+)?)$/'],
+
+            'question' => 'nullable|string|max:500',
+            'question_answer' => 'nullable|string|max:500',
+            'question_success' => 'nullable|string|max:500',
+
+            'is_multiple_choice' => 'nullable|boolean',
         ];
     }
 }

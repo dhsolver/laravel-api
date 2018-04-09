@@ -175,4 +175,88 @@ class ManageStopTest extends TestCase
         $result->assertStatus(200)
             ->assertSeeInOrder([$stop3->title, $this->stop->title, $stop2->title]);
     }
+
+    /** @test */
+    public function a_stop_can_have_an_address()
+    {
+        $this->loginAs($this->business);
+
+        $data = [
+            'address1' => md5('123 Elm St.'),
+            'address2' => md5('APT 805'),
+            'city' => md5('New York'),
+            'state' => 'NY',
+            'zipcode' => '10001',
+        ];
+
+        $this->updateStop(array_merge($this->stop->toArray(), $data))
+            ->assertStatus(200)
+            ->assertJson($data);
+    }
+
+    /** @test */
+    public function a_stop_can_have_coordinates()
+    {
+        $this->loginAs($this->business);
+
+        $data = [
+            'latitude' => 23.5235,
+            'longitude' => -35.325235,
+        ];
+
+        $this->updateStop(array_merge($this->stop->toArray(), $data))
+            ->assertStatus(200)
+            ->assertJson($data);
+    }
+
+    /** @test */
+    public function stop_coordinates_must_be_valid()
+    {
+        $this->loginAs($this->business);
+
+        $data = [
+            'latitude' => 293582039,
+            'longitude' => 'test',
+        ];
+
+        $this->updateStop(array_merge($this->stop->toArray(), $data))
+            ->assertStatus(422)
+            ->assertJson([
+                'errors' => [
+                    'latitude' => ['The latitude format is invalid.'],
+                    'longitude' => ['The longitude format is invalid.'],
+                ]
+            ]);
+    }
+
+    /** @test */
+    public function a_stop_can_have_a_question_and_answer()
+    {
+        $this->loginAs($this->business);
+
+        $data = [
+            'is_multiple_choice' => false,
+            'question' => 'Test question?',
+            'question_answer' => 'The answer',
+            'question_success' => "That's correct!",
+        ];
+
+        $this->updateStop(array_merge($this->stop->toArray(), $data))
+            ->assertStatus(200)
+            ->assertJson($data);
+    }
+
+    /** @test */
+    public function a_stop_can_be_multiple_chocie()
+    {
+        $this->loginAs($this->business);
+
+        $data = [
+            'is_multiple_choice' => true,
+        ];
+
+        $this->updateStop(array_merge($this->stop->toArray(), $data))
+            ->assertStatus(200)
+            ->assertJson($data);
+    }
 }

@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
 
 class Tour extends Model
 {
@@ -225,5 +226,25 @@ class Tour extends Model
         }
 
         return 'https://www.instagram.com/' . $this->instagram_url;
+    }
+
+    /**
+     * Publishes the tour.
+     *
+     * @return void
+     */
+    public function publish()
+    {
+        $this->update(['published_at' => Carbon::now()]);
+    }
+
+    /**
+     * Gets whether the tour has been publishes or not.
+     *
+     * @return void
+     */
+    public function getIsPublishedAttribute()
+    {
+        return !empty($this->published_at);
     }
 }

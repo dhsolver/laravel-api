@@ -47,9 +47,13 @@ class UpdateTourRequest extends FormRequest
             'instagram_url' => 'nullable|string',
 
             'video_url' => 'nullable|url|regex:/(youtube.com)/u',
+            'start_video_url' => 'nullable|url|regex:/(youtube.com)/u',
+            'end_video_url' => 'nullable|url|regex:/(youtube.com)/u',
 
             'start_message' => 'nullable|string|max:1000',
             'end_message' => 'nullable|string|max:1000',
+
+            'has_prize' => 'nullable|boolean',
             'prize_details' => 'nullable|string|max:1000',
             'prize_instructions' => 'nullable|string|max:1000',
 

@@ -156,11 +156,7 @@ class ManageToursTest extends TestCase
 
         $this->updateTour($data)
             ->assertStatus(200)
-            ->assertSee($data['address1'])
-            ->assertSee($data['address2'])
-            ->assertSee($data['city'])
-            ->assertSee($data['state'])
-            ->assertSee($data['zipcode']);
+            ->assertJson($data);
     }
 
     /** @test */
@@ -181,37 +177,62 @@ class ManageToursTest extends TestCase
     }
 
     /** @test */
-    public function a_tours_video_url_requires_a_valid_youtube_url()
+    public function a_tours_video_urls_require_a_valid_youtube_urls()
     {
         $this->loginAs($this->business);
 
         $url = 'https://www.youtube.com/watch?v=abcd1234';
 
-        $this->updateTour(['video_url' => $url])
+        $data = [
+            'video_url' => $url,
+            'start_video_url' => $url,
+            'end_video_url' => $url
+        ];
+
+        $this->updateTour($data)
             ->assertStatus(200)
-            ->assertJson(['video_url' => $url]);
+            ->assertJson($data);
 
-        $this->assertEquals($url, $this->tour->fresh()->video_url);
+        $url = 'https://www.google.com/';
+        $data = [
+            'video_url' => $url,
+            'start_video_url' => $url,
+            'end_video_url' => $url
+        ];
 
-        $this->updateTour(['video_url' => 'https://www.google.com/'])
+        $this->updateTour($data)
             ->assertStatus(422)
-            ->assertSee('video_url');
+            ->assertJson(['errors' => [
+                'video_url' => ['The video url format is invalid.'],
+                'start_video_url' => ['The start video url format is invalid.'],
+                'end_video_url' => ['The end video url format is invalid.']
+            ]]);
 
-        $this->updateTour(['video_url' => 'not a url'])
+        $url = 'not a url';
+        $data = [
+            'video_url' => $url,
+            'start_video_url' => $url,
+            'end_video_url' => $url
+        ];
+
+        $this->updateTour($data)
             ->assertStatus(422)
-            ->assertSee('video_url');
+            ->assertJson(['errors' => [
+                'video_url' => ['The video url format is invalid.'],
+                'start_video_url' => ['The start video url format is invalid.'],
+                'end_video_url' => ['The end video url format is invalid.']
+            ]]);
     }
 
     /** @test */
-    public function a_tours_text_fields_can_be_updated()
+    public function a_tour_can_have_a_prize()
     {
         $this->loginAs($this->business);
 
         $updates = [
             'prize_details' => 'details',
             'prize_instructions' => 'instructions',
-            'start_message' => 'starting message',
-            'end_message' => 'end message',
+            'has_prize' => true,
         ];
 
         $this->updateTour($updates)
@@ -228,6 +249,7 @@ class ManageToursTest extends TestCase
 
         $updates = [
             'start_point' => $stop->id,
+            'start_message' => 'starting message',
         ];
 
         $this->updateTour($updates)
@@ -257,6 +279,7 @@ class ManageToursTest extends TestCase
 
         $updates = [
             'end_point' => $stop->id,
+            'end_message' => 'end message',
         ];
 
         $this->updateTour($updates)
@@ -265,7 +288,7 @@ class ManageToursTest extends TestCase
     }
 
     /** @test */
-    public function a_end_point_must_be_a_stop_on_the_tour()
+    public function an_end_point_must_be_a_stop_on_the_tour()
     {
         $this->loginAs($this->business);
 

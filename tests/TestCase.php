@@ -56,4 +56,9 @@ abstract class TestCase extends BaseTestCase
 
         return $this;
     }
+
+    protected function assertHasErrorsFor($fields)
+    {
+        
+    }
 }

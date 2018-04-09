@@ -42,17 +42,23 @@ class CreateToursTable extends Migration
             $table->string('image_1')->nullable();
             $table->string('image_2')->nullable();
             $table->string('image_3')->nullable();
-            $table->string('trophy_image')->nullable();
-            $table->string('start_image')->nullable();
-            $table->string('end_image')->nullable();
 
+            $table->string('trophy_image')->nullable();
+            $table->boolean('has_prize')->default(false);
             $table->string('prize_details')->nullable();
             $table->string('prize_instructions')->nullable();
+
+            $table->string('start_image')->nullable();
             $table->string('start_message', 1000)->nullable();
+            $table->string('start_video_url')->nullable();
+            $table->string('end_image')->nullable();
             $table->string('end_message', 1000)->nullable();
+            $table->string('end_video_url')->nullable();
 
             $table->unsignedInteger('start_point')->nullable();
             $table->unsignedInteger('end_point')->nullable();
+
+            $table->datetime('published_at')->nullable();
 
             $table->timestamps();
             $table->softDeletes();
