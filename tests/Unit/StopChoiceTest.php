@@ -41,6 +41,6 @@ class StopChoiceTest extends TestCase
         create(StopChoice::class, ['tour_stop_id' => $stop->id, 'order' => 1]);
         create(StopChoice::class, ['tour_stop_id' => $stop->id, 'order' => 3]);
 
-        $this->assertEquals([1, 2, 3], $stop->fresh()->choices()->ordered()->pluck('order')->toArray());
+        $this->assertEquals([1, 2, 3], $stop->fresh()->choices()->pluck('order')->toArray());
     }
 }

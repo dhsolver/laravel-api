@@ -69,7 +69,7 @@ class TourStop extends Model
      */
     public function choices()
     {
-        return $this->hasMany(StopChoice::class);
+        return $this->hasMany(StopChoice::class)->orderBy('order');
     }
 
     /**
