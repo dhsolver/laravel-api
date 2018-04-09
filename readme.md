@@ -1,13 +1,13 @@
 ## Junket CMS and Mobile API
 
+
 ### Code Documentation
 - [AccessPoints](docs/AccessPoints.md)
 - [Authentication](docs/Authentication.md)
 - [Development Setup](docs/Development.md)
 
 
-### Database questions
-- Safe to hard code tour pricing type ?
-- Safe to hard code tour type ?
-- Shouldn't start / end point get set on the tour manager?  That way message and media is done once
+### 3rd Party 
 
+- Roles and permissions provided by [spatie/laravel-permission](https://github.com/spatie/laravel-permission)
+- All auth is based on JWT tokens using [tymondesigns/jwt-auth](https://github.com/tymondesigns/jwt-auth)
