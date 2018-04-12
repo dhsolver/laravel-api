@@ -56,7 +56,7 @@ class TourMediaTest extends TestCase
         foreach (Tour::$imageAttributes as $key) {
             $this->uploadMedia($key, $file, $largeImage)
                 ->assertStatus(422)
-                ->assertSee('may not be greater than');
+                ->assertJsonValidationErrors($key);
         }
     }
 
@@ -71,7 +71,7 @@ class TourMediaTest extends TestCase
         foreach (Tour::$imageAttributes as $key) {
             $this->uploadMedia($key, $file, $pdfFile)
             ->assertStatus(422)
-            ->assertSee('must be an image');
+            ->assertJsonValidationErrors($key);
         }
     }
 
@@ -116,11 +116,11 @@ class TourMediaTest extends TestCase
         foreach (Tour::$audioAttributes as $key) {
             $this->uploadMedia($key, $file, $pdfFile)
                 ->assertStatus(422)
-                ->assertSee('file of type:');
+                ->assertJsonValidationErrors($key);
 
             $this->uploadMedia($key, $file, $largeFile)
                 ->assertStatus(422)
-                ->assertSee('may not be greater than');
+                ->assertJsonValidationErrors($key);
         }
     }
 

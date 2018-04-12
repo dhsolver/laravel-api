@@ -57,12 +57,14 @@ class ManageStopTest extends TestCase
 
         $this->loginAs($this->business);
 
-        $data = $this->updateStop([
+        $data = [
             'title' => 'new title',
             'description' => 'new description',
-        ])->assertStatus(200)
-            ->assertSee('new title')
-            ->assertSee('new description');
+        ];
+
+        $data = $this->updateStop($data)
+            ->assertStatus(200)
+            ->assertJson($data);
     }
 
     /** @test */
@@ -84,9 +86,7 @@ class ManageStopTest extends TestCase
 
         $this->updateStop($this->stop->toArray())
             ->assertStatus(422)
-            ->assertSee('title')
-            ->assertSee('description')
-            ->assertSee('location_type');
+            ->assertJsonValidationErrors(['title', 'description', 'location_type']);
     }
 
     /** @test */
@@ -104,10 +104,10 @@ class ManageStopTest extends TestCase
 
         $this->json('GET', route('cms.stops.index', $this->tour->id))
             ->assertStatus(200)
-            ->assertSee($this->stop->title)
-            ->assertSee($stop2->title)
-            ->assertSee($stop3->title)
-            ->assertDontSee('BADTITLE!');
+            ->assertJsonFragment(['title' => $this->stop->title])
+            ->assertJsonFragment(['title' => $stop2->title])
+            ->assertJsonFragment(['title' => $stop3->title])
+            ->assertJsonMissing(['title' => 'BADTITLE!']);
     }
 
     /** @test */
@@ -147,7 +147,7 @@ class ManageStopTest extends TestCase
 
         $this->json('GET', $this->stopRoute('show', true))
             ->assertStatus(200)
-            ->assertSee($this->stop->description);
+            ->assertJsonFragment(['description' => $this->stop->description]);
     }
 
     /** @test */
@@ -222,12 +222,7 @@ class ManageStopTest extends TestCase
 
         $this->updateStop(array_merge($this->stop->toArray(), $data))
             ->assertStatus(422)
-            ->assertJson([
-                'errors' => [
-                    'latitude' => ['The latitude format is invalid.'],
-                    'longitude' => ['The longitude format is invalid.'],
-                ]
-            ]);
+            ->assertJsonValidationErrors(['latitude', 'longitude']);
     }
 
     /** @test */

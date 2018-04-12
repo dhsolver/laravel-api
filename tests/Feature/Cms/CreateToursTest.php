@@ -30,7 +30,8 @@ class CreateToursTest extends TestCase
         $this->signIn('business');
 
         $this->publishTour(['title' => null])
-            ->assertStatus(422);
+            ->assertStatus(422)
+            ->assertJsonValidationErrors('title');
 
         $this->assertCount(0, Tour::all());
     }
@@ -41,7 +42,8 @@ class CreateToursTest extends TestCase
         $this->signIn('business');
 
         $this->publishTour(['description' => null])
-            ->assertStatus(422);
+            ->assertStatus(422)
+            ->assertJsonValidationErrors('description');
 
         $this->assertCount(0, Tour::all());
     }
@@ -52,7 +54,8 @@ class CreateToursTest extends TestCase
         $this->signIn('business');
 
         $this->publishTour(['pricing_type' => null])
-            ->assertStatus(422);
+            ->assertStatus(422)
+            ->assertJsonValidationErrors('pricing_type');
 
         foreach (Tour::$PRICING_TYPES as $type) {
             $this->publishTour(['pricing_type' => $type])
@@ -68,7 +71,8 @@ class CreateToursTest extends TestCase
         $this->signIn('business');
 
         $this->publishTour(['type' => null])
-            ->assertStatus(422);
+            ->assertStatus(422)
+            ->assertJsonValidationErrors('type');
 
         foreach (Tour::$TOUR_TYPES as $type) {
             $this->publishTour(['type' => $type])

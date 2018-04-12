@@ -30,7 +30,12 @@ class AuthTest extends TestCase
             'email' => $user->email,
             'password' => 'secret',
         ])->assertStatus(200)
-            ->assertSee($user->email);
+            ->assertJson([
+                'user' => [
+                    'email' => $user->email,
+                    'role' => $role
+                ],
+            ]);
     }
 
     /** @test */

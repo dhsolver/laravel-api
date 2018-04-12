@@ -37,7 +37,8 @@ class CreateStopTest extends TestCase
     {
         $this->loginAs($this->business);
 
-        $this->publishStop()->assertSee($this->stop['title']);
+        $this->publishStop()
+            ->assertJson(['title' => $this->stop['title']]);
 
         $this->assertCount(1, TourStop::all());
     }
@@ -59,8 +60,6 @@ class CreateStopTest extends TestCase
 
         $this->publishStop()
             ->assertStatus(422)
-            ->assertSee('title')
-            ->assertSee('description')
-            ->assertSee('location_type');
+            ->assertJsonValidationErrors(['title', 'description', 'location_type']);
     }
 }

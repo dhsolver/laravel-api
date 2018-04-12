@@ -51,14 +51,16 @@ class ManageToursTest extends TestCase
     {
         $this->loginAs($this->business);
 
-        $this->updateTour([
+        $data = [
             'title' => 'test title',
             'description' => 'test desc',
             'pricing_type' => Tour::$PRICING_TYPES[0],
             'type' => Tour::$TOUR_TYPES[0],
-            ])->assertStatus(200)
-            ->assertSee('test title')
-            ->assertSee('test desc');
+        ];
+
+        $this->updateTour($data)
+            ->assertStatus(200)
+            ->assertJson($data);
     }
 
     /** @test */
@@ -92,8 +94,8 @@ class ManageToursTest extends TestCase
 
         $this->json('GET', route('cms.tours.index'))
             ->assertStatus(200)
-            ->assertSee($this->tour->title)
-            ->assertDontSee($otherTour->title);
+            ->assertJsonFragment(['title' => $this->tour->title])
+            ->assertJsonMissing(['title' => $otherTour->title]);
     }
 
     /** @test */
@@ -129,7 +131,7 @@ class ManageToursTest extends TestCase
 
         $this->json('GET', route('cms.tours.show', $this->tour->id))
             ->assertStatus(200)
-            ->assertSee($this->tour->title);
+            ->assertJsonFragment(['title' => $this->tour->title]);
     }
 
     /** @test */
@@ -267,7 +269,7 @@ class ManageToursTest extends TestCase
 
         $this->updateTour(['start_point' => $stop->id])
             ->assertStatus(422)
-            ->assertSee('The selected start point is invalid');
+            ->assertJsonValidationErrors(['start_point']);
     }
 
     /** @test */
@@ -297,6 +299,6 @@ class ManageToursTest extends TestCase
 
         $this->updateTour(['end_point' => $stop->id])
             ->assertStatus(422)
-            ->assertSee('The selected end point is invalid');
+            ->assertJsonValidationErrors('end_point');
     }
 }
