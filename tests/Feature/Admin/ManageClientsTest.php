@@ -43,7 +43,6 @@ class ManageClientsTest extends TestCase
             'name' => 'Test Client',
             'email' => 'test@test.com',
             'password' => 'password',
-            'password_confirmation' => 'password',
         ];
 
         $this->json('post', route('admin.clients.store'), $data)
