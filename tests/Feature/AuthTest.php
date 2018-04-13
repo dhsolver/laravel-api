@@ -11,17 +11,12 @@ class AuthTest extends TestCase
     use DatabaseMigrations;
     use AttachJwtToken;
 
-    /** @test */
-    public function a_user_with_any_role_can_log_in()
-    {
-        $this->withExceptionHandling();
-
-        $this->assertRoleLogsIn('user');
-        $this->assertRoleLogsIn('admin');
-        $this->assertRoleLogsIn('superadmin');
-        $this->assertRoleLogsIn('business');
-    }
-
+    /**
+     * Helper function to determine if a user with the given roll may login.
+     *
+     * @param [type] $role
+     * @return void
+     */
     public function assertRoleLogsIn($role)
     {
         $user = createUser($role);
@@ -30,7 +25,23 @@ class AuthTest extends TestCase
             'email' => $user->email,
             'password' => 'secret',
         ])->assertStatus(200)
-            ->assertSee($user->email);
+            ->assertJson([
+                'user' => [
+                    'email' => $user->email,
+                    'role' => $role
+                ],
+            ]);
+    }
+
+    /** @test */
+    public function a_user_with_any_role_can_log_in()
+    {
+        $this->withExceptionHandling();
+
+        $this->assertRoleLogsIn('client');
+        $this->assertRoleLogsIn('user');
+        $this->assertRoleLogsIn('admin');
+        $this->assertRoleLogsIn('superadmin');
     }
 
     /** @test */
@@ -74,13 +85,13 @@ class AuthTest extends TestCase
     }
 
     /** @test */
-    public function a_business_can_access_the_cms_and_the_mobile_api()
+    public function a_client_can_access_the_cms_and_the_mobile_api()
     {
         $this->withExceptionHandling();
 
-        $this->signIn('business')->json('GET', '/admin/session')->assertStatus(403);
-        $this->signIn('business')->json('GET', '/cms/session')->assertStatus(200);
-        $this->signIn('business')->json('GET', '/mobile/session')->assertStatus(200);
+        $this->signIn('client')->json('GET', '/admin/session')->assertStatus(403);
+        $this->signIn('client')->json('GET', '/cms/session')->assertStatus(200);
+        $this->signIn('client')->json('GET', '/mobile/session')->assertStatus(200);
     }
 
     /** @test */
@@ -91,5 +102,44 @@ class AuthTest extends TestCase
         $this->json('GET', '/admin/session')->assertStatus(400);
         $this->json('GET', '/cms/session')->assertStatus(400);
         $this->json('GET', '/mobile/session')->assertStatus(400);
+    }
+
+    /** @test */
+    public function a_mobile_user_can_register()
+    {
+        $this->json('POST', '/auth/signup', [
+            'name' => 'Test User',
+            'email' => 'user@test.com',
+            'password' => 'sdgdhe2354',
+            'password_confirmation' => 'sdgdhe2354',
+            'role' => 'user',
+        ])->assertStatus(200)
+            ->assertJsonFragment(['name' => 'Test User', 'role' => 'user']);
+    }
+
+    /** @test */
+    public function a_client_can_register()
+    {
+        $this->json('POST', '/auth/signup', [
+            'name' => 'Test client',
+            'email' => 'client@test.com',
+            'password' => 'sdgdhe2354',
+            'password_confirmation' => 'sdgdhe2354',
+            'role' => 'client',
+        ])->assertStatus(200)
+            ->assertJsonFragment(['name' => 'Test client', 'role' => 'client']);
+    }
+
+    /** @test */
+    public function an_admin_cannot_register()
+    {
+        $this->json('POST', '/auth/signup', [
+            'name' => 'Test Admin',
+            'email' => 'admin@test.com',
+            'password' => 'sdgdhe2354',
+            'password_confirmation' => 'sdgdhe2354',
+            'role' => 'admin',
+        ])->assertStatus(422)
+            ->assertJsonValidationErrors(['role']);
     }
 }

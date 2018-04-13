@@ -17,10 +17,15 @@ trait AttachJwtToken
      * @param User $user
      * @return $this
      */
-    public function loginAs(User $user)
+    public function loginAs($user)
     {
-        $this->loginUser = $user;
-        $this->userId = $user->id;
+        if ($user instanceof User) {
+            $this->loginUser = $user;
+            $this->userId = $user->id;
+        } else {
+            $this->loginUser = $user;
+            $this->userId = $user->id;
+        }
 
         return $this;
     }

@@ -15,7 +15,7 @@ class UpdateStopRequest extends FormRequest
      */
     public function authorize()
     {
-        return auth()->user()->ownsTour(
+        return auth()->user()->type->ownsTour(
             $this->route('tour')->id
         );
     }
@@ -49,6 +49,17 @@ class UpdateStopRequest extends FormRequest
             'question_success' => 'nullable|string|max:500',
 
             'is_multiple_choice' => 'nullable|boolean',
+
+            'choices' => 'nullable|array',
+            'choices.*.answer' => 'required|string',
+            'choices.*.next_stop_id' => [
+                'nullable',
+                'numeric',
+                Rule::exists('tour_stops', 'id')->where(function ($query) {
+                    $query->where('tour_id', $this->route('tour')->id)
+                        ->where('id', '<>', $this->route('stop')->id);
+                }),
+            ],
         ];
     }
 }

@@ -14,7 +14,7 @@ class StopMediaTest extends TestCase
     use AttachJwtToken;
 
     public $tour;
-    public $business;
+    public $client;
 
     public function setUp()
     {
@@ -22,9 +22,9 @@ class StopMediaTest extends TestCase
 
         \Storage::fake('s3');
 
-        $this->business = createUser('business');
+        $this->client = createUser('client');
 
-        $this->tour = create('App\Tour', ['user_id' => $this->business->id]);
+        $this->tour = create('App\Tour', ['user_id' => $this->client->id]);
 
         $this->stop = create('App\TourStop', ['tour_id' => $this->tour->id, 'order' => 1]);
     }
@@ -32,7 +32,7 @@ class StopMediaTest extends TestCase
     /** @test */
     public function a_user_can_update_a_stops_images()
     {
-        $this->loginAs($this->business);
+        $this->loginAs($this->client);
 
         foreach (TourStop::$imageAttributes as $key) {
             $this->uploadMedia($key, $file)
@@ -47,7 +47,7 @@ class StopMediaTest extends TestCase
     /** @test */
     public function stop_images_must_be_of_valid_type_and_size()
     {
-        $this->loginAs($this->business);
+        $this->loginAs($this->client);
 
         $largeImage = UploadedFile::fake()
             ->image('main.jpg')
@@ -59,18 +59,18 @@ class StopMediaTest extends TestCase
         foreach (TourStop::$imageAttributes as $key) {
             $this->uploadMedia($key, $file, $largeImage)
                 ->assertStatus(422)
-                ->assertSee('may not be greater than');
+                ->assertJsonValidationErrors($key);
 
             $this->uploadMedia($key, $file, $pdfFile)
                 ->assertStatus(422)
-                ->assertSee('must be an image');
+                ->assertJsonValidationErrors($key);
         }
     }
 
     /** @test */
     public function stop_media_can_not_be_updated_by_another_user()
     {
-        $this->signIn('business');
+        $this->signIn('client');
 
         $this->json('PUT', $this->stopRoute('media'), [])
             ->assertStatus(403);
@@ -79,7 +79,7 @@ class StopMediaTest extends TestCase
     /** @test */
     public function the_creator_can_update_a_stops_audio()
     {
-        $this->loginAs($this->business);
+        $this->loginAs($this->client);
 
         $audioFile = UploadedFile::fake()
             ->create('audio.mp3', 5000);
@@ -97,7 +97,7 @@ class StopMediaTest extends TestCase
     /** @test */
     public function stop_audio_must_be_of_valid_type_and_size()
     {
-        $this->loginAs($this->business);
+        $this->loginAs($this->client);
 
         $pdfFile = UploadedFile::fake()
             ->create('audio.pdf');
@@ -108,11 +108,11 @@ class StopMediaTest extends TestCase
         foreach (TourStop::$audioAttributes as $key) {
             $this->uploadMedia($key, $file, $pdfFile)
                 ->assertStatus(422)
-                ->assertSee('file of type:');
+                ->assertJsonValidationErrors($key);
 
             $this->uploadMedia($key, $file, $largeFile)
                 ->assertStatus(422)
-                ->assertSee('may not be greater than');
+                ->assertJsonValidationErrors($key);
         }
     }
 

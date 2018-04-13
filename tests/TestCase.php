@@ -25,7 +25,7 @@ abstract class TestCase extends BaseTestCase
     {
         $user = createUser($role);
 
-        $this->loginAs($user);
+        $this->loginAs($user->user);
 
         return $this;
     }
@@ -59,6 +59,5 @@ abstract class TestCase extends BaseTestCase
 
     protected function assertHasErrorsFor($fields)
     {
-        
     }
 }

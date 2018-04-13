@@ -13,15 +13,15 @@ class ManageToursTest extends TestCase
     use AttachJwtToken;
 
     public $tour;
-    public $business;
+    public $client;
 
     public function setUp()
     {
         parent::setUp();
 
-        $this->business = createUser('business');
+        $this->client = createUser('client');
 
-        $this->tour = create('App\Tour', ['user_id' => $this->business->id]);
+        $this->tour = create('App\Tour', ['user_id' => $this->client->id]);
     }
 
     /**
@@ -38,7 +38,7 @@ class ManageToursTest extends TestCase
     /** @test */
     public function a_tour_requires_a_title_description_and_proper_types_to_be_updated()
     {
-        $this->loginAs($this->business);
+        $this->loginAs($this->client);
 
         $this->updateTour(['title' => null])->assertStatus(422);
         $this->updateTour(['description' => null])->assertStatus(422);
@@ -49,22 +49,24 @@ class ManageToursTest extends TestCase
     /** @test */
     public function a_tour_can_be_updated_by_its_creator()
     {
-        $this->loginAs($this->business);
+        $this->loginAs($this->client);
 
-        $this->updateTour([
+        $data = [
             'title' => 'test title',
             'description' => 'test desc',
             'pricing_type' => Tour::$PRICING_TYPES[0],
             'type' => Tour::$TOUR_TYPES[0],
-            ])->assertStatus(200)
-            ->assertSee('test title')
-            ->assertSee('test desc');
+        ];
+
+        $this->updateTour($data)
+            ->assertStatus(200)
+            ->assertJson($data);
     }
 
     /** @test */
     public function a_tour_cannot_be_updated_by_another_user()
     {
-        $this->signIn('business');
+        $this->signIn('client');
 
         $this->updateTour([
             'title' => 'new title',
@@ -88,54 +90,54 @@ class ManageToursTest extends TestCase
 
         $this->assertCount(2, Tour::all());
 
-        $this->loginAs($this->business);
+        $this->loginAs($this->client);
 
         $this->json('GET', route('cms.tours.index'))
             ->assertStatus(200)
-            ->assertSee($this->tour->title)
-            ->assertDontSee($otherTour->title);
+            ->assertJsonFragment(['title' => $this->tour->title])
+            ->assertJsonMissing(['title' => $otherTour->title]);
     }
 
     /** @test */
     public function a_tour_can_be_deleted_by_its_creator()
     {
-        $this->loginAs($this->business);
+        $this->loginAs($this->client);
 
-        $this->assertCount(1, $this->business->tours);
+        $this->assertCount(1, $this->client->tours);
 
         $this->json('DELETE', route('cms.tours.destroy', $this->tour->id))
             ->assertStatus(204);
 
-        $this->assertCount(0, $this->business->fresh()->tours);
+        $this->assertCount(0, $this->client->fresh()->tours);
     }
 
     /** @test */
     public function a_tour_cannot_be_deleted_by_another_user()
     {
-        $this->signIn('business');
+        $this->signIn('client');
 
-        $this->assertCount(1, $this->business->tours);
+        $this->assertCount(1, $this->client->tours);
 
         $this->json('DELETE', route('cms.tours.destroy', $this->tour->id))
             ->assertStatus(403);
 
-        $this->assertCount(1, $this->business->fresh()->tours);
+        $this->assertCount(1, $this->client->fresh()->tours);
     }
 
     /** @test */
     public function a_tour_can_be_seen_by_its_creator()
     {
-        $this->loginAs($this->business);
+        $this->loginAs($this->client);
 
         $this->json('GET', route('cms.tours.show', $this->tour->id))
             ->assertStatus(200)
-            ->assertSee($this->tour->title);
+            ->assertJsonFragment(['title' => $this->tour->title]);
     }
 
     /** @test */
     public function a_tour_cannot_be_seen_by_another_user()
     {
-        $this->signIn('business');
+        $this->signIn('client');
 
         $this->json('GET', route('cms.tours.show', $this->tour->id))
             ->assertStatus(403);
@@ -144,7 +146,7 @@ class ManageToursTest extends TestCase
     /** @test */
     public function a_user_can_update_a_tours_address()
     {
-        $this->loginAs($this->business);
+        $this->loginAs($this->client);
 
         $data = [
             'address1' => md5('123 Elm St.'),
@@ -162,7 +164,7 @@ class ManageToursTest extends TestCase
     /** @test */
     public function a_user_can_update_the_tours_social_url()
     {
-        $this->loginAs($this->business);
+        $this->loginAs($this->client);
 
         $this->updateTour([
             'facebook_url' => 'fb_name',
@@ -179,7 +181,7 @@ class ManageToursTest extends TestCase
     /** @test */
     public function a_tours_video_urls_require_a_valid_youtube_urls()
     {
-        $this->loginAs($this->business);
+        $this->loginAs($this->client);
 
         $url = 'https://www.youtube.com/watch?v=abcd1234';
 
@@ -227,7 +229,7 @@ class ManageToursTest extends TestCase
     /** @test */
     public function a_tour_can_have_a_prize()
     {
-        $this->loginAs($this->business);
+        $this->loginAs($this->client);
 
         $updates = [
             'prize_details' => 'details',
@@ -243,7 +245,7 @@ class ManageToursTest extends TestCase
     /** @test */
     public function a_tour_can_have_a_start_point()
     {
-        $this->loginAs($this->business);
+        $this->loginAs($this->client);
 
         $stop = create('App\TourStop', ['tour_id' => $this->tour]);
 
@@ -260,20 +262,20 @@ class ManageToursTest extends TestCase
     /** @test */
     public function a_start_point_must_be_a_stop_on_the_tour()
     {
-        $this->loginAs($this->business);
+        $this->loginAs($this->client);
 
-        $otherTour = create('App\Tour', ['user_id' => $this->business->id]);
+        $otherTour = create('App\Tour', ['user_id' => $this->client->id]);
         $stop = create('App\TourStop', ['tour_id' => $otherTour]);
 
         $this->updateTour(['start_point' => $stop->id])
             ->assertStatus(422)
-            ->assertSee('The selected start point is invalid');
+            ->assertJsonValidationErrors(['start_point']);
     }
 
     /** @test */
     public function a_tour_can_have_an_endpoint()
     {
-        $this->loginAs($this->business);
+        $this->loginAs($this->client);
 
         $stop = create('App\TourStop', ['tour_id' => $this->tour]);
 
@@ -290,13 +292,13 @@ class ManageToursTest extends TestCase
     /** @test */
     public function an_end_point_must_be_a_stop_on_the_tour()
     {
-        $this->loginAs($this->business);
+        $this->loginAs($this->client);
 
-        $otherTour = create('App\Tour', ['user_id' => $this->business->id]);
+        $otherTour = create('App\Tour', ['user_id' => $this->client->id]);
         $stop = create('App\TourStop', ['tour_id' => $otherTour]);
 
         $this->updateTour(['end_point' => $stop->id])
             ->assertStatus(422)
-            ->assertSee('The selected end point is invalid');
+            ->assertJsonValidationErrors('end_point');
     }
 }

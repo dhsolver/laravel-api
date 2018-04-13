@@ -12,7 +12,7 @@ class UserTest extends TestCase
     /** @test */
     public function a_user_can_identify_its_role()
     {
-        $user = create('App\User')->assignRole('user');
+        $user = createUser('user');
 
         $this->assertTrue($user->role === 'user');
     }
@@ -20,12 +20,19 @@ class UserTest extends TestCase
     /** @test */
     public function it_can_identify_if_it_owns_one_of_its_tour()
     {
-        $user = create('App\User')->assignRole('business');
-        $user2 = create('App\User')->assignRole('user');
+        $user = createUser('client');
+        $user2 = createUser('user');
 
         $tour = create('App\Tour', ['user_id' => $user->id]);
 
         $this->assertTrue($user->ownsTour($tour->id));
-        $this->assertFalse($user2->ownsTour($tour->id));
+    }
+
+    /** @test */
+    public function a_user_can_get_its_role_class()
+    {
+        $client = create('App\Client');
+
+        $this->assertInstanceOf('App\Client', $client->user->type);
     }
 }

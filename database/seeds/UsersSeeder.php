@@ -1,7 +1,10 @@
 <?php
 
 use Illuminate\Database\Seeder;
-use App\User;
+use App\SuperAdmin;
+use App\MobileUser;
+use App\Admin;
+use App\Client;
 
 class UsersSeeder extends Seeder
 {
@@ -12,28 +15,28 @@ class UsersSeeder extends Seeder
      */
     public function run()
     {
-        $user = User::create([
+        $superadmin = SuperAdmin::create([
             'email' => 'admin@wejunket.com',
             'name' => 'Master Account',
             'password' => bcrypt('qweqwe'),
-        ])->assignRole('superadmin');
+        ]);
 
-        $user = User::create([
+        MobileUser::create([
             'email' => 'user@test.com',
             'name' => 'Test User',
             'password' => bcrypt('qweqwe'),
-        ])->assignRole('user');
+        ]);
 
-        $user = User::create([
+        Admin::create([
             'email' => 'admin@test.com',
             'name' => 'Test Admin',
             'password' => bcrypt('qweqwe'),
-        ])->assignRole('admin');
+        ]);
 
-        $user = User::create([
-            'email' => 'business@test.com',
-            'name' => 'Test Business',
+        Client::create([
+            'email' => 'client@test.com',
+            'name' => 'Test Client',
             'password' => bcrypt('qweqwe'),
-        ])->assignRole('business');
+        ]);
     }
 }

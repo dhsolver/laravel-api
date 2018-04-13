@@ -13,9 +13,9 @@ class CreateToursTest extends TestCase
     use AttachJwtToken;
 
     /** @test */
-    public function a_user_can_create_a_tour()
+    public function a_client_can_create_a_tour()
     {
-        $this->signIn('business');
+        $this->signIn('client');
 
         $tour = make(Tour::class)->toArray();
 
@@ -25,12 +25,24 @@ class CreateToursTest extends TestCase
     }
 
     /** @test */
+    public function a_mobile_cannot_create_a_tour()
+    {
+        $this->signIn('user');
+
+        $tour = make(Tour::class)->toArray();
+
+        $this->json('POST', route('cms.tours.store'), $tour)
+            ->assertStatus(403);
+    }
+
+    /** @test */
     public function a_tour_must_have_a_title()
     {
-        $this->signIn('business');
+        $this->signIn('client');
 
         $this->publishTour(['title' => null])
-            ->assertStatus(422);
+            ->assertStatus(422)
+            ->assertJsonValidationErrors('title');
 
         $this->assertCount(0, Tour::all());
     }
@@ -38,10 +50,11 @@ class CreateToursTest extends TestCase
     /** @test */
     public function a_tour_must_have_a_description()
     {
-        $this->signIn('business');
+        $this->signIn('client');
 
         $this->publishTour(['description' => null])
-            ->assertStatus(422);
+            ->assertStatus(422)
+            ->assertJsonValidationErrors('description');
 
         $this->assertCount(0, Tour::all());
     }
@@ -49,10 +62,11 @@ class CreateToursTest extends TestCase
     /** @test */
     public function a_tour_must_have_a_valid_pricing_type()
     {
-        $this->signIn('business');
+        $this->signIn('client');
 
         $this->publishTour(['pricing_type' => null])
-            ->assertStatus(422);
+            ->assertStatus(422)
+            ->assertJsonValidationErrors('pricing_type');
 
         foreach (Tour::$PRICING_TYPES as $type) {
             $this->publishTour(['pricing_type' => $type])
@@ -65,10 +79,11 @@ class CreateToursTest extends TestCase
     /** @test */
     public function a_tour_must_have_a_valid_type()
     {
-        $this->signIn('business');
+        $this->signIn('client');
 
         $this->publishTour(['type' => null])
-            ->assertStatus(422);
+            ->assertStatus(422)
+            ->assertJsonValidationErrors('type');
 
         foreach (Tour::$TOUR_TYPES as $type) {
             $this->publishTour(['type' => $type])

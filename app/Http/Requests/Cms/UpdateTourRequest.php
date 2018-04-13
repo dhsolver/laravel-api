@@ -15,7 +15,7 @@ class UpdateTourRequest extends FormRequest
      */
     public function authorize()
     {
-        return auth()->user()->ownsTour($this->route('tour')->id);
+        return auth()->user()->type->ownsTour($this->route('tour')->id);
     }
 
     /**

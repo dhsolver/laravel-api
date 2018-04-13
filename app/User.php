@@ -31,16 +31,6 @@ class User extends Authenticatable
     protected $appends = ['role'];
 
     /**
-     * A user has many tours
-     *
-     * @return void
-     */
-    public function tours()
-    {
-        return $this->hasMany(Tour::class);
-    }
-
-    /**
      * Gets the users role
      *
      * @return String
@@ -51,15 +41,41 @@ class User extends Authenticatable
     }
 
     /**
-     * Determines if the user owns the given Tour id.
+     * Return the fully-qualified name of the role class
      *
-     * @param [int] $tourId
-     * @return bool
+     * @param null $type
+     * @return null|string
      */
-    public function ownsTour($tourId)
+    public function getRoleClass($type = null)
     {
-        return Tour::where('id', $tourId)
-            ->where('user_id', $this->id)
-            ->exists();
+        if (!$type) {
+            $type = $this->role;
+        }
+
+        switch ($type) {
+            case 'admin':
+                return Admin::class;
+            case 'user':
+                return MobileUser::class;
+            case 'client':
+                return Client::class;
+            case 'superadmin':
+                return SuperAdmin::class;
+        }
+
+        return null;
+    }
+
+    /**
+     * Get the role user object.
+     *
+     * @return void
+     */
+    public function type()
+    {
+        if ($this->getRoleClass()) {
+            return $this->hasOne($this->getRoleClass(), 'id', 'id');
+        }
+        return null;
     }
 }

@@ -14,9 +14,9 @@ class TourTest extends TestCase
     /** @test */
     public function it_can_determine_the_next_order_for_its_stops()
     {
-        $business = createUser('business');
+        $client = createUser('client');
 
-        $tour = create('App\Tour', ['user_id' => $business->id]);
+        $tour = create('App\Tour', ['user_id' => $client->id]);
 
         $this->assertEquals(1, $tour->getNextStopOrder());
 
@@ -32,9 +32,9 @@ class TourTest extends TestCase
     /** @test */
     public function it_can_determine_all_image_paths()
     {
-        $business = createUser('business');
+        $client = createUser('client');
 
-        $tour = create('App\Tour', ['user_id' => $business->id]);
+        $tour = create('App\Tour', ['user_id' => $client->id]);
 
         foreach (Tour::$imageAttributes as $key) {
             $this->assertNull($tour->key);
@@ -50,9 +50,9 @@ class TourTest extends TestCase
     /** @test */
     public function it_gets_the_full_facebook_url()
     {
-        $business = createUser('business');
+        $client = createUser('client');
 
-        $tour = create('App\Tour', ['user_id' => $business->id]);
+        $tour = create('App\Tour', ['user_id' => $client->id]);
 
         $tour->facebook_url = 'new_social_url';
 
@@ -64,9 +64,9 @@ class TourTest extends TestCase
     /** @test */
     public function it_gets_the_full_twitter_url()
     {
-        $business = createUser('business');
+        $client = createUser('client');
 
-        $tour = create('App\Tour', ['user_id' => $business->id]);
+        $tour = create('App\Tour', ['user_id' => $client->id]);
 
         $tour->twitter_url = 'new_social_url';
 
@@ -78,9 +78,9 @@ class TourTest extends TestCase
     /** @test */
     public function it_gets_the_full_instagram_url()
     {
-        $business = createUser('business');
+        $client = createUser('client');
 
-        $tour = create('App\Tour', ['user_id' => $business->id]);
+        $tour = create('App\Tour', ['user_id' => $client->id]);
 
         $tour->instagram_url = 'new_social_url';
 
