@@ -17,11 +17,26 @@ function createState($class, $state, $attributes = [])
 
 function createUser($role = 'user', $password = 'secret')
 {
-    $user = factory('App\User')->create([
+    switch ($role) {
+        case 'user':
+            $cls = 'App\MobileUser';
+            break;
+        case 'admin':
+            $cls = 'App\Admin';
+            break;
+        case 'superadmin':
+            $cls = 'App\SuperAdmin';
+            break;
+        case 'client':
+            $cls = 'App\Client';
+            break;
+    }
+
+    $user = factory($cls)->create([
         'password' => bcrypt($password)
     ]);
 
-    $user->assignRole($role);
+    // $user->assignRole($role);
 
     return $user;
 }

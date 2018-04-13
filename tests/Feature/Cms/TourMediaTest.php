@@ -14,7 +14,7 @@ class TourMediaTest extends TestCase
     use AttachJwtToken;
 
     public $tour;
-    public $business;
+    public $client;
 
     public function setUp()
     {
@@ -22,9 +22,9 @@ class TourMediaTest extends TestCase
 
         \Storage::fake('s3');
 
-        $this->business = createUser('business');
+        $this->client = createUser('client');
 
-        $this->tour = create('App\Tour', ['user_id' => $this->business->id]);
+        $this->tour = create('App\Tour', ['user_id' => $this->client->id]);
     }
 
     /** @test */
@@ -32,7 +32,7 @@ class TourMediaTest extends TestCase
     {
         $this->withoutExceptionHandling();
 
-        $this->loginAs($this->business);
+        $this->loginAs($this->client);
 
         foreach (Tour::$imageAttributes as $key) {
             $this->uploadMedia($key, $file)
@@ -47,7 +47,7 @@ class TourMediaTest extends TestCase
     /** @test */
     public function tour_images_have_a_max_file_size()
     {
-        $this->loginAs($this->business);
+        $this->loginAs($this->client);
 
         $largeImage = UploadedFile::fake()
             ->image('main.jpg')
@@ -63,7 +63,7 @@ class TourMediaTest extends TestCase
     /** @test */
     public function tour_images_must_be_images()
     {
-        $this->loginAs($this->business);
+        $this->loginAs($this->client);
 
         $pdfFile = UploadedFile::fake()
             ->create('document.pdf', 5000);
@@ -78,7 +78,7 @@ class TourMediaTest extends TestCase
     /** @test */
     public function only_the_creator_can_upload_media()
     {
-        $this->signIn('business');
+        $this->signIn('client');
 
         $this->json('PUT', $this->tourRoute('media'), [])
             ->assertStatus(403);
@@ -87,7 +87,7 @@ class TourMediaTest extends TestCase
     /** @test */
     public function the_creator_can_update_a_tours_audio()
     {
-        $this->loginAs($this->business);
+        $this->loginAs($this->client);
 
         $audioFile = UploadedFile::fake()
             ->create('audio.mp3', 5000);
@@ -105,7 +105,7 @@ class TourMediaTest extends TestCase
     /** @test */
     public function tour_audio_uploads_must_be_of_valid_type_and_size()
     {
-        $this->loginAs($this->business);
+        $this->loginAs($this->client);
 
         $pdfFile = UploadedFile::fake()
             ->create('audio.pdf', 5000);

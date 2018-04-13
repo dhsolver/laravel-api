@@ -14,5 +14,5 @@ Mobile : https://api.wejunket.com/mobile/auth/login
 |------------|----------------|-------------------|------------------|
 | superadmin |       Yes      |        Yes        |        Yes       |
 | admin      |       Yes      |        Yes        |        Yes       |
-| business   |       Yes      |        Yes        |        No        |
+| client     |       Yes      |        Yes        |        No        |
 | user       |       Yes      |         No        |        No        |

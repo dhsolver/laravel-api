@@ -13,9 +13,9 @@ class StopChoiceTest extends TestCase
     /** @test */
     public function it_can_determine_the_next_order_for_a_choice()
     {
-        $business = createUser('business');
+        $client = createUser('client');
 
-        $tour = create('App\Tour', ['user_id' => $business->id]);
+        $tour = create('App\Tour', ['user_id' => $client->id]);
         $stop = create('App\TourStop', ['tour_id' => $tour->id]);
 
         $this->assertEquals(1, StopChoice::getNextOrder($stop->id));
@@ -32,9 +32,9 @@ class StopChoiceTest extends TestCase
     /** @test */
     public function it_can_by_sorted_by_order()
     {
-        $business = createUser('business');
+        $client = createUser('client');
 
-        $tour = create('App\Tour', ['user_id' => $business->id]);
+        $tour = create('App\Tour', ['user_id' => $client->id]);
         $stop = create('App\TourStop', ['tour_id' => $tour->id]);
 
         create(StopChoice::class, ['tour_stop_id' => $stop->id, 'order' => 2]);

@@ -13,15 +13,15 @@ class PublishToursTest extends TestCase
     use AttachJwtToken;
 
     public $tour;
-    public $business;
+    public $client;
 
     public function setUp()
     {
         parent::setUp();
 
-        $this->business = createUser('business');
+        $this->client = createUser('client');
 
-        $this->tour = create('App\Tour', ['user_id' => $this->business->id]);
+        $this->tour = create('App\Tour', ['user_id' => $this->client->id]);
     }
 
     /**
@@ -38,7 +38,7 @@ class PublishToursTest extends TestCase
     /** @test */
     public function a_tour_can_be_published()
     {
-        $this->loginAs($this->business);
+        $this->loginAs($this->client);
 
         $this->assertFalse($this->tour->isPublished);
 

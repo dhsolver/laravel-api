@@ -78,7 +78,7 @@ class CreatePermissionTables extends Migration
         Role::create(['name' => 'superadmin']);
         Role::create(['name' => 'admin']);
         Role::create(['name' => 'user']);
-        Role::create(['name' => 'business']);
+        Role::create(['name' => 'client']);
     }
 
     /**

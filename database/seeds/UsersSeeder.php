@@ -31,9 +31,9 @@ class UsersSeeder extends Seeder
         ])->assignRole('admin');
 
         $user = User::create([
-            'email' => 'business@test.com',
-            'name' => 'Test Business',
+            'email' => 'client@test.com',
+            'name' => 'Test Client',
             'password' => bcrypt('qweqwe'),
-        ])->assignRole('business');
+        ])->assignRole('client');
     }
 }

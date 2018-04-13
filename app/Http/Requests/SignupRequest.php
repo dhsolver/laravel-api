@@ -30,7 +30,7 @@ class SignupRequest extends FormRequest
             'password' => 'required|string|min:6|confirmed',
             'role' => [
                 'required',
-                Rule::in(['business', 'user']),
+                Rule::in(['client', 'user']),
             ]
         ];
     }

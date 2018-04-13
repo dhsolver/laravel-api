@@ -14,16 +14,16 @@ class ManageStopTest extends TestCase
     use AttachJwtToken;
 
     public $tour;
-    public $business;
+    public $client;
     public $stop;
 
     public function setUp()
     {
         parent::setUp();
 
-        $this->business = createUser('business');
+        $this->client = createUser('client');
 
-        $this->tour = create('App\Tour', ['user_id' => $this->business->id]);
+        $this->tour = create('App\Tour', ['user_id' => $this->client->id]);
 
         $this->stop = create('App\TourStop', ['tour_id' => $this->tour->id, 'order' => 1]);
     }
@@ -55,7 +55,7 @@ class ManageStopTest extends TestCase
     {
         $this->withoutExceptionHandling();
 
-        $this->loginAs($this->business);
+        $this->loginAs($this->client);
 
         $data = [
             'title' => 'new title',
@@ -70,7 +70,7 @@ class ManageStopTest extends TestCase
     /** @test */
     public function a_stop_cannot_be_updated_by_another_user()
     {
-        $this->signIn('business');
+        $this->signIn('client');
 
         $this->updateStop([
             'title' => 'new title',
@@ -80,7 +80,7 @@ class ManageStopTest extends TestCase
     /** @test */
     public function a_stop_requires_a_title_description_and_type_to_be_updated()
     {
-        $this->loginAs($this->business);
+        $this->loginAs($this->client);
 
         unset($this->stop['title'], $this->stop['description'], $this->stop['location_type']);
 
@@ -92,12 +92,12 @@ class ManageStopTest extends TestCase
     /** @test */
     public function a_user_can_get_all_stops_for_a_tour()
     {
-        $this->loginAs($this->business);
+        $this->loginAs($this->client);
 
         $stop2 = create('App\TourStop', ['tour_id' => $this->tour->id, 'order' => 2]);
         $stop3 = create('App\TourStop', ['tour_id' => $this->tour->id, 'order' => 3]);
 
-        $otherTour = create('App\Tour', ['user_id' => $this->business->id]);
+        $otherTour = create('App\Tour', ['user_id' => $this->client->id]);
         create('App\TourStop', ['tour_id' => $otherTour->id, 'order' => 1, 'title' => 'BADTITLE!']);
 
         $this->assertCount(4, TourStop::all());
@@ -115,7 +115,7 @@ class ManageStopTest extends TestCase
     {
         $this->withExceptionHandling();
 
-        $this->loginAs($this->business);
+        $this->loginAs($this->client);
 
         $this->assertCount(1, $this->tour->stops);
 
@@ -130,7 +130,7 @@ class ManageStopTest extends TestCase
     {
         $this->withExceptionHandling();
 
-        $this->signIn('business');
+        $this->signIn('client');
 
         $this->assertCount(1, $this->tour->stops);
 
@@ -143,7 +143,7 @@ class ManageStopTest extends TestCase
     /** @test */
     public function a_stop_can_be_seen_by_its_creator()
     {
-        $this->loginAs($this->business);
+        $this->loginAs($this->client);
 
         $this->json('GET', $this->stopRoute('show', true))
             ->assertStatus(200)
@@ -153,7 +153,7 @@ class ManageStopTest extends TestCase
     /** @test */
     public function a_stop_cannot_be_seen_by_another_user()
     {
-        $this->signIn('business');
+        $this->signIn('client');
 
         $this->json('GET', $this->stopRoute('show', true))
             ->assertStatus(403);
@@ -162,7 +162,7 @@ class ManageStopTest extends TestCase
     /** @test */
     public function a_stop_can_be_reordered()
     {
-        $this->loginAs($this->business);
+        $this->loginAs($this->client);
 
         $stop2 = create('App\TourStop', ['tour_id' => $this->tour->id, 'order' => 2]);
         $stop3 = create('App\TourStop', ['tour_id' => $this->tour->id, 'order' => 3]);
@@ -180,7 +180,7 @@ class ManageStopTest extends TestCase
     /** @test */
     public function a_stop_can_have_an_address()
     {
-        $this->loginAs($this->business);
+        $this->loginAs($this->client);
 
         $data = [
             'address1' => md5('123 Elm St.'),
@@ -198,7 +198,7 @@ class ManageStopTest extends TestCase
     /** @test */
     public function a_stop_can_have_coordinates()
     {
-        $this->loginAs($this->business);
+        $this->loginAs($this->client);
 
         $data = [
             'latitude' => 23.5235,
@@ -213,7 +213,7 @@ class ManageStopTest extends TestCase
     /** @test */
     public function stop_coordinates_must_be_valid()
     {
-        $this->loginAs($this->business);
+        $this->loginAs($this->client);
 
         $data = [
             'latitude' => 293582039,
@@ -228,7 +228,7 @@ class ManageStopTest extends TestCase
     /** @test */
     public function a_stop_can_have_a_question_and_answer()
     {
-        $this->loginAs($this->business);
+        $this->loginAs($this->client);
 
         $data = [
             'is_multiple_choice' => false,
@@ -245,7 +245,7 @@ class ManageStopTest extends TestCase
     /** @test */
     public function a_stop_can_be_multiple_choice()
     {
-        $this->loginAs($this->business);
+        $this->loginAs($this->client);
 
         $data = [
             'is_multiple_choice' => true,
@@ -259,7 +259,7 @@ class ManageStopTest extends TestCase
     /** @test */
     public function a_choice_can_be_added_to_a_stop()
     {
-        $this->loginAs($this->business);
+        $this->loginAs($this->client);
 
         $choice = make(StopChoice::class, ['tour_stop_id' => $this->stop->id]);
 
@@ -277,7 +277,7 @@ class ManageStopTest extends TestCase
     /** @test */
     public function a_choice_requires_an_answer()
     {
-        $this->loginAs($this->business);
+        $this->loginAs($this->client);
 
         $choice = make(StopChoice::class, ['tour_stop_id' => $this->stop->id]);
 
@@ -297,7 +297,7 @@ class ManageStopTest extends TestCase
     /** @test */
     public function a_choices_next_stop_must_be_exist()
     {
-        $this->loginAs($this->business);
+        $this->loginAs($this->client);
 
         $choice = make(StopChoice::class, ['tour_stop_id' => $this->stop->id]);
 
@@ -319,7 +319,7 @@ class ManageStopTest extends TestCase
     {
         $this->disableExceptionHandling();
 
-        $this->loginAs($this->business);
+        $this->loginAs($this->client);
 
         $choice = create(StopChoice::class, ['tour_stop_id' => $this->stop->id]);
 
@@ -343,7 +343,7 @@ class ManageStopTest extends TestCase
     {
         $this->disableExceptionHandling();
 
-        $this->loginAs($this->business);
+        $this->loginAs($this->client);
 
         $choice1 = create(StopChoice::class, ['tour_stop_id' => $this->stop->id]);
         $choice2 = create(StopChoice::class, ['tour_stop_id' => $this->stop->id]);
@@ -366,7 +366,7 @@ class ManageStopTest extends TestCase
     /** @test */
     public function choices_should_order_themselves()
     {
-        $this->loginAs($this->business);
+        $this->loginAs($this->client);
 
         $choice1 = create(StopChoice::class, ['tour_stop_id' => $this->stop->id]);
         $choice2 = create(StopChoice::class, ['tour_stop_id' => $this->stop->id]);
@@ -399,7 +399,7 @@ class ManageStopTest extends TestCase
     {
         // $this->disableExceptionHandling();
 
-        $this->loginAs($this->business);
+        $this->loginAs($this->client);
 
         $choice1 = create(StopChoice::class, ['tour_stop_id' => $this->stop->id]);
         $choice2 = create(StopChoice::class, ['tour_stop_id' => $this->stop->id]);
@@ -433,7 +433,7 @@ class ManageStopTest extends TestCase
     /** @test */
     public function a_choice_can_have_a_next_stop()
     {
-        $this->loginAs($this->business);
+        $this->loginAs($this->client);
 
         $nextStop = create('App\TourStop', ['tour_id' => $this->tour->id, 'order' => 2]);
 
@@ -457,9 +457,9 @@ class ManageStopTest extends TestCase
     /** @test */
     public function a_choice_cannot_have_invalid_next_stops()
     {
-        $this->loginAs($this->business);
+        $this->loginAs($this->client);
 
-        $otherTour = create('App\Tour', ['user_id' => $this->business->id]);
+        $otherTour = create('App\Tour', ['user_id' => $this->client->id]);
         $otherStop = create('App\TourStop', ['tour_id' => $otherTour->id, 'order' => 1]);
 
         $choice = create(StopChoice::class, ['tour_stop_id' => $this->stop->id]);
@@ -480,7 +480,7 @@ class ManageStopTest extends TestCase
     /** @test */
     public function a_choices_next_stop_cannot_be_the_current_stop()
     {
-        $this->loginAs($this->business);
+        $this->loginAs($this->client);
 
         $choice = create(StopChoice::class, ['tour_stop_id' => $this->stop->id]);
 

@@ -15,7 +15,7 @@ class CreateToursTest extends TestCase
     /** @test */
     public function a_user_can_create_a_tour()
     {
-        $this->signIn('business');
+        $this->signIn('client');
 
         $tour = make(Tour::class)->toArray();
 
@@ -27,7 +27,7 @@ class CreateToursTest extends TestCase
     /** @test */
     public function a_tour_must_have_a_title()
     {
-        $this->signIn('business');
+        $this->signIn('client');
 
         $this->publishTour(['title' => null])
             ->assertStatus(422)
@@ -39,7 +39,7 @@ class CreateToursTest extends TestCase
     /** @test */
     public function a_tour_must_have_a_description()
     {
-        $this->signIn('business');
+        $this->signIn('client');
 
         $this->publishTour(['description' => null])
             ->assertStatus(422)
@@ -51,7 +51,7 @@ class CreateToursTest extends TestCase
     /** @test */
     public function a_tour_must_have_a_valid_pricing_type()
     {
-        $this->signIn('business');
+        $this->signIn('client');
 
         $this->publishTour(['pricing_type' => null])
             ->assertStatus(422)
@@ -68,7 +68,7 @@ class CreateToursTest extends TestCase
     /** @test */
     public function a_tour_must_have_a_valid_type()
     {
-        $this->signIn('business');
+        $this->signIn('client');
 
         $this->publishTour(['type' => null])
             ->assertStatus(422)

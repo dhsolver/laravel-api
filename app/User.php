@@ -5,10 +5,11 @@ namespace App;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Spatie\Permission\Traits\HasRoles;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class User extends Authenticatable
 {
-    use Notifiable, HasRoles;
+    use Notifiable, HasRoles, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -61,5 +62,44 @@ class User extends Authenticatable
         return Tour::where('id', $tourId)
             ->where('user_id', $this->id)
             ->exists();
+    }
+
+    /**
+     * Return the fully-qualified name of the role class
+     *
+     * @param null $type
+     * @return null|string
+     */
+    public function getRoleClass($type = null)
+    {
+        if (!$type) {
+            $type = $this->role;
+        }
+
+        switch ($type) {
+            case 'admin':
+                return Admin::class;
+            case 'user':
+                return MobileUser::class;
+            case 'client':
+                return Client::class;
+            case 'superadmin':
+                return SuperAdmin::class;
+        }
+
+        return null;
+    }
+
+    /**
+     * Get the role user object.
+     *
+     * @return void
+     */
+    public function rolee()
+    {
+        if ($this->getRoleClass()) {
+            return $this->hasOne($this->getRoleClass(), 'id', 'id');
+        }
+        return null;
     }
 }

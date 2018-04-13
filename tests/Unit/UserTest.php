@@ -20,7 +20,7 @@ class UserTest extends TestCase
     /** @test */
     public function it_can_identify_if_it_owns_one_of_its_tour()
     {
-        $user = create('App\User')->assignRole('business');
+        $user = create('App\User')->assignRole('client');
         $user2 = create('App\User')->assignRole('user');
 
         $tour = create('App\Tour', ['user_id' => $user->id]);

@@ -14,9 +14,9 @@ class StopTest extends TestCase
     /** @test */
     public function it_can_have_multiple_choices()
     {
-        $business = createUser('business');
+        $client = createUser('client');
 
-        $tour = create('App\Tour', ['user_id' => $business->id]);
+        $tour = create('App\Tour', ['user_id' => $client->id]);
 
         $stop = create(TourStop::class, ['tour_id' => $tour->id, 'order' => 1]);
 

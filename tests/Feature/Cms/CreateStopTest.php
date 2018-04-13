@@ -14,16 +14,16 @@ class CreateStopTest extends TestCase
     use AttachJwtToken;
 
     public $tour;
-    public $business;
+    public $client;
     public $stop;
 
     public function setUp()
     {
         parent::setUp();
 
-        $this->business = createUser('business');
+        $this->client = createUser('client');
 
-        $this->tour = create('App\Tour', ['user_id' => $this->business->id]);
+        $this->tour = create('App\Tour', ['user_id' => $this->client->id]);
         $this->stop = make(TourStop::class, ['tour_id' => $this->tour->id])->toArray();
     }
 
@@ -35,7 +35,7 @@ class CreateStopTest extends TestCase
     /** @test */
     public function a_stop_can_be_added_to_a_tour()
     {
-        $this->loginAs($this->business);
+        $this->loginAs($this->client);
 
         $this->publishStop()
             ->assertJson(['title' => $this->stop['title']]);
@@ -46,7 +46,7 @@ class CreateStopTest extends TestCase
     /** @test */
     public function a_stop_can_only_by_added_by_the_tour_creator()
     {
-        $this->signIn('business');
+        $this->signIn('client');
 
         $this->publishStop()->assertStatus(403);
     }
@@ -54,7 +54,7 @@ class CreateStopTest extends TestCase
     /** @test */
     public function a_stop_requires_a_title_description_and_type()
     {
-        $this->loginAs($this->business);
+        $this->loginAs($this->client);
 
         unset($this->stop['title'], $this->stop['description'], $this->stop['location_type']);
 

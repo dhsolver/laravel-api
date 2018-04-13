@@ -19,7 +19,7 @@ class PermissionsSeeder extends Seeder
         // $superAdmin = Role::create(['name' => 'superadmin']);
         // $admin = Role::create(['name' => 'admin']);
         // $user = Role::create(['name' => 'user']);
-        // $business = Role::create(['name' => 'business']);
+        // $client = Role::create(['name' => 'client']);
 
         // $useCms = Permission::create(['name' => 'use-cms']);
         // $useMobile = Permission::create(['name' => 'use-mobile']);
@@ -28,6 +28,6 @@ class PermissionsSeeder extends Seeder
         // $superAdmin->syncPermissions(['use-cms', 'use-mobile', 'use-admin']);
         // $admin->syncPermissions(['use-cms', 'use-mobile', 'use-admin']);
         // $user->syncPermissions(['use-mobile']);
-        // $business->syncPermissions(['use-cms']);
+        // $client->syncPermissions(['use-cms']);
     }
 }
