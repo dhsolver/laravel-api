@@ -6,6 +6,7 @@ use App\Tour;
 $factory->define(App\Tour::class, function (Faker $faker) {
     $user = factory('App\User')->create();
     $user->assignRole('client');
+    
     return [
         'user_id' => $user->id,
         'title' => $faker->sentence(),

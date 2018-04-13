@@ -22,7 +22,7 @@ class TourController extends Controller
     public function index()
     {
         return new TourCollection(
-            auth()->user()->tours
+            auth()->user()->type->tours
         );
     }
 
@@ -35,7 +35,7 @@ class TourController extends Controller
     public function store(CreateTourRequest $request)
     {
         return new TourResource(
-            auth()->user()->tours()->create($request->validated())
+            auth()->user()->type->tours()->create($request->validated())
         );
     }
 

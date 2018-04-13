@@ -5,11 +5,10 @@ namespace App;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Spatie\Permission\Traits\HasRoles;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class User extends Authenticatable
 {
-    use Notifiable, HasRoles, SoftDeletes;
+    use Notifiable, HasRoles;
 
     /**
      * The attributes that are mass assignable.
@@ -32,16 +31,6 @@ class User extends Authenticatable
     protected $appends = ['role'];
 
     /**
-     * A user has many tours
-     *
-     * @return void
-     */
-    public function tours()
-    {
-        return $this->hasMany(Tour::class);
-    }
-
-    /**
      * Gets the users role
      *
      * @return String
@@ -49,19 +38,6 @@ class User extends Authenticatable
     public function getRoleAttribute()
     {
         return $this->roles()->pluck('name')->first();
-    }
-
-    /**
-     * Determines if the user owns the given Tour id.
-     *
-     * @param [int] $tourId
-     * @return bool
-     */
-    public function ownsTour($tourId)
-    {
-        return Tour::where('id', $tourId)
-            ->where('user_id', $this->id)
-            ->exists();
     }
 
     /**
@@ -95,7 +71,7 @@ class User extends Authenticatable
      *
      * @return void
      */
-    public function rolee()
+    public function type()
     {
         if ($this->getRoleClass()) {
             return $this->hasOne($this->getRoleClass(), 'id', 'id');

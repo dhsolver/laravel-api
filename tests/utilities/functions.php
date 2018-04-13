@@ -36,7 +36,5 @@ function createUser($role = 'user', $password = 'secret')
         'password' => bcrypt($password)
     ]);
 
-    // $user->assignRole($role);
-
     return $user;
 }

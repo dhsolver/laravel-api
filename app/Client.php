@@ -4,10 +4,11 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Traits\IsUserRole;
+use App\Traits\HasTours;
 
 class Client extends Model
 {
-    use IsUserRole;
+    use IsUserRole, HasTours;
 
     protected $with = [];
 

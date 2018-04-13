@@ -103,4 +103,43 @@ class AuthTest extends TestCase
         $this->json('GET', '/cms/session')->assertStatus(400);
         $this->json('GET', '/mobile/session')->assertStatus(400);
     }
+
+    /** @test */
+    public function a_mobile_user_can_register()
+    {
+        $this->json('POST', '/auth/signup', [
+            'name' => 'Test User',
+            'email' => 'user@test.com',
+            'password' => 'sdgdhe2354',
+            'password_confirmation' => 'sdgdhe2354',
+            'role' => 'user',
+        ])->assertStatus(200)
+            ->assertJsonFragment(['name' => 'Test User', 'role' => 'user']);
+    }
+
+    /** @test */
+    public function a_client_can_register()
+    {
+        $this->json('POST', '/auth/signup', [
+            'name' => 'Test client',
+            'email' => 'client@test.com',
+            'password' => 'sdgdhe2354',
+            'password_confirmation' => 'sdgdhe2354',
+            'role' => 'client',
+        ])->assertStatus(200)
+            ->assertJsonFragment(['name' => 'Test client', 'role' => 'client']);
+    }
+
+    /** @test */
+    public function an_admin_cannot_register()
+    {
+        $this->json('POST', '/auth/signup', [
+            'name' => 'Test Admin',
+            'email' => 'admin@test.com',
+            'password' => 'sdgdhe2354',
+            'password_confirmation' => 'sdgdhe2354',
+            'role' => 'admin',
+        ])->assertStatus(422)
+            ->assertJsonValidationErrors(['role']);
+    }
 }

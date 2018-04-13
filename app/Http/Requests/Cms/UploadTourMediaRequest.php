@@ -13,7 +13,7 @@ class UploadTourMediaRequest extends FormRequest
      */
     public function authorize()
     {
-        return auth()->user()->ownsTour(
+        return auth()->user()->type->ownsTour(
             $this->route('tour')->id
         );
     }

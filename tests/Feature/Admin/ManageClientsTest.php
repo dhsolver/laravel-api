@@ -19,8 +19,7 @@ class ManageClientsTest extends TestCase
     {
         parent::setUp();
 
-        // $this->admin = createUser('admin');
-        // $this->client = createUser('client');
+        $this->admin = createUser('admin');
 
         // $this->tour = create('App\Tour', ['user_id' => $this->client->id]);
     }
@@ -28,11 +27,11 @@ class ManageClientsTest extends TestCase
     /** @test */
     public function an_admin_can_get_a_list_of_clients()
     {
-        // $this->loginAs($this->admin);
+        $this->loginAs($this->admin);
 
-        // $data = $this->json('get', route('admin.clients.index'))->getData();
+        create('App\Client', [], 3);
 
-        // dd($data);
-        // ->assertStatus(200);
+        $data = $this->json('get', route('admin.clients.index'))
+            ->assertJsonCount(3);
     }
 }

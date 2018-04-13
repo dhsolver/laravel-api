@@ -45,13 +45,23 @@ class AuthController extends Controller
     {
         $data = $req->validated();
 
-        $user = User::create([
+        $attributes = [
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => bcrypt($data['password']),
-        ]);
+        ];
 
-        $user->assignRole($data['role']);
+        switch ($data['role']) {
+            case 'client':
+                $user = \App\Client::create($attributes);
+                break;
+            case 'user':
+            default:
+                $user = \App\MobileUser::create($attributes);
+                break;
+        }
+
+        // $user->assignRole($data['role']);
 
         try {
             if (!$token = JWTAuth::fromUser($user)) {
@@ -75,8 +85,6 @@ class AuthController extends Controller
      */
     public function userSession()
     {
-        // print_r(auth()->user()->toArray());
-
         return response()->json(auth()->user());
     }
 }

@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin;
 use Illuminate\Http\Request;
 use App\Http\Resources\ClientCollection;
 use App\Http\Controllers\Controller;
-use App\User;
+use App\Client;
 
 class ClientController extends Controller
 {
@@ -16,7 +16,7 @@ class ClientController extends Controller
      */
     public function index()
     {
-        return new ClientCollection(User::all());
+        return new ClientCollection(Client::all());
     }
 
     /**

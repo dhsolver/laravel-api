@@ -22,7 +22,7 @@ class CreateUsersTable extends Migration
             $table->string('fb_token', 1000)->nullable();
 
             $table->string('password');
-            
+
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();

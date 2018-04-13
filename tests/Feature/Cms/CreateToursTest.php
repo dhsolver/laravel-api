@@ -13,7 +13,7 @@ class CreateToursTest extends TestCase
     use AttachJwtToken;
 
     /** @test */
-    public function a_user_can_create_a_tour()
+    public function a_client_can_create_a_tour()
     {
         $this->signIn('client');
 
@@ -22,6 +22,17 @@ class CreateToursTest extends TestCase
         $this->json('POST', route('cms.tours.store'), $tour);
 
         $this->assertCount(1, Tour::all());
+    }
+
+    /** @test */
+    public function a_mobile_cannot_create_a_tour()
+    {
+        $this->signIn('user');
+
+        $tour = make(Tour::class)->toArray();
+
+        $this->json('POST', route('cms.tours.store'), $tour)
+            ->assertStatus(403);
     }
 
     /** @test */
