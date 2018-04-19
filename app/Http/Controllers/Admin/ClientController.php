@@ -8,6 +8,8 @@ use App\Client;
 use App\Http\Requests\Admin\CreateClientRequest;
 use App\Http\Resources\ClientResource;
 use App\Http\Requests\Admin\UpdateClientRequest;
+use App\Http\Responses\SuccessResponse;
+use App\Http\Responses\ErrorResponse;
 
 class ClientController extends Controller
 {
@@ -29,9 +31,11 @@ class ClientController extends Controller
      */
     public function store(CreateClientRequest $request)
     {
-        $client = Client::create($request->validated());
+        if ($client = Client::create($request->validated())) {
+            return new SuccessResponse("{$client->name} was added successfully.", new ClientResource($client));
+        }
 
-        return new ClientResource($client);
+        return new ErrorResponse(500, 'The Client could not be created.');
     }
 
     /**
@@ -54,9 +58,12 @@ class ClientController extends Controller
      */
     public function update(UpdateClientRequest $request, Client $client)
     {
-        $client->update($request->validated());
+        if ($client->update($request->validated())) {
+            $client = $client->fresh();
+            return new SuccessResponse("{$client->name} was updated successfully.", new ClientResource($client));
+        }
 
-        return new ClientResource($client->fresh());
+        return new ErrorResponse(500, "{$client->name} could not be saved.");
     }
 
     /**
@@ -67,8 +74,10 @@ class ClientController extends Controller
      */
     public function destroy(Client $client)
     {
-        $client->delete();
+        if ($client->delete()) {
+            return new SuccessResponse("{$client->name} was archived successfully.");
+        }
 
-        return response()->json(['status' => 1]);
+        return new ErrorResponse(500, "{$client->name} could not be deleted.");
     }
 }

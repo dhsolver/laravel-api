@@ -46,7 +46,7 @@ class ManageClientsTest extends TestCase
         ];
 
         $this->json('post', route('admin.clients.store'), $data)
-            ->assertStatus(201)
+            ->assertStatus(200)
             ->assertJsonFragment(['email' => 'test@test.com'])
             ->assertJsonFragment(['role' => 'client']);
 
