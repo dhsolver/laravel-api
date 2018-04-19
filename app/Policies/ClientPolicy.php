@@ -3,10 +3,10 @@
 namespace App\Policies;
 
 use App\User;
-use App\Admin;
+use App\Client;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class AdminPolicy
+class ClientPolicy
 {
     use HandlesAuthorization;
 
@@ -19,25 +19,25 @@ class AdminPolicy
      */
     public function before($user, $ability)
     {
-        if ($user->role == 'superadmin') {
+        if ($user->isAdmin()) {
             return true;
         }
     }
 
     /**
-     * Determine whether the user can view the admin.
+     * Determine whether the user can view the client.
      *
      * @param  \App\User  $user
-     * @param  \App\Admin  $admin
+     * @param  \App\Client  $client
      * @return mixed
      */
-    public function view(User $user, Admin $admin)
+    public function view(User $user, Client $client)
     {
-        return $user->role == 'admin';
+        return $user->id == $client->id;
     }
 
     /**
-     * Determine whether the user can create admins.
+     * Determine whether the user can create clients.
      *
      * @param  \App\User  $user
      * @return mixed
@@ -48,26 +48,25 @@ class AdminPolicy
     }
 
     /**
-     * Determine whether the user can update the admin.
+     * Determine whether the user can update the client.
      *
      * @param  \App\User  $user
-     * @param  \App\Admin  $admin
+     * @param  \App\Client  $client
      * @return mixed
      */
-    public function update(User $user, Admin $admin)
+    public function update(User $user, Client $client)
     {
-        // an admin can update itself
-        return $user->role == 'admin' && $user->id === $admin->id;
+        return $user->id == $client->id;
     }
 
     /**
-     * Determine whether the user can delete the admin.
+     * Determine whether the user can delete the client.
      *
      * @param  \App\User  $user
-     * @param  \App\Admin  $admin
+     * @param  \App\Client  $client
      * @return mixed
      */
-    public function delete(User $user, Admin $admin)
+    public function delete(User $user, Client $client)
     {
         return false;
     }

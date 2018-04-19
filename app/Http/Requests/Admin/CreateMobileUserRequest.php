@@ -13,7 +13,7 @@ class CreateMobileUserRequest extends FormRequest
      */
     public function authorize()
     {
-        return auth()->user()->role === 'admin';
+        return true;
     }
 
     /**
