@@ -20,4 +20,10 @@ Route::middleware(['jwt.auth', 'role:superadmin|admin'])->group(function () {
     Route::get('users/{user}', 'Admin\MobileUserController@show')->name('admin.users.show');
     Route::patch('users/{user}', 'Admin\MobileUserController@update')->name('admin.users.update');
     Route::delete('users/{user}', 'Admin\MobileUserController@destroy')->name('admin.users.destroy');
+
+    Route::get('admins', 'Admin\AdminController@index')->name('admin.admins.index');
+    Route::post('admins', 'Admin\AdminController@store')->name('admin.admins.store');
+    Route::get('admins/{admin}', 'Admin\AdminController@show')->name('admin.admins.show');
+    Route::patch('admins/{admin}', 'Admin\AdminController@update')->name('admin.admins.update');
+    Route::delete('admins/{admin}', 'Admin\AdminController@destroy')->name('admin.admins.destroy');
 });
