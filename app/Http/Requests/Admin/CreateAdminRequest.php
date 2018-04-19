@@ -13,7 +13,7 @@ class CreateAdminRequest extends FormRequest
      */
     public function authorize()
     {
-        return auth()->user()->role === 'superadmin';
+        return true;
     }
 
     /**

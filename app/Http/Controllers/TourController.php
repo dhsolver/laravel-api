@@ -34,9 +34,13 @@ class TourController extends Controller
      */
     public function store(CreateTourRequest $request)
     {
-        return new TourResource(
-            auth()->user()->type->tours()->create($request->validated())
-        );
+        if ($tour = auth()->user()->type->tours()->create($request->validated())) {
+            return $this->success("The tour {$tour->title} was created successfully.", new TourResource(
+                $tour->fresh()
+            ));
+        }
+
+        return $this->fail();
     }
 
     /**
@@ -47,10 +51,6 @@ class TourController extends Controller
      */
     public function show(Tour $tour)
     {
-        if ($tour->user_id != auth()->user()->id) {
-            return response(null, 403);
-        }
-
         return new TourResource($tour);
     }
 
@@ -63,9 +63,12 @@ class TourController extends Controller
      */
     public function update(UpdateTourRequest $request, Tour $tour)
     {
-        $tour->update($request->validated());
+        if ($tour->update($request->validated())) {
+            $tour = $tour->fresh();
+            return $this->success("{$tour->title} was updated successfully.", new TourResource($tour));
+        }
 
-        return new TourResource($tour);
+        return $this->fail();
     }
 
     /**
@@ -76,13 +79,10 @@ class TourController extends Controller
      */
     public function destroy(Tour $tour)
     {
-        if ($tour->user_id != auth()->user()->id) {
-            return response(null, 403);
+        if ($tour->delete()) {
+            return $this->success("{$tour->title} was archived successfully.");
         }
-
-        $tour->delete();
-
-        return response(null, 204);
+        return $this->fail();
     }
 
     /**
@@ -110,6 +110,6 @@ class TourController extends Controller
             }
         }
 
-        return new TourResource($tour->fresh());
+        return $this->success("{$tour->title} was updated successfully.", new TourResource($tour->fresh()));
     }
 }

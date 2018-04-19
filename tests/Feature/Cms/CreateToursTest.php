@@ -70,7 +70,7 @@ class CreateToursTest extends TestCase
 
         foreach (Tour::$PRICING_TYPES as $type) {
             $this->publishTour(['pricing_type' => $type])
-            ->assertStatus(201);
+            ->assertStatus(200);
         }
 
         $this->assertCount(count(Tour::$PRICING_TYPES), Tour::all());
@@ -87,7 +87,7 @@ class CreateToursTest extends TestCase
 
         foreach (Tour::$TOUR_TYPES as $type) {
             $this->publishTour(['type' => $type])
-            ->assertStatus(201);
+            ->assertStatus(200);
         }
 
         $this->assertCount(count(Tour::$TOUR_TYPES), Tour::all());

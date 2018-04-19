@@ -8,8 +8,6 @@ use App\MobileUser;
 use App\Http\Requests\Admin\CreateMobileUserRequest;
 use App\Http\Resources\MobileUserResource;
 use App\Http\Requests\Admin\UpdateMobileUserRequest;
-use App\Http\Responses\SuccessResponse;
-use App\Http\Responses\ErrorResponse;
 
 class MobileUserController extends Controller
 {
@@ -32,10 +30,10 @@ class MobileUserController extends Controller
     public function store(CreateMobileUserRequest $request)
     {
         if ($user = MobileUser::create($request->validated())) {
-            return new SuccessResponse("{$user->name} was added successfully.", new MobileUserResource($user));
+            return $this->success("{$user->name} was added successfully.", new MobileUserResource($user));
         }
 
-        return new ErrorResponse(500, 'The User could not be created.');
+        return $this->fail();
     }
 
     /**
@@ -60,10 +58,10 @@ class MobileUserController extends Controller
     {
         if ($user->update($request->validated())) {
             $user = $user->fresh();
-            return new SuccessResponse("{$user->name} was updated successfully.", new MobileUserResource($user));
+            return $this->success("{$user->name} was updated successfully.", new MobileUserResource($user));
         }
 
-        return new ErrorResponse(500, "{$user->name} could not be saved.");
+        return $this->fail();
     }
 
     /**
@@ -75,9 +73,9 @@ class MobileUserController extends Controller
     public function destroy(MobileUser $user)
     {
         if ($user->delete()) {
-            return new SuccessResponse("{$user->name} was archived successfully.");
+            return $this->success("{$user->name} was archived successfully.");
         }
 
-        return new ErrorResponse(500, "{$user->name} could not be deleted.");
+        return $this->fail();
     }
 }

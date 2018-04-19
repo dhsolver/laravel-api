@@ -38,7 +38,7 @@ class CreateStopTest extends TestCase
         $this->loginAs($this->client);
 
         $this->publishStop()
-            ->assertJson(['title' => $this->stop['title']]);
+            ->assertJsonFragment(['title' => $this->stop['title']]);
 
         $this->assertCount(1, TourStop::all());
     }

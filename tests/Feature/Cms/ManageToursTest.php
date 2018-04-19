@@ -60,7 +60,7 @@ class ManageToursTest extends TestCase
 
         $this->updateTour($data)
             ->assertStatus(200)
-            ->assertJson($data);
+            ->assertJsonFragment($data);
     }
 
     /** @test */
@@ -106,7 +106,7 @@ class ManageToursTest extends TestCase
         $this->assertCount(1, $this->client->tours);
 
         $this->json('DELETE', route('cms.tours.destroy', $this->tour->id))
-            ->assertStatus(204);
+            ->assertStatus(200);
 
         $this->assertCount(0, $this->client->fresh()->tours);
     }
@@ -158,7 +158,7 @@ class ManageToursTest extends TestCase
 
         $this->updateTour($data)
             ->assertStatus(200)
-            ->assertJson($data);
+            ->assertJsonFragment($data);
     }
 
     /** @test */
@@ -193,7 +193,7 @@ class ManageToursTest extends TestCase
 
         $this->updateTour($data)
             ->assertStatus(200)
-            ->assertJson($data);
+            ->assertJsonFragment($data);
 
         $url = 'https://www.google.com/';
         $data = [
@@ -204,7 +204,7 @@ class ManageToursTest extends TestCase
 
         $this->updateTour($data)
             ->assertStatus(422)
-            ->assertJson(['errors' => [
+            ->assertJsonFragment(['errors' => [
                 'video_url' => ['The video url format is invalid.'],
                 'start_video_url' => ['The start video url format is invalid.'],
                 'end_video_url' => ['The end video url format is invalid.']
@@ -219,7 +219,7 @@ class ManageToursTest extends TestCase
 
         $this->updateTour($data)
             ->assertStatus(422)
-            ->assertJson(['errors' => [
+            ->assertJsonFragment(['errors' => [
                 'video_url' => ['The video url format is invalid.'],
                 'start_video_url' => ['The start video url format is invalid.'],
                 'end_video_url' => ['The end video url format is invalid.']
@@ -239,7 +239,7 @@ class ManageToursTest extends TestCase
 
         $this->updateTour($updates)
             ->assertStatus(200)
-            ->assertJson($updates);
+            ->assertJsonFragment($updates);
     }
 
     /** @test */
@@ -250,13 +250,13 @@ class ManageToursTest extends TestCase
         $stop = create('App\TourStop', ['tour_id' => $this->tour]);
 
         $updates = [
-            'start_point' => $stop->id,
+            'start_point' => '' . $stop->id,
             'start_message' => 'starting message',
         ];
 
         $this->updateTour($updates)
             ->assertStatus(200)
-            ->assertJson($updates);
+            ->assertJsonFragment($updates);
     }
 
     /** @test */
@@ -280,13 +280,13 @@ class ManageToursTest extends TestCase
         $stop = create('App\TourStop', ['tour_id' => $this->tour]);
 
         $updates = [
-            'end_point' => $stop->id,
+            'end_point' => '' . $stop->id,
             'end_message' => 'end message',
         ];
 
         $this->updateTour($updates)
             ->assertStatus(200)
-            ->assertJson($updates);
+            ->assertJsonFragment($updates);
     }
 
     /** @test */

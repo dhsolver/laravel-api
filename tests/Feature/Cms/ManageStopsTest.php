@@ -64,7 +64,7 @@ class ManageStopTest extends TestCase
 
         $data = $this->updateStop($data)
             ->assertStatus(200)
-            ->assertJson($data);
+            ->assertJsonFragment($data);
     }
 
     /** @test */
@@ -120,7 +120,7 @@ class ManageStopTest extends TestCase
         $this->assertCount(1, $this->tour->stops);
 
         $this->json('DELETE', $this->stopRoute('destroy', true))
-            ->assertStatus(204);
+            ->assertStatus(200);
 
         $this->assertCount(0, $this->tour->fresh()->stops);
     }
@@ -192,7 +192,7 @@ class ManageStopTest extends TestCase
 
         $this->updateStop(array_merge($this->stop->toArray(), $data))
             ->assertStatus(200)
-            ->assertJson($data);
+            ->assertJsonFragment($data);
     }
 
     /** @test */
@@ -207,7 +207,7 @@ class ManageStopTest extends TestCase
 
         $this->updateStop(array_merge($this->stop->toArray(), $data))
             ->assertStatus(200)
-            ->assertJson($data);
+            ->assertJsonFragment($data);
     }
 
     /** @test */
@@ -239,7 +239,7 @@ class ManageStopTest extends TestCase
 
         $this->updateStop(array_merge($this->stop->toArray(), $data))
             ->assertStatus(200)
-            ->assertJson($data);
+            ->assertJsonFragment($data);
     }
 
     /** @test */
@@ -253,7 +253,7 @@ class ManageStopTest extends TestCase
 
         $this->updateStop(array_merge($this->stop->toArray(), $data))
             ->assertStatus(200)
-            ->assertJson($data);
+            ->assertJsonFragment($data);
     }
 
     /** @test */
@@ -271,7 +271,7 @@ class ManageStopTest extends TestCase
 
         $this->updateStop($data)
             ->assertStatus(200)
-            ->assertJson($data);
+            ->assertJson(['data' => $data]);
     }
 
     /** @test */
@@ -291,7 +291,7 @@ class ManageStopTest extends TestCase
 
         $this->updateStop($data)
             ->assertStatus(422)
-            ->assertJson(['errors' => ['choices.0.answer' => ['The choices.0.answer field is required.']]]);
+            ->assertJsonFragment(['errors' => ['choices.0.answer' => ['The choices.0.answer field is required.']]]);
     }
 
     /** @test */
@@ -311,7 +311,7 @@ class ManageStopTest extends TestCase
 
         $this->updateStop($data)
             ->assertStatus(422)
-            ->assertJson(['errors' => ['choices.0.next_stop_id' => ['The selected choices.0.next_stop_id is invalid.']]]);
+            ->assertJsonFragment(['errors' => ['choices.0.next_stop_id' => ['The selected choices.0.next_stop_id is invalid.']]]);
     }
 
     /** @test */
@@ -335,7 +335,7 @@ class ManageStopTest extends TestCase
 
         $this->updateStop($data)
             ->assertStatus(200)
-            ->assertJson($data);
+            ->assertJson(['data' => $data]);
     }
 
     /** @test */
@@ -358,7 +358,7 @@ class ManageStopTest extends TestCase
 
         $this->updateStop($data)
             ->assertStatus(200)
-            ->assertJson($data);
+            ->assertJson(['data' => $data]);
 
         $this->assertCount(1, $this->stop->fresh()->choices);
     }
@@ -449,7 +449,7 @@ class ManageStopTest extends TestCase
 
         $resp = $this->updateStop($data)
             ->assertStatus(200)
-            ->assertJson($data);
+            ->assertJsonFragment($data);
 
         $this->assertEquals($nextStop->id, $choice->fresh()->next_stop_id);
     }

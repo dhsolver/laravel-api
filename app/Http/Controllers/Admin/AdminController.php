@@ -8,8 +8,6 @@ use App\Admin;
 use App\Http\Requests\Admin\CreateAdminRequest;
 use App\Http\Resources\AdminResource;
 use App\Http\Requests\Admin\UpdateAdminRequest;
-use App\Http\Responses\SuccessResponse;
-use App\Http\Responses\ErrorResponse;
 
 class AdminController extends Controller
 {
@@ -32,10 +30,10 @@ class AdminController extends Controller
     public function store(CreateAdminRequest $request)
     {
         if ($admin = Admin::create($request->validated())) {
-            return new SuccessResponse("{$admin->name} was added successfully.", new AdminResource($admin));
+            return $this->success("{$admin->name} was added successfully.", new AdminResource($admin));
         }
 
-        return new ErrorResponse(500, 'The User could not be created.');
+        return $this->fail();
     }
 
     /**
@@ -60,10 +58,10 @@ class AdminController extends Controller
     {
         if ($admin->update($request->validated())) {
             $admin = $admin->fresh();
-            return new SuccessResponse("{$admin->name} was updated successfully.", new AdminResource($admin));
+            return $this->success("{$admin->name} was updated successfully.", new AdminResource($admin));
         }
 
-        return new ErrorResponse(500, "{$admin->name} could not be saved.");
+        return $this->fail();
     }
 
     /**
@@ -74,14 +72,10 @@ class AdminController extends Controller
      */
     public function destroy(Admin $admin)
     {
-        if (auth()->user()->role != 'superadmin') {
-            return new ErrorResponse(403, 'Forbidden.');
-        }
-
         if ($admin->delete()) {
-            return new SuccessResponse("{$admin->name} was archived successfully.");
+            return $this->success("{$admin->name} was archived successfully.");
         }
 
-        return new ErrorResponse(500, "{$admin->name} could not be deleted.");
+        return $this->fail();
     }
 }

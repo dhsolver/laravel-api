@@ -36,6 +36,15 @@ class Tour extends Model
     protected $appends = ['main_image_path', 'image_1_path', 'image_2_path', 'image_3_path'];
 
     /**
+     * The attributes that should be cast to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'has_prize' => 'bool',
+    ];
+
+    /**
      * Defines the attributes that are images.
      *
      * @var array

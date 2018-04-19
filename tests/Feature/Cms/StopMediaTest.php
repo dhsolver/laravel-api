@@ -29,6 +29,44 @@ class StopMediaTest extends TestCase
         $this->stop = create('App\TourStop', ['tour_id' => $this->tour->id, 'order' => 1]);
     }
 
+    /**
+     * Helper to provide route to the class tour based on named routes.
+     *
+     * @param String $name
+     * @return void
+     */
+    public function stopRoute($name)
+    {
+        return route("cms.stops.$name", ['tour' => $this->tour->id, 'stop' => $this->stop->id]);
+    }
+
+    /**
+     * Helper to upload tour media and return the filename.
+     *
+     * @param String $key
+     * @param String $filename
+     * @param [type] $image
+     * @return \Illuminate\Foundation\Testing\TestResponse
+     */
+    public function uploadMedia($key, &$filename, $file = null)
+    {
+        if (empty($file)) {
+            $file = UploadedFile::fake()
+                ->image('main.jpg', 500, 500)
+                ->size(config('junket.imaging.max_file_size') - 1);
+        }
+
+        $resp = $this->json('PUT', $this->stopRoute('media'), [$key => $file]);
+
+        try {
+            $filename = $resp->getData()->data->$key;
+        } catch (\Exception $ex) {
+            $filename = null;
+        }
+
+        return $resp;
+    }
+
     /** @test */
     public function a_user_can_update_a_stops_images()
     {
@@ -114,43 +152,5 @@ class StopMediaTest extends TestCase
                 ->assertStatus(422)
                 ->assertJsonValidationErrors($key);
         }
-    }
-
-    /**
-     * Helper to provide route to the class tour based on named routes.
-     *
-     * @param String $name
-     * @return void
-     */
-    public function stopRoute($name)
-    {
-        return route("cms.stops.$name", ['tour' => $this->tour->id, 'stop' => $this->stop->id]);
-    }
-
-    /**
-     * Helper to upload tour media and return the filename.
-     *
-     * @param String $key
-     * @param String $filename
-     * @param [type] $image
-     * @return \Illuminate\Foundation\Testing\TestResponse
-     */
-    public function uploadMedia($key, &$filename, $file = null)
-    {
-        if (empty($file)) {
-            $file = UploadedFile::fake()
-                ->image('main.jpg', 500, 500)
-                ->size(config('junket.imaging.max_file_size') - 1);
-        }
-
-        $resp = $this->json('PUT', $this->stopRoute('media'), [$key => $file]);
-
-        try {
-            $filename = $resp->getData()->$key;
-        } catch (\Exception $ex) {
-            $filename = null;
-        }
-
-        return $resp;
     }
 }

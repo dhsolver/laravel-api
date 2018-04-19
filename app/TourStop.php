@@ -21,6 +21,24 @@ class TourStop extends Model
     protected $guarded = ['id'];
 
     /**
+     * Relatioships to always load with the model.
+     *
+     * @var array
+     */
+    public $with = ['choices'];
+
+    /**
+     * The attributes that should be cast to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'is_multiple_choice' => 'bool',
+        'latitude' => 'float',
+        'longitude' => 'float',
+    ];
+
+    /**
      * Defines the attributes that are images.
      *
      * @var array
@@ -35,13 +53,6 @@ class TourStop extends Model
     public static $audioAttributes = ['audio'];
 
     /**
-     * Relatioships to always load with the model.
-     *
-     * @var array
-     */
-    public $with = ['choices'];
-
-    /**
      * Returns the relationship of the tour that the stop belongs to.
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -50,7 +61,7 @@ class TourStop extends Model
     {
         return $this->belongsTo(Tour::class);
     }
-    
+
     /**
      * Defines the default ordering for stops using order column.
      *

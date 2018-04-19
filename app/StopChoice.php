@@ -13,6 +13,17 @@ class StopChoice extends Model
      */
     protected $guarded = ['id'];
 
+    /**
+     * The attributes that should be cast to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'tour_stop_id' => 'int',
+        'next_stop_id' => 'int',
+        'order' => 'int',
+    ];
+
     public static function boot()
     {
         self::creating(function ($choice) {

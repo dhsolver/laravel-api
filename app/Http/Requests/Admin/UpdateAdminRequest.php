@@ -13,7 +13,19 @@ class UpdateAdminRequest extends FormRequest
      */
     public function authorize()
     {
-        return auth()->user()->role === 'superadmin';
+        return true;
+    }
+
+    /**
+     * Find the method name for the current route
+     *
+     * @return string
+     */
+    protected function findMethodName()
+    {
+        list($class, $method) = explode('@', $this->route()->getActionName());
+
+        return $method;
     }
 
     /**

@@ -27,6 +27,44 @@ class TourMediaTest extends TestCase
         $this->tour = create('App\Tour', ['user_id' => $this->client->id]);
     }
 
+    /**
+     * Helper to provide route to the class tour based on named routes.
+     *
+     * @param String $name
+     * @return void
+     */
+    public function tourRoute($name)
+    {
+        return route("cms.tours.$name", $this->tour->id);
+    }
+
+    /**
+     * Helper to upload tour media and return the filename.
+     *
+     * @param String $key
+     * @param String $filename
+     * @param [type] $image
+     * @return \Illuminate\Foundation\Testing\TestResponse
+     */
+    public function uploadMedia($key, &$filename, $image = null)
+    {
+        if (empty($image)) {
+            $image = UploadedFile::fake()
+                ->image('main.jpg', 500, 500)
+                ->size(config('junket.imaging.max_file_size') - 1);
+        }
+
+        $resp = $this->json('PUT', $this->tourRoute('media'), [$key => $image]);
+
+        try {
+            $filename = $resp->getData()->data->$key;
+        } catch (\Exception $ex) {
+            $filename = null;
+        }
+
+        return $resp;
+    }
+
     /** @test */
     public function a_user_can_update_a_tours_images()
     {
@@ -122,43 +160,5 @@ class TourMediaTest extends TestCase
                 ->assertStatus(422)
                 ->assertJsonValidationErrors($key);
         }
-    }
-
-    /**
-     * Helper to provide route to the class tour based on named routes.
-     *
-     * @param String $name
-     * @return void
-     */
-    public function tourRoute($name)
-    {
-        return route("cms.tours.$name", $this->tour->id);
-    }
-
-    /**
-     * Helper to upload tour media and return the filename.
-     *
-     * @param String $key
-     * @param String $filename
-     * @param [type] $image
-     * @return \Illuminate\Foundation\Testing\TestResponse
-     */
-    public function uploadMedia($key, &$filename, $image = null)
-    {
-        if (empty($image)) {
-            $image = UploadedFile::fake()
-                ->image('main.jpg', 500, 500)
-                ->size(config('junket.imaging.max_file_size') - 1);
-        }
-
-        $resp = $this->json('PUT', $this->tourRoute('media'), [$key => $image]);
-
-        try {
-            $filename = $resp->getData()->$key;
-        } catch (\Exception $ex) {
-            $filename = null;
-        }
-
-        return $resp;
     }
 }

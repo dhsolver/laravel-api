@@ -6,8 +6,39 @@ use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use App\Http\Responses\ErrorResponse;
+use App\Http\Responses\SuccessResponse;
 
 class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
+
+    /**
+     * Helper function for success response.
+     *
+     * @param [type] $message
+     * @param array $data
+     * @return void
+     */
+    public function success($message, $data = [])
+    {
+        return new SuccessResponse($message, $data);
+    }
+
+    /**
+     * Helper function for error response
+     *
+     * @param [type] $statusCode
+     * @param string $messages
+     * @param array $data
+     * @return void
+     */
+    public function fail($statusCode = 500, $messages = '', $data = [])
+    {
+        if (empty($messages)) {
+            $messages = 'An unexpected error occurred.  Please try again.';
+        }
+
+        return new ErrorResponse($statusCode, $messages, $data);
+    }
 }
