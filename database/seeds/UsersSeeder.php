@@ -40,5 +40,7 @@ class UsersSeeder extends Seeder
         ]);
 
         create(Client::class, [], 50);
+        create(MobileUser::class, [], 50);
+        create(Admin::class, [], 5);
     }
 }
