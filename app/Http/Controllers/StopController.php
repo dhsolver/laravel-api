@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\Cms\CreateStopRequest;
+use App\Http\Requests\CreateStopRequest;
 use App\Tour;
 use App\Http\Resources\StopResource;
 use App\TourStop;
 use App\Http\Resources\StopCollection;
-use App\Http\Requests\Cms\UpdateStopRequest;
-use App\Http\Requests\Cms\UploadStopMediaRequest;
+use App\Http\Requests\UpdateStopRequest;
+use App\Http\Requests\UploadStopMediaRequest;
 use App\Http\Controllers\Traits\UploadsMedia;
 
 class StopController extends Controller

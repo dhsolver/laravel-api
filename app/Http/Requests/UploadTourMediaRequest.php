@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\Cms;
+namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -13,9 +13,7 @@ class UploadTourMediaRequest extends FormRequest
      */
     public function authorize()
     {
-        return auth()->user()->type->ownsTour(
-            $this->route('tour')->id
-        );
+        return true;
     }
 
     /**

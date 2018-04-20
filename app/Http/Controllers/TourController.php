@@ -4,11 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\TourResource;
 use App\Tour;
-use App\Http\Requests\Cms\CreateTourRequest;
-use App\Http\Requests\Cms\UpdateTourRequest;
+use App\Http\Requests\CreateTourRequest;
+use App\Http\Requests\UpdateTourRequest;
 use App\Http\Resources\TourCollection;
 use App\Http\Controllers\Traits\UploadsMedia;
-use App\Http\Requests\Cms\UploadTourMediaRequest;
+use App\Http\Requests\UploadTourMediaRequest;
 
 class TourController extends Controller
 {

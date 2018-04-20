@@ -12,6 +12,13 @@ class CreateToursTest extends TestCase
     use DatabaseMigrations;
     use AttachJwtToken;
 
+    protected function publishTour($overrides = [])
+    {
+        $tour = make('App\Tour', $overrides);
+
+        return $this->json('POST', route('cms.tours.store'), $tour->toArray());
+    }
+
     /** @test */
     public function a_client_can_create_a_tour()
     {
@@ -25,7 +32,7 @@ class CreateToursTest extends TestCase
     }
 
     /** @test */
-    public function a_mobile_cannot_create_a_tour()
+    public function a_mobile_user_cannot_create_a_tour()
     {
         $this->signIn('user');
 
@@ -91,12 +98,5 @@ class CreateToursTest extends TestCase
         }
 
         $this->assertCount(count(Tour::$TOUR_TYPES), Tour::all());
-    }
-
-    protected function publishTour($overrides = [])
-    {
-        $tour = make('App\Tour', $overrides);
-
-        return $this->json('POST', route('cms.tours.store'), $tour->toArray());
     }
 }

@@ -93,4 +93,36 @@ class ManageToursTest extends TestCase
             ->assertStatus(200)
             ->assertJsonFragment(['title' => $this->tour->title]);
     }
+
+    /** @test */
+    public function an_admin_can_create_a_tour()
+    {
+        $this->signIn('admin');
+
+        $tour = make(Tour::class)->toArray();
+
+        $this->assertCount(1, Tour::all());
+
+        $this->json('POST', route('admin.tours.store'), $tour);
+
+        $this->assertCount(2, Tour::all());
+    }
+
+    /** @test */
+    public function an_admin_must_supply_a_client_id_to_create_a_tour()
+    {
+        $this->signIn('admin');
+
+        $tour = make(Tour::class)->toArray();
+
+        $this->assertCount(1, Tour::all());
+
+        unset($tour['user_id']);
+
+        $this->json('POST', route('admin.tours.store'), $tour)
+            ->assertStatus(422)
+            ->assertJsonValidationErrors(['user_id']);
+
+        $this->assertCount(1, Tour::all());
+    }
 }

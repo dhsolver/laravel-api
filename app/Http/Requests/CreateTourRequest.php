@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Requests\Cms;
+namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use App\TourStop;
+use App\Tour;
 use Illuminate\Validation\Rule;
 
-class CreateStopRequest extends FormRequest
+class CreateTourRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -15,9 +15,7 @@ class CreateStopRequest extends FormRequest
      */
     public function authorize()
     {
-        return auth()->user()->type->ownsTour(
-            $this->route('tour')->id
-        );
+        return true;
     }
 
     /**
@@ -27,13 +25,23 @@ class CreateStopRequest extends FormRequest
      */
     public function rules()
     {
-        return [
+        $rules = [
             'title' => 'required|string|max:255|min:3',
             'description' => 'required|string|max:2000|min:3',
-            'location_type' => [
+            'pricing_type' => [
                 'required',
-                Rule::in(TourStop::$LOCATION_TYPES),
+                Rule::in(Tour::$PRICING_TYPES),
+            ],
+            'type' => [
+                'required',
+                Rule::in(Tour::$TOUR_TYPES),
             ],
         ];
+
+        if ($this->route()->getPrefix() == 'admin') {
+            $rules['user_id'] = 'required|numeric|exists:clients,id';
+        }
+
+        return $rules;
     }
 }

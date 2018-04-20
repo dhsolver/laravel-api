@@ -4,9 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Resources\TourResource;
 use App\Tour;
-use App\Http\Requests\Cms\CreateTourRequest;
+use App\Http\Requests\CreateTourRequest;
 use App\Http\Resources\TourCollection;
-use App\Http\Responses\SuccessResponse;
 use App\Http\Controllers\TourController as BaseTourController;
 
 class TourController extends BaseTourController
@@ -30,7 +29,7 @@ class TourController extends BaseTourController
     public function store(CreateTourRequest $request)
     {
         if ($tour = Tour::create($request->validated())) {
-            return SuccessResponse("The tour {$tour->name} was created successfully.", new TourResource(
+            return $this->success("The tour {$tour->name} was created successfully.", new TourResource(
                 $tour->fresh()
             ));
         }
