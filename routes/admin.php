@@ -27,9 +27,14 @@ Route::middleware(['jwt.auth', 'role:superadmin|admin'])->group(function () {
     Route::patch('admins/{admin}', 'Admin\AdminController@update')->name('admin.admins.update')->middleware(['can:update,admin']);
     Route::delete('admins/{admin}', 'Admin\AdminController@destroy')->name('admin.admins.destroy')->middleware(['can:delete,admin']);
 
-    Route::resource('tours', 'Admin\TourController', ['as' => 'admin']);
-    Route::put('tours/{tour}/media', 'Admin\TourController@uploadMedia')->name('admin.tours.media');
-    // Route::resource('tours/{tour}/stops', 'Admin\StopController', ['as' => 'admin']);
-    // Route::put('tours/{tour}/stops/{stop}/order', 'Admin\StopController@changeOrder')->name('admin.stops.order');
-    // Route::put('tours/{tour}/stops/{stop}', 'Admin\StopController@uploadMedia')->name('admin.stops.media');
+    Route::get('tours', 'Admin\TourController@index')->name('admin.tours.index');
+    Route::post('tours', 'Admin\TourController@store')->name('admin.tours.store')->middleware(['can:create,App\Tour']);
+    Route::get('tours/{tour}', 'Admin\TourController@show')->name('admin.tours.show')->middleware(['can:view,tour']);
+    Route::patch('tours/{tour}', 'Admin\TourController@update')->name('admin.tours.update')->middleware(['can:update,tour']);
+    Route::delete('tours/{tour}', 'Admin\TourController@destroy')->name('admin.tours.destroy')->middleware(['can:delete,tour']);
+    Route::put('tours/{tour}/media', 'Admin\TourController@uploadMedia')->name('admin.tours.media')->middleware(['can:view,tour']);
+
+    Route::resource('tours/{tour}/stops', 'StopController', ['as' => 'admin'])->middleware(['can:update,tour']);
+    Route::put('tours/{tour}/stops/{stop}/order', 'StopController@changeOrder')->name('admin.stops.order')->middleware(['can:update,tour']);
+    Route::put('tours/{tour}/stops/{stop}', 'StopController@uploadMedia')->name('admin.stops.media')->middleware(['can:update,tour']);
 });

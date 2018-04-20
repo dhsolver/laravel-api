@@ -15,9 +15,7 @@ class CreateStopRequest extends FormRequest
      */
     public function authorize()
     {
-        return auth()->user()->type->ownsTour(
-            $this->route('tour')->id
-        );
+        return true;
     }
 
     /**
