@@ -19,7 +19,7 @@ class Tour extends Model
      *
      * @var array
      */
-    public static $TOUR_TYPES = ['tour', 'adventure'];
+    public static $TOUR_TYPES = ['indoor', 'outdoor', 'adventure'];
 
     /**
      * The attributes that aren't mass assignable.
