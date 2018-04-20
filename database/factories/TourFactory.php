@@ -4,11 +4,10 @@ use Faker\Generator as Faker;
 use App\Tour;
 
 $factory->define(App\Tour::class, function (Faker $faker) {
-    $user = factory('App\User')->create();
-    $user->assignRole('client');
-    
+    $client = factory('App\Client')->create();
+
     return [
-        'user_id' => $user->id,
+        'user_id' => $client->id,
         'title' => $faker->sentence(),
         'description' => $faker->paragraph(),
         'pricing_type' => Tour::$PRICING_TYPES[array_rand(Tour::$PRICING_TYPES)],

@@ -19,7 +19,7 @@ class Tour extends Model
      *
      * @var array
      */
-    public static $TOUR_TYPES = ['tour', 'adventure'];
+    public static $TOUR_TYPES = ['indoor', 'outdoor', 'adventure'];
 
     /**
      * The attributes that aren't mass assignable.
@@ -34,6 +34,15 @@ class Tour extends Model
      * @var array
      */
     protected $appends = ['main_image_path', 'image_1_path', 'image_2_path', 'image_3_path'];
+
+    /**
+     * The attributes that should be cast to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'has_prize' => 'bool',
+    ];
 
     /**
      * Defines the attributes that are images.

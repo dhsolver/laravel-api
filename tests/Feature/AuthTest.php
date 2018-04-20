@@ -25,12 +25,7 @@ class AuthTest extends TestCase
             'email' => $user->email,
             'password' => 'secret',
         ])->assertStatus(200)
-            ->assertJson([
-                'user' => [
-                    'email' => $user->email,
-                    'role' => $role
-                ],
-            ]);
+            ->assertJsonFragment(['email' => $user->email, 'role' => $role]);
     }
 
     /** @test */

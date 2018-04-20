@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\Cms\CreateStopRequest;
+use App\Http\Requests\CreateStopRequest;
 use App\Tour;
 use App\Http\Resources\StopResource;
 use App\TourStop;
 use App\Http\Resources\StopCollection;
-use App\Http\Requests\Cms\UpdateStopRequest;
-use App\Http\Requests\Cms\UploadStopMediaRequest;
+use App\Http\Requests\UpdateStopRequest;
+use App\Http\Requests\UploadStopMediaRequest;
 use App\Http\Controllers\Traits\UploadsMedia;
 
 class StopController extends Controller
@@ -23,10 +23,6 @@ class StopController extends Controller
      */
     public function index(Tour $tour)
     {
-        if ($tour->user_id != auth()->user()->id) {
-            return response(null, 403);
-        }
-
         return new StopCollection(
             $tour->stops
         );
@@ -43,9 +39,15 @@ class StopController extends Controller
     {
         $order = $tour->getNextStopOrder();
 
-        return new StopResource(
-            $tour->stops()->create(array_merge($request->validated(), ['order' => $order]))
-        );
+        $data = array_merge($request->validated(), ['order' => $order]);
+
+        if ($stop = $tour->stops()->create($data)) {
+            return $this->success("The stop {$stop->title} was created successfully.", new StopResource(
+                $stop->fresh()
+            ));
+        }
+
+        return $this->fail();
     }
 
     /**
@@ -57,10 +59,6 @@ class StopController extends Controller
      */
     public function show(Tour $tour, TourStop $stop)
     {
-        if ($tour->user_id != auth()->user()->id) {
-            return response(null, 403);
-        }
-
         return new StopResource($stop);
     }
 
@@ -78,9 +76,7 @@ class StopController extends Controller
 
         $stop->updateChoices($request->choices);
 
-        return new StopResource(
-            $stop->fresh()
-        );
+        return $this->success("{$stop->title} was updated successfully.", $stop->fresh());
     }
 
     /**
@@ -92,13 +88,11 @@ class StopController extends Controller
      */
     public function destroy(Tour $tour, TourStop $stop)
     {
-        if ($tour->user_id != auth()->user()->id) {
-            return response(null, 403);
+        if ($stop->delete()) {
+            return $this->success("{$stop->title} was archived successfully.");
         }
 
-        $stop->delete();
-
-        return response(null, 204);
+        return $this->fail();
     }
 
     /**
@@ -118,9 +112,14 @@ class StopController extends Controller
 
         $tour->increaseOrderAt($stop->order);
 
-        $stop->save();
+        if ($stop->save()) {
+            return $this->success(
+                "{$tour->title}'s stop order was updated successfully.",
+                new StopCollection($tour->stops()->get())
+            );
+        }
 
-        return new StopCollection($tour->stops()->get());
+        return $this->fail();
     }
 
     /**
@@ -149,6 +148,6 @@ class StopController extends Controller
             }
         }
 
-        return new StopResource($stop->fresh());
+        return $this->success("{$stop->title} was updated successfully.", new StopResource($stop->fresh()));
     }
 }

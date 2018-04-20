@@ -38,5 +38,9 @@ class UsersSeeder extends Seeder
             'name' => 'Test Client',
             'password' => bcrypt('qweqwe'),
         ]);
+
+        create(Client::class, [], 10);
+        create(MobileUser::class, [], 10);
+        create(Admin::class, [], 3);
     }
 }

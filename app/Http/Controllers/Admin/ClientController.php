@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\Admin;
 
-use Illuminate\Http\Request;
 use App\Http\Resources\ClientCollection;
 use App\Http\Controllers\Controller;
 use App\Client;
+use App\Http\Requests\Admin\CreateClientRequest;
+use App\Http\Resources\ClientResource;
+use App\Http\Requests\Admin\UpdateClientRequest;
 
 class ClientController extends Controller
 {
@@ -20,24 +22,18 @@ class ClientController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(CreateClientRequest $request)
     {
-        //
+        if ($client = Client::create($request->validated())) {
+            return $this->success("{$client->name} was added successfully.", new ClientResource($client));
+        }
+
+        return $this->fail();
     }
 
     /**
@@ -46,20 +42,9 @@ class ClientController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Client $client)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
+        return new ClientResource($client);
     }
 
     /**
@@ -69,9 +54,14 @@ class ClientController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UpdateClientRequest $request, Client $client)
     {
-        //
+        if ($client->update($request->validated())) {
+            $client = $client->fresh();
+            return $this->success("{$client->name} was updated successfully.", new ClientResource($client));
+        }
+
+        return $this->fail();
     }
 
     /**
@@ -80,8 +70,12 @@ class ClientController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Client $client)
     {
-        //
+        if ($client->delete()) {
+            return $this->success("{$client->name} was archived successfully.");
+        }
+
+        return $this->fail();
     }
 }

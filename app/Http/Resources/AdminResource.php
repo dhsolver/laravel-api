@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class TourResource extends JsonResource
+class AdminResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -14,6 +14,6 @@ class TourResource extends JsonResource
      */
     public function toArray($request)
     {
-        return $this->resource->toArray();
+        return parent::toArray($request);
     }
 }

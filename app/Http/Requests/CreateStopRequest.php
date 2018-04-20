@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Requests\Cms;
+namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use App\Tour;
+use App\TourStop;
 use Illuminate\Validation\Rule;
 
-class CreateTourRequest extends FormRequest
+class CreateStopRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -28,13 +28,9 @@ class CreateTourRequest extends FormRequest
         return [
             'title' => 'required|string|max:255|min:3',
             'description' => 'required|string|max:2000|min:3',
-            'pricing_type' => [
+            'location_type' => [
                 'required',
-                Rule::in(Tour::$PRICING_TYPES),
-            ],
-            'type' => [
-                'required',
-                Rule::in(Tour::$TOUR_TYPES),
+                Rule::in(TourStop::$LOCATION_TYPES),
             ],
         ];
     }
