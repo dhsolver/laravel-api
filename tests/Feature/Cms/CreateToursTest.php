@@ -32,6 +32,19 @@ class CreateToursTest extends TestCase
     }
 
     /** @test */
+    public function an_admin_can_create_a_tour()
+    {
+        $this->signIn('admin');
+
+        $tour = make(Tour::class)->toArray();
+
+        $this->json('POST', route('cms.tours.store'), $tour)
+            ->assertStatus(200);
+
+        $this->assertCount(1, Tour::all());
+    }
+
+    /** @test */
     public function a_mobile_user_cannot_create_a_tour()
     {
         $this->signIn('user');

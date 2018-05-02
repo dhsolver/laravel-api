@@ -36,7 +36,7 @@ class TourController extends Controller
     {
         if ($tour = auth()->user()->type->tours()->create($request->validated())) {
             return $this->success("The tour {$tour->title} was created successfully.", new TourResource(
-                $tour->fresh()
+                $tour->fresh()->load('stops')
             ));
         }
 
@@ -51,7 +51,7 @@ class TourController extends Controller
      */
     public function show(Tour $tour)
     {
-        return new TourResource($tour);
+        return new TourResource($tour->load('stops'));
     }
 
     /**
@@ -63,9 +63,12 @@ class TourController extends Controller
      */
     public function update(UpdateTourRequest $request, Tour $tour)
     {
-        if ($tour->update($request->validated())) {
+        $data = $request->validated();
+
+        // $data['video_url'] =
+        if ($tour->update($data)) {
             $tour = $tour->fresh();
-            return $this->success("{$tour->title} was updated successfully.", new TourResource($tour));
+            return $this->success("{$tour->title} was updated successfully.", new TourResource($tour->load('stops')));
         }
 
         return $this->fail();
@@ -99,6 +102,8 @@ class TourController extends Controller
             if ($request->has($key)) {
                 $filename = $this->storeFile($request->file($key), 'images');
                 $tour->update([$key => $filename]);
+
+                return $this->success('Image was uploaded successfully.', new TourResource($tour->fresh()->load('stops')));
             }
         }
 
@@ -107,9 +112,11 @@ class TourController extends Controller
             if ($request->has($key)) {
                 $filename = $this->storeFile($request->file($key), 'audio');
                 $tour->update([$key => $filename]);
+
+                return $this->success('Audio was uploaded successfully.', new TourResource($tour->fresh()->load('stops')));
             }
         }
 
-        return $this->success("{$tour->title} was updated successfully.", new TourResource($tour->fresh()));
+        return $this->fail();
     }
 }

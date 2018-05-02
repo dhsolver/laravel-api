@@ -54,7 +54,7 @@ class TourMediaTest extends TestCase
                 ->size(config('junket.imaging.max_file_size') - 1);
         }
 
-        $resp = $this->json('PUT', $this->tourRoute('media'), [$key => $image]);
+        $resp = $this->json('POST', $this->tourRoute('media'), [$key => $image]);
 
         try {
             $filename = $resp->getData()->data->$key;
@@ -118,7 +118,7 @@ class TourMediaTest extends TestCase
     {
         $this->signIn('client');
 
-        $this->json('PUT', $this->tourRoute('media'), [])
+        $this->json('POST', $this->tourRoute('media'), [])
             ->assertStatus(403);
     }
 

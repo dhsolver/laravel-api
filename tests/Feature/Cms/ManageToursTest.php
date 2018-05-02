@@ -166,16 +166,42 @@ class ManageToursTest extends TestCase
     {
         $this->loginAs($this->client);
 
+        $fb = 'https://facebook.com/test';
+        $ig = 'https://instagram.com/test';
+        $tw = 'https://twitter.com/test';
+
         $this->updateTour([
-            'facebook_url' => 'fb_name',
-            'twitter_url' => 'twitter_name',
-            'instagram_url' => 'insta_name',
+            'facebook_url' => $fb,
+            'twitter_url' => $tw,
+            'instagram_url' => $ig,
         ])->assertStatus(200);
 
         $t = $this->tour->fresh();
-        $this->assertEquals($t->facebook_url, 'fb_name');
-        $this->assertEquals($t->twitter_url, 'twitter_name');
-        $this->assertEquals($t->instagram_url, 'insta_name');
+        $this->assertEquals($t->facebook_url, $fb);
+        $this->assertEquals($t->twitter_url, $tw);
+        $this->assertEquals($t->instagram_url, $ig);
+    }
+
+    /** @test */
+    public function social_urls_must_be_valid()
+    {
+        $this->loginAs($this->client);
+
+        $bad_url = 'test';
+        $this->updateTour([
+            'facebook_url' => $bad_url,
+            'twitter_url' => $bad_url,
+            'instagram_url' => $bad_url,
+        ])->assertStatus(422)
+            ->assertJsonValidationErrors(['facebook_url', 'twitter_url', 'instagram_url']);
+
+        $bad_url = 'https://google.com/test';
+        $this->updateTour([
+            'facebook_url' => $bad_url,
+            'twitter_url' => $bad_url,
+            'instagram_url' => $bad_url,
+        ])->assertStatus(422)
+            ->assertJsonValidationErrors(['facebook_url', 'twitter_url', 'instagram_url']);
     }
 
     /** @test */
@@ -204,11 +230,7 @@ class ManageToursTest extends TestCase
 
         $this->updateTour($data)
             ->assertStatus(422)
-            ->assertJsonFragment(['errors' => [
-                'video_url' => ['The video url format is invalid.'],
-                'start_video_url' => ['The start video url format is invalid.'],
-                'end_video_url' => ['The end video url format is invalid.']
-            ]]);
+            ->assertJsonValidationErrors(['video_url', 'start_video_url', 'end_video_url']);
 
         $url = 'not a url';
         $data = [
@@ -219,11 +241,7 @@ class ManageToursTest extends TestCase
 
         $this->updateTour($data)
             ->assertStatus(422)
-            ->assertJsonFragment(['errors' => [
-                'video_url' => ['The video url format is invalid.'],
-                'start_video_url' => ['The start video url format is invalid.'],
-                'end_video_url' => ['The end video url format is invalid.']
-            ]]);
+            ->assertJsonValidationErrors(['video_url', 'start_video_url', 'end_video_url']);
     }
 
     /** @test */

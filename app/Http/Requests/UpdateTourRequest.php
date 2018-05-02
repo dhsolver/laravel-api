@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use App\Tour;
+use App\Rules\YoutubeVideo;
 
 class UpdateTourRequest extends FormRequest
 {
@@ -42,13 +43,13 @@ class UpdateTourRequest extends FormRequest
             'city' => 'nullable|string|max:100',
             'state' => 'nullable|string|max:2',
             'zipcode' => 'nullable|string|max:12',
-            'facebook_url' => 'nullable|string',
-            'twitter_url' => 'nullable|string',
-            'instagram_url' => 'nullable|string',
+            'facebook_url' => 'nullable|string|regex:/(facebook.com\/[a-zA-Z0-9])/u',
+            'twitter_url' => 'nullable|string|regex:/(twitter.com\/[a-zA-Z0-9])/u',
+            'instagram_url' => 'nullable|string|regex:/(instagram.com\/[a-zA-Z0-9])/u',
 
-            'video_url' => 'nullable|url|regex:/(youtube.com)/u',
-            'start_video_url' => 'nullable|url|regex:/(youtube.com)/u',
-            'end_video_url' => 'nullable|url|regex:/(youtube.com)/u',
+            'video_url' => ['nullable', 'url', new YoutubeVideo],
+            'start_video_url' => ['nullable', 'url', new YoutubeVideo],
+            'end_video_url' => ['nullable', 'url', new YoutubeVideo],
 
             'start_message' => 'nullable|string|max:1000',
             'end_message' => 'nullable|string|max:1000',

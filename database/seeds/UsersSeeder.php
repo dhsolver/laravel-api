@@ -33,11 +33,13 @@ class UsersSeeder extends Seeder
             'password' => bcrypt('qweqwe'),
         ]);
 
-        Client::create([
+        $client = Client::create([
             'email' => 'client@test.com',
             'name' => 'Test Client',
             'password' => bcrypt('qweqwe'),
         ]);
+
+        create(App\Tour::class, ['user_id' => $client->id], 4);
 
         create(Client::class, [], 10);
         create(MobileUser::class, [], 10);

@@ -39,7 +39,7 @@ class TourPolicy
      */
     public function create(User $user)
     {
-        return $user->role == 'client';
+        return $user->hasRole(['client', 'admin', 'superadmin']);
     }
 
     /**

@@ -14,6 +14,7 @@ class TourResource extends JsonResource
      */
     public function toArray($request)
     {
-        return $this->resource->toArray();
+        return array_merge($this->resource->toArray(), [
+        ]);
     }
 }

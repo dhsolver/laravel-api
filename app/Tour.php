@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
+use App\Rules\YoutubeVideo;
 
 class Tour extends Model
 {
@@ -33,7 +34,7 @@ class Tour extends Model
      *
      * @var array
      */
-    protected $appends = ['main_image_path', 'image_1_path', 'image_2_path', 'image_3_path'];
+    protected $appends = ['stops_count', 'main_image_path', 'image_1_path', 'image_2_path', 'image_3_path'];
 
     /**
      * The attributes that should be cast to native types.
@@ -267,5 +268,93 @@ class Tour extends Model
     public function scopeOrdered($query)
     {
         return $query->orderBy('order', 'ASC');
+    }
+
+    /**
+     * Get count on stops relationship
+     *
+     * @return int
+     */
+    public function getStopsCountAttribute()
+    {
+        return $this->stops()->count();
+    }
+
+    /**
+     * Mutator for video_url
+     *
+     * @param [String] $value
+     * @return void
+     */
+    public function setVideoUrlAttribute($value)
+    {
+        $this->attributes['video_url'] = YoutubeVideo::formatUrl($value);
+    }
+
+    /**
+     * Mutator for start_video_url
+     *
+     * @param [String] $value
+     * @return void
+     */
+    public function setStartVideoUrlAttribute($value)
+    {
+        $this->attributes['start_video_url'] = YoutubeVideo::formatUrl($value);
+    }
+
+    /**
+     * Mutator for end_video_url
+     *
+     * @param [String] $value
+     * @return void
+     */
+    public function setEndVideoUrlAttribute($value)
+    {
+        $this->attributes['end_video_url'] = YoutubeVideo::formatUrl($value);
+    }
+
+    /**
+     * Mutator for facebook_url.
+     *
+     * @param [type] $value
+     * @return void
+     */
+    public function setFacebookUrlAttribute($value)
+    {
+        if (!empty($value) && !starts_with($value, ['http:', 'https:'])) {
+            $this->attributes['facebook_url'] = 'https://' . $value;
+        } else {
+            $this->attributes['facebook_url'] = $value;
+        }
+    }
+
+    /**
+     * Mutator for instagram_url.
+     *
+     * @param [type] $value
+     * @return void
+     */
+    public function setInstagramUrlAttribute($value)
+    {
+        if (!empty($value) && !starts_with($value, ['http:', 'https:'])) {
+            $this->attributes['instagram_url'] = 'https://' . $value;
+        } else {
+            $this->attributes['instagram_url'] = $value;
+        }
+    }
+
+    /**
+     * Mutator for twitter_url.
+     *
+     * @param [type] $value
+     * @return void
+     */
+    public function setTwitterUrlAttribute($value)
+    {
+        if (!empty($value) && !starts_with($value, ['http:', 'https:'])) {
+            $this->attributes['twitter_url'] = 'https://' . $value;
+        } else {
+            $this->attributes['twitter_url'] = $value;
+        }
     }
 }
