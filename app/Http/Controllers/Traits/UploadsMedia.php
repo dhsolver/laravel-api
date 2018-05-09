@@ -38,7 +38,8 @@ trait UploadsMedia
      */
     public function storeFile($file, $dir)
     {
-        $filename = $this->generateFilename($file->extension());
+        // $filename = $this->generateFilename($file->extension());
+        $filename = $this->generateFilename('mp3');
 
         if (!\Storage::putFileAs($dir, $file, $filename)) {
             // error saving image -> quit

@@ -66,19 +66,27 @@ class TourMediaTest extends TestCase
     }
 
     /** @test */
-    public function a_user_can_update_a_tours_images()
+    public function a_user_can_add_and_remove_a_tours_images()
     {
-        $this->withoutExceptionHandling();
-
         $this->loginAs($this->client);
 
         foreach (Tour::$imageAttributes as $key) {
+            // upload
             $this->uploadMedia($key, $file)
                ->assertStatus(200);
 
             \Storage::disk('s3')->assertExists($file);
 
             $this->assertNotEmpty($this->tour->fresh()->toArray()[$key]);
+
+            // clear
+            $this->json('DELETE', $this->tourRoute('media.destroy'), [
+                $key => '',
+            ])->assertStatus(200);
+
+            \Storage::disk('s3')->assertMissing($file);
+
+            $this->assertEmpty($this->tour->fresh()->toArray()[$key]);
         }
     }
 
@@ -123,7 +131,7 @@ class TourMediaTest extends TestCase
     }
 
     /** @test */
-    public function the_creator_can_update_a_tours_audio()
+    public function the_creator_can_add_and_remove_a_tours_audio()
     {
         $this->loginAs($this->client);
 
@@ -131,12 +139,22 @@ class TourMediaTest extends TestCase
             ->create('audio.mp3', 5000);
 
         foreach (Tour::$audioAttributes as $key) {
+            // update
             $this->uploadMedia($key, $file, $audioFile)
             ->assertStatus(200);
 
             $this->assertNotEmpty($this->tour->fresh()->$key);
 
             \Storage::disk('s3')->assertExists($file);
+
+            // clear
+            $this->json('DELETE', $this->tourRoute('media.destroy'), [
+                $key => '',
+            ])->assertStatus(200);
+
+            \Storage::disk('s3')->assertMissing($file);
+
+            $this->assertEmpty($this->tour->fresh()->toArray()[$key]);
         }
     }
 

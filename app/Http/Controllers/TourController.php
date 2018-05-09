@@ -119,4 +119,31 @@ class TourController extends Controller
 
         return $this->fail();
     }
+
+    public function destroyMedia(Tour $tour)
+    {
+        // handle image uploads
+        foreach (Tour::$imageAttributes as $key) {
+            if (request()->has($key)) {
+                $file = $tour->toArray()[$key];
+                \Storage::delete($file);
+                $tour->update([$key => null]);
+
+                return $this->success('Image was removed successfully.', new TourResource($tour->fresh()->load('stops')));
+            }
+        }
+
+        // handle audio uploads
+        foreach (Tour::$audioAttributes as $key) {
+            if (request()->has($key)) {
+                $file = $tour->toArray()[$key];
+                \Storage::delete($file);
+                $tour->update([$key => null]);
+
+                return $this->success('Audio was removed successfully.', new TourResource($tour->fresh()->load('stops')));
+            }
+        }
+
+        return $this->fail();
+    }
 }

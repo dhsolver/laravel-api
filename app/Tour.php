@@ -34,7 +34,7 @@ class Tour extends Model
      *
      * @var array
      */
-    protected $appends = ['stops_count', 'main_image_path', 'image_1_path', 'image_2_path', 'image_3_path'];
+    protected $appends = ['stops_count', 'main_image_path', 'image_1_path', 'image_2_path', 'image_3_path', 'trophy_image_path', 'intro_audio_path', 'background_audio_path', 'start_image_path', 'end_image_path'];
 
     /**
      * The attributes that should be cast to native types.
@@ -356,5 +356,33 @@ class Tour extends Model
         } else {
             $this->attributes['twitter_url'] = $value;
         }
+    }
+
+    /**
+     * Returns the full qualified http path for the tour's intro audio.
+     *
+     * @return void
+     */
+    public function getIntroAudioPathAttribute()
+    {
+        if (empty($this->intro_audio)) {
+            return null;
+        }
+
+        return config('filesystems.disks.s3.url') . $this->intro_audio;
+    }
+
+    /**
+     * Returns the full qualified http path for the tour's background audio.
+     *
+     * @return void
+     */
+    public function getBackgroundAudioPathAttribute()
+    {
+        if (empty($this->background_audio)) {
+            return null;
+        }
+
+        return config('filesystems.disks.s3.url') . $this->background_audio;
     }
 }
