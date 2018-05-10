@@ -5,7 +5,6 @@ namespace Tests\Unit;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use App\TourStop;
-use App\Tour;
 
 class TourTest extends TestCase
 {
@@ -27,24 +26,6 @@ class TourTest extends TestCase
         create(TourStop::class, ['tour_id' => $tour->id, 'order' => 5]);
 
         $this->assertEquals(6, $tour->getNextStopOrder());
-    }
-
-    /** @test */
-    public function it_can_determine_all_image_paths()
-    {
-        $client = createUser('client');
-
-        $tour = create('App\Tour', ['user_id' => $client->id]);
-
-        foreach (Tour::$imageAttributes as $key) {
-            $this->assertNull($tour->key);
-
-            $tour->$key = 'test.jpg';
-            $pathAttribute = $key . '_path';
-
-            $this->assertStringStartsWith('http', $tour->$pathAttribute);
-            $this->assertContains('test.jpg', $tour->$pathAttribute);
-        }
     }
 
     /** @test */
