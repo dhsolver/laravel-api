@@ -35,23 +35,23 @@ class CreateToursTable extends Migration
             $table->string('video_url')->nullable();
 
             // media
-            $table->string('intro_audio')->nullable();
-            $table->string('background_audio')->nullable();
+            $table->unsignedInteger('intro_audio')->nullable();
+            $table->unsignedInteger('background_audio')->nullable();
 
-            $table->string('main_image')->nullable();
-            $table->string('image_1')->nullable();
-            $table->string('image_2')->nullable();
-            $table->string('image_3')->nullable();
+            $table->unsignedInteger('main_image')->nullable();
+            $table->unsignedInteger('image_1')->nullable();
+            $table->unsignedInteger('image_2')->nullable();
+            $table->unsignedInteger('image_3')->nullable();
 
-            $table->string('trophy_image')->nullable();
+            $table->unsignedInteger('trophy_image')->nullable();
             $table->boolean('has_prize')->default(false);
             $table->string('prize_details')->nullable();
             $table->string('prize_instructions')->nullable();
 
-            $table->string('start_image')->nullable();
+            $table->unsignedInteger('start_image')->nullable();
             $table->string('start_message', 1000)->nullable();
             $table->string('start_video_url')->nullable();
-            $table->string('end_image')->nullable();
+            $table->unsignedInteger('end_image')->nullable();
             $table->string('end_message', 1000)->nullable();
             $table->string('end_video_url')->nullable();
 
