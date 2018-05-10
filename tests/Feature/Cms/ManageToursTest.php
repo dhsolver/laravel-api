@@ -6,6 +6,7 @@ use Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\Concerns\AttachJwtToken;
 use App\Tour;
+use App\Media;
 
 class ManageToursTest extends TestCase
 {
@@ -318,5 +319,34 @@ class ManageToursTest extends TestCase
         $this->updateTour(['end_point' => $stop->id])
             ->assertStatus(422)
             ->assertJsonValidationErrors('end_point');
+    }
+
+    /** @test */
+    public function tour_media_can_be_updated()
+    {
+        $this->loginAs($this->client);
+
+        $media = Media::create([
+            'file' => 'images/test.jpg',
+            'user_id' => $this->client->id,
+        ]);
+
+        $data = [
+            'main_image_id' => '' . $media->id,
+            'start_image_id' => '' . $media->id,
+            'end_image_id' => '' . $media->id,
+            'trophy_image_id' => '' . $media->id,
+            'image1_id' => '' . $media->id,
+            'image2_id' => '' . $media->id,
+            'image3_id' => '' . $media->id,
+            'intro_audio_id' => '' . $media->id,
+            'background_audio_id' => '' . $media->id,
+        ];
+
+        $this->updateTour($data)
+            ->assertStatus(200)
+            ->assertJsonFragment($data);
+
+        $this->assertEquals('images/test.jpg', $this->tour->fresh()->mainImage->file);
     }
 }

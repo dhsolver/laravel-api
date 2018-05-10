@@ -39,9 +39,9 @@ class CreateTourStopsTable extends Migration
             $table->string('audio')->nullable();
 
             $table->string('main_image')->nullable();
-            $table->string('image_1')->nullable();
-            $table->string('image_2')->nullable();
-            $table->string('image_3')->nullable();
+            $table->string('image1')->nullable();
+            $table->string('image2')->nullable();
+            $table->string('image3')->nullable();
 
             $table->string('video_url')->nullable();
 

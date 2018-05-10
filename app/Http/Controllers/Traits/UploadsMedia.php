@@ -36,10 +36,9 @@ trait UploadsMedia
      * @param [type] $dir
      * @return void
      */
-    public function storeFile($file, $dir)
+    public function storeFile($file, $dir, $ext = null)
     {
-        // $filename = $this->generateFilename($file->extension());
-        $filename = $this->generateFilename('mp3');
+        $filename = $this->generateFilename($ext ? $ext : $file->extension());
 
         if (!\Storage::putFileAs($dir, $file, $filename)) {
             // error saving image -> quit

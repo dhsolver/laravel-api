@@ -34,29 +34,28 @@ class CreateToursTable extends Migration
             $table->string('instagram_url')->nullable();
             $table->string('video_url')->nullable();
 
-            // media
-            $table->string('intro_audio')->nullable();
-            $table->string('background_audio')->nullable();
-
-            $table->string('main_image')->nullable();
-            $table->string('image_1')->nullable();
-            $table->string('image_2')->nullable();
-            $table->string('image_3')->nullable();
-
-            $table->string('trophy_image')->nullable();
             $table->boolean('has_prize')->default(false);
             $table->string('prize_details')->nullable();
             $table->string('prize_instructions')->nullable();
 
-            $table->string('start_image')->nullable();
             $table->string('start_message', 1000)->nullable();
             $table->string('start_video_url')->nullable();
-            $table->string('end_image')->nullable();
             $table->string('end_message', 1000)->nullable();
             $table->string('end_video_url')->nullable();
 
             $table->unsignedInteger('start_point')->nullable();
             $table->unsignedInteger('end_point')->nullable();
+
+            // media
+            $table->unsignedInteger('intro_audio_id')->nullable();
+            $table->unsignedInteger('background_audio_id')->nullable();
+            $table->unsignedInteger('main_image_id')->nullable();
+            $table->unsignedInteger('image1_id')->nullable();
+            $table->unsignedInteger('image2_id')->nullable();
+            $table->unsignedInteger('image3_id')->nullable();
+            $table->unsignedInteger('trophy_image_id')->nullable();
+            $table->unsignedInteger('start_image_id')->nullable();
+            $table->unsignedInteger('end_image_id')->nullable();
 
             $table->datetime('published_at')->nullable();
 

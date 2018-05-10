@@ -43,7 +43,7 @@ class TourStop extends Model
      *
      * @var array
      */
-    public static $imageAttributes = ['main_image', 'image_1', 'image_2', 'image_3'];
+    public static $imageAttributes = ['main_image', 'image1', 'image2', 'image3'];
 
     /**
      * Defines the attributes that are images.

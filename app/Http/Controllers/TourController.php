@@ -8,7 +8,6 @@ use App\Http\Requests\CreateTourRequest;
 use App\Http\Requests\UpdateTourRequest;
 use App\Http\Resources\TourCollection;
 use App\Http\Controllers\Traits\UploadsMedia;
-use App\Http\Requests\UploadTourMediaRequest;
 
 class TourController extends Controller
 {
@@ -85,65 +84,6 @@ class TourController extends Controller
         if ($tour->delete()) {
             return $this->success("{$tour->title} was archived successfully.");
         }
-        return $this->fail();
-    }
-
-    /**
-     * Handles all media uploads.
-     *
-     * @param UploadTourMediaRequest $request
-     * @param Tour $tour
-     * @return mixed
-     */
-    public function uploadMedia(UploadTourMediaRequest $request, Tour $tour)
-    {
-        // handle image uploads
-        foreach (Tour::$imageAttributes as $key) {
-            if ($request->has($key)) {
-                $filename = $this->storeFile($request->file($key), 'images');
-                $tour->update([$key => $filename]);
-
-                return $this->success('Image was uploaded successfully.', new TourResource($tour->fresh()->load('stops')));
-            }
-        }
-
-        // handle audio uploads
-        foreach (Tour::$audioAttributes as $key) {
-            if ($request->has($key)) {
-                $filename = $this->storeFile($request->file($key), 'audio');
-                $tour->update([$key => $filename]);
-
-                return $this->success('Audio was uploaded successfully.', new TourResource($tour->fresh()->load('stops')));
-            }
-        }
-
-        return $this->fail();
-    }
-
-    public function destroyMedia(Tour $tour)
-    {
-        // handle image uploads
-        foreach (Tour::$imageAttributes as $key) {
-            if (request()->has($key)) {
-                $file = $tour->toArray()[$key];
-                \Storage::delete($file);
-                $tour->update([$key => null]);
-
-                return $this->success('Image was removed successfully.', new TourResource($tour->fresh()->load('stops')));
-            }
-        }
-
-        // handle audio uploads
-        foreach (Tour::$audioAttributes as $key) {
-            if (request()->has($key)) {
-                $file = $tour->toArray()[$key];
-                \Storage::delete($file);
-                $tour->update([$key => null]);
-
-                return $this->success('Audio was removed successfully.', new TourResource($tour->fresh()->load('stops')));
-            }
-        }
-
         return $this->fail();
     }
 }
