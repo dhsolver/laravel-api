@@ -336,9 +336,9 @@ class ManageToursTest extends TestCase
             'start_image_id' => '' . $media->id,
             'end_image_id' => '' . $media->id,
             'trophy_image_id' => '' . $media->id,
-            'image_1_id' => '' . $media->id,
-            'image_2_id' => '' . $media->id,
-            'image_3_id' => '' . $media->id,
+            'image1_id' => '' . $media->id,
+            'image2_id' => '' . $media->id,
+            'image3_id' => '' . $media->id,
             'intro_audio_id' => '' . $media->id,
             'background_audio_id' => '' . $media->id,
         ];

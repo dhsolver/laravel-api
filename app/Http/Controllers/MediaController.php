@@ -21,7 +21,7 @@ class MediaController extends Controller
         if ($request->has('image')) {
             $filename = $this->storeFile($request->file('image'), 'images');
         } elseif ($request->has('audio')) {
-            $filename = $this->storeFile($request->file('audio'), 'audio');
+            $filename = $this->storeFile($request->file('audio'), 'audio', 'mp3');
         } else {
             return $this->fail();
         }

@@ -57,7 +57,7 @@ class Tour extends Model
      *
      * @var array
      */
-    public static $imageAttributes = ['main_image', 'image_1', 'image_2', 'image_3', 'trophy_image', 'start_image', 'end_image'];
+    public static $imageAttributes = ['main_image', 'image1', 'image2', 'image3', 'trophy_image', 'start_image', 'end_image'];
 
     /**
      * Defines the attributes that are images.
@@ -274,17 +274,17 @@ class Tour extends Model
 
     public function image1()
     {
-        return $this->hasOne(Media::class, 'id', 'image_1_id');
+        return $this->hasOne(Media::class, 'id', 'image1_id');
     }
 
     public function image2()
     {
-        return $this->hasOne(Media::class, 'id', 'image_2_id');
+        return $this->hasOne(Media::class, 'id', 'image2_id');
     }
 
     public function image3()
     {
-        return $this->hasOne(Media::class, 'id', 'image_3_id');
+        return $this->hasOne(Media::class, 'id', 'image3_id');
     }
 
     public function startImage()

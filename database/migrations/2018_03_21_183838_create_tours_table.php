@@ -50,9 +50,9 @@ class CreateToursTable extends Migration
             $table->unsignedInteger('intro_audio_id')->nullable();
             $table->unsignedInteger('background_audio_id')->nullable();
             $table->unsignedInteger('main_image_id')->nullable();
-            $table->unsignedInteger('image_1_id')->nullable();
-            $table->unsignedInteger('image_2_id')->nullable();
-            $table->unsignedInteger('image_3_id')->nullable();
+            $table->unsignedInteger('image1_id')->nullable();
+            $table->unsignedInteger('image2_id')->nullable();
+            $table->unsignedInteger('image3_id')->nullable();
             $table->unsignedInteger('trophy_image_id')->nullable();
             $table->unsignedInteger('start_image_id')->nullable();
             $table->unsignedInteger('end_image_id')->nullable();
