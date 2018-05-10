@@ -72,6 +72,16 @@ class UpdateTourRequest extends FormRequest
                     $query->where('tour_id', $this->route('tour')->id);
                 }),
             ],
+
+            'main_image_id' => 'nullable|integer|exists:media,id',
+            'start_image_id' => 'nullable|integer|exists:media,id',
+            'end_image_id' => 'nullable|integer|exists:media,id',
+            'image_1_id' => 'nullable|integer|exists:media,id',
+            'image_2_id' => 'nullable|integer|exists:media,id',
+            'image_3_id' => 'nullable|integer|exists:media,id',
+            'trophy_image_id' => 'nullable|integer|exists:media,id',
+            'intro_audio_id' => 'nullable|integer|exists:media,id',
+            'background_audio_id' => 'nullable|integer|exists:media,id',
         ];
     }
 }

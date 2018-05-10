@@ -34,7 +34,14 @@ class Tour extends Model
      *
      * @var array
      */
-    protected $appends = ['stops_count', 'main_image_path', 'image_1_path', 'image_2_path', 'image_3_path', 'trophy_image_path', 'intro_audio_path', 'background_audio_path', 'start_image_path', 'end_image_path'];
+    protected $appends = ['stops_count'];
+
+    /**
+     * Relationships to always load.
+     *
+     * @var array
+     */
+    protected $with = ['image1', 'image2', 'image3', 'mainImage', 'startImage', 'endImage', 'introAudio', 'backgroundAudio'];
 
     /**
      * The attributes that should be cast to native types.
@@ -97,104 +104,6 @@ class Tour extends Model
         TourStop::where('tour_id', $this->id)
             ->where('order', '>=', $order)
             ->increment('order');
-    }
-
-    /**
-     * Returns the full qualified http path for the tour's main image.
-     *
-     * @return void
-     */
-    public function getMainImagePathAttribute()
-    {
-        if (empty($this->main_image)) {
-            return null;
-        }
-
-        return config('filesystems.disks.s3.url') . $this->main_image;
-    }
-
-    /**
-     * Returns the full qualified http path for the tour's first image.
-     *
-     * @return void
-     */
-    public function getImage1PathAttribute()
-    {
-        if (empty($this->image_1)) {
-            return null;
-        }
-
-        return config('filesystems.disks.s3.url') . $this->image_1;
-    }
-
-    /**
-     * Returns the full qualified http path for the tour's second image.
-     *
-     * @return void
-     */
-    public function getImage2PathAttribute()
-    {
-        if (empty($this->image_2)) {
-            return null;
-        }
-
-        return config('filesystems.disks.s3.url') . $this->image_2;
-    }
-
-    /**
-     * Returns the full qualified http path for the tour's third image.
-     *
-     * @return void
-     */
-    public function getImage3PathAttribute()
-    {
-        if (empty($this->image_3)) {
-            return null;
-        }
-
-        return config('filesystems.disks.s3.url') . $this->image_3;
-    }
-
-    /**
-     * Returns the full qualified http path for the tour's trophy image.
-     *
-     * @return void
-     */
-    public function getTrophyImagePathAttribute()
-    {
-        if (empty($this->trophy_image)) {
-            return null;
-        }
-
-        return config('filesystems.disks.s3.url') . $this->trophy_image;
-    }
-
-    /**
-     * Returns the full qualified http path for the tour's start image.
-     *
-     * @return void
-     */
-    public function getStartImagePathAttribute()
-    {
-        if (empty($this->start_image)) {
-            return null;
-        }
-
-        return config('filesystems.disks.s3.url') . $this->start_image;
-    }
-
-    /**
-     * Returns the full qualified http path for the tour's third image.
-     *
-     * @return void
-     */
-    public function getEndImagePathAttribute()
-    {
-        if (empty($this->end_image)) {
-            return null;
-        }
-
-        return config('filesystems.disks.s3.url') . $this->end_image;
     }
 
     /**
@@ -358,31 +267,43 @@ class Tour extends Model
         }
     }
 
-    /**
-     * Returns the full qualified http path for the tour's intro audio.
-     *
-     * @return void
-     */
-    public function getIntroAudioPathAttribute()
+    public function mainImage()
     {
-        if (empty($this->intro_audio)) {
-            return null;
-        }
-
-        return config('filesystems.disks.s3.url') . $this->intro_audio;
+        return $this->hasOne(Media::class, 'id', 'main_image_id');
     }
 
-    /**
-     * Returns the full qualified http path for the tour's background audio.
-     *
-     * @return void
-     */
-    public function getBackgroundAudioPathAttribute()
+    public function image1()
     {
-        if (empty($this->background_audio)) {
-            return null;
-        }
+        return $this->hasOne(Media::class, 'id', 'image_1_id');
+    }
 
-        return config('filesystems.disks.s3.url') . $this->background_audio;
+    public function image2()
+    {
+        return $this->hasOne(Media::class, 'id', 'image_2_id');
+    }
+
+    public function image3()
+    {
+        return $this->hasOne(Media::class, 'id', 'image_3_id');
+    }
+
+    public function startImage()
+    {
+        return $this->hasOne(Media::class, 'id', 'start_image_id');
+    }
+
+    public function endImage()
+    {
+        return $this->hasOne(Media::class, 'id', 'end_image_id');
+    }
+
+    public function introAudio()
+    {
+        return $this->hasOne(Media::class, 'id', 'intro_audio_id');
+    }
+
+    public function backgroundAudio()
+    {
+        return $this->hasOne(Media::class, 'id', 'background_audio_id');
     }
 }
