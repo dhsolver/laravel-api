@@ -23,7 +23,7 @@ class CreateTourStopsTable extends Migration
             $table->string('description', 2000);
 
             // location
-            $table->string('location_type', 10); // map/address/gps
+            $table->string('location_type', 10)->default('gps'); // map/address/gps
 
             $table->string('address1')->nullable();
             $table->string('address2')->nullable();

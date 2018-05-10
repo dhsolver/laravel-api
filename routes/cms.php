@@ -14,12 +14,9 @@ Route::middleware(['jwt.auth', 'role:client|admin|superadmin'])->group(function 
     Route::get('tours/{tour}', 'TourController@show')->name('cms.tours.show')->middleware(['can:view,tour']);
     Route::patch('tours/{tour}', 'TourController@update')->name('cms.tours.update')->middleware(['can:update,tour']);
     Route::delete('tours/{tour}', 'TourController@destroy')->name('cms.tours.destroy')->middleware(['can:delete,tour']);
-    Route::post('tours/{tour}/media', 'TourController@uploadMedia')->name('cms.tours.media')->middleware(['can:update,tour']);
-    Route::delete('tours/{tour}/media', 'TourController@destroyMedia')->name('cms.tours.media.destroy')->middleware(['can:update,tour']);
 
     Route::resource('tours/{tour}/stops', 'StopController', ['as' => 'cms'])->middleware(['can:update,tour']);
     Route::put('tours/{tour}/stops/{stop}/order', 'StopController@changeOrder')->name('cms.stops.order')->middleware(['can:update,tour']);
-    Route::put('tours/{tour}/stops/{stop}', 'StopController@uploadMedia')->name('cms.stops.media')->middleware(['can:update,tour']);
 
     Route::post('media/upload', 'MediaController@store')->middleware(['can:create,App\Media'])->name('cms.media');
 });

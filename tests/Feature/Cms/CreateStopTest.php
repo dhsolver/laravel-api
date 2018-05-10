@@ -52,14 +52,14 @@ class CreateStopTest extends TestCase
     }
 
     /** @test */
-    public function a_stop_requires_a_title_description_and_type()
+    public function a_stop_requires_a_title_and_description()
     {
         $this->loginAs($this->client);
 
-        unset($this->stop['title'], $this->stop['description'], $this->stop['location_type']);
+        unset($this->stop['title'], $this->stop['description']); //, $this->stop['location_type']);
 
         $this->publishStop()
             ->assertStatus(422)
-            ->assertJsonValidationErrors(['title', 'description', 'location_type']);
+            ->assertJsonValidationErrors(['title', 'description']); //, 'location_type']);
     }
 }

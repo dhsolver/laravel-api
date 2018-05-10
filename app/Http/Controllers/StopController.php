@@ -8,7 +8,6 @@ use App\Http\Resources\StopResource;
 use App\TourStop;
 use App\Http\Resources\StopCollection;
 use App\Http\Requests\UpdateStopRequest;
-use App\Http\Requests\UploadStopMediaRequest;
 use App\Http\Controllers\Traits\UploadsMedia;
 
 class StopController extends Controller
@@ -120,34 +119,5 @@ class StopController extends Controller
         }
 
         return $this->fail();
-    }
-
-    /**
-     * Handles all media uploads.
-     *
-     * @param UploadStopMediaRequest $request
-     * @param Tour $tour
-     * @param TourStop $stop
-     * @return StopResource
-     */
-    public function uploadMedia(UploadStopMediaRequest $request, Tour $tour, TourStop $stop)
-    {
-        // handle image uploads
-        foreach (TourStop::$imageAttributes as $key) {
-            if ($request->has($key)) {
-                $filename = $this->storeFile($request->file($key), 'images');
-                $stop->update([$key => $filename]);
-            }
-        }
-
-        // handle audio uploads
-        foreach (TourStop::$audioAttributes as $key) {
-            if ($request->has($key)) {
-                $filename = $this->storeFile($request->file($key), 'audio');
-                $stop->update([$key => $filename]);
-            }
-        }
-
-        return $this->success("{$stop->title} was updated successfully.", new StopResource($stop->fresh()));
     }
 }

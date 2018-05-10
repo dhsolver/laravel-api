@@ -78,15 +78,15 @@ class ManageStopTest extends TestCase
     }
 
     /** @test */
-    public function a_stop_requires_a_title_description_and_type_to_be_updated()
+    public function a_stop_requires_a_title_and_description_to_be_updated()
     {
         $this->loginAs($this->client);
 
-        unset($this->stop['title'], $this->stop['description'], $this->stop['location_type']);
+        unset($this->stop['title'], $this->stop['description']); //, $this->stop['location_type']);
 
         $this->updateStop($this->stop->toArray())
             ->assertStatus(422)
-            ->assertJsonValidationErrors(['title', 'description', 'location_type']);
+            ->assertJsonValidationErrors(['title', 'description']); //, 'location_type']);
     }
 
     /** @test */
