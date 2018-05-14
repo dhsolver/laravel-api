@@ -25,7 +25,7 @@ class TourStop extends Model
      *
      * @var array
      */
-    public $with = ['choices'];
+    public $with = ['choices', 'image1', 'image2', 'image3', 'mainImage', 'audio'];
 
     /**
      * The attributes that should be cast to native types.
@@ -37,20 +37,6 @@ class TourStop extends Model
         'latitude' => 'float',
         'longitude' => 'float',
     ];
-
-    /**
-     * Defines the attributes that are images.
-     *
-     * @var array
-     */
-    public static $imageAttributes = ['main_image', 'image1', 'image2', 'image3'];
-
-    /**
-     * Defines the attributes that are images.
-     *
-     * @var array
-     */
-    public static $audioAttributes = ['audio'];
 
     /**
      * Returns the relationship of the tour that the stop belongs to.
@@ -112,5 +98,30 @@ class TourStop extends Model
         }
 
         return true;
+    }
+
+    public function mainImage()
+    {
+        return $this->hasOne(Media::class, 'id', 'main_image_id');
+    }
+
+    public function image1()
+    {
+        return $this->hasOne(Media::class, 'id', 'image1_id');
+    }
+
+    public function image2()
+    {
+        return $this->hasOne(Media::class, 'id', 'image2_id');
+    }
+
+    public function image3()
+    {
+        return $this->hasOne(Media::class, 'id', 'image3_id');
+    }
+
+    public function audio()
+    {
+        return $this->hasOne(Media::class, 'id', 'audio_id');
     }
 }

@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use App\TourStop;
 use Illuminate\Validation\Rule;
+use App\Rules\YoutubeVideo;
 
 class UpdateStopRequest extends FormRequest
 {
@@ -58,6 +59,13 @@ class UpdateStopRequest extends FormRequest
                         ->where('id', '<>', $this->route('stop')->id);
                 }),
             ],
+
+            'video_url' => ['nullable', 'url', new YoutubeVideo],
+            'main_image_id' => 'nullable|integer|exists:media,id',
+            'image1_id' => 'nullable|integer|exists:media,id',
+            'image2_id' => 'nullable|integer|exists:media,id',
+            'image3_id' => 'nullable|integer|exists:media,id',
+            'audio_id' => 'nullable|integer|exists:media,id',
         ];
     }
 }

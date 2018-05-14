@@ -7,6 +7,7 @@ use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\Concerns\AttachJwtToken;
 use App\TourStop;
 use App\StopChoice;
+use App\Media;
 
 class ManageStopTest extends TestCase
 {
@@ -495,5 +496,30 @@ class ManageStopTest extends TestCase
         $resp = $this->updateStop($data)
             ->assertStatus(422)
             ->assertJsonValidationErrors(['choices.0.next_stop_id']);
+    }
+
+    /** @test */
+    public function stop_media_can_be_updated()
+    {
+        $this->loginAs($this->client);
+
+        $media = Media::create([
+            'file' => 'images/test.jpg',
+            'user_id' => $this->client->id,
+        ]);
+
+        $data = [
+            'main_image_id' => '' . $media->id,
+            'image1_id' => '' . $media->id,
+            'image2_id' => '' . $media->id,
+            'image3_id' => '' . $media->id,
+            'audio_id' => '' . $media->id,
+        ];
+
+        $this->updateStop($data)
+            ->assertStatus(200)
+            ->assertJsonFragment($data);
+
+        $this->assertEquals('images/test.jpg', $this->stop->fresh()->mainImage->file);
     }
 }

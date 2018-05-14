@@ -8,12 +8,9 @@ use App\Http\Resources\StopResource;
 use App\TourStop;
 use App\Http\Resources\StopCollection;
 use App\Http\Requests\UpdateStopRequest;
-use App\Http\Controllers\Traits\UploadsMedia;
 
 class StopController extends Controller
 {
-    use UploadsMedia;
-
     /**
      * Lists all stops for a given tour.
      *
@@ -71,11 +68,11 @@ class StopController extends Controller
      */
     public function update(UpdateStopRequest $request, Tour $tour, TourStop $stop)
     {
-        $stop->update(array_except($request->validated(), ['choices']));
-
-        $stop->updateChoices($request->choices);
-
-        return $this->success("{$stop->title} was updated successfully.", $stop->fresh());
+        if ($stop->update(array_except($request->validated(), ['choices']))) {
+            $stop->updateChoices($request->choices);
+            $stop = $stop->fresh();
+            return $this->success("{$stop->title} was updated successfully.", new StopResource($stop));
+        }
     }
 
     /**

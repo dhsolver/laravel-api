@@ -35,13 +35,11 @@ class CreateTourStopsTable extends Migration
             $table->decimal('longitude', 11, 8)->nullable();
 
             // media
-            // $table->string('play_radius');
-            $table->string('audio')->nullable();
-
-            $table->string('main_image')->nullable();
-            $table->string('image1')->nullable();
-            $table->string('image2')->nullable();
-            $table->string('image3')->nullable();
+            $table->unsignedInteger('audio_id')->nullable();
+            $table->unsignedInteger('main_image_id')->nullable();
+            $table->unsignedInteger('image1_id')->nullable();
+            $table->unsignedInteger('image2_id')->nullable();
+            $table->unsignedInteger('image3_id')->nullable();
 
             $table->string('video_url')->nullable();
 

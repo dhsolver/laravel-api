@@ -53,20 +53,6 @@ class Tour extends Model
     ];
 
     /**
-     * Defines the attributes that are images.
-     *
-     * @var array
-     */
-    public static $imageAttributes = ['main_image', 'image1', 'image2', 'image3', 'trophy_image', 'start_image', 'end_image'];
-
-    /**
-     * Defines the attributes that are images.
-     *
-     * @var array
-     */
-    public static $audioAttributes = ['intro_audio', 'background_audio'];
-
-    /**
      * Defines the relatioship of all the tours stops
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany

@@ -7,12 +7,9 @@ use App\Tour;
 use App\Http\Requests\CreateTourRequest;
 use App\Http\Requests\UpdateTourRequest;
 use App\Http\Resources\TourCollection;
-use App\Http\Controllers\Traits\UploadsMedia;
 
 class TourController extends Controller
 {
-    use UploadsMedia;
-
     /**
      * Display a listing of the resource.
      *
