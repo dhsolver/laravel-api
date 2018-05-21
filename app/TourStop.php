@@ -78,13 +78,12 @@ class TourStop extends Model
      */
     public function updateChoices($newChoices)
     {
-        if (empty($newChoices)) {
+        if (!is_array($newChoices)) {
             return false;
         }
 
         $choices = collect($newChoices);
         $ids = $choices->pluck('id');
-
         $this->choices()->whereNotIn('id', $ids)->delete();
 
         foreach ($newChoices as $data) {
