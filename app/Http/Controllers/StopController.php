@@ -8,6 +8,7 @@ use App\Http\Resources\StopResource;
 use App\TourStop;
 use App\Http\Resources\StopCollection;
 use App\Http\Requests\UpdateStopRequest;
+use App\StopChoice;
 
 class StopController extends Controller
 {
@@ -84,6 +85,10 @@ class StopController extends Controller
      */
     public function destroy(Tour $tour, TourStop $stop)
     {
+        if (StopChoice::where('next_stop_id', $stop->id)->count() > 0) {
+            return $this->fail(422, 'You cannot delete this stop because it is referenced in another stops destination points');
+        }
+
         if ($stop->delete()) {
             return $this->success("{$stop->title} was archived successfully.");
         }
