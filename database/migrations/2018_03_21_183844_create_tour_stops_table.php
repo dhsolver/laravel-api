@@ -22,18 +22,6 @@ class CreateTourStopsTable extends Migration
             $table->string('title', 255);
             $table->string('description', 2000);
 
-            // location
-            $table->string('location_type', 10)->default('gps'); // map/address/gps
-
-            $table->string('address1')->nullable();
-            $table->string('address2')->nullable();
-            $table->string('city', 100)->nullable();
-            $table->string('state', 2)->nullable();
-            $table->string('zipcode', 12)->nullable();
-
-            $table->decimal('latitude', 10, 8)->nullable();
-            $table->decimal('longitude', 11, 8)->nullable();
-
             // media
             $table->unsignedInteger('audio_id')->nullable();
             $table->unsignedInteger('main_image_id')->nullable();
@@ -50,8 +38,6 @@ class CreateTourStopsTable extends Migration
 
             $table->timestamps();
             $table->softDeletes();
-
-            // $table->unique(['tour_id', 'order']);
         });
     }
 

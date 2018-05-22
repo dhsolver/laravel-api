@@ -56,10 +56,10 @@ class CreateStopTest extends TestCase
     {
         $this->loginAs($this->client);
 
-        unset($this->stop['title'], $this->stop['description']); //, $this->stop['location_type']);
+        unset($this->stop['title'], $this->stop['description']);
 
         $this->publishStop()
             ->assertStatus(422)
-            ->assertJsonValidationErrors(['title', 'description']); //, 'location_type']);
+            ->assertJsonValidationErrors(['title', 'description']);
     }
 }

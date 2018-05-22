@@ -41,7 +41,7 @@ class Tour extends Model
      *
      * @var array
      */
-    protected $with = ['image1', 'image2', 'image3', 'mainImage', 'startImage', 'endImage', 'trophyImage', 'introAudio', 'backgroundAudio'];
+    protected $with = ['location', 'image1', 'image2', 'image3', 'mainImage', 'startImage', 'endImage', 'trophyImage', 'introAudio', 'backgroundAudio'];
 
     /**
      * The attributes that should be cast to native types.
@@ -51,6 +51,39 @@ class Tour extends Model
     protected $casts = [
         'has_prize' => 'bool',
     ];
+
+    /**
+     * Handles the model boot options.
+     *
+     * @return void
+     */
+    protected static function boot()
+    {
+        // always attach a location when a Tour is created.
+        static::created(function ($model) {
+            $model->location()->create([
+                'locationable_id' => $model->id,
+                'locationable_type' => 'App\Tour',
+            ]);
+        });
+
+        parent::boot();
+    }
+
+    // **********************************************************
+    // RELATIONSHIPS
+    // **********************************************************
+
+    /**
+     * Defines the location relationship.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function location()
+    {
+        return $this->hasOne('App\Location', 'locationable_id', 'id')
+            ->where('locationable_type', 'App\Tour');
+    }
 
     /**
      * Defines the relatioship of all the tours stops
@@ -63,34 +96,54 @@ class Tour extends Model
             ->ordered();
     }
 
-    /**
-     * Returns the next free number in the order sequence
-     * for the Tour's stops.
-     *
-     * @return void
-     */
-    public function getNextStopOrder()
+    public function mainImage()
     {
-        return $this->stops()
-            ->select(\DB::raw('coalesce(max(`order`), 0) as max_order'))
-            ->get()
-            ->first()
-            ->max_order + 1;
+        return $this->hasOne(Media::class, 'id', 'main_image_id');
     }
 
-    /**
-     * Increases the order at the given index for all stops
-     * that belong to this tour.
-     *
-     * @param [type] $order
-     * @return void
-     */
-    public function increaseOrderAt($order)
+    public function image1()
     {
-        TourStop::where('tour_id', $this->id)
-            ->where('order', '>=', $order)
-            ->increment('order');
+        return $this->hasOne(Media::class, 'id', 'image1_id');
     }
+
+    public function image2()
+    {
+        return $this->hasOne(Media::class, 'id', 'image2_id');
+    }
+
+    public function image3()
+    {
+        return $this->hasOne(Media::class, 'id', 'image3_id');
+    }
+
+    public function startImage()
+    {
+        return $this->hasOne(Media::class, 'id', 'start_image_id');
+    }
+
+    public function endImage()
+    {
+        return $this->hasOne(Media::class, 'id', 'end_image_id');
+    }
+
+    public function trophyImage()
+    {
+        return $this->hasOne(Media::class, 'id', 'trophy_image_id');
+    }
+
+    public function introAudio()
+    {
+        return $this->hasOne(Media::class, 'id', 'intro_audio_id');
+    }
+
+    public function backgroundAudio()
+    {
+        return $this->hasOne(Media::class, 'id', 'background_audio_id');
+    }
+
+    // **********************************************************
+    // MUTATORS
+    // **********************************************************
 
     /**
      * Returns the full facebook url.
@@ -135,16 +188,6 @@ class Tour extends Model
     }
 
     /**
-     * Publishes the tour.
-     *
-     * @return void
-     */
-    public function publish()
-    {
-        $this->update(['published_at' => Carbon::now()]);
-    }
-
-    /**
      * Gets whether the tour has been publishes or not.
      *
      * @return void
@@ -152,27 +195,6 @@ class Tour extends Model
     public function getIsPublishedAttribute()
     {
         return !empty($this->published_at);
-    }
-
-    /**
-     * Defines the default ordering for stops using order column.
-     *
-     * @param [type] $query
-     * @return void
-     */
-    public function scopeOrdered($query)
-    {
-        return $query->orderBy('order', 'ASC');
-    }
-
-    /**
-     * Get count on stops relationship
-     *
-     * @return int
-     */
-    public function getStopsCountAttribute()
-    {
-        return $this->stops()->count();
     }
 
     /**
@@ -253,48 +275,71 @@ class Tour extends Model
         }
     }
 
-    public function mainImage()
+    /**
+     * Get count on stops relationship
+     *
+     * @return int
+     */
+    public function getStopsCountAttribute()
     {
-        return $this->hasOne(Media::class, 'id', 'main_image_id');
+        return $this->stops()->count();
     }
 
-    public function image1()
+    // **********************************************************
+    // QUERY SCOPES
+    // **********************************************************
+
+    /**
+     * Defines the default ordering for stops using order column.
+     *
+     * @param [type] $query
+     * @return void
+     */
+    public function scopeOrdered($query)
     {
-        return $this->hasOne(Media::class, 'id', 'image1_id');
+        return $query->orderBy('order', 'ASC');
     }
 
-    public function image2()
+    // **********************************************************
+    // OTHER METHODS
+    // **********************************************************
+
+    /**
+     * Publishes the tour.
+     *
+     * @return void
+     */
+    public function publish()
     {
-        return $this->hasOne(Media::class, 'id', 'image2_id');
+        $this->update(['published_at' => Carbon::now()]);
     }
 
-    public function image3()
+    /**
+     * Returns the next free number in the order sequence
+     * for the Tour's stops.
+     *
+     * @return void
+     */
+    public function getNextStopOrder()
     {
-        return $this->hasOne(Media::class, 'id', 'image3_id');
+        return $this->stops()
+            ->select(\DB::raw('coalesce(max(`order`), 0) as max_order'))
+            ->get()
+            ->first()
+            ->max_order + 1;
     }
 
-    public function startImage()
+    /**
+     * Increases the order at the given index for all stops
+     * that belong to this tour.
+     *
+     * @param [type] $order
+     * @return void
+     */
+    public function increaseOrderAt($order)
     {
-        return $this->hasOne(Media::class, 'id', 'start_image_id');
-    }
-
-    public function endImage()
-    {
-        return $this->hasOne(Media::class, 'id', 'end_image_id');
-    }
-
-    public function trophyImage()
-    {
-        return $this->hasOne(Media::class, 'id', 'trophy_image_id');
-    }
-
-    public function introAudio()
-    {
-        return $this->hasOne(Media::class, 'id', 'intro_audio_id');
-    }
-
-    public function backgroundAudio()
-    {
-        return $this->hasOne(Media::class, 'id', 'background_audio_id');
+        TourStop::where('tour_id', $this->id)
+            ->where('order', '>=', $order)
+            ->increment('order');
     }
 }

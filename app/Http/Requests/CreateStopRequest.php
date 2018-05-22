@@ -28,10 +28,6 @@ class CreateStopRequest extends FormRequest
         return [
             'title' => 'required|string|max:255|min:3',
             'description' => 'required|string|max:2000|min:3',
-            // 'location_type' => [
-            //     'required',
-            //     Rule::in(TourStop::$LOCATION_TYPES),
-            // ],
         ];
     }
 }

@@ -83,11 +83,11 @@ class ManageStopTest extends TestCase
     {
         $this->loginAs($this->client);
 
-        unset($this->stop['title'], $this->stop['description']); //, $this->stop['location_type']);
+        unset($this->stop['title'], $this->stop['description']);
 
         $this->updateStop($this->stop->toArray())
             ->assertStatus(422)
-            ->assertJsonValidationErrors(['title', 'description']); //, 'location_type']);
+            ->assertJsonValidationErrors(['title', 'description']);
     }
 
     /** @test */
@@ -181,49 +181,24 @@ class ManageStopTest extends TestCase
     /** @test */
     public function a_stop_can_have_an_address()
     {
+        $this->withoutExceptionHandling();
         $this->loginAs($this->client);
 
         $data = [
-            'address1' => md5('123 Elm St.'),
-            'address2' => md5('APT 805'),
-            'city' => md5('New York'),
-            'state' => 'NY',
-            'zipcode' => '10001',
+            'location' => [
+                'address1' => md5('123 Elm St.'),
+                'address2' => md5('APT 805'),
+                'city' => md5('New York'),
+                'state' => 'NY',
+                'zipcode' => '10001',
+                'latitude' => '40.12343657',
+                'longitude' => '-74.0242935',
+            ],
         ];
 
         $this->updateStop(array_merge($this->stop->toArray(), $data))
             ->assertStatus(200)
-            ->assertJsonFragment($data);
-    }
-
-    /** @test */
-    public function a_stop_can_have_coordinates()
-    {
-        $this->loginAs($this->client);
-
-        $data = [
-            'latitude' => 23.5235,
-            'longitude' => -35.325235,
-        ];
-
-        $this->updateStop(array_merge($this->stop->toArray(), $data))
-            ->assertStatus(200)
-            ->assertJsonFragment($data);
-    }
-
-    /** @test */
-    public function stop_coordinates_must_be_valid()
-    {
-        $this->loginAs($this->client);
-
-        $data = [
-            'latitude' => 293582039,
-            'longitude' => 'test',
-        ];
-
-        $this->updateStop(array_merge($this->stop->toArray(), $data))
-            ->assertStatus(422)
-            ->assertJsonValidationErrors(['latitude', 'longitude']);
+            ->assertJsonFragment($data['location']);
     }
 
     /** @test */

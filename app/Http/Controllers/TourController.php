@@ -7,6 +7,7 @@ use App\Tour;
 use App\Http\Requests\CreateTourRequest;
 use App\Http\Requests\UpdateTourRequest;
 use App\Http\Resources\TourCollection;
+use Illuminate\Support\Arr;
 
 class TourController extends Controller
 {
@@ -61,8 +62,11 @@ class TourController extends Controller
     {
         $data = $request->validated();
 
-        // $data['video_url'] =
-        if ($tour->update($data)) {
+        if ($tour->update(Arr::except($data, 'location'))) {
+            if ($request->has('location')) {
+                $tour->location()->update($data['location']);
+            }
+
             $tour = $tour->fresh();
             return $this->success("{$tour->title} was updated successfully.", new TourResource($tour->load('stops')));
         }

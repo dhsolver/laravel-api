@@ -23,12 +23,6 @@ class CreateToursTable extends Migration
             $table->string('pricing_type', 10);
             $table->string('type', 10);
 
-            $table->string('address1')->nullable();
-            $table->string('address2')->nullable();
-            $table->string('city', 100)->nullable();
-            $table->string('state', 2)->nullable();
-            $table->string('zipcode', 12)->nullable();
-
             $table->string('facebook_url')->nullable();
             $table->string('twitter_url')->nullable();
             $table->string('instagram_url')->nullable();

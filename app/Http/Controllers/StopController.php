@@ -9,6 +9,7 @@ use App\TourStop;
 use App\Http\Resources\StopCollection;
 use App\Http\Requests\UpdateStopRequest;
 use App\StopChoice;
+use Illuminate\Support\Arr;
 
 class StopController extends Controller
 {
@@ -69,8 +70,15 @@ class StopController extends Controller
      */
     public function update(UpdateStopRequest $request, Tour $tour, TourStop $stop)
     {
-        if ($stop->update(array_except($request->validated(), ['choices']))) {
+        $data = $request->validated();
+
+        if ($stop->update(Arr::except($data, ['choices', 'location']))) {
+            if ($request->has('location')) {
+                $stop->location()->update($data['location']);
+            }
+
             $stop->updateChoices($request->choices);
+
             $stop = $stop->fresh();
             return $this->success("{$stop->title} was updated successfully.", new StopResource($stop));
         }

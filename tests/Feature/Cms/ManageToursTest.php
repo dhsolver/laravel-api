@@ -150,16 +150,20 @@ class ManageToursTest extends TestCase
         $this->loginAs($this->client);
 
         $data = [
-            'address1' => md5('123 Elm St.'),
-            'address2' => md5('APT 805'),
-            'city' => md5('New York'),
-            'state' => 'NY',
-            'zipcode' => '10001',
+            'location' => [
+                'address1' => md5('123 Elm St.'),
+                'address2' => md5('APT 805'),
+                'city' => md5('New York'),
+                'state' => 'NY',
+                'zipcode' => '10001',
+                'latitude' => '40.12343657',
+                'longitude' => '-74.0242935',
+            ],
         ];
 
         $this->updateTour($data)
             ->assertStatus(200)
-            ->assertJsonFragment($data);
+            ->assertJsonFragment($data['location']);
     }
 
     /** @test */
@@ -294,6 +298,8 @@ class ManageToursTest extends TestCase
     /** @test */
     public function a_tour_can_have_an_endpoint()
     {
+        $this->withoutExceptionHandling();
+
         $this->loginAs($this->client);
 
         $stop = create('App\TourStop', ['tour_id' => $this->tour]);

@@ -6,6 +6,7 @@ use Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\Concerns\AttachJwtToken;
 use App\Tour;
+use App\Location;
 
 class CreateToursTest extends TestCase
 {
@@ -53,6 +54,21 @@ class CreateToursTest extends TestCase
 
         $this->json('POST', route('cms.tours.store'), $tour)
             ->assertStatus(403);
+    }
+
+    /** @test */
+    public function when_a_tour_is_created_it_should_automatically_create_a_location_object()
+    {
+        $this->signIn('client');
+
+        $tour = make(Tour::class)->toArray();
+
+        $this->assertCount(0, Location::all());
+
+        $this->json('POST', route('cms.tours.store'), $tour)
+            ->assertStatus(200);
+
+        $this->assertCount(1, Location::all());
     }
 
     /** @test */
