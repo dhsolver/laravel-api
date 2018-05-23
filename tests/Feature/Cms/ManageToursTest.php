@@ -355,4 +355,18 @@ class ManageToursTest extends TestCase
 
         $this->assertEquals('images/test.jpg', $this->tour->fresh()->mainImage->file);
     }
+
+    /** @test */
+    public function tour_titles_must_be_unique()
+    {
+        $this->loginAs($this->client);
+
+        $otherTour = create('App\Tour');
+
+        $this->assertCount(2, Tour::all());
+
+        $this->updateTour(['title' => $otherTour->title])
+            ->assertStatus(422)
+            ->assertJsonValidationErrors(['title']);
+    }
 }

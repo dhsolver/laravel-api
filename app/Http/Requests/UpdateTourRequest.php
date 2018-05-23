@@ -27,7 +27,13 @@ class UpdateTourRequest extends FormRequest
     public function rules()
     {
         return [
-            'title' => 'required|string|max:255|min:3',
+            'title' => [
+                'required',
+                'string',
+                'max:255',
+                'min:3',
+                Rule::unique('tours', 'title')->ignore(request()->route('tour')),
+            ],
             'description' => 'required|string|max:16000|min:3',
             'pricing_type' => [
                 'required',

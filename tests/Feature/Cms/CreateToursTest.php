@@ -128,4 +128,21 @@ class CreateToursTest extends TestCase
 
         $this->assertCount(count(Tour::$TOUR_TYPES), Tour::all());
     }
+
+    /** @test */
+    public function tour_titles_must_be_unique()
+    {
+        $this->signIn('client');
+
+        $this->publishTour(['title' => 'test'])
+            ->assertStatus(200);
+
+        $this->assertCount(1, Tour::all());
+
+        $this->publishTour(['title' => 'test'])
+            ->assertStatus(422)
+            ->assertJsonValidationErrors(['title']);
+
+        $this->assertCount(1, Tour::all());
+    }
 }

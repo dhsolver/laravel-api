@@ -26,7 +26,13 @@ class CreateTourRequest extends FormRequest
     public function rules()
     {
         $rules = [
-            'title' => 'required|string|max:255|min:3',
+            'title' => [
+                'required',
+                'string',
+                'max:255',
+                'min:3',
+                Rule::unique('tours', 'title'),
+            ],
             'description' => 'required|string|max:16000|min:3',
             'pricing_type' => [
                 'required',
@@ -43,5 +49,12 @@ class CreateTourRequest extends FormRequest
         }
 
         return $rules;
+    }
+
+    public function messages()
+    {
+        return [
+            'title.unique' => 'A Tour with this name already exists.',
+        ];
     }
 }
