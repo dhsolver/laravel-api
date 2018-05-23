@@ -3,7 +3,6 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use App\TourStop;
 use Illuminate\Validation\Rule;
 use App\Rules\YoutubeVideo;
 
@@ -28,7 +27,7 @@ class UpdateStopRequest extends FormRequest
     {
         return [
             'title' => 'required|string|max:255|min:3',
-            'description' => 'required|string|max:2000|min:3',
+            'description' => 'required|string|max:16000|min:3',
 
             'location.address1' => 'nullable|string|max:255',
             'location.address2' => 'nullable|string|max:255',

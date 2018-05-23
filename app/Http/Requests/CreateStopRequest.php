@@ -3,8 +3,6 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use App\TourStop;
-use Illuminate\Validation\Rule;
 
 class CreateStopRequest extends FormRequest
 {
@@ -27,7 +25,7 @@ class CreateStopRequest extends FormRequest
     {
         return [
             'title' => 'required|string|max:255|min:3',
-            'description' => 'required|string|max:2000|min:3',
+            'description' => 'required|string|max:16000|min:3',
         ];
     }
 }

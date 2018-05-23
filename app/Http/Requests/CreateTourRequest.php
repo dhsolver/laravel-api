@@ -27,7 +27,7 @@ class CreateTourRequest extends FormRequest
     {
         $rules = [
             'title' => 'required|string|max:255|min:3',
-            'description' => 'required|string|max:2000|min:3',
+            'description' => 'required|string|max:16000|min:3',
             'pricing_type' => [
                 'required',
                 Rule::in(Tour::$PRICING_TYPES),
