@@ -19,7 +19,7 @@ class CreateToursTable extends Migration
             $table->unsignedInteger('user_id');
 
             $table->string('title', 100);
-            $table->string('description', 2000);
+            $table->text('description');
             $table->string('pricing_type', 10);
             $table->string('type', 10);
 

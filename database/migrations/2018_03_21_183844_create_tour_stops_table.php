@@ -20,7 +20,7 @@ class CreateTourStopsTable extends Migration
             $table->unsignedTinyInteger('order');
 
             $table->string('title', 255);
-            $table->string('description', 2000);
+            $table->text('description');
 
             // media
             $table->unsignedInteger('audio_id')->nullable();
