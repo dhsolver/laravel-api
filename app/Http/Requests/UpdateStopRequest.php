@@ -37,6 +37,8 @@ class UpdateStopRequest extends FormRequest
             'location.latitude' => ['nullable', 'regex:/^[-]?(([0-8]?[0-9])\.(\d+))|(90(\.0+)?)$/'],
             'location.longitude' => ['nullable', 'regex:/^[-]?((((1[0-7][0-9])|([0-9]?[0-9]))\.(\d+))|180(\.0+)?)$/'],
 
+            'play_radius' => 'nullable|numeric|min:0',
+
             'question' => 'nullable|string|max:500',
             'question_answer' => 'nullable|string|max:500',
             'question_success' => 'nullable|string|max:500',

@@ -29,6 +29,7 @@ class TourStop extends Model
         'is_multiple_choice' => 'bool',
         'latitude' => 'float',
         'longitude' => 'float',
+        'play_radius' => 'float',
     ];
 
     /**

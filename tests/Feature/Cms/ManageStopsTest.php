@@ -497,4 +497,26 @@ class ManageStopTest extends TestCase
 
         $this->assertEquals('images/test.jpg', $this->stop->fresh()->mainImage->file);
     }
+
+    /** @test */
+    public function a_stop_can_have_a_numeric_play_radius()
+    {
+        $this->loginAs($this->client);
+
+        $data = [
+            'play_radius' => 5.32,
+        ];
+
+        $data = $this->updateStop($data)
+            ->assertStatus(200)
+            ->assertJsonFragment($data);
+
+        $data = [
+            'play_radius' => 'test',
+        ];
+
+        $data = $this->updateStop($data)
+            ->assertStatus(422)
+            ->assertJsonValidationErrors(['play_radius']);
+    }
 }
