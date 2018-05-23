@@ -141,6 +141,16 @@ class Tour extends Model
         return $this->hasOne(Media::class, 'id', 'background_audio_id');
     }
 
+    public function startPoint()
+    {
+        return $this->hasOne(TourStop::class, 'id', 'start_point_id');
+    }
+
+    public function endPoint()
+    {
+        return $this->hasOne(TourStop::class, 'id', 'end_point_id');
+    }
+    
     // **********************************************************
     // MUTATORS
     // **********************************************************

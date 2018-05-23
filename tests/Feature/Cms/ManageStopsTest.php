@@ -191,8 +191,8 @@ class ManageStopTest extends TestCase
                 'city' => md5('New York'),
                 'state' => 'NY',
                 'zipcode' => '10001',
-                'latitude' => '40.12343657',
-                'longitude' => '-74.0242935',
+                'latitude' => 40.12343657,
+                'longitude' => -74.0242935,
             ],
         ];
 
@@ -518,5 +518,44 @@ class ManageStopTest extends TestCase
         $data = $this->updateStop($data)
             ->assertStatus(422)
             ->assertJsonValidationErrors(['play_radius']);
+    }
+
+    /** @test */
+    public function a_stop_cannot_be_deleted_if_it_is_a_start_point()
+    {
+        $this->loginAs($this->client);
+
+        $this->tour->update(['start_point_id' => $this->stop->id]);
+
+        $this->json('DELETE', $this->stopRoute('destroy', true))
+            ->assertStatus(422);
+
+        $this->assertCount(1, $this->tour->fresh()->stops);
+    }
+
+    /** @test */
+    public function a_stop_cannot_be_deleted_if_it_is_an_end_point()
+    {
+        $this->loginAs($this->client);
+
+        $this->tour->update(['end_point_id' => $this->stop->id]);
+
+        $this->json('DELETE', $this->stopRoute('destroy', true))
+            ->assertStatus(422);
+
+        $this->assertCount(1, $this->tour->fresh()->stops);
+    }
+
+    /** @test */
+    public function a_stop_cannot_be_deleted_if_it_is_a_stop_choice_destination()
+    {
+        $this->loginAs($this->client);
+
+        $choice = create(StopChoice::class, ['tour_stop_id' => $this->stop->id, 'next_stop_id' => $this->stop->id]);
+
+        $this->json('DELETE', $this->stopRoute('destroy', true))
+            ->assertStatus(422);
+
+        $this->assertCount(1, $this->tour->fresh()->stops);
     }
 }

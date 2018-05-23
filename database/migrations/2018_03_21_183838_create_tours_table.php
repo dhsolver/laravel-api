@@ -37,8 +37,8 @@ class CreateToursTable extends Migration
             $table->string('end_message', 1000)->nullable();
             $table->string('end_video_url')->nullable();
 
-            $table->unsignedInteger('start_point')->nullable();
-            $table->unsignedInteger('end_point')->nullable();
+            $table->unsignedInteger('start_point_id')->nullable();
+            $table->unsignedInteger('end_point_id')->nullable();
 
             // media
             $table->unsignedInteger('intro_audio_id')->nullable();

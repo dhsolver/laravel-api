@@ -156,8 +156,8 @@ class ManageToursTest extends TestCase
                 'city' => md5('New York'),
                 'state' => 'NY',
                 'zipcode' => '10001',
-                'latitude' => '40.12343657',
-                'longitude' => '-74.0242935',
+                'latitude' => 40.12343657,
+                'longitude' => -74.0242935,
             ],
         ];
 
@@ -273,7 +273,7 @@ class ManageToursTest extends TestCase
         $stop = create('App\TourStop', ['tour_id' => $this->tour]);
 
         $updates = [
-            'start_point' => '' . $stop->id,
+            'start_point_id' => '' . $stop->id,
             'start_message' => 'starting message',
         ];
 
@@ -290,9 +290,9 @@ class ManageToursTest extends TestCase
         $otherTour = create('App\Tour', ['user_id' => $this->client->id]);
         $stop = create('App\TourStop', ['tour_id' => $otherTour]);
 
-        $this->updateTour(['start_point' => $stop->id])
+        $this->updateTour(['start_point_id' => $stop->id])
             ->assertStatus(422)
-            ->assertJsonValidationErrors(['start_point']);
+            ->assertJsonValidationErrors(['start_point_id']);
     }
 
     /** @test */
@@ -305,7 +305,7 @@ class ManageToursTest extends TestCase
         $stop = create('App\TourStop', ['tour_id' => $this->tour]);
 
         $updates = [
-            'end_point' => '' . $stop->id,
+            'end_point_id' => '' . $stop->id,
             'end_message' => 'end message',
         ];
 
@@ -322,9 +322,9 @@ class ManageToursTest extends TestCase
         $otherTour = create('App\Tour', ['user_id' => $this->client->id]);
         $stop = create('App\TourStop', ['tour_id' => $otherTour]);
 
-        $this->updateTour(['end_point' => $stop->id])
+        $this->updateTour(['end_point_id' => $stop->id])
             ->assertStatus(422)
-            ->assertJsonValidationErrors('end_point');
+            ->assertJsonValidationErrors('end_point_id');
     }
 
     /** @test */

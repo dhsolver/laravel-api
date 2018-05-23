@@ -94,7 +94,15 @@ class StopController extends Controller
     public function destroy(Tour $tour, TourStop $stop)
     {
         if (StopChoice::where('next_stop_id', $stop->id)->count() > 0) {
-            return $this->fail(422, 'You cannot delete this stop because it is referenced in another stops destination points');
+            return $this->fail(422, 'You cannot delete this stop because it is referenced in another stops destination points.');
+        }
+
+        if (Tour::where('start_point_id', $stop->id)->count() > 0) {
+            return $this->fail(422, 'You cannot delete this stop because it set as the Tour\'s start point.');
+        }
+
+        if (Tour::where('end_point_id', $stop->id)->count() > 0) {
+            return $this->fail(422, 'You cannot delete this stop because it set as the Tour\'s end point.');
         }
 
         if ($stop->delete()) {

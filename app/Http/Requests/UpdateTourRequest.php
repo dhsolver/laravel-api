@@ -67,14 +67,14 @@ class UpdateTourRequest extends FormRequest
             'prize_details' => 'nullable|string|max:1000',
             'prize_instructions' => 'nullable|string|max:1000',
 
-            'start_point' => [
+            'start_point_id' => [
                 'nullable',
                 'numeric',
                 Rule::exists('tour_stops', 'id')->where(function ($query) {
                     $query->where('tour_id', $this->route('tour')->id);
                 }),
             ],
-            'end_point' => [
+            'end_point_id' => [
                 'nullable',
                 'numeric',
                 Rule::exists('tour_stops', 'id')->where(function ($query) {
