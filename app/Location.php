@@ -12,4 +12,14 @@ class Location extends Model
      * @var array
      */
     protected $guarded = ['id'];
+
+    /**
+     * The attributes that should be cast to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'longitude' => 'float',
+        'latitude' => 'float',
+    ];
 }

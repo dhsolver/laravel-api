@@ -27,8 +27,6 @@ class TourStop extends Model
      */
     protected $casts = [
         'is_multiple_choice' => 'bool',
-        'latitude' => 'float',
-        'longitude' => 'float',
         'play_radius' => 'float',
     ];
 
