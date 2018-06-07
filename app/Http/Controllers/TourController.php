@@ -33,7 +33,7 @@ class TourController extends Controller
     {
         if ($tour = auth()->user()->type->tours()->create($request->validated())) {
             return $this->success("The tour {$tour->title} was created successfully.", new TourResource(
-                $tour->fresh()->load('stops')
+                $tour->fresh()
             ));
         }
 
@@ -48,7 +48,7 @@ class TourController extends Controller
      */
     public function show(Tour $tour)
     {
-        return new TourResource($tour->load('stops'));
+        return new TourResource($tour);
     }
 
     /**
@@ -68,7 +68,7 @@ class TourController extends Controller
             }
 
             $tour = $tour->fresh();
-            return $this->success("{$tour->title} was updated successfully.", new TourResource($tour->load('stops')));
+            return $this->success("{$tour->title} was updated successfully.", new TourResource($tour));
         }
 
         return $this->fail();

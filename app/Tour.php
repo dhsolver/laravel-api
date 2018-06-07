@@ -150,7 +150,18 @@ class Tour extends Model
     {
         return $this->hasOne(TourStop::class, 'id', 'end_point_id');
     }
-    
+
+    /**
+     * Get all the tour's stop routes.
+     *
+     * @return void
+     */
+    public function routes()
+    {
+        return $this->hasMany(StopRoute::class, 'tour_id', 'id')
+            ->orderBy('order');
+    }
+
     // **********************************************************
     // MUTATORS
     // **********************************************************

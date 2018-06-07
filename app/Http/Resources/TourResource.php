@@ -14,6 +14,8 @@ class TourResource extends JsonResource
      */
     public function toArray($request)
     {
+        $this->resource->load(['stops', 'routes']);
+
         return array_merge($this->resource->toArray(), [
         ]);
     }
