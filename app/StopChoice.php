@@ -24,8 +24,14 @@ class StopChoice extends Model
         'order' => 'int',
     ];
 
+    /**
+     * Handles the model boot options.
+     *
+     * @return void
+     */
     public static function boot()
     {
+        // auto-update choice order on creation
         self::creating(function ($choice) {
             if (empty($choice->order)) {
                 $choice->order = self::getNextOrder($choice->tour_stop_id);
