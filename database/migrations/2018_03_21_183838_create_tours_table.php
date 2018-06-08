@@ -50,6 +50,7 @@ class CreateToursTable extends Migration
             $table->unsignedInteger('trophy_image_id')->nullable();
             $table->unsignedInteger('start_image_id')->nullable();
             $table->unsignedInteger('end_image_id')->nullable();
+            $table->unsignedInteger('pin_image_id')->nullable();
 
             $table->datetime('published_at')->nullable();
 

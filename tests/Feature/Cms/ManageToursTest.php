@@ -347,6 +347,7 @@ class ManageToursTest extends TestCase
             'image3_id' => '' . $media->id,
             'intro_audio_id' => '' . $media->id,
             'background_audio_id' => '' . $media->id,
+            'pin_image_id' => '' . $media->id,
         ];
 
         $this->updateTour($data)

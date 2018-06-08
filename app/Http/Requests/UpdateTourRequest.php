@@ -85,6 +85,7 @@ class UpdateTourRequest extends FormRequest
             'main_image_id' => 'nullable|integer|exists:media,id',
             'start_image_id' => 'nullable|integer|exists:media,id',
             'end_image_id' => 'nullable|integer|exists:media,id',
+            'pin_image_id' => 'nullable|integer|exists:media,id',
             'image1_id' => 'nullable|integer|exists:media,id',
             'image2_id' => 'nullable|integer|exists:media,id',
             'image3_id' => 'nullable|integer|exists:media,id',

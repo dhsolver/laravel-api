@@ -41,7 +41,7 @@ class Tour extends Model
      *
      * @var array
      */
-    protected $with = ['location', 'image1', 'image2', 'image3', 'mainImage', 'startImage', 'endImage', 'trophyImage', 'introAudio', 'backgroundAudio'];
+    protected $with = ['location', 'image1', 'image2', 'image3', 'mainImage', 'startImage', 'endImage', 'pinImage', 'trophyImage', 'introAudio', 'backgroundAudio'];
 
     /**
      * The attributes that should be cast to native types.
@@ -124,6 +124,11 @@ class Tour extends Model
     public function endImage()
     {
         return $this->hasOne(Media::class, 'id', 'end_image_id');
+    }
+
+    public function pinImage()
+    {
+        return $this->hasOne(Media::class, 'id', 'pin_image_id');
     }
 
     public function trophyImage()
