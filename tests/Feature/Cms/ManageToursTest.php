@@ -268,6 +268,8 @@ class ManageToursTest extends TestCase
     /** @test */
     public function a_tour_can_have_a_start_point()
     {
+        $this->withoutExceptionHandling();
+
         $this->loginAs($this->client);
 
         $stop = create('App\TourStop', ['tour_id' => $this->tour]);

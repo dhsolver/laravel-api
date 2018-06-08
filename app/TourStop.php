@@ -18,7 +18,7 @@ class TourStop extends Model
      *
      * @var array
      */
-    public $with = ['location', 'choices', 'image1', 'image2', 'image3', 'mainImage', 'audio'];
+    public $with = ['location', 'choices', 'image1', 'image2', 'image3', 'mainImage', 'introAudio', 'backgroundAudio'];
 
     /**
      * The attributes that should be cast to native types.
@@ -93,9 +93,14 @@ class TourStop extends Model
         return $this->hasOne(Media::class, 'id', 'image3_id');
     }
 
-    public function audio()
+    public function introAudio()
     {
-        return $this->hasOne(Media::class, 'id', 'audio_id');
+        return $this->hasOne(Media::class, 'id', 'intro_audio_id');
+    }
+
+    public function backgroundAudio()
+    {
+        return $this->hasOne(Media::class, 'id', 'background_audio_id');
     }
 
     /**

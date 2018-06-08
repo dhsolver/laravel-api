@@ -488,7 +488,8 @@ class ManageStopTest extends TestCase
             'image1_id' => '' . $media->id,
             'image2_id' => '' . $media->id,
             'image3_id' => '' . $media->id,
-            'audio_id' => '' . $media->id,
+            'intro_audio_id' => '' . $media->id,
+            'background_audio_id' => '' . $media->id,
         ];
 
         $this->updateStop($data)

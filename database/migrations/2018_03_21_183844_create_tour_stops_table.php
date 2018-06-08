@@ -23,7 +23,8 @@ class CreateTourStopsTable extends Migration
             $table->text('description');
 
             // media
-            $table->unsignedInteger('audio_id')->nullable();
+            $table->unsignedInteger('intro_audio_id')->nullable();
+            $table->unsignedInteger('background_audio_id')->nullable();
             $table->decimal('play_radius', 13, 2)->default(0);
 
             $table->unsignedInteger('main_image_id')->nullable();
