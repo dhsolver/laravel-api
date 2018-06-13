@@ -18,7 +18,7 @@ class Media extends Model
      *
      * @var array
      */
-    protected $appends = ['path'];
+    protected $appends = ['path', 'small_path', 'icon_path'];
 
     /**
      * Defines the user relationship for who uploaded the media.
@@ -38,5 +38,37 @@ class Media extends Model
     public function getPathAttribute()
     {
         return config('filesystems.disks.s3.url') . $this->file;
+    }
+
+    /**
+     * Get the media's full URL.
+     *
+     * @return void
+     */
+    public function getSmallPathAttribute()
+    {
+        return config('filesystems.disks.s3.url') . $this->modFilename($this->file, '_sm');
+    }
+
+    /**
+     * Get the media's full URL.
+     *
+     * @return void
+     */
+    public function getIconPathAttribute()
+    {
+        return config('filesystems.disks.s3.url') . $this->modFilename($this->file, '_ico');
+    }
+
+    /**
+     * Add string to the end of the filename.
+     *
+     * @param string $filename
+     * @param string $mod
+     * @return string
+     */
+    public function modFilename($filename, $mod)
+    {
+        return substr($filename, 0, strpos($filename, '.')) . $mod . substr($filename, strpos($filename, '.'));
     }
 }
