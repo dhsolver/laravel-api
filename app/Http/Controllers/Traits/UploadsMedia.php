@@ -72,22 +72,25 @@ trait UploadsMedia
      */
     public function storeImage($file, $dir, $ext = null)
     {
+        $thumbSize = config('junket.imaging.image_thumb_size', 400);
+        $maxSize = config('junket.imaging.max_image_size', 3000);
+
         $filename = $this->generateFilename($ext ? $ext : $file->extension());
 
         $image = \Image::make($file->path());
 
-        if ($image->height() < 400 || $image->width() < 400) {
-            throw new ImageTooSmallException('Image too small.  Images must be at least 400x400.');
+        if ($image->height() < $thumbSize || $image->width() < $thumbSize) {
+            throw new ImageTooSmallException("Image too small.  Images must be at least {$thumbSize}x{$thumbSize}.");
         }
 
-        // resize original if exceeds 3000px
-        if ($image->height() > 3000 || $image->width() > 3000) {
+        // resize original if exceeds max
+        if ($image->height() > $maxSize || $image->width() > $maxSize) {
             if ($image->height() < $image->width()) {
-                $image->resize(null, 3000, function ($constraint) {
+                $image->resize(null, $maxSize, function ($constraint) {
                     $constraint->aspectRatio();
                 })->save();
             } else {
-                $image->resize(3000, null, function ($constraint) {
+                $image->resize($maxSize, null, function ($constraint) {
                     $constraint->aspectRatio();
                 })->save();
             }
@@ -102,11 +105,11 @@ trait UploadsMedia
         $image = \Image::make($file->path());
 
         if ($image->height() < $image->width()) {
-            $image->resize(null, 400, function ($constraint) {
+            $image->resize(null, $thumbSize, function ($constraint) {
                 $constraint->aspectRatio();
             })->save();
         } else {
-            $image->resize(400, null, function ($constraint) {
+            $image->resize($thumbSize, null, function ($constraint) {
                 $constraint->aspectRatio();
             })->save();
         }
@@ -128,22 +131,25 @@ trait UploadsMedia
      */
     public function storeIcon($file, $dir, $ext = null)
     {
+        $thumbSize = config('junket.imaging.icon_size', 48);
+        $maxSize = config('junket.imaging.max_icon_size', 3000);
+
         $filename = $this->generateFilename($ext ? $ext : $file->extension());
 
         $image = \Image::make($file);
 
-        if ($image->height() < 48 || $image->width() < 48) {
-            throw new ImageTooSmallException('Image too small.  Images must be at least 48x48.');
+        if ($image->height() < $thumbSize || $image->width() < $thumbSize) {
+            throw new ImageTooSmallException("Image too small.  Images must be at least {$thumbSize}x{$thumbSize}.");
         }
 
-        // resize original if exceeds 3000px
-        if ($image->height() > 3000 || $image->width() > 3000) {
+        // resize original if exceeds max
+        if ($image->height() > $maxSize || $image->width() > $maxSize) {
             if ($image->height() < $image->width()) {
-                $image->resize(null, 3000, function ($constraint) {
+                $image->resize(null, $maxSize, function ($constraint) {
                     $constraint->aspectRatio();
                 })->save();
             } else {
-                $image->resize(3000, null, function ($constraint) {
+                $image->resize($maxSize, null, function ($constraint) {
                     $constraint->aspectRatio();
                 })->save();
             }
@@ -161,26 +167,7 @@ trait UploadsMedia
             return false;
         }
 
-        // $image = \Image::make($file);
-
-        // if ($image->height() < $image->width()) {
-        //     $image->resize(null, 400, function ($constraint) {
-        //         $constraint->aspectRatio();
-        //     })->save();
-        // } else {
-        //     $image->resize(400, null, function ($constraint) {
-        //         $constraint->aspectRatio();
-        //     })->save();
-        // }
-
-        // $image->fit(400, 400)->save();
-
-        // if (!\Storage::putFileAs($dir, new ImageFile($image), $this->modFilename($filename, '_sm'))) {
-        //     // error saving image -> quit
-        //     return false;
-        // }
-
-        $image->fit(48, 48)->save();
+        $image->fit($thumbSize, $thumbSize)->save();
 
         if (!\Storage::putFileAs($dir, new ImageFile($image), $this->modFilename($filename, '_ico'))) {
             // error saving image -> quit

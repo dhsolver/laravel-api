@@ -8,7 +8,28 @@ return [
         /**
          * The maximum allowed file size of an uploaded image.
          */
-        'max_file_size' => env('MAX_IMAGE_KB', 100000), // in KB
+        'max_file_size' => env('MAX_IMAGE_KB', 15000), // in KB
+
+        /**
+         * The width and height of image thumbnail files.
+         * Sizes are assumed squares, so a value of 400 is equal to 400x400.
+        */
+        'image_thumb_size' => 400,
+
+        /**
+         * Maximum height or width of an image.
+         */
+        'max_image_size' => 3000,
+
+        /**
+         * The width and height of icons (custom map pins)
+         */
+        'icon_size' => 48,
+
+        /**
+         * Maximum icon size - applies to map pins and trophies.
+         */
+        'max_icon_size' => 3000,
     ],
 
     /**
@@ -18,6 +39,6 @@ return [
         /**
          * The maximum allowed file size of an uploaded image.
          */
-        'max_file_size' => env('MAX_AUDIO_KB', 100000), // in KB
+        'max_file_size' => env('MAX_AUDIO_KB', 30000), // in KB
     ],
 ];
