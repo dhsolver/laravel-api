@@ -12,6 +12,6 @@
 - [Testing](docs/Testing.md)
 
 ### 3rd Party 
-
 - Roles and permissions provided by [spatie/laravel-permission](https://github.com/spatie/laravel-permission)
 - All auth is based on JWT tokens using [tymondesigns/jwt-auth](https://github.com/tymondesigns/jwt-auth)
+- Image processing [intervention/image](http://image.intervention.io)
