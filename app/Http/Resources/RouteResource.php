@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class TourResource extends JsonResource
+class RouteResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -14,10 +14,9 @@ class TourResource extends JsonResource
      */
     public function toArray($request)
     {
-        $this->resource->load(['stops', 'route', 'stopRoutes']);
-
-        return array_merge($this->resource->toArray(), [
-            'route' => RouteResource::collection($this->resource->route),
-        ]);
+        return [
+            'lat' => $this->resource->latitude,
+            'lng' => $this->resource->longitude,
+        ];
     }
 }

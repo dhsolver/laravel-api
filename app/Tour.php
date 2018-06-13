@@ -161,9 +161,20 @@ class Tour extends Model
      *
      * @return void
      */
-    public function routes()
+    public function stopRoutes()
     {
         return $this->hasMany(StopRoute::class, 'tour_id', 'id')
+            ->orderBy('order');
+    }
+
+    /**
+     * Get the tours route.
+     *
+     * @return void
+     */
+    public function route()
+    {
+        return $this->hasMany(TourRoute::class, 'tour_id', 'id')
             ->orderBy('order');
     }
 
@@ -367,5 +378,27 @@ class Tour extends Model
         TourStop::where('tour_id', $this->id)
             ->where('order', '>=', $order)
             ->increment('order');
+    }
+
+    /**
+     * Sync Tour route from array of coordinates.
+     *
+     * @param array $coordinates
+     * @return void
+     */
+    public function syncRoute($coordinates)
+    {
+        $this->route()->delete();
+
+        if (empty($coordinates)) {
+            return;
+        }
+
+        foreach ($coordinates as $latLng) {
+            $this->route()->create([
+                'latitude' => $latLng['lat'],
+                'longitude' => $latLng['lng'],
+            ]);
+        }
     }
 }

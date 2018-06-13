@@ -92,6 +92,8 @@ class UpdateTourRequest extends FormRequest
             'trophy_image_id' => 'nullable|integer|exists:media,id',
             'intro_audio_id' => 'nullable|integer|exists:media,id',
             'background_audio_id' => 'nullable|integer|exists:media,id',
+
+            'route' => 'nullable',
         ];
     }
 }

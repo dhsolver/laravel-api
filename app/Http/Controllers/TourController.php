@@ -62,15 +62,25 @@ class TourController extends Controller
     {
         $data = $request->validated();
 
-        if ($tour->update(Arr::except($data, 'location'))) {
+        \DB::beginTransaction();
+
+        if ($tour->update(Arr::except($data, ['location', 'route']))) {
             if ($request->has('location')) {
                 $tour->location()->update($data['location']);
             }
+
+            // dd($data['route']);
+            if ($request->has('route')) {
+                $tour->syncRoute($data['route']);
+            }
+
+            \DB::commit();
 
             $tour = $tour->fresh();
             return $this->success("{$tour->title} was updated successfully.", new TourResource($tour));
         }
 
+        \DB::rollBack();
         return $this->fail();
     }
 
