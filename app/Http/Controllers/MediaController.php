@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Traits\UploadsMedia;
 use App\Http\Requests\MediaUploadRequest;
 use App\Media;
+use App\Exceptions\ImageTooSmallException;
 
 class MediaController extends Controller
 {
@@ -18,12 +19,18 @@ class MediaController extends Controller
      */
     public function store(MediaUploadRequest $request)
     {
-        if ($request->has('image')) {
-            $filename = $this->storeFile($request->file('image'), 'images');
-        } elseif ($request->has('audio')) {
-            $filename = $this->storeFile($request->file('audio'), 'audio', 'mp3');
-        } else {
-            return $this->fail();
+        try {
+            if ($request->has('image')) {
+                $filename = $this->storeImage($request->file('image'), 'images', 'jpg');
+            } elseif ($request->has('icon')) {
+                $filename = $this->storeIcon($request->file('icon'), 'images', 'png');
+            } elseif ($request->has('audio')) {
+                $filename = $this->storeFile($request->file('audio'), 'audio', 'mp3');
+            } else {
+                return $this->fail();
+            }
+        } catch (ImageTooSmallException $ex) {
+            return $this->fail(422, $ex->message);
         }
 
         $media = Media::create([

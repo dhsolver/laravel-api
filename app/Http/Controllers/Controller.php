@@ -41,4 +41,14 @@ class Controller extends BaseController
 
         return new ErrorResponse($statusCode, $messages, $data);
     }
+
+    public function test()
+    {
+        $filename = '../../../../resources/assets/test.jpg';
+
+        $img = \Image::make($filename)
+            ->resize(100, 100);
+
+        return $img->response('jpg');
+    }
 }

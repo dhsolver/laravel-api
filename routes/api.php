@@ -9,6 +9,8 @@
 Route::post('auth/login', 'AuthController@login');
 Route::post('auth/signup', 'AuthController@signup');
 
+Route::get('test', 'Controller@test');
+
 Route::middleware(['jwt.auth'])->group(function () {
     Route::get('auth/session', 'AuthController@userSession');
 });

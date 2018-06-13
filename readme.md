@@ -1,5 +1,9 @@
 ## Junket CMS and Mobile API
 
+## Requirements
+- PHP >= 7.2
+- Fileinfo Extension
+- Imagick PHP extension (>=6.5.7)
 
 ### Code Documentation
 - [AccessPoints](docs/AccessPoints.md)
