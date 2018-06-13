@@ -44,11 +44,12 @@ class Controller extends BaseController
 
     public function test()
     {
-        $filename = '../../../../resources/assets/test.jpg';
+        phpinfo();
+        // $filename = '../../../../resources/assets/test.jpg';
 
-        $img = \Image::make($filename)
-            ->resize(100, 100);
+        // $img = \Image::make($filename)
+        //     ->resize(100, 100);
 
-        return $img->response('jpg');
+        // return $img->response('jpg');
     }
 }
