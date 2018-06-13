@@ -31,4 +31,12 @@ class MediaUploadRequest extends FormRequest
             'audio' => "nullable|file|mimetypes:audio/mpeg|max:$audioMax",
         ];
     }
+
+    public function messages()
+    {
+        return [
+            'image.image' => 'Image must be a valid image file.',
+            'audio.mimetypes' => 'Image must be a valid MP3 file.',
+        ];
+    }
 }
