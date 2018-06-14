@@ -86,6 +86,7 @@ class UploadMediaTest extends TestCase
         $this->signIn('client');
 
         $this->uploadMedia($file)
+            ->assertStatus(200)
             ->assertJsonStructure(['data' => ['id', 'file', 'path']]);
     }
 
@@ -140,5 +141,15 @@ class UploadMediaTest extends TestCase
         $this->uploadMedia($file, 'audio', $pdfFile)
             ->assertStatus(422)
             ->assertJsonValidationErrors('audio');
+    }
+
+    /** @test */
+    public function media_uploads_should_have_small_and_icon_paths()
+    {
+        $this->signIn('client');
+
+        $this->uploadMedia($file)
+            ->assertStatus(200)
+            ->assertJsonStructure(['data' => ['path', 'small_path', 'icon_path']]);
     }
 }
