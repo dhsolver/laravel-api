@@ -372,4 +372,27 @@ class ManageToursTest extends TestCase
             ->assertStatus(422)
             ->assertJsonValidationErrors(['title']);
     }
+
+    /** @test */
+    public function a_tours_stops_can_be_ordered_all_at_once()
+    {
+        // $this->withoutExceptionHandling();
+
+        $this->loginAs($this->client);
+
+        $stop = create('App\TourStop', ['tour_id' => $this->tour, 'order' => 55]);
+        $stop2 = create('App\TourStop', ['tour_id' => $this->tour]);
+        $stop3 = create('App\TourStop', ['tour_id' => $this->tour]);
+
+        $this->assertEquals([$stop2->id, $stop3->id, $stop->id], $this->tour->stopOrder->toArray());
+
+        $newOrder = [$stop->id, $stop2->id, $stop3->id];
+        $data = ['order' => $newOrder];
+
+        $this->put(route('cms.tour.order', ['tour' => $this->tour]), $data)
+            ->assertStatus(200)
+            ->assertJsonFragment($data);
+
+        $this->assertEquals($newOrder, $this->tour->fresh()->stopOrder->toArray());
+    }
 }

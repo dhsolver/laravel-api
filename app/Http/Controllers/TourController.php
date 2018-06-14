@@ -8,13 +8,15 @@ use App\Http\Requests\CreateTourRequest;
 use App\Http\Requests\UpdateTourRequest;
 use App\Http\Resources\TourCollection;
 use Illuminate\Support\Arr;
+use App\Http\Requests\UpdateStopOrderRequest;
+use App\TourStop;
 
 class TourController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \App\Http\Resources\TourCollection
      */
     public function index()
     {
@@ -26,8 +28,8 @@ class TourController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param  \App\Http\Requests\CreateTourRequest  $request
+     * @return \App\Http\Responses\SuccessResponse|App\Http\Responses\ErrorResponse
      */
     public function store(CreateTourRequest $request)
     {
@@ -43,8 +45,8 @@ class TourController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param  \App\Tour  $tour
+     * @return \App\Http\Resources\TourResource
      */
     public function show(Tour $tour)
     {
@@ -54,9 +56,9 @@ class TourController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param  \App\Http\Requests\UpdateTourRequest  $request
+     * @param  \App\Tour  $tour
+     * @return \App\Http\Responses\SuccessResponse|App\Http\Responses\ErrorResponse
      */
     public function update(UpdateTourRequest $request, Tour $tour)
     {
@@ -87,8 +89,8 @@ class TourController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param  \App\Tour  $tour
+     * @return \App\Http\Responses\SuccessResponse|App\Http\Responses\ErrorResponse
      */
     public function destroy(Tour $tour)
     {
@@ -96,5 +98,22 @@ class TourController extends Controller
             return $this->success("{$tour->title} was archived successfully.");
         }
         return $this->fail();
+    }
+
+    /**
+     * Updates the order of all Tour's stops.
+     *
+     * @param  \App\Tour  $tour
+     * @return \App\Http\Responses\SuccessResponse|App\Http\Responses\ErrorResponse
+     */
+    public function stopOrder(UpdateStopOrderRequest $request, Tour $tour)
+    {
+        $order = 1;
+        foreach($request->order as $key => $id) {
+            TourStop::where('id', $id)->update(['order' => $order]);
+            $order++;
+        }
+
+        return $this->success("Stop order successfully saved.", ['order' => $request->order]);
     }
 }

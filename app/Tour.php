@@ -322,6 +322,18 @@ class Tour extends Model
         return $this->stops()->count();
     }
 
+    /**
+     * Get the list of stop ids in order.
+     *
+     * @return void
+     */
+    public function getStopOrderAttribute()
+    {
+        return $this->stops->map(function ($s) {
+            return $s->id;
+        });
+    }
+
     // **********************************************************
     // QUERY SCOPES
     // **********************************************************
