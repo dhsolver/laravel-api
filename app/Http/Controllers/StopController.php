@@ -39,12 +39,23 @@ class StopController extends Controller
 
         $data = array_merge($request->validated(), ['order' => $order]);
 
-        if ($stop = $tour->stops()->create($data)) {
+        \DB::beginTransaction();
+
+        if ($stop = $tour->stops()->create(Arr::except($data, ['choices', 'location']))) {
+            if ($request->has('location')) {
+                $stop->location()->update($data['location']);
+            }
+
+            $stop->updateChoices($request->choices);
+            
+            \DB::commit();
+
             return $this->success("The stop {$stop->title} was created successfully.", new StopResource(
                 $stop->fresh()
             ));
         }
 
+        \DB::rollback();
         return $this->fail();
     }
 
@@ -72,16 +83,22 @@ class StopController extends Controller
     {
         $data = $request->validated();
 
+        \DB::beginTransaction();
+
         if ($stop->update(Arr::except($data, ['choices', 'location']))) {
             if ($request->has('location')) {
                 $stop->location()->update($data['location']);
             }
 
             $stop->updateChoices($request->choices);
+            
+            \DB::commit();
 
-            $stop = $stop->fresh();
-            return $this->success("{$stop->title} was updated successfully.", new StopResource($stop));
+            return $this->success("{$stop->title} was updated successfully.", new StopResource($stop->fresh()));
         }
+
+        \DB::rollback();
+        return $this->fail();
     }
 
     /**
