@@ -84,18 +84,6 @@ class CreateToursTest extends TestCase
     }
 
     /** @test */
-    public function a_tour_must_have_a_description()
-    {
-        $this->signIn('client');
-
-        $this->publishTour(['description' => null])
-            ->assertStatus(422)
-            ->assertJsonValidationErrors('description');
-
-        $this->assertCount(0, Tour::all());
-    }
-
-    /** @test */
     public function a_tour_must_have_a_valid_pricing_type()
     {
         $this->signIn('client');

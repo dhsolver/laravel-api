@@ -83,11 +83,11 @@ class ManageStopTest extends TestCase
     {
         $this->loginAs($this->client);
 
-        unset($this->stop['title'], $this->stop['description']);
+        unset($this->stop['title']);
 
         $this->updateStop($this->stop->toArray())
             ->assertStatus(422)
-            ->assertJsonValidationErrors(['title', 'description']);
+            ->assertJsonValidationErrors(['title']);
     }
 
     /** @test */
@@ -267,7 +267,7 @@ class ManageStopTest extends TestCase
 
         $this->updateStop($data)
             ->assertStatus(422)
-            ->assertJsonFragment(['errors' => ['choices.0.answer' => ['The choices.0.answer field is required.']]]);
+            ->assertJsonValidationErrors(['choices.0.answer']);
     }
 
     /** @test */
@@ -287,7 +287,7 @@ class ManageStopTest extends TestCase
 
         $this->updateStop($data)
             ->assertStatus(422)
-            ->assertJsonFragment(['errors' => ['choices.0.next_stop_id' => ['The selected choices.0.next_stop_id is invalid.']]]);
+            ->assertJsonValidationErrors('choices.0.next_stop_id');
     }
 
     /** @test */

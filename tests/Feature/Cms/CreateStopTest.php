@@ -6,7 +6,6 @@ use Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\Concerns\AttachJwtToken;
 use App\TourStop;
-use App\Tour;
 
 class CreateStopTest extends TestCase
 {
@@ -52,14 +51,14 @@ class CreateStopTest extends TestCase
     }
 
     /** @test */
-    public function a_stop_requires_a_title_and_description()
+    public function a_stop_requires_a_title()
     {
         $this->loginAs($this->client);
 
-        unset($this->stop['title'], $this->stop['description']);
+        unset($this->stop['title']);
 
         $this->publishStop()
             ->assertStatus(422)
-            ->assertJsonValidationErrors(['title', 'description']);
+            ->assertJsonValidationErrors(['title']);
     }
 }

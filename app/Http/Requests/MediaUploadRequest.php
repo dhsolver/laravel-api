@@ -34,6 +34,9 @@ class MediaUploadRequest extends FormRequest
 
     public function messages()
     {
+        $max = config('junket.imaging.max_file_size');
+        $audioMax = config('junket.audio.max_file_size');
+
         return [
             'image.max' => 'Image must be less than ' . $max . ' KB',
             'image.*' => 'Image must be a valid image file.',
