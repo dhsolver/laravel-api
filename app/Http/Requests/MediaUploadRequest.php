@@ -35,8 +35,10 @@ class MediaUploadRequest extends FormRequest
     public function messages()
     {
         return [
-            'image.image' => 'Image must be a valid image file.',
-            'audio.mimetypes' => 'Image must be a valid MP3 file.',
+            'image.max' => 'Image must be less than ' . $max . ' KB',
+            'image.*' => 'Image must be a valid image file.',
+            'audio.max' => 'Image must be less than ' . $audioMax . ' KB',
+            'audio.*' => 'Image must be a valid MP3 file.',
         ];
     }
 }

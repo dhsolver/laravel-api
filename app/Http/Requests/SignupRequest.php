@@ -34,4 +34,19 @@ class SignupRequest extends FormRequest
             ]
         ];
     }
+
+    /**
+     * Get the validation messages.
+     *
+     * @return array
+     */
+    public function messages()
+    {
+        return [
+            'name.max' => 'Your name is too long.',
+            'email.*' => 'A valid email is required.',
+            'password.*' => 'Your password is required.',
+            'role.*' => 'A role of client or user is required.',
+        ];
+    }
 }

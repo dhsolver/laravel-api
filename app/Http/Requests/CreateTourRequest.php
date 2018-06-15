@@ -33,7 +33,7 @@ class CreateTourRequest extends FormRequest
                 'min:3',
                 Rule::unique('tours', 'title'),
             ],
-            'description' => 'required|string|max:16000|min:3',
+            'description' => 'nullable|string|max:16000|min:3',
             'pricing_type' => [
                 'required',
                 Rule::in(Tour::$PRICING_TYPES),
@@ -55,6 +55,11 @@ class CreateTourRequest extends FormRequest
     {
         return [
             'title.unique' => 'A Tour with this name already exists.',
+            'title.max' => 'Tour title must be less than 255 characters.',
+            'title.*' => 'Tour title is required.',
+            'description.max' => 'Tour description is too long.',
+            'pricing_type.*' => 'Tour pricing type must be selected.',
+            'type.*' => 'Tour type must be selected.',
         ];
     }
 }

@@ -26,8 +26,8 @@ class CreateStopRequest extends FormRequest
     public function rules()
     {
         return [
-            'title' => 'required|string|max:255|min:3',
-            'description' => 'required|string|max:16000|min:3',
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string|max:16000',
 
             'location.address1' => 'nullable|string|max:255',
             'location.address2' => 'nullable|string|max:255',
@@ -63,6 +63,35 @@ class CreateStopRequest extends FormRequest
             'image3_id' => 'nullable|integer|exists:media,id',
             'intro_audio_id' => 'nullable|integer|exists:media,id',
             'background_audio_id' => 'nullable|integer|exists:media,id',
+        ];
+    }
+
+    /**
+     * Get the validation messages.
+     *
+     * @return array
+     */
+    public function messages()
+    {
+        return [
+            'title.*' => 'A Stop Title is required.',
+            'title.max' => 'Stop title must be less than 255 characters.',
+            'description.max' => 'Stop description is too long.',
+            'location.latitude.*' => 'Invalid coordinates.',
+            'location.longitude.*' => 'Invalid coordinates.',
+            'location.*' => 'Invalid address.',
+            'play_radius.*' => 'Location trigger must be numeric.',
+            'question.max' => 'Question is too long.',
+            'question_answer.max' => 'Question is too long.',
+            'question_success.max' => 'Question is too long.',
+            'choices.*.next_stop_id.*' => 'Next stop does not exist.',
+            'video_url.*' => 'Invalid YouTube URL.',
+            'main_image_id.*' => 'Feature Image file not found.',
+            'image1_id.*' => 'Image 1 file not found.',
+            'image2_id.*' => 'Image 2 file not found.',
+            'image3_id.*' => 'Image 3 file not found.',
+            'intro_audio_id.*' => 'Intro audio file not found.',
+            'background_audio_id.*' => 'Intro audio file not found.',
         ];
     }
 }

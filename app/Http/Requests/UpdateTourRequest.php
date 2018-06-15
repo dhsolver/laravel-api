@@ -96,4 +96,51 @@ class UpdateTourRequest extends FormRequest
             'route' => 'nullable',
         ];
     }
+
+    /**
+     * Get the validation messages.
+     *
+     * @return array
+     */
+    public function messages()
+    {
+        return [
+            'title.unique' => 'A Tour with this name already exists.',
+            'title.max' => 'Tour title must be less than 255 characters.',
+            'title.*' => 'Tour title is required.',
+            'description.max' => 'Tour description is too long.',
+            'description.*' => 'Tour description is required.',
+            'pricing_type.*' => 'Tour pricing type must be selected.',
+            'type.*' => 'Tour type must be selected.',
+
+            'location.latitude.*' => 'Invalid coordinates.',
+            'location.longitude.*' => 'Invalid coordinates.',
+            'location.*' => 'Invalid address.',
+
+            'facebook_url.*' => 'Invalid Facebook URL.',
+            'twitter_url.*' => 'Invalid Twitter URL.',
+            'instagram_url.*' => 'Invalid Instagram URL.',
+            'video_url.*' => 'Invalid YouTube URL.',
+            'start_video_url.*' => 'Invalid YouTube URL.',
+            'end_video_url.*' => 'Invalid YouTube URL.',
+            'start_message.max' => 'Starting point message is too long.',
+            'end_message.max' => 'Starting point message is too long.',
+            'end_message.max' => 'Starting point message is too long.',
+            'prize_details.max' => 'Prize details are too long.',
+            'prize_instructions.max' => 'Prize instructions are too long.',
+            'start_point_id.*' => 'Starting point does not exist.',
+            'end_point_id.*' => 'End point does not exist.',
+
+            'main_image_id.*' => 'Feature Image file not found.',
+            'image1_id.*' => 'Image 1 file not found.',
+            'image2_id.*' => 'Image 2 file not found.',
+            'image3_id.*' => 'Image 3 file not found.',
+            'intro_audio_id.*' => 'Intro audio file not found.',
+            'background_audio_id.*' => 'Intro audio file not found.',
+            'trophy_image_id.*' => 'Trophy Image file not found.',
+            'start_image_id.*' => 'Starting point image file not found.',
+            'end_image_id.*' => 'End point image file not found.',
+            'pin_image_id.*' => 'Custom pin image file not found.',
+        ];
+    }
 }

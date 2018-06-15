@@ -28,4 +28,17 @@ class LoginRequest extends FormRequest
             'password' => 'required',
         ];
     }
+
+    /**
+     * Get the validation messages.
+     *
+     * @return array
+     */
+    public function messages()
+    {
+        return [
+            'email.*' => 'A valid email is required.',
+            'password.*' => 'Your password is required.',
+        ];
+    }
 }
