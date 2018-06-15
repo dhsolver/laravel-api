@@ -18,6 +18,8 @@ class CreateMediaTable extends Migration
             $table->string('file');
             $table->unsignedInteger('user_id');
 
+            $table->foreign('user_id')->references('id')->on('users');
+
             $table->timestamps();
         });
     }
@@ -29,6 +31,8 @@ class CreateMediaTable extends Migration
      */
     public function down()
     {
+        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('media');
+        Schema::enableForeignKeyConstraints();
     }
 }

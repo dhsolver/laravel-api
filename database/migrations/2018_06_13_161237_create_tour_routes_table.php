@@ -21,6 +21,8 @@ class CreateTourRoutesTable extends Migration
             $table->decimal('longitude', 11, 8)->nullable();
 
             $table->timestamps();
+
+            $table->foreign('tour_id')->references('id')->on('tours');
         });
     }
 
@@ -31,6 +33,8 @@ class CreateTourRoutesTable extends Migration
      */
     public function down()
     {
+        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('tour_routes');
+        Schema::enableForeignKeyConstraints();
     }
 }

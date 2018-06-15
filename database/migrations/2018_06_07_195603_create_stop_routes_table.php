@@ -22,6 +22,10 @@ class CreateStopRoutesTable extends Migration
             $table->decimal('latitude', 10, 8)->nullable();
             $table->decimal('longitude', 11, 8)->nullable();
 
+            $table->foreign('tour_id')->references('id')->on('tours');
+            $table->foreign('stop_id')->references('id')->on('tour_stops');
+            $table->foreign('next_stop_id')->references('id')->on('tour_stops');
+
             $table->timestamps();
         });
     }
@@ -33,6 +37,8 @@ class CreateStopRoutesTable extends Migration
      */
     public function down()
     {
+        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('stop_routes');
+        Schema::enableForeignKeyConstraints();
     }
 }
