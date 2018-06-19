@@ -56,6 +56,15 @@ class CreateStopRequest extends FormRequest
                 }),
             ],
 
+            'next_stop_id' => [
+                'nullable',
+                'numeric',
+                Rule::exists('tour_stops', 'id')->where(function ($query) {
+                    $query->where('tour_id', $this->route('tour')->id)
+                        ->where('id', '<>', $this->route('stop')->id);
+                }),
+            ],
+
             'video_url' => ['nullable', 'url', new YoutubeVideo],
             'main_image_id' => 'nullable|integer|exists:media,id',
             'image1_id' => 'nullable|integer|exists:media,id',

@@ -21,6 +21,7 @@ class AlterTourStopsTableAddForeignKeys extends Migration
             $table->foreign('image1_id')->references('id')->on('media');
             $table->foreign('image2_id')->references('id')->on('media');
             $table->foreign('image3_id')->references('id')->on('media');
+            $table->foreign('next_stop_id')->references('id')->on('tour_stops');
         });
     }
 
@@ -39,6 +40,7 @@ class AlterTourStopsTableAddForeignKeys extends Migration
             $table->dropForeign(['image1_id']);
             $table->dropForeign(['image2_id']);
             $table->dropForeign(['image3_id']);
+            $table->dropForeign(['next_stop_id']);
         });
     }
 }

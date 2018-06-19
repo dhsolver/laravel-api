@@ -47,7 +47,7 @@ class StopController extends Controller
             }
 
             $stop->updateChoices($request->choices);
-            
+
             \DB::commit();
 
             return $this->success("The stop {$stop->title} was created successfully.", new StopResource(
@@ -91,7 +91,7 @@ class StopController extends Controller
             }
 
             $stop->updateChoices($request->choices);
-            
+
             \DB::commit();
 
             return $this->success("{$stop->title} was updated successfully.", new StopResource($stop->fresh()));

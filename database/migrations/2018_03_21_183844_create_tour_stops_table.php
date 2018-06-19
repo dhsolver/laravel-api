@@ -38,6 +38,7 @@ class CreateTourStopsTable extends Migration
             $table->string('question', 500)->nullable();
             $table->string('question_answer', 500)->nullable();
             $table->string('question_success', 500)->nullable();
+            $table->unsignedInteger('next_stop_id')->nullable();
 
             $table->timestamps();
             $table->softDeletes();

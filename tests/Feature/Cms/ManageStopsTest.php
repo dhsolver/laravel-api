@@ -559,4 +559,65 @@ class ManageStopTest extends TestCase
 
         $this->assertCount(1, $this->tour->fresh()->stops);
     }
+
+    /** @test */
+    public function a_stop_can_have_a_next_stop()
+    {
+        $this->loginAs($this->client);
+
+        $nextStop = create('App\TourStop', ['tour_id' => $this->tour->id, 'order' => 2]);
+
+        $data = [
+            'next_stop_id' => '' . $nextStop->id
+        ];
+
+        $this->updateStop(array_merge($this->stop->toArray(), $data))
+            ->assertStatus(200)
+            ->assertJsonFragment($data);
+    }
+
+    /** @test */
+    public function a_stops_next_stop_must_exist()
+    {
+        $this->loginAs($this->client);
+
+        $data = [
+            'next_stop_id' => '999',
+        ];
+
+        $this->updateStop($data)
+            ->assertStatus(422)
+            ->assertJsonValidationErrors('next_stop_id');
+    }
+
+    /** @test */
+    public function a_stop_cannot_have_an_invalid_next_stop()
+    {
+        $this->loginAs($this->client);
+
+        $otherTour = create('App\Tour', ['user_id' => $this->client->id]);
+        $otherStop = create('App\TourStop', ['tour_id' => $otherTour->id, 'order' => 1]);
+
+        $data = [
+            'next_stop_id' => '' . $otherStop->id,
+        ];
+
+        $resp = $this->updateStop($data)
+            ->assertStatus(422)
+            ->assertJsonValidationErrors(['next_stop_id']);
+    }
+
+    /** @test */
+    public function a_stops_next_stop_cannot_be_the_current_stop()
+    {
+        $this->loginAs($this->client);
+
+        $data = [
+            'next_stop_id' => $this->stop->id,
+        ];
+
+        $resp = $this->updateStop($data)
+            ->assertStatus(422)
+            ->assertJsonValidationErrors(['next_stop_id']);
+    }
 }
