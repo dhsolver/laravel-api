@@ -38,9 +38,9 @@ class StopRoute extends Model
     public static function boot()
     {
         // auto-update route order on creation
-        self::creating(function ($choice) {
-            if (empty($choice->order)) {
-                $choice->order = self::getNextOrder($choice->tour_stop_id);
+        self::creating(function ($route) {
+            if (empty($route->order)) {
+                $route->order = self::getNextOrder($route->stop_id, $route->next_stop_id);
             }
         });
     }
@@ -78,13 +78,14 @@ class StopRoute extends Model
 
     /**
      * Returns the next free number in the order sequence
-     * for the given TourStop's Choices.
+     * for the given Stop/NextStop order
      *
      * @return void
      */
-    public static function getNextOrder($stopId)
+    public static function getNextOrder($stopId, $nextId)
     {
-        return self::where('tour_stop_id', $stopId)
+        return self::where('stop_id', $stopId)
+            ->where('next_stop_id', $nextId)
             ->select(\DB::raw('coalesce(max(`order`), 0) as max_order'))
             ->get()
             ->first()

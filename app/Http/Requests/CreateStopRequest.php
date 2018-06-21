@@ -72,6 +72,8 @@ class CreateStopRequest extends FormRequest
             'image3_id' => 'nullable|integer|exists:media,id',
             'intro_audio_id' => 'nullable|integer|exists:media,id',
             'background_audio_id' => 'nullable|integer|exists:media,id',
+
+            'routes' => 'nullable|array',
         ];
     }
 

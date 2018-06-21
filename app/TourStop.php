@@ -18,7 +18,7 @@ class TourStop extends Model
      *
      * @var array
      */
-    public $with = ['location', 'choices', 'image1', 'image2', 'image3', 'mainImage', 'introAudio', 'backgroundAudio'];
+    public $with = ['location', 'choices', 'image1', 'image2', 'image3', 'mainImage', 'introAudio', 'backgroundAudio', 'routes'];
 
     /**
      * The attributes that should be cast to native types.
@@ -114,6 +114,17 @@ class TourStop extends Model
             ->where('locationable_type', 'App\TourStop');
     }
 
+    /**
+     * Get all the stops's next routes.
+     *
+     * @return void
+     */
+    public function routes()
+    {
+        return $this->hasMany(StopRoute::class, 'stop_id', 'id')
+            ->orderBy('order');
+    }
+
     // **********************************************************
     // MUTATORS
     // **********************************************************
@@ -164,5 +175,32 @@ class TourStop extends Model
         }
 
         return true;
+    }
+
+    /**
+     * Sync all Stop routes from array.
+     *
+     * @param array $routes
+     * @return void
+     */
+    public function syncRoutes($routes)
+    {
+        $this->routes()->delete();
+
+        if (empty($routes)) {
+            return;
+        }
+
+        foreach ($routes as $nextStop) {
+            foreach ($nextStop['route'] as $item) {
+                $this->routes()->create([
+                    'tour_id' => $this->tour_id,
+                    'stop_id' => $this->id,
+                    'next_stop_id' => $nextStop['next_stop_id'],
+                    'latitude' => $item['lat'],
+                    'longitude' => $item['lng'],
+                ]);
+            }
+        }
     }
 }

@@ -85,12 +85,14 @@ class StopController extends Controller
 
         \DB::beginTransaction();
 
-        if ($stop->update(Arr::except($data, ['choices', 'location']))) {
+        if ($stop->update(Arr::except($data, ['choices', 'location', 'routes']))) {
             if ($request->has('location')) {
                 $stop->location()->update($data['location']);
             }
 
             $stop->updateChoices($request->choices);
+
+            $stop->syncRoutes($request->routes);
 
             \DB::commit();
 
