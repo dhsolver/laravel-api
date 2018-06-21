@@ -620,4 +620,40 @@ class ManageStopTest extends TestCase
             ->assertStatus(422)
             ->assertJsonValidationErrors(['next_stop_id']);
     }
+
+    /** @test */
+    public function a_stop_can_have_routes()
+    {
+        $this->loginAs($this->client);
+
+        $stop2 = create('App\TourStop', ['tour_id' => $this->tour->id, 'order' => 2]);
+        $stop3 = create('App\TourStop', ['tour_id' => $this->tour->id, 'order' => 3]);
+
+        $this->loginAs($this->client);
+
+        $data = [
+            'routes' => [
+                [
+                    'next_stop_id' => $stop2->id,
+                    'route' => [
+                        (object)['lat' => 40.75795412, 'lng' => -71.98552966],
+                        (object)['lat' => 41.75795412, 'lng' => -72.98552966],
+                        (object)['lat' => 42.75795412, 'lng' => -73.98552966],
+                        (object)['lat' => 43.75795412, 'lng' => -74.98552966],
+                    ],
+                ],
+                [
+                    'next_stop_id' => $stop3->id,
+                    'route' => [
+                        (object)['lat' => 43.75795412, 'lng' => -74.98552966],
+                        (object)['lat' => 40.75795412, 'lng' => -71.98552966],
+                    ],
+                ],
+            ],
+        ];
+
+        $data = $this->updateStop($data)
+            ->assertStatus(200)
+            ->assertJsonFragment($data);
+    }
 }

@@ -41,7 +41,7 @@ class StopController extends Controller
 
         \DB::beginTransaction();
 
-        if ($stop = $tour->stops()->create(Arr::except($data, ['choices', 'location']))) {
+        if ($stop = $tour->stops()->create(Arr::except($data, ['choices', 'location', 'routes']))) {
             if ($request->has('location')) {
                 $stop->location()->update($data['location']);
             }
