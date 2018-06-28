@@ -60,8 +60,10 @@ class CreateStopRequest extends FormRequest
                 'nullable',
                 'numeric',
                 Rule::exists('tour_stops', 'id')->where(function ($query) {
-                    $query->where('tour_id', $this->route('tour')->id)
-                        ->where('id', '<>', $this->route('stop')->id);
+                    $query->where('tour_id', $this->route('tour')->id);
+                    if (!empty($this->route('stop'))) {
+                        $query->where('id', '<>', $this->route('stop')->id);
+                    }
                 }),
             ],
 
