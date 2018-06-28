@@ -68,7 +68,7 @@ class TourController extends Controller
 
         if ($tour->update(Arr::except($data, ['location', 'route']))) {
             if ($request->has('location')) {
-                $stop->location()->update(Arr::except($data['location'], ['id']));
+                $tour->location()->update(Arr::except($data['location'], ['id']));
             }
 
             // dd($data['route']);
