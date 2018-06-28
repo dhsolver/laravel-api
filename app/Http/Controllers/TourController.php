@@ -68,7 +68,7 @@ class TourController extends Controller
 
         if ($tour->update(Arr::except($data, ['location', 'route']))) {
             if ($request->has('location')) {
-                $tour->location()->update($data['location']);
+                $stop->location()->update(Arr::except($data['location'], ['id']));
             }
 
             // dd($data['route']);
@@ -109,11 +109,11 @@ class TourController extends Controller
     public function stopOrder(UpdateStopOrderRequest $request, Tour $tour)
     {
         $order = 1;
-        foreach($request->order as $key => $id) {
+        foreach ($request->order as $key => $id) {
             TourStop::where('id', $id)->update(['order' => $order]);
             $order++;
         }
 
-        return $this->success("Stop order successfully saved.", ['order' => $request->order]);
+        return $this->success('Stop order successfully saved.', ['order' => $request->order]);
     }
 }

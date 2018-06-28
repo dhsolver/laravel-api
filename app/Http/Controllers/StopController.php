@@ -43,7 +43,7 @@ class StopController extends Controller
 
         if ($stop = $tour->stops()->create(Arr::except($data, ['choices', 'location', 'routes']))) {
             if ($request->has('location')) {
-                $stop->location()->update($data['location']);
+                $stop->location()->update(Arr::except($data['location'], ['id']));
             }
 
             $stop->updateChoices($request->choices);
@@ -87,7 +87,7 @@ class StopController extends Controller
 
         if ($stop->update(Arr::except($data, ['choices', 'location', 'routes']))) {
             if ($request->has('location')) {
-                $stop->location()->update($data['location']);
+                $stop->location()->update(Arr::except($data['location'], ['id']));
             }
 
             $stop->updateChoices($request->choices);

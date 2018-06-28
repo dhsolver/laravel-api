@@ -110,7 +110,7 @@ class TourStop extends Model
      */
     public function location()
     {
-        return $this->hasOne('App\Location', 'locationable_id', 'id')
+        return $this->hasOne(Location::class, 'locationable_id', 'id')
             ->where('locationable_type', 'App\TourStop');
     }
 
