@@ -34,7 +34,7 @@ class UpdateTourRequest extends FormRequest
                 'min:3',
                 Rule::unique('tours', 'title')->ignore(request()->route('tour')),
             ],
-            'description' => 'required|string|max:16000|min:3',
+            'description' => 'nullable|max:16000|min:3',
             'pricing_type' => [
                 'required',
                 Rule::in(Tour::$PRICING_TYPES),

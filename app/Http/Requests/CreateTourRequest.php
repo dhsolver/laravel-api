@@ -33,7 +33,7 @@ class CreateTourRequest extends FormRequest
                 'min:3',
                 Rule::unique('tours', 'title'),
             ],
-            'description' => 'nullable|string|max:16000|min:3',
+            'description' => 'nullable|max:16000|min:3',
             'pricing_type' => [
                 'required',
                 Rule::in(Tour::$PRICING_TYPES),
