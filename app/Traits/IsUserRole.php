@@ -85,14 +85,14 @@ trait IsUserRole
      * @return mixed
      * @throws \Exception
      */
-    public function save(array $options = [])
+    public function save(array $options = [], $forceCreate = false)
     {
         $this->setIncrementing(false);
 
         $role_attributes = array_intersect_key($this->attributes, array_flip($this->fillable));
         $user_attributes = array_diff_key($this->attributes, array_flip($this->fillable));
 
-        if ($this->id) {
+        if ($this->id && !$forceCreate) {
             $user = $this->user;
             $user->update($user_attributes);
         } else {

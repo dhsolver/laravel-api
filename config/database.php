@@ -78,6 +78,20 @@ return [
             'prefix' => '',
         ],
 
+        'itourmobile' => [
+            'driver' => 'mysql',
+            'host' => env('ITOUR_DB_HOST', '127.0.0.1'),
+            'port' => env('ITOUR_DB_PORT', '3306'),
+            'database' => env('ITOUR_DB_DATABASE', 'forge'),
+            'username' => env('ITOUR_DB_USERNAME', 'forge'),
+            'password' => env('ITOUR_DB_PASSWORD', ''),
+            'unix_socket' => env('ITOUR_DB_SOCKET', ''),
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix' => '',
+            'strict' => true,
+            'engine' => null,
+        ],
     ],
 
     /*
