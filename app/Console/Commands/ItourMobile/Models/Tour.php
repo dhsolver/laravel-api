@@ -29,4 +29,40 @@ class Tour extends Model
      * @var string
      */
     protected $table = 'tours';
+
+    /**
+     * Converts the address information on the model into attributes
+     * that can be used to create a Location object.
+     *
+     * @return array
+     */
+    public function getLocationAttribute()
+    {
+        return [
+            'address1' => empty($this->tour_street_address) ? null : $this->tour_street_address,
+            'city' => empty($this->tour_city) ? null : $this->tour_city,
+            'state' => empty($this->tour_state) ? null : $this->tour_state,
+            'zipcode' => empty($this->tour_weather_zip) ? null : $this->tour_weather_zip,
+            'latitude' => empty($this->tour_lat) ? null : $this->tour_lat,
+            'longitude' => empty($this->tour_lon) ? null : $this->tour_lon,
+        ];
+    }
+
+    public function getVideoUrlAttribute()
+    {
+        if (empty($this->tour_youtube)) {
+            return null;
+        }
+
+        return 'https://youtu.be/' . $this->tour_youtube;
+    }
+
+    public function getTwitterUrlAttribute()
+    {
+        if (empty($this->twitter)) {
+            return null;
+        }
+
+        return 'https://twitter.com/' . $this->twitter;
+    }
 }

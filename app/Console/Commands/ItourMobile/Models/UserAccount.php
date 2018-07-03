@@ -30,4 +30,13 @@ class UserAccount extends Model
         }
         return $this->firstName . ' ' . $this->lastName;
     }
+
+    public function getCompanyAttribute()
+    {
+        if (empty($this->company_name)) {
+            return null;
+        }
+
+        return $this->company_name;
+    }
 }

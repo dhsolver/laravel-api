@@ -14,7 +14,7 @@ return [
          * The width and height of image thumbnail files.
          * Sizes are assumed squares, so a value of 400 is equal to 400x400.
         */
-        'image_thumb_size' => 400,
+        'image_thumb_size' => 250,
 
         /**
          * Maximum height or width of an image.
@@ -41,4 +41,9 @@ return [
          */
         'max_file_size' => env('MAX_AUDIO_KB', 30000), // in KB
     ],
+
+    /**
+     * Holds the containing path the the backup of the iTourMobile tourfiles folder.
+     */
+    'itourfiles' => env('ITOUR_BACKUP_DIR'),
 ];
