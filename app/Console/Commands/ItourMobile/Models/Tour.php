@@ -65,4 +65,10 @@ class Tour extends Model
 
         return 'https://twitter.com/' . $this->twitter;
     }
+
+    public function icon()
+    {
+        return $this->hasOne(TourIcon::class, 'tour_id', 'tour_id')
+            ->where('type', 'base');
+    }
 }

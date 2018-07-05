@@ -14,7 +14,7 @@ return [
          * The width and height of image thumbnail files.
          * Sizes are assumed squares, so a value of 400 is equal to 400x400.
         */
-        'image_thumb_size' => 250,
+        'image_thumb_size' => 400,
 
         /**
          * Maximum height or width of an image.

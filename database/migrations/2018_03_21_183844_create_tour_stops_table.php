@@ -17,7 +17,7 @@ class CreateTourStopsTable extends Migration
             $table->increments('id');
 
             $table->unsignedInteger('tour_id');
-            $table->unsignedTinyInteger('order');
+            $table->unsignedSmallInteger('order');
 
             $table->string('title', 255);
             $table->text('description')->nullable();

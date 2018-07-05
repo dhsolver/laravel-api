@@ -2,19 +2,25 @@
 
 namespace App\Console\Commands\ItourMobile;
 
-use Illuminate\Console\Command;
+use App\Console\Commands\ItourMobile\Models\TourStop as OldStop;
 use App\Console\Commands\ItourMobile\Models\Tour as OldTour;
 use App\Console\Commands\ItourMobile\Models\UserAccount;
-use App\Admin;
-use App\MobileUser;
-use App\Client;
-use Illuminate\Database\QueryException;
-use App\Tour;
-use App\SuperAdmin;
-use App\User;
+use Intervention\Image\Exception\NotSupportedException;
+use App\Console\Commands\ItourMobile\Models\RoutePoint;
 use App\Http\Controllers\Traits\UploadsMedia;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Console\Command;
+use App\MobileUser;
+use App\SuperAdmin;
+use App\TourRoute;
+use App\TourStop;
+use App\Client;
+use App\Tour;
+use App\User;
 use App\Media;
+use App\Admin;
+use Intervention\Image\Exception\NotReadableException;
 
 class RestoreItourMobile extends Command
 {
@@ -114,6 +120,12 @@ class RestoreItourMobile extends Command
         echo "Converting Tours...\n";
         $this->convertTours();
 
+        echo "Converting Tours Routes...\n";
+        $this->convertTourRoutes();
+
+        echo "Converting Tour Stops...\n";
+        $this->convertStops();
+
         $this->printErrors();
 
         echo "Restoration complete.\n";
@@ -184,10 +196,8 @@ class RestoreItourMobile extends Command
     public function convertTours()
     {
         foreach (OldTour::all() as $old) {
-            $old->tour_id = $this->idPrefix . $old->tour_id;
-
             $tour = Tour::make([
-                'id' => $old->tour_id,
+                'id' => $this->idPrefix . $old->tour_id,
                 'user_id' => $this->idPrefix . $old->tour_owner,
                 'title' => $old->tour_title,
                 'description' => $old->tour_description,
@@ -204,16 +214,53 @@ class RestoreItourMobile extends Command
                 $tour->title = $old->tour_title . ' 2';
             }
 
-            // $tour->main_image_id = $this->createImage($old->tour_image_large, $tour->user_id);
-            // $tour->intro_audio_id = $this->createAudio($old->tour_intro_music, $tour->user_id);
-            // $tour->background_audio_id = $this->createAudio($old->tour_music, $tour->user_id);
+            try {
+                $tour->main_image_id = $this->createImage($old->tour_image_large, $tour->user_id);
+            } catch (NotSupportedException $ex) {
+                echo 'Bad image format: ' . $old->tour_image_large . "\n";
+                continue;
+            } catch (NotReadableException $ex) {
+                echo 'Bad image format: ' . $old->tour_image_large . "\n";
+                continue;
+            }
+
+            try {
+                $tour->intro_audio_id = $this->createAudio($old->tour_intro_music, $tour->user_id);
+            } catch (NotSupportedException $ex) {
+                echo 'Bad audio format: ' . $old->tour_intro_music . "\n";
+                continue;
+            } catch (NotReadableException $ex) {
+                echo 'Bad audio format: ' . $old->tour_intro_music . "\n";
+                continue;
+            }
+
+            try {
+                $tour->background_audio_id = $this->createAudio($old->tour_music, $tour->user_id);
+            } catch (NotSupportedException $ex) {
+                echo 'Bad audio format: ' . $old->tour_music . "\n";
+                continue;
+            } catch (NotReadableException $ex) {
+                echo 'Bad audio format: ' . $old->tour_music . "\n";
+                continue;
+            }
+
+            if (!empty($old->icon)) {
+                try {
+                    $tour->pin_image_id = $this->createIcon($old->icon->url, $tour->user_id);
+                } catch (NotSupportedException $ex) {
+                    echo 'Bad image format: ' . $old->icon->url . "\n";
+                    continue;
+                } catch (NotReadableException $ex) {
+                    echo 'Bad image format: ' . $old->icon->url . "\n";
+                    continue;
+                }
+            }
 
             $tour->video_url = $old->video_url;
             $tour->facebook_url = empty($old->facebook) ? null : $old->facebook;
             $tour->twitter_url = $old->twitter_url;
 
             // TODO:
-            // - handle routes
             // - handle inapp ids ?
             // - handle tour_ready_for_sale = published
             // - pricing?
@@ -248,7 +295,7 @@ class RestoreItourMobile extends Command
 
         $f = new UploadedFile($file, basename($file), mime_content_type($file));
         if ($type == 'image') {
-            $filename = $this->storeImage($f, 'images', 'jpg');
+            $filename = $this->storeImage($f, 'images', 'jpg', true);
         } elseif ($type == 'icon') {
             $filename = $this->storeIcon($f, 'images', 'png');
         } elseif ($type == 'audio') {
@@ -293,5 +340,113 @@ class RestoreItourMobile extends Command
         $this->errorCount++;
         array_push($this->missingFiles, $file);
         echo "File not found: $file\n";
+    }
+
+    public function convertTourRoutes()
+    {
+        $bad = [];
+
+        foreach (RoutePoint::orderBy('point_order')->get() as $old) {
+            if (empty($old->tour_id)) {
+                echo "No tour associated with route point\n";
+                array_push($bad, $old);
+                continue;
+            }
+
+            if (!Tour::where('id', $this->idPrefix . $old->tour_id)->exists()) {
+                echo "Tour does not exist for route point\n";
+                array_push($bad, $old);
+                continue;
+            }
+
+            if (empty($old->point_lat) || empty($old->point_lon)) {
+                echo "Route is missing coordinates\n";
+                array_push($bad, $old);
+                continue;
+            }
+
+            TourRoute::create([
+                'tour_id' => $this->idPrefix . $old->tour_id,
+                'order' => $old->point_order,
+                'latitude' => $old->point_lat,
+                'longitude' => $old->point_lon,
+            ]);
+        }
+
+        echo 'Total invalid routes: ' . count($bad) . "\n";
+    }
+
+    public function convertStops()
+    {
+        foreach (OldStop::orderBy('stop_order')->get() as $old) {
+            $old->tour_id = $this->idPrefix . $old->tour_id;
+
+            $tour = Tour::where('id', $old->tour_id)->first();
+            if (empty($tour)) {
+                echo 'Tour does not exist for stop ' . $old->stop_id . "\n";
+                continue;
+            }
+
+            $stop = TourStop::make([
+                'id' => $this->idPrefix . $old->stop_id,
+                'title' => $old->stop_title,
+                'description' => $old->stop_description,
+                'tour_id' => $tour->id,
+                'order' => $old->order,
+                'video_url' => $old->video_url,
+                'play_radius' => $old->play_distance,
+            ]);
+
+            try {
+                $stop->main_image_id = $this->createImage($old->stop_photo_original, $tour->user_id);
+            } catch (NotSupportedException $ex) {
+                echo 'Bad image format: ' . $old->stop_photo_original . "\n";
+                continue;
+            } catch (NotReadableException $ex) {
+                echo 'Bad image format: ' . $old->stop_photo_original . "\n";
+                continue;
+            }
+
+            try {
+                $stop->intro_audio_id = $this->createAudio($old->stop_audio_url, $tour->user_id);
+            } catch (NotSupportedException $ex) {
+                echo 'Bad audio format: ' . $old->stop_audio_url . "\n";
+                continue;
+            } catch (NotReadableException $ex) {
+                echo 'Bad audio format: ' . $old->stop_audio_url . "\n";
+                continue;
+            }
+
+            $i = 0;
+            foreach ($old->images as $image) {
+                $i++;
+                try {
+                    switch ($i) {
+                        case 1:
+                            $stop->image1_id = $this->createImage($image->image_url, $tour->user_id);
+                            break;
+                        case 2:
+                            $stop->image2_id = $this->createImage($image->image_url, $tour->user_id);
+                            break;
+                        case 3:
+                            $stop->image3_id = $this->createImage($image->image_url, $tour->user_id);
+                            break;
+                        default:
+                            echo 'Image count exceeded 3 for stop: ' . $old->stop_id . "\n";
+                            break;
+                    }
+                } catch (NotSupportedException $ex) {
+                    echo 'Bad image format: ' . $image->image_url . "\n";
+                    continue;
+                } catch (NotReadableException $ex) {
+                    echo 'Bad image format: ' . $image->image_url . "\n";
+                    continue;
+                }
+            }
+
+            $stop->save();
+
+            $stop->location()->update($old->location);
+        }
     }
 }

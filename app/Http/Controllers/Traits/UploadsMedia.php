@@ -70,7 +70,7 @@ trait UploadsMedia
      * @param [type] $dir
      * @return void
      */
-    public function storeImage($file, $dir, $ext = null)
+    public function storeImage($file, $dir, $ext = null, $sizeUp = false)
     {
         $thumbSize = config('junket.imaging.image_thumb_size', 400);
         $maxSize = config('junket.imaging.max_image_size', 3000);
@@ -79,7 +79,17 @@ trait UploadsMedia
 
         $image = \Image::make($file->path());
 
-        if ($image->height() < $thumbSize || $image->width() < $thumbSize) {
+        if ($sizeUp && ($image->height() < $thumbSize || $image->width() < $thumbSize)) {
+            if ($image->height() < $image->width()) {
+                $image->resize(null, $thumbSize, function ($constraint) {
+                    $constraint->aspectRatio();
+                })->save();
+            } else {
+                $image->resize($thumbSize, null, function ($constraint) {
+                    $constraint->aspectRatio();
+                })->save();
+            }
+        } elseif ($image->height() < $thumbSize || $image->width() < $thumbSize) {
             throw new ImageTooSmallException("Image too small.  Images must be at least {$thumbSize}x{$thumbSize}.");
         }
 
