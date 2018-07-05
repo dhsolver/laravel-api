@@ -86,11 +86,6 @@ class RestoreItourMobile extends Command
      */
     public function __construct()
     {
-        $this->loadUsersWithTours();
-        Admin::unguard();
-        Client::unguard();
-        MobileUser::unguard();
-
         parent::__construct();
     }
 
@@ -101,6 +96,11 @@ class RestoreItourMobile extends Command
      */
     public function handle()
     {
+        $this->loadUsersWithTours();
+        Admin::unguard();
+        Client::unguard();
+        MobileUser::unguard();
+
         echo "Converting Users...\n";
 
         $this->superadmin = SuperAdmin::create([
