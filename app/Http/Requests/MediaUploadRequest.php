@@ -28,6 +28,7 @@ class MediaUploadRequest extends FormRequest
 
         return [
             'image' => "nullable|file|image|max:$max",
+            'icon' => "nullable|file|image|max:$max|mimetypes:image/png",
             'audio' => "nullable|file|mimetypes:audio/mpeg|max:$audioMax",
         ];
     }
@@ -40,6 +41,8 @@ class MediaUploadRequest extends FormRequest
         return [
             'image.max' => 'Image must be less than ' . $max . ' KB',
             'image.*' => 'Image must be a valid image file.',
+            'icon.max' => 'Image must be less than ' . $max . ' KB',
+            'icon.*' => 'Image must be a valid PNG file.',
             'audio.max' => 'Image must be less than ' . $audioMax . ' KB',
             'audio.*' => 'Image must be a valid MP3 file.',
         ];

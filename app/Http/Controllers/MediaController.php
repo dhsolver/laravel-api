@@ -6,6 +6,7 @@ use App\Http\Controllers\Traits\UploadsMedia;
 use App\Http\Requests\MediaUploadRequest;
 use App\Media;
 use App\Exceptions\ImageTooSmallException;
+use App\Exceptions\InvalidImageException;
 
 class MediaController extends Controller
 {
@@ -30,6 +31,8 @@ class MediaController extends Controller
                 return $this->fail();
             }
         } catch (ImageTooSmallException $ex) {
+            return $this->fail(422, $ex->message);
+        } catch (InvalidImageException $ex) {
             return $this->fail(422, $ex->message);
         }
 

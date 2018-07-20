@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Traits;
 
 use App\ImageFile;
 use App\Exceptions\ImageTooSmallException;
+use App\Exceptions\InvalidImageException;
+use Intervention\Image\Exception\NotReadableException;
 
 trait UploadsMedia
 {
@@ -15,11 +17,25 @@ trait UploadsMedia
     protected $imageMimes = ['image/gif', 'image/jpg', 'image/jpeg', 'image/png'];
 
     /**
+     * Icon mime types that are allowed.
+     *
+     * @var array
+     */
+    protected $iconMimes = ['image/png'];
+
+    /**
      * Video mime types that are allowed.
      *
      * @var array
      */
     protected $videoMimes = ['video/avi', 'video/mpeg', 'video/quicktime', 'video/mp4'];
+
+    /**
+     * Audio mime types that are allowed.
+     *
+     * @var array
+     */
+    protected $audioMimes = ['audio/mpeg'];
 
     /**
      * Generates unique hash based filename.
@@ -53,6 +69,8 @@ trait UploadsMedia
      */
     public function storeFile($file, $dir, $ext = null)
     {
+        $this->validateMime($file->path(), $this->audioMimes);
+
         $filename = $this->generateFilename($ext ? $ext : $file->extension());
 
         if (!\Storage::putFileAs($dir, $file, $filename)) {
@@ -78,6 +96,7 @@ trait UploadsMedia
         $filename = $this->generateFilename($ext ? $ext : $file->extension());
 
         $image = \Image::make($file->path());
+        $this->validateMime($image, $this->imageMimes);
 
         if ($sizeUp && ($image->height() < $thumbSize || $image->width() < $thumbSize)) {
             if ($image->height() < $image->width()) {
@@ -146,7 +165,12 @@ trait UploadsMedia
 
         $filename = $this->generateFilename($ext ? $ext : $file->extension());
 
-        $image = \Image::make($file);
+        try {
+            $image = \Image::make($file);
+        } catch (NotReadableException $ex) {
+            throw new InvalidImageException('File type not supported.');
+        }
+        $this->validateMime($image, $this->iconMimes);
 
         if ($image->height() < $thumbSize || $image->width() < $thumbSize) {
             throw new ImageTooSmallException("Image too small.  Images must be at least {$thumbSize}x{$thumbSize}.");
@@ -188,24 +212,26 @@ trait UploadsMedia
     }
 
     /**
-     * Validates file mime type as an image.
+     * Throws an error if Image's mime type is not in the given array.
+     * Accepts either an object of Image class or a string filename.
      *
-     * @param [type] $file
-     * @return boolean
+     * @param string|Intervention\Image\Image $imageOrFilename
+     * @param array $mimes
+     * @throws InvalidImageException
+     * @return void
      */
-    public function isValidImageFile($file)
+    public function validateMime($imageOrFilename, $mimes)
     {
-        return in_array(mime_content_type($file->path()), $this->imageMimes);
-    }
+        if (is_a($imageOrFilename, 'Intervention\Image\Image')) {
+            if (!in_array($imageOrFilename->mime(), $mimes)) {
+                throw new InvalidImageException('File type not supported.');
+            }
+        } else {
+            if (!in_array(mime_content_type($imageOrFilename), $mimes)) {
+                throw new InvalidImageException('File type not supported.');
+            }
+        }
 
-    /**
-     * Validates file mime type as a video.
-     *
-     * @param [type] $file
-     * @return boolean
-     */
-    public function isValidVideoFile($file)
-    {
-        return in_array(mime_content_type($file->path()), $this->videoMimes);
+        return true;
     }
 }
