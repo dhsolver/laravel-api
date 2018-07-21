@@ -56,7 +56,7 @@ class AuthTest extends TestCase
 
         $this->signIn('superadmin')->json('GET', '/admin/session')->assertStatus(200);
         $this->signIn('superadmin')->json('GET', '/cms/session')->assertStatus(200);
-        $this->signIn('superadmin')->json('GET', '/mobile/session')->assertStatus(200);
+        $this->signIn('superadmin')->json('GET', '/mobile/tours')->assertStatus(200);
     }
 
     /** @test */
@@ -66,7 +66,7 @@ class AuthTest extends TestCase
 
         $this->signIn('admin')->json('GET', '/admin/session')->assertStatus(200);
         $this->signIn('admin')->json('GET', '/cms/session')->assertStatus(200);
-        $this->signIn('admin')->json('GET', '/mobile/session')->assertStatus(200);
+        $this->signIn('admin')->json('GET', '/mobile/tours')->assertStatus(200);
     }
 
     /** @test */
@@ -76,7 +76,7 @@ class AuthTest extends TestCase
 
         $this->signIn('user')->json('GET', '/admin/session')->assertStatus(403);
         $this->signIn('user')->json('GET', '/cms/session')->assertStatus(403);
-        $this->signIn('user')->json('GET', '/mobile/session')->assertStatus(200);
+        $this->signIn('user')->json('GET', '/mobile/tours')->assertStatus(200);
     }
 
     /** @test */
@@ -86,7 +86,7 @@ class AuthTest extends TestCase
 
         $this->signIn('client')->json('GET', '/admin/session')->assertStatus(403);
         $this->signIn('client')->json('GET', '/cms/session')->assertStatus(200);
-        $this->signIn('client')->json('GET', '/mobile/session')->assertStatus(200);
+        $this->signIn('client')->json('GET', '/mobile/tours')->assertStatus(200);
     }
 
     /** @test */
@@ -96,7 +96,7 @@ class AuthTest extends TestCase
 
         $this->json('GET', '/admin/session')->assertStatus(400);
         $this->json('GET', '/cms/session')->assertStatus(400);
-        $this->json('GET', '/mobile/session')->assertStatus(400);
+        $this->json('GET', '/mobile/tours')->assertStatus(400);
     }
 
     /** @test */

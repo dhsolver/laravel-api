@@ -92,7 +92,7 @@ trait IsUserRole
         $role_attributes = array_intersect_key($this->attributes, array_flip($this->fillable));
         $user_attributes = array_diff_key($this->attributes, array_flip($this->fillable));
 
-        if ($this->id && !$options['create']) {
+        if ($this->id && (!isset($options['create']) || !$options['create'])) {
             $user = $this->user;
             $user->update($user_attributes);
         } else {

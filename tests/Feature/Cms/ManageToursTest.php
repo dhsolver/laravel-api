@@ -37,12 +37,11 @@ class ManageToursTest extends TestCase
     }
 
     /** @test */
-    public function a_tour_requires_a_title_description_and_proper_types_to_be_updated()
+    public function a_tour_requires_a_title_and_proper_types_to_be_updated()
     {
         $this->loginAs($this->client);
 
         $this->updateTour(['title' => null])->assertStatus(422);
-        $this->updateTour(['description' => null])->assertStatus(422);
         $this->updateTour(['pricing_type' => null])->assertStatus(422);
         $this->updateTour(['type' => null])->assertStatus(422);
     }
