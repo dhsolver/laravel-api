@@ -5,9 +5,12 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
 use App\Rules\YoutubeVideo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Tour extends Model
 {
+    use SoftDeletes;
+
     /**
      * Defines the valid options for pricing types
      *

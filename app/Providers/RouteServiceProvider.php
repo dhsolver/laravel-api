@@ -15,6 +15,7 @@ class RouteServiceProvider extends ServiceProvider
      * @var string
      */
     protected $namespace = 'App\Http\Controllers';
+    protected $mobileNamespace = 'App\Mobile\Controllers';
 
     /**
      * Define your route model bindings, pattern filters, etc.
@@ -54,7 +55,7 @@ class RouteServiceProvider extends ServiceProvider
     {
         Route::prefix('mobile')
             ->middleware('api')
-            ->namespace($this->namespace)
+            ->namespace($this->mobileNamespace)
             ->group(base_path('routes/mobile.php'));
     }
 
