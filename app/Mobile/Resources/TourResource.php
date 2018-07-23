@@ -55,12 +55,12 @@ class TourResource extends JsonResource
                 'background_audio' => new AudioResource($this->backgroundAudio)
             ],
 
+            'route' => TourRouteResource::collection($this->route),
+            'stops' => StopResource::collection($this->resource->stops),
+
             'created_at' => $this->created_at->toDateTimeString(),
             'updated_at' => $this->updated_at ? $this->updated_at->toDateTimeString() : null,
             'published_at' => $this->published_at ? $this->published_at->toDateTimeString() : null,
-
-            // 'route' => RouteResource::collection($this->resource->route),
-            'stops' => StopResource::collection($this->resource->stops),
         ];
     }
 }

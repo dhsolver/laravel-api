@@ -24,15 +24,6 @@ class StopResource extends JsonResource
             'video_url' => $this->video_url,
             'location' => new LocationResource($this->location),
 
-            'is_multiple_choice' => $this->is_multiple_choice,
-            'question' => $this->question,
-
-            'question_answer' => $this->question_answer,
-            'question_success' => $this->question_success,
-            'next_stop' => $this->next_stop_id,
-
-            'choices' => StopChoiceResource::collection($this->choices),
-
             'media' => [
                 'image1' => new ImageResource($this->image1),
                 'image2' => new ImageResource($this->image2),
@@ -42,10 +33,18 @@ class StopResource extends JsonResource
                 'background_audio' => new AudioResource($this->backgroundAudio)
             ],
 
+            'is_multiple_choice' => $this->is_multiple_choice,
+            'question' => $this->question,
+
+            'question_answer' => $this->question_answer,
+            'question_success' => $this->question_success,
+            'next_stop' => $this->next_stop_id,
+
+            'choices' => StopChoiceResource::collection($this->choices),
+            'routes' => StopRouteResource::collection($this->routes),
+
             'created_at' => $this->created_at->toDateTimeString(),
             'updated_at' => $this->updated_at ? $this->updated_at->toDateTimeString() : null,
-
-            // 'routes' => new StopRouteResource($this->resource->routes),
         ];
     }
 }

@@ -122,6 +122,7 @@ class TourStop extends Model
     public function routes()
     {
         return $this->hasMany(StopRoute::class, 'stop_id', 'id')
+            ->orderBy('next_stop_id')
             ->orderBy('order');
     }
 
