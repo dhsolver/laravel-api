@@ -38,33 +38,32 @@ class TourCollection extends ResourceCollection
                     'prize_details' => $item->prize_details,
                     'prize_instructions' => $item->prize_instructions,
 
-                    'start_point' => $this->start_point_id,
+                    'start_point' => $item->start_point_id,
                     'start_message' => $item->start_message,
                     'start_video_url' => $item->start_video_url,
 
-                    'end_point' => $this->end_point_id,
+                    'end_point' => $item->end_point_id,
                     'end_message' => $item->end_message,
                     'end_video_url' => $item->end_video_url,
 
                     'media' => [
-                        'image1' => new ImageResource($this->image1),
-                        'image2' => new ImageResource($this->image2),
-                        'image3' => new ImageResource($this->image3),
-                        'main_image' => new ImageResource($this->mainImage),
-                        'start_image' => new ImageResource($this->startImage),
-                        'end_image' => new ImageResource($this->endImage),
-                        'pin_image' => new IconResource($this->pinImage),
-                        'trophy_image' => new IconResource($this->trophyImage),
-                        'intro_audio' => new AudioResource($this->introAudio),
-                        'background_audio' => new AudioResource($this->backgroundAudio)
+                        'image1' => $item->image1 ? new ImageResource($item->image1) : null,
+                        'image2' => $item->image2 ? new ImageResource($item->image2) : null,
+                        'image3' => $item->image3 ? new ImageResource($item->image3) : null,
+                        'main_image' => $item->mainImage ? new ImageResource($item->mainImage) : null,
+                        'start_image' => $item->startImage ? new ImageResource($item->startImage) : null,
+                        'end_image' => $item->endImage ? new ImageResource($item->endImage) : null,
+                        'pin_image' => $item->pinImage ? new IconResource($item->pinImage) : null,
+                        'trophy_image' => $item->trophyImage ? new IconResource($item->trophyImage) : null,
+                        'intro_audio' => $item->introAudio ? new AudioResource($item->introAudio) : null,
+                        'background_audio' => $item->backgroundAudio ? new AudioResource($item->backgroundAudio) : null,
                     ],
 
-                    'created_at' => $item->created_at,
-                    'updated_at' => $item->updated_at,
-                    'published_at' => $item->published_at,
+                    'created_at' => $item->created_at->toDateTimeString(),
+                    'updated_at' => $item->updated_at ? $item->updated_at->toDateTimeString() : null,
+                    'published_at' => $item->published_at ? $item->published_at->toDateTimeString() : null,
                 ];
             }),
         ];
-        // return parent::toArray($request);
     }
 }

@@ -3,9 +3,9 @@
 namespace App\Mobile\Controllers;
 
 use App\Tour;
+use App\Http\Controllers\Controller;
 use App\Mobile\Resources\TourResource;
 use App\Mobile\Resources\TourCollection;
-use App\Http\Controllers\Controller;
 
 class TourController extends Controller
 {
