@@ -1,0 +1,345 @@
+swagger: '2.0'
+info:
+  title: Junket API
+  description: |
+    Junket Mobile API 
+  version: 1.0.1
+host: api.wejunket.com
+basePath: /mobile
+schemes:
+ - https
+tags:
+- name: tours
+  description: Read Tour information.
+paths:
+  /tours:
+    get:
+      tags:
+      - tours
+      summary: Get all published Tours.
+      description: Lists all available published Tours.
+      operationId: getTours
+      produces:
+      - application/json
+      responses:
+        200:
+          description: successful operation
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Tour'
+        500:
+          description: Unexpected Error
+  /tours/{tour_id}:
+    get:
+      tags:
+      - tours
+      summary: Get Tour details
+      description: Returns all of the information for the given tour.
+      operationId: getTourById
+      produces:
+      - application/json
+      parameters:
+      - name: tour_id
+        in: path
+        description: ID of the Tour to return
+        required: true
+        type: integer
+        format: int64
+      responses:
+        200:
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Tour'
+        404:
+          description: Tour not found
+definitions:
+  Tour:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+      user_id:
+        type: integer
+        format: int32
+      title:
+        type: string
+        description: 'The name of the tour'
+        example: 'San Fransico Ghost Tour'
+      description:
+        type: string
+      pricing_type:
+        type: string
+        format: enum
+          - free
+          - premium
+      type:
+        type: string
+        format: enum
+          - indoor
+          - outdoor
+          - adventure
+        description: 'The type of Tour.'
+        example: 'adventure'
+      stops_count:
+        type: integer
+        format: int32
+        description: 'The number of Stops on the Tour.'
+        example: 31
+      location:
+        $ref: '#/definitions/Location'
+        description: 'The location of the Tour, including GPS coordinates.'
+      facebook_url: 
+        type: string
+        description: 'Facebook URL'
+        example: 'https://www.facebook.com/example-page'
+      twitter_url: 
+        type: string
+        description: 'Twitter URL'
+        example: 'https://www.twitter.com/example-page'
+      instagram_url: 
+        type: string
+        description: 'Instagram URL'
+        example: 'https://www.instagram.com/example-page'
+      video_url:
+        type: string
+        description: 'Youtube video URL for the tour.'
+        example: 'https://youtu.be/Bey4XXJAqS8'
+      has_prize:
+        type: boolean
+        description: 'Whether the Tour offers a prize or not.'
+        example: true
+      prize_details:
+        type: string
+        description: 'The details and description of the Tour prize.'
+        example: '$10 Giftcard'
+      prize_instructions:
+        type: string
+        description: 'The instructions for how to redeem the Tour prize.'
+        example: 'Goto the local store to redeem.'
+      trophy_image:
+        type: string
+        description: 'Custom trophy image.'
+        example: 'http://media.wejunket.com/images/4fd1b212d98168645c0dce52bdb05189.png'
+      start_point:
+        type: integer
+        format: int32
+        description: 'The ID of the first stop on the Tour.'
+        example: 15
+      start_message:
+        type: string
+        description: 'The message to be displayed when a User starts the Tour.'
+        example: 'Welcome to Ghost Tour'
+      start_image:
+        type: string
+        description: 'The image to be displayed when a User starts the Tour.'
+        example: 'http://media.wejunket.com/images/4fd1b212d98168645c0dce52bdb05189.jpg'
+      start_video_url:
+        type: string
+        description: 'The Youtube video URL of the video that is to be displayed when a User starts the Tour.'
+        example: 'https://youtu.be/Bey4XXJAqS8'
+      end_point:
+        type: integer
+        format: int32
+        description: 'The ID of the last stop on the Tour.'
+        example: 35
+      end_message:
+        type: string
+        description: 'The message to be displayed when a User completes the Tour.'
+        example: 'Well done!'
+      end_image:
+        type: string
+        description: 'The image to be displayed when a User completes the Tour.'
+        example: 'http://media.wejunket.com/images/4fd1b212d98168645c0dce52bdb05189.jpg'
+      end_video_url:
+        type: string
+        description: 'The Youtube video URL of the video that is to be displayed when a User completes the Tour.'
+        example: 'https://youtu.be/Bey4XXJAqS8'
+      main_image:
+        type: string
+        description: 'Tour cover image.'
+        example: 'http://media.wejunket.com/images/4fd1b212d98168645c0dce52bdb05189.jpg'
+      image1:
+        type: string
+        description: 'First Tour image.'
+        example: 'http://media.wejunket.com/images/4fd1b212d98168645c0dce52bdb05189.jpg'
+      image2:
+        type: string
+        description: 'Second Tour image.'
+        example: 'http://media.wejunket.com/images/4fd1b212d98168645c0dce52bdb05189.jpg'
+      image3:
+        type: string
+        description: 'Third Tour image.'
+        example: 'http://media.wejunket.com/images/4fd1b212d98168645c0dce52bdb05189.jpg'
+      pin_image:
+        type: string
+        description: 'Custom map pin icon.'
+        example: 'http://media.wejunket.com/images/4fd1b212d98168645c0dce52bdb05189.png'
+      intro_audio:
+        type: string
+        description: 'Intro audio MP3 path.'
+        example: 'http://media.wejunket.com/images/4fd1b212d98168645c0dce52bdb05189.mp3'
+      background_audio:
+        type: string
+        description: 'Background audio MP3 path.'
+        example: 'http://media.wejunket.com/images/4fd1b212d98168645c0dce52bdb05189.mp3'
+      created_at:
+        type: string
+        format: date-time
+        description: 'Timestamp the Tour was created.'
+        example: '2018-07-21 13:53:20'
+      updated_at:
+        type: string
+        format: date-time
+        description: 'Timestamp the Tour was updated.'
+        example: '2018-07-21 13:53:20'
+      published_at:
+        type: string
+        format: date-time
+        description: 'Timestamp the Tour was published.'
+        example: '2018-07-21 13:53:20'
+  Location:
+    type: object
+    properties:
+      address1:
+        type: string
+        example: '150 5th Avenue'
+      address2:
+        type: string
+        example: 'Unit 405'
+      city:
+        type: string
+        example: 'New York'
+      state:
+        type: string
+        example: 'NY'
+      zipcode:
+        type: string
+        example: '10001'
+      latitude:
+        type: number
+        format: float
+        example: 40.7395956
+      longitude:
+        type: number
+        format: float
+        example: -73.9913727
+  Order:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+      petId:
+        type: integer
+        format: int64
+      quantity:
+        type: integer
+        format: int32
+      shipDate:
+        type: string
+        format: date-time
+      status:
+        type: string
+        description: Order Status
+        enum:
+        - placed
+        - approved
+        - delivered
+      complete:
+        type: boolean
+        default: false
+    xml:
+      name: Order
+  Category:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+      name:
+        type: string
+    xml:
+      name: Category
+  User:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+      username:
+        type: string
+      firstName:
+        type: string
+      lastName:
+        type: string
+      email:
+        type: string
+      password:
+        type: string
+      phone:
+        type: string
+      userStatus:
+        type: integer
+        format: int32
+        description: User Status
+    xml:
+      name: User
+  Tag:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+      name:
+        type: string
+    xml:
+      name: Tag
+  Pet:
+    type: object
+    required:
+    - name
+    - photoUrls
+    properties:
+      id:
+        type: integer
+        format: int64
+      category:
+        $ref: '#/definitions/Category'
+      name:
+        type: string
+        example: doggie
+      photoUrls:
+        type: array
+        xml:
+          name: photoUrl
+          wrapped: true
+        items:
+          type: string
+      tags:
+        type: array
+        xml:
+          name: tag
+          wrapped: true
+        items:
+          $ref: '#/definitions/Tag'
+      status:
+        type: string
+        description: pet status in the store
+        enum:
+        - available
+        - pending
+        - sold
+    xml:
+      name: Pet
+  ApiResponse:
+    type: object
+    properties:
+      code:
+        type: integer
+        format: int32
+      type:
+        type: string
+      message:
+        type: string
