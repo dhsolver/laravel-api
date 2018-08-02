@@ -11,6 +11,7 @@
 - [Development Setup](docs/Development.md)
 - [Testing](docs/Testing.md)
 - [Media](docs/Media.md)
+- [API Documentation](docs/Api.md)
 
 ### 3rd Party 
 - Roles and permissions provided by [spatie/laravel-permission](https://github.com/spatie/laravel-permission)
