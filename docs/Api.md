@@ -4,8 +4,8 @@ API documentation is generated using the OpenApi 3.0 specification.
 
 | File          | Description                          |
 |---------------|--------------------------------------|
-| docs/api.yaml | The documentation source (OpenApi)   |
-| docs/api.html | The compiled/generated API docs      |
+| [docs/api.yaml](api.yaml) | The documentation source (OpenApi)   |
+| [docs/api.html](api.html) | The compiled/generated API docs      |
 
 If you have swagger-codegen installed, you can generate a fresh copy of the documentation using the custom artisan command.  
 
