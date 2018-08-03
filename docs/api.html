@@ -696,21 +696,6 @@ margin-bottom: 20px;
   <script>
     // Script section to load models into a JS Var
     var defs = {}
-            defs.ApiResponse = {
-  "type" : "object",
-  "properties" : {
-    "code" : {
-      "type" : "integer",
-      "format" : "int32"
-    },
-    "type" : {
-      "type" : "string"
-    },
-    "message" : {
-      "type" : "string"
-    }
-  }
-};
             defs.credentials = {
   "required" : [ "email", "password" ],
   "properties" : {
@@ -734,6 +719,28 @@ margin-bottom: 20px;
     "token" : {
       "type" : "string",
       "description" : "JWT Auth token to be used for Bearer authentication header."
+    }
+  }
+};
+            defs.inline_response_200_1 = {
+  "properties" : {
+    "tour" : {
+      "description" : "The information for the Tour.",
+      "$ref" : "#/definitions/Tour"
+    },
+    "stops" : {
+      "type" : "array",
+      "description" : "All of the Stops on the Tour.",
+      "items" : {
+        "$ref" : "#/definitions/Stop"
+      }
+    },
+    "route" : {
+      "type" : "array",
+      "description" : "An array of points that make up the Tour's route.",
+      "items" : {
+        "$ref" : "#/definitions/TourRoutePoint"
+      }
     }
   }
 };
@@ -821,8 +828,181 @@ margin-bottom: 20px;
     }
   }
 };
+            defs.Stop = {
+  "type" : "object",
+  "required" : [ "created_at", "id", "is_multiple_choice", "order", "play_radius", "title", "tour_id" ],
+  "properties" : {
+    "id" : {
+      "type" : "integer",
+      "format" : "int32",
+      "example" : 52,
+      "description" : "The ID of the Stop."
+    },
+    "tour_id" : {
+      "type" : "integer",
+      "format" : "int32",
+      "example" : 99,
+      "description" : "The ID of the Tour the Stop belongs to."
+    },
+    "order" : {
+      "type" : "integer",
+      "format" : "int32",
+      "example" : 1,
+      "description" : "The position of the stop in order."
+    },
+    "title" : {
+      "type" : "string",
+      "example" : "Tyler Garden",
+      "description" : "The title of the Stop."
+    },
+    "description" : {
+      "type" : "string",
+      "example" : "Welcome to the Tyler Garden. The Tyler Garden was dedicated in 2004 and shows three busts of prominent members of the Tyler family.",
+      "description" : "The description of the Stop."
+    },
+    "play_radius" : {
+      "type" : "number",
+      "format" : "double",
+      "example" : 15.5,
+      "description" : "The radius (in meters) that should trigger being 'near' a stop and media should start playing."
+    },
+    "main_image" : {
+      "type" : "string",
+      "example" : "http://media.wejunket.com/images/4fd1b212d98168645c0dce52bdb05189.jpg",
+      "description" : "Stop cover image."
+    },
+    "image1" : {
+      "type" : "string",
+      "example" : "http://media.wejunket.com/images/4fd1b212d98168645c0dce52bdb05189.jpg",
+      "description" : "First Stop image."
+    },
+    "image2" : {
+      "type" : "string",
+      "example" : "http://media.wejunket.com/images/4fd1b212d98168645c0dce52bdb05189.jpg",
+      "description" : "Second Stop image."
+    },
+    "image3" : {
+      "type" : "string",
+      "example" : "http://media.wejunket.com/images/4fd1b212d98168645c0dce52bdb05189.jpg",
+      "description" : "Third Stop image."
+    },
+    "intro_audio" : {
+      "type" : "string",
+      "example" : "http://media.wejunket.com/images/4fd1b212d98168645c0dce52bdb05189.mp3",
+      "description" : "Intro audio MP3 path."
+    },
+    "background_audio" : {
+      "type" : "string",
+      "example" : "http://media.wejunket.com/images/4fd1b212d98168645c0dce52bdb05189.mp3",
+      "description" : "Background audio MP3 path."
+    },
+    "is_multiple_choice" : {
+      "type" : "boolean",
+      "example" : true,
+      "description" : "Boolean to determine whether the stop question is multiple choice or simple text answer.  Only for 'adventure' Tours."
+    },
+    "question" : {
+      "type" : "string",
+      "example" : "What did you see?",
+      "description" : "The question to prompt the User to allow access to the next stop on the Tour.  Only for 'adventure' Tours."
+    },
+    "question_answer" : {
+      "type" : "string",
+      "example" : "A Ghost",
+      "description" : "The correct answer to the question (non multiple choice).  Only for 'adventure' Tours."
+    },
+    "question_success" : {
+      "type" : "string",
+      "example" : "Correct!  Proceed to the next stop.",
+      "description" : "The message to prompt the User when the question is answered successfully.  Only for 'adventure' Tours."
+    },
+    "next_stop" : {
+      "type" : "integer",
+      "format" : "int32",
+      "example" : 5,
+      "description" : "The ID of the next stop on the Tour to give the User when a question (non multiple choice) is successfully answered.  Only for 'adventure' Tours."
+    },
+    "choices" : {
+      "type" : "array",
+      "description" : "The multiple choice questions.  Only for 'adventure' Tours that are marked multiple choice.",
+      "items" : {
+        "$ref" : "#/definitions/StopChoice"
+      }
+    },
+    "routes" : {
+      "type" : "array",
+      "description" : "An array of points that make up the route to the next Stop from this Stop.",
+      "items" : {
+        "$ref" : "#/definitions/StopRoutePoint"
+      }
+    },
+    "created_at" : {
+      "type" : "string",
+      "format" : "date-time",
+      "example" : "2018-07-21 13:53:20",
+      "description" : "Timestamp of when the Stop was created."
+    },
+    "updated_at" : {
+      "type" : "string",
+      "format" : "date-time",
+      "example" : "2018-07-21 13:53:20",
+      "description" : "Timestamp of when the Stop was updated."
+    }
+  }
+};
+            defs.StopChoice = {
+  "type" : "object",
+  "required" : [ "answer", "next_stop", "order" ],
+  "properties" : {
+    "order" : {
+      "type" : "integer",
+      "format" : "int32",
+      "example" : 1,
+      "description" : "The position of the choice in order."
+    },
+    "answer" : {
+      "type" : "string",
+      "example" : "A Ghost",
+      "description" : "The multiple choice answer."
+    },
+    "next_stop" : {
+      "type" : "integer",
+      "format" : "int32",
+      "example" : 5,
+      "description" : "The ID of the next stop on the Tour if the User selects this choice."
+    }
+  }
+};
+            defs.StopRoutePoint = {
+  "type" : "object",
+  "required" : [ "latitude", "longitude", "order" ],
+  "properties" : {
+    "next_stop" : {
+      "type" : "integer",
+      "format" : "int32",
+      "description" : "The ID of the stop that the route point goes to."
+    },
+    "order" : {
+      "type" : "integer",
+      "format" : "int32",
+      "example" : 1,
+      "description" : "The position of the route point in order."
+    },
+    "latitude" : {
+      "type" : "number",
+      "format" : "float",
+      "example" : 40.739597
+    },
+    "longitude" : {
+      "type" : "number",
+      "format" : "float",
+      "example" : -73.99137
+    }
+  }
+};
             defs.Tour = {
   "type" : "object",
+  "required" : [ "id", "pricing_type", "title", "type", "user_id" ],
   "properties" : {
     "id" : {
       "type" : "integer",
@@ -838,11 +1018,15 @@ margin-bottom: 20px;
       "description" : "The name of the tour"
     },
     "description" : {
-      "type" : "string"
+      "type" : "string",
+      "example" : "Explore the haunted history of Williamsburg with this guided audio tour app from www.colonialghosts.com ! Listen to the tour on your mobile device with a friend, or all alone...if you dare!",
+      "description" : "The full text description of the Tour."
     },
     "pricing_type" : {
       "type" : "string",
-      "format" : "enum - free - premium"
+      "format" : "enum - free - premium",
+      "example" : "premium",
+      "description" : "Pricing model for the Tour, either free or premium (paid)."
     },
     "type" : {
       "type" : "string",
@@ -911,15 +1095,15 @@ margin-bottom: 20px;
       "example" : "Welcome to Ghost Tour",
       "description" : "The message to be displayed when a User starts the Tour."
     },
-    "start_image" : {
-      "type" : "string",
-      "example" : "http://media.wejunket.com/images/4fd1b212d98168645c0dce52bdb05189.jpg",
-      "description" : "The image to be displayed when a User starts the Tour."
-    },
     "start_video_url" : {
       "type" : "string",
       "example" : "https://youtu.be/Bey4XXJAqS8",
       "description" : "The Youtube video URL of the video that is to be displayed when a User starts the Tour."
+    },
+    "start_image" : {
+      "type" : "string",
+      "example" : "http://media.wejunket.com/images/4fd1b212d98168645c0dce52bdb05189.jpg",
+      "description" : "The image to be displayed when a User starts the Tour."
     },
     "end_point" : {
       "type" : "integer",
@@ -932,15 +1116,15 @@ margin-bottom: 20px;
       "example" : "Well done!",
       "description" : "The message to be displayed when a User completes the Tour."
     },
-    "end_image" : {
-      "type" : "string",
-      "example" : "http://media.wejunket.com/images/4fd1b212d98168645c0dce52bdb05189.jpg",
-      "description" : "The image to be displayed when a User completes the Tour."
-    },
     "end_video_url" : {
       "type" : "string",
       "example" : "https://youtu.be/Bey4XXJAqS8",
       "description" : "The Youtube video URL of the video that is to be displayed when a User completes the Tour."
+    },
+    "end_image" : {
+      "type" : "string",
+      "example" : "http://media.wejunket.com/images/4fd1b212d98168645c0dce52bdb05189.jpg",
+      "description" : "The image to be displayed when a User completes the Tour."
     },
     "main_image" : {
       "type" : "string",
@@ -981,19 +1165,41 @@ margin-bottom: 20px;
       "type" : "string",
       "format" : "date-time",
       "example" : "2018-07-21 13:53:20",
-      "description" : "Timestamp the Tour was created."
+      "description" : "Timestamp of when the Tour was created."
     },
     "updated_at" : {
       "type" : "string",
       "format" : "date-time",
       "example" : "2018-07-21 13:53:20",
-      "description" : "Timestamp the Tour was updated."
+      "description" : "Timestamp of when the Tour was updated."
     },
     "published_at" : {
       "type" : "string",
       "format" : "date-time",
       "example" : "2018-07-21 13:53:20",
-      "description" : "Timestamp the Tour was published."
+      "description" : "Timestamp of when the Tour was published."
+    }
+  }
+};
+            defs.TourRoutePoint = {
+  "type" : "object",
+  "required" : [ "latitude", "longitude", "order" ],
+  "properties" : {
+    "order" : {
+      "type" : "integer",
+      "format" : "int32",
+      "example" : 1,
+      "description" : "The position of the route point in order."
+    },
+    "latitude" : {
+      "type" : "number",
+      "format" : "float",
+      "example" : 40.739597
+    },
+    "longitude" : {
+      "type" : "number",
+      "format" : "float",
+      "example" : -73.99137
     }
   }
 };
@@ -2876,7 +3082,7 @@ $(document).ready(function() {
                         <div class="pull-right"></div>
                         <div class="clearfix"></div>
                         <p></p>
-                        <p class="marked">Returns all of the information for the given tour.</p>
+                        <p class="marked">Returns all of the information for the given tour, including the route points and the stops.</p>
                         <p></p>
                         <br />
                         <pre class="prettyprint language-html prettyprinted" data-type="get"><code><span class="pln">/tours/{tour_id}</span></code></pre>
@@ -2926,7 +3132,7 @@ public class ToursApiExample {
 
         Long tourId = 789; // Long | ID of the desired Tour
         try {
-            Tour result = apiInstance.tour(authorization, tourId);
+            inline_response_200_1 result = apiInstance.tour(authorization, tourId);
             System.out.println(result);
         } catch (ApiException e) {
             System.err.println("Exception when calling ToursApi#tour");
@@ -2947,7 +3153,7 @@ public class ToursApiExample {
 
         Long tourId = 789; // Long | ID of the desired Tour
         try {
-            Tour result = apiInstance.tour(authorization, tourId);
+            inline_response_200_1 result = apiInstance.tour(authorization, tourId);
             System.out.println(result);
         } catch (ApiException e) {
             System.err.println("Exception when calling ToursApi#tour");
@@ -2977,7 +3183,7 @@ ToursApi *apiInstance = [[ToursApi alloc] init];
 // Get Tour details
 [apiInstance tourWith:authorization
     tourId:tourId
-              completionHandler: ^(Tour output, NSError* error) {
+              completionHandler: ^(inline_response_200_1 output, NSError* error) {
                             if (output) {
                                 NSLog(@"%@", output);
                             }
@@ -3047,7 +3253,7 @@ namespace Example
             try
             {
                 // Get Tour details
-                Tour result = apiInstance.tour(authorization, tourId);
+                inline_response_200_1 result = apiInstance.tour(authorization, tourId);
                 Debug.WriteLine(result);
             }
             catch (Exception e)
@@ -3223,7 +3429,7 @@ except ApiException as e:
                                         var schemaWrapper = {
   "description" : "OK",
   "schema" : {
-    "$ref" : "#/definitions/Tour"
+    "$ref" : "#/definitions/inline_response_200_1"
   }
 };
                                         var schema = schemaWrapper.schema;
@@ -3912,7 +4118,7 @@ except ApiException as e:
           </div>
           <div id="generator">
             <div class="content">
-              Generated 2018-08-03T11:14:47.438-04:00
+              Generated 2018-08-03T12:39:38.313-04:00
             </div>
           </div>
       </div>

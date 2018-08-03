@@ -15,7 +15,7 @@ class StopRouteResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'next_stop_id' => $this->next_stop_id,
+            'next_stop' => $this->next_stop_id,
             'order' => $this->order,
             'latitude' => $this->latitude,
             'longitude' => $this->longitude,

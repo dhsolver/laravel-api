@@ -6,6 +6,8 @@ use App\Tour;
 use App\Http\Controllers\Controller;
 use App\Mobile\Resources\TourResource;
 use App\Mobile\Resources\TourCollection;
+use App\Mobile\Resources\StopResource;
+use App\Mobile\Resources\TourRouteResource;
 
 class TourController extends Controller
 {
@@ -16,9 +18,11 @@ class TourController extends Controller
      */
     public function index()
     {
-        return new TourCollection(
-            Tour::all()
-        );
+        // TODO: implement pagination
+        return TourResource::collection(Tour::all());
+        // return new TourCollection(
+        //     Tour::all()
+        // );
     }
 
     /**
@@ -29,6 +33,10 @@ class TourController extends Controller
      */
     public function show(Tour $tour)
     {
-        return new TourResource($tour);
+        return response()->json([
+            'tour' => new TourResource($tour),
+            'stops' => StopResource::collection($tour->stops),
+            'route' => TourRouteResource::collection($tour->route),
+        ]);
     }
 }
