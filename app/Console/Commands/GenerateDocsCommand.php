@@ -37,25 +37,12 @@ class GenerateDocsCommand extends Command
      */
     public function handle()
     {
-        if (file_exists('index.html')) {
-            $this->error('Can\'t generate documentation: index.html file already exists in this directory');
+        $result = exec('redoc-cli bundle docs/api.yaml -o docs/api.html --title "Junket API 1.0 Documentation"');
+
+        if (!file_exists('docs/api.html')) {
+            $this->error('Error running bundling documentation!');
             return;
         }
-
-        // use swagger-codegen to generate a static html file
-        $result = exec('swagger-codegen generate -i docs/api.yaml -l html2');
-
-        if (!file_exists('index.html')) {
-            $this->error('Error running codegen!');
-            return;
-        }
-
-        // move generated file to docs folder
-        rename('index.html', 'docs/api.html');
-
-        // delete left over codegen files to keep working directory clean.
-        unlink('.swagger-codegen-ignore');
-        $this->delTree('.swagger-codegen');
 
         $this->info('API documentation generated to docs/api.html');
     }

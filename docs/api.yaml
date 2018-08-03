@@ -13,21 +13,21 @@ securityDefinitions:
     name: Authorization
     in: header
 tags:
-- name: auth
-- name: tours
+  - name: auth
+  - name: tours
 
 paths:
   /auth/session:
     get:
       tags:
-      - auth
+        - auth
       summary: Profile
       description: Get the logged in user's profile information.
       operationId: session
       produces:
-      - application/json
+        - application/json
       parameters:
-      - $ref: '#/parameters/AuthToken'
+        - $ref: '#/parameters/AuthToken'
       security:
         - Bearer: []
       responses:
@@ -52,7 +52,7 @@ paths:
       produces:
         - application/json
       parameters:
-      - $ref: '#/parameters/AuthToken'
+        - $ref: '#/parameters/AuthToken'
       security:
         - Bearer: []
       responses:
@@ -72,14 +72,14 @@ paths:
   /auth/signup:
     post:
       tags:
-      - auth
+        - auth
       summary: Sign up
       description: Register for an account.
       operationId: signup
       consumes:
-      - application/json
+        - application/json
       produces:
-      - application/json
+        - application/json
       parameters:
         - in: body
           name: user
@@ -132,14 +132,14 @@ paths:
   /auth/login:
     post:
       tags:
-      - auth
+        - auth
       summary: Login
       description: Submit credentials and get the JWT auth token.
       operationId: login
       consumes:
-      - application/json
+        - application/json
       produces:
-      - application/json
+        - application/json
       parameters:
         - in: body
           name: credentials
@@ -178,14 +178,14 @@ paths:
   /tours:
     get:
       tags:
-      - tours
+        - tours
       summary: Tour listing
       description: Get a paginated listing of all published Tours.
       operationId: tours
       produces:
-      - application/json
+        - application/json
       parameters:
-      - $ref: '#/parameters/AuthToken'
+        - $ref: '#/parameters/AuthToken'
       security:
         - Bearer: []
       responses:
@@ -215,20 +215,20 @@ paths:
   /tours/{tour_id}:
     get:
       tags:
-      - tours
+        - tours
       summary: Get Tour details
       description: Returns all of the information for the given tour, including the route points and the stops.
       operationId: tour
       produces:
-      - application/json
+        - application/json
       parameters:
-      - $ref: '#/parameters/AuthToken'
-      - in: path
-        name: tour_id
-        description: ID of the desired Tour
-        required: true
-        type: integer
-        format: int64
+        - $ref: '#/parameters/AuthToken'
+        - in: path
+          name: tour_id
+          description: ID of the desired Tour
+          required: true
+          type: integer
+          format: int64
       security:
         - Bearer: []
       responses:
