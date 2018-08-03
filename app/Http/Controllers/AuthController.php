@@ -7,6 +7,7 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use App\User;
 use App\Http\Requests\SignupRequest;
+use App\Http\Resources\UserSessionResource;
 
 class AuthController extends Controller
 {
@@ -30,7 +31,7 @@ class AuthController extends Controller
 
         // all good so return the token
         return response()->json([
-            'user' => auth()->user(),
+            'user' => new UserSessionResource(auth()->user()),
             'token' => $token,
         ]);
     }
@@ -61,8 +62,6 @@ class AuthController extends Controller
                 break;
         }
 
-        // $user->assignRole($data['role']);
-
         try {
             if (!$token = JWTAuth::fromUser($user)) {
                 return response()->json(['error' => 'could_not_create_token'], v);
@@ -73,7 +72,7 @@ class AuthController extends Controller
         }
 
         return response()->json([
-            'user' => $user,
+            'user' => new UserSessionResource($user),
             'token' => $token,
         ]);
     }
@@ -85,6 +84,6 @@ class AuthController extends Controller
      */
     public function userSession()
     {
-        return response()->json(auth()->user());
+        return response()->json(new UserSessionResource(auth()->user()));
     }
 }
