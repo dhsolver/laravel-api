@@ -1,59 +1,327 @@
 swagger: '2.0'
 info:
   title: Junket API
-  description: |
-    Junket Mobile API 
-  version: 1.0.1
+  description: Private API for the wejunket.com mobile apps. 
+  version: 1.0.0
 host: api.wejunket.com
 basePath: /mobile
 schemes:
  - https
+securityDefinitions:
+  Bearer:
+    type: apiKey
+    name: Authorization
+    in: header
 tags:
+- name: auth
 - name: tours
-  description: Read Tour information.
+
 paths:
+  /auth/session:
+    get:
+      tags:
+      - auth
+      summary: Profile
+      description: Get the logged in user's profile information.
+      operationId: session
+      produces:
+      - application/json
+      parameters:
+      - $ref: '#/parameters/AuthToken'
+      security:
+        - Bearer: []
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/User'
+        400:
+          $ref: '#/responses/NoToken'
+        401:
+          $ref: '#/responses/Unauthroized'
+        500:
+          $ref: '#/responses/UnexpectedError'
+      
+  /auth/refresh:
+    get:
+      tags:
+        - auth
+      summary: Refresh JWT Token
+      description: Submit an expired JWT token and get a new active one.
+      operationId: refresh
+      produces:
+        - application/json
+      parameters:
+      - $ref: '#/parameters/AuthToken'
+      security:
+        - Bearer: []
+      responses:
+        204:
+          description: OK
+          headers:
+            Authorization:
+              type: string
+              description: The new JWT bearer auth token.
+        400:
+          $ref: '#/responses/NoToken'
+        401:
+          $ref: '#/responses/Unauthroized'
+        500:
+          $ref: '#/responses/UnexpectedError'
+
+  /auth/signup:
+    post:
+      tags:
+      - auth
+      summary: Sign up
+      description: Register for an account.
+      operationId: signup
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+        - in: body
+          name: user
+          description: The user to create.
+          schema:
+            required:
+              - name
+              - email
+              - password
+              - password_confirmation
+            properties:
+              name:
+                type: string
+                description: The user's first and/or last name.
+                example: John Doe
+                maximum: 255
+              email:
+                type: string
+                example: client@test.com
+                description: The user's email address.
+                maximum: 255
+              password:
+                type: string
+                example: secret
+                description: The user's password.
+                minimum: 6
+              password_confirmation:
+                type: string
+                example: secret
+                description: Confirmation of the user's password.
+                minimum: 6
+      responses:
+        200:
+          description: Successful registration
+          schema: 
+            type: object
+            properties:
+              user:
+                $ref: '#/definitions/User'
+              token:
+                type: string
+                description: JWT Auth token to be used for Bearer authentication header.
+        422:
+          $ref: '#/responses/ValidationError'
+        401:
+          $ref: '#/responses/Unauthroized'
+        500:
+          $ref: '#/responses/UnexpectedError'
+
+  /auth/login:
+    post:
+      tags:
+      - auth
+      summary: Login
+      description: Submit credentials and get the JWT auth token.
+      operationId: login
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+        - in: body
+          name: credentials
+          description: The user's logim credentials.
+          schema:
+            required:
+              - email
+              - password
+            properties:
+              email:
+                type: string
+                example: client@test.com
+                description: The user's email address.
+              password:
+                type: string
+                example: secret
+                description: The user's password.
+      responses:
+        200:
+          description: Successful login
+          schema: 
+            type: object
+            properties:
+              user:
+                $ref: '#/definitions/User'
+              token:
+                type: string
+                description: JWT Auth token to be used for Bearer authentication header.
+        422:
+          $ref: '#/responses/ValidationError'
+        401:
+          $ref: '#/responses/Unauthroized'
+        500:
+          $ref: '#/responses/UnexpectedError'
+          
   /tours:
     get:
       tags:
       - tours
-      summary: Get all published Tours.
-      description: Lists all available published Tours.
-      operationId: getTours
+      summary: Tour listing
+      description: Get listing of all published Tours.
+      operationId: tours
       produces:
       - application/json
+      parameters:
+      - $ref: '#/parameters/AuthToken'
+      security:
+        - Bearer: []
       responses:
         200:
-          description: successful operation
+          description: OK
           schema:
             type: array
             items:
               $ref: '#/definitions/Tour'
+        400:
+          $ref: '#/responses/NoToken'
+        401:
+          $ref: '#/responses/Unauthroized'
         500:
-          description: Unexpected Error
+          $ref: '#/responses/UnexpectedError'
+          
   /tours/{tour_id}:
     get:
       tags:
       - tours
       summary: Get Tour details
       description: Returns all of the information for the given tour.
-      operationId: getTourById
+      operationId: tour
       produces:
       - application/json
       parameters:
-      - name: tour_id
-        in: path
-        description: ID of the Tour to return
+      - $ref: '#/parameters/AuthToken'
+      - in: path
+        name: tour_id
+        description: ID of the desired Tour
         required: true
         type: integer
         format: int64
+      security:
+        - Bearer: []
       responses:
         200:
-          description: successful operation
+          description: OK
           schema:
             $ref: '#/definitions/Tour'
+        400:
+          $ref: '#/responses/NoToken'
+        401:
+          $ref: '#/responses/Unauthroized'
         404:
-          description: Tour not found
+          $ref: '#/responses/NotFound'
+        500:
+          $ref: '#/responses/UnexpectedError'
+
+parameters:
+  AuthToken:
+    in: header
+    name: Authorization
+    type: string
+    required: true
+    description: |
+      JTW auth bearer token in the format of "Authorization: Bearer {token_here}"
+
+responses:
+  ValidationError:
+    description: Validation errors in the request body.
+    schema:
+      type: object
+      properties:
+          message:
+            type: string
+            description: The error message.
+            example: The given data was invalid.
+          errors:
+            type: object
+            description: A list of fields and their corresponding errors.
+
+  NotFound:
+    description: Object not found.
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+          description: The error message.
+          example: Object not found
+          
+  NoToken:
+    description: Invalid auth token provided.
+    schema:
+      type: object
+      properties:
+        message: 
+          type: string
+          description: The error message.
+          example: 'token_not_provided'
+          
+  Unauthroized:
+    description: Unauthorized.  Invalid or expired auth token or credentials provided.
+    schema:
+      type: object
+      properties:
+        message: 
+          type: string
+          description: The error message.
+          example: 'token_invalid'
+    
+  UnexpectedError:
+    description: An unexpected error occurred.
+    schema:
+      type: object
+      properties:
+        message: 
+          type: string
+          description: The error message.
+    
 definitions:
+  User:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+      name:
+        type: string
+        description: The user's first and last name.
+        example: John Doe
+      email:
+        type: string
+        description: The user's email address.
+        example: client@test.com
+      role:
+        type: string
+        enum: [user, client, admin]
+        description: |
+          The user's role in the system.
+          user - Regular mobile user
+          client - Tour creator, has access to the CMS but can also be a mobile user.
+          admin - System admin, has access to the Admin Panel but can also be a mobile user. 
+        example: user
+        
   Tour:
     type: object
     properties:
@@ -199,6 +467,7 @@ definitions:
         format: date-time
         description: 'Timestamp the Tour was published.'
         example: '2018-07-21 13:53:20'
+
   Location:
     type: object
     properties:
@@ -225,114 +494,7 @@ definitions:
         type: number
         format: float
         example: -73.9913727
-  Order:
-    type: object
-    properties:
-      id:
-        type: integer
-        format: int64
-      petId:
-        type: integer
-        format: int64
-      quantity:
-        type: integer
-        format: int32
-      shipDate:
-        type: string
-        format: date-time
-      status:
-        type: string
-        description: Order Status
-        enum:
-        - placed
-        - approved
-        - delivered
-      complete:
-        type: boolean
-        default: false
-    xml:
-      name: Order
-  Category:
-    type: object
-    properties:
-      id:
-        type: integer
-        format: int64
-      name:
-        type: string
-    xml:
-      name: Category
-  User:
-    type: object
-    properties:
-      id:
-        type: integer
-        format: int64
-      username:
-        type: string
-      firstName:
-        type: string
-      lastName:
-        type: string
-      email:
-        type: string
-      password:
-        type: string
-      phone:
-        type: string
-      userStatus:
-        type: integer
-        format: int32
-        description: User Status
-    xml:
-      name: User
-  Tag:
-    type: object
-    properties:
-      id:
-        type: integer
-        format: int64
-      name:
-        type: string
-    xml:
-      name: Tag
-  Pet:
-    type: object
-    required:
-    - name
-    - photoUrls
-    properties:
-      id:
-        type: integer
-        format: int64
-      category:
-        $ref: '#/definitions/Category'
-      name:
-        type: string
-        example: doggie
-      photoUrls:
-        type: array
-        xml:
-          name: photoUrl
-          wrapped: true
-        items:
-          type: string
-      tags:
-        type: array
-        xml:
-          name: tag
-          wrapped: true
-        items:
-          $ref: '#/definitions/Tag'
-      status:
-        type: string
-        description: pet status in the store
-        enum:
-        - available
-        - pending
-        - sold
-    xml:
-      name: Pet
+
   ApiResponse:
     type: object
     properties:

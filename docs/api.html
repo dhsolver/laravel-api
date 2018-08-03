@@ -711,19 +711,79 @@ margin-bottom: 20px;
     }
   }
 };
-            defs.Category = {
-  "type" : "object",
+            defs.credentials = {
+  "required" : [ "email", "password" ],
   "properties" : {
-    "id" : {
-      "type" : "integer",
-      "format" : "int64"
+    "email" : {
+      "type" : "string",
+      "example" : "client@test.com",
+      "description" : "The user's email address."
     },
-    "name" : {
-      "type" : "string"
+    "password" : {
+      "type" : "string",
+      "example" : "secret",
+      "description" : "The user's password."
     }
-  },
-  "xml" : {
-    "name" : "Category"
+  }
+};
+            defs.inline_response_200 = {
+  "properties" : {
+    "user" : {
+      "$ref" : "#/definitions/User"
+    },
+    "token" : {
+      "type" : "string",
+      "description" : "JWT Auth token to be used for Bearer authentication header."
+    }
+  }
+};
+            defs.inline_response_400 = {
+  "properties" : {
+    "message" : {
+      "type" : "string",
+      "example" : "token_not_provided",
+      "description" : "The error message."
+    }
+  }
+};
+            defs.inline_response_401 = {
+  "properties" : {
+    "message" : {
+      "type" : "string",
+      "example" : "token_invalid",
+      "description" : "The error message."
+    }
+  }
+};
+            defs.inline_response_404 = {
+  "properties" : {
+    "message" : {
+      "type" : "string",
+      "example" : "Object not found",
+      "description" : "The error message."
+    }
+  }
+};
+            defs.inline_response_422 = {
+  "properties" : {
+    "message" : {
+      "type" : "string",
+      "example" : "The given data was invalid.",
+      "description" : "The error message."
+    },
+    "errors" : {
+      "type" : "object",
+      "description" : "A list of fields and their corresponding errors.",
+      "properties" : { }
+    }
+  }
+};
+            defs.inline_response_500 = {
+  "properties" : {
+    "message" : {
+      "type" : "string",
+      "description" : "The error message."
+    }
   }
 };
             defs.Location = {
@@ -759,99 +819,6 @@ margin-bottom: 20px;
       "format" : "float",
       "example" : -73.99137
     }
-  }
-};
-            defs.Order = {
-  "type" : "object",
-  "properties" : {
-    "id" : {
-      "type" : "integer",
-      "format" : "int64"
-    },
-    "petId" : {
-      "type" : "integer",
-      "format" : "int64"
-    },
-    "quantity" : {
-      "type" : "integer",
-      "format" : "int32"
-    },
-    "shipDate" : {
-      "type" : "string",
-      "format" : "date-time"
-    },
-    "status" : {
-      "type" : "string",
-      "description" : "Order Status",
-      "enum" : [ "placed", "approved", "delivered" ]
-    },
-    "complete" : {
-      "type" : "boolean",
-      "default" : false
-    }
-  },
-  "xml" : {
-    "name" : "Order"
-  }
-};
-            defs.Pet = {
-  "type" : "object",
-  "required" : [ "name", "photoUrls" ],
-  "properties" : {
-    "id" : {
-      "type" : "integer",
-      "format" : "int64"
-    },
-    "category" : {
-      "$ref" : "#/definitions/Category"
-    },
-    "name" : {
-      "type" : "string",
-      "example" : "doggie"
-    },
-    "photoUrls" : {
-      "type" : "array",
-      "xml" : {
-        "name" : "photoUrl",
-        "wrapped" : true
-      },
-      "items" : {
-        "type" : "string"
-      }
-    },
-    "tags" : {
-      "type" : "array",
-      "xml" : {
-        "name" : "tag",
-        "wrapped" : true
-      },
-      "items" : {
-        "$ref" : "#/definitions/Tag"
-      }
-    },
-    "status" : {
-      "type" : "string",
-      "description" : "pet status in the store",
-      "enum" : [ "available", "pending", "sold" ]
-    }
-  },
-  "xml" : {
-    "name" : "Pet"
-  }
-};
-            defs.Tag = {
-  "type" : "object",
-  "properties" : {
-    "id" : {
-      "type" : "integer",
-      "format" : "int64"
-    },
-    "name" : {
-      "type" : "string"
-    }
-  },
-  "xml" : {
-    "name" : "Tag"
   }
 };
             defs.Tour = {
@@ -1030,39 +997,29 @@ margin-bottom: 20px;
     }
   }
 };
-            defs.User = {
-  "type" : "object",
+            defs.user = {
+  "required" : [ "email", "name", "password", "password_confirmation" ],
   "properties" : {
-    "id" : {
-      "type" : "integer",
-      "format" : "int64"
-    },
-    "username" : {
-      "type" : "string"
-    },
-    "firstName" : {
-      "type" : "string"
-    },
-    "lastName" : {
-      "type" : "string"
+    "name" : {
+      "type" : "string",
+      "example" : "John Doe",
+      "description" : "The user's first and/or last name."
     },
     "email" : {
-      "type" : "string"
+      "type" : "string",
+      "example" : "client@test.com",
+      "description" : "The user's email address."
     },
     "password" : {
-      "type" : "string"
+      "type" : "string",
+      "example" : "secret",
+      "description" : "The user's password."
     },
-    "phone" : {
-      "type" : "string"
-    },
-    "userStatus" : {
-      "type" : "integer",
-      "format" : "int32",
-      "description" : "User Status"
+    "password_confirmation" : {
+      "type" : "string",
+      "example" : "secret",
+      "description" : "Confirmation of the user's password."
     }
-  },
-  "xml" : {
-    "name" : "User"
   }
 };
   </script>
@@ -1081,12 +1038,25 @@ margin-bottom: 20px;
             -->
             <li class="nav-fixed nav-header active" data-group="_"><a href="#api-_">API Summary</a></li>
 
-                  <li class="nav-header" data-group="Tours"><a href="#api-Tours">API Methods - Tours</a></li>
-                    <li data-group="Tours" data-name="getTourById" class="">
-                      <a href="#api-Tours-getTourById">getTourById</a>
+                  <li class="nav-header" data-group="Auth"><a href="#api-Auth">API Methods - Auth</a></li>
+                    <li data-group="Auth" data-name="login" class="">
+                      <a href="#api-Auth-login">login</a>
                     </li>
-                    <li data-group="Tours" data-name="getTours" class="">
-                      <a href="#api-Tours-getTours">getTours</a>
+                    <li data-group="Auth" data-name="refresh" class="">
+                      <a href="#api-Auth-refresh">refresh</a>
+                    </li>
+                    <li data-group="Auth" data-name="session" class="">
+                      <a href="#api-Auth-session">session</a>
+                    </li>
+                    <li data-group="Auth" data-name="signup" class="">
+                      <a href="#api-Auth-signup">signup</a>
+                    </li>
+                  <li class="nav-header" data-group="Tours"><a href="#api-Tours">API Methods - Tours</a></li>
+                    <li data-group="Tours" data-name="tour" class="">
+                      <a href="#api-Tours-tour">tour</a>
+                    </li>
+                    <li data-group="Tours" data-name="tours" class="">
+                      <a href="#api-Tours-tours">tours</a>
                     </li>
           </ul>
         </nav>
@@ -1101,104 +1071,104 @@ margin-bottom: 20px;
         <div id="header">
           <div id="api-_">
             <h2 id="welcome-to-apidoc">API and SDK Documentation</h2>
-              <div class="app-desc">Version: 1.0.1</div>
+              <div class="app-desc">Version: 1.0.0</div>
             <hr>
-            <div>Junket Mobile API</div>
+            <div>Private API for the wejunket.com mobile apps.</div>
           </div>
         </div>
         <div id="sections">
-                <section id="api-Tours">
-                  <h1>Tours</h1>
-                    <div id="api-Tours-getTourById">
-                      <article id="api-Tours-getTourById-0" data-group="User" data-name="getTourById" data-version="0">
+                <section id="api-Auth">
+                  <h1>Auth</h1>
+                    <div id="api-Auth-login">
+                      <article id="api-Auth-login-0" data-group="User" data-name="login" data-version="0">
                         <div class="pull-left">
-                          <h1>getTourById</h1>
-                          <p>Get Tour details</p>
+                          <h1>login</h1>
+                          <p>Login</p>
                         </div>
                         <div class="pull-right"></div>
                         <div class="clearfix"></div>
                         <p></p>
-                        <p class="marked">Returns all of the information for the given tour.</p>
+                        <p class="marked">Submit credentials and get the JWT auth token.</p>
                         <p></p>
                         <br />
-                        <pre class="prettyprint language-html prettyprinted" data-type="get"><code><span class="pln">/tours/{tour_id}</span></code></pre>
+                        <pre class="prettyprint language-html prettyprinted" data-type="post"><code><span class="pln">/auth/login</span></code></pre>
                         <p>
                           <h3>Usage and SDK Samples</h3>
                         </p>
                         <ul class="nav nav-tabs nav-tabs-examples">
-                          <li class="active"><a href="#examples-Tours-getTourById-0-curl">Curl</a></li>
-                          <li class=""><a href="#examples-Tours-getTourById-0-java">Java</a></li>
-                          <li class=""><a href="#examples-Tours-getTourById-0-android">Android</a></li>
-                          <!--<li class=""><a href="#examples-Tours-getTourById-0-groovy">Groovy</a></li>-->
-                          <li class=""><a href="#examples-Tours-getTourById-0-objc">Obj-C</a></li>
-                          <li class=""><a href="#examples-Tours-getTourById-0-javascript">JavaScript</a></li>
-                          <!--<li class=""><a href="#examples-Tours-getTourById-0-angular">Angular</a></li>-->
-                          <li class=""><a href="#examples-Tours-getTourById-0-csharp">C#</a></li>
-                          <li class=""><a href="#examples-Tours-getTourById-0-php">PHP</a></li>
-                          <li class=""><a href="#examples-Tours-getTourById-0-perl">Perl</a></li>
-                          <li class=""><a href="#examples-Tours-getTourById-0-python">Python</a></li>
+                          <li class="active"><a href="#examples-Auth-login-0-curl">Curl</a></li>
+                          <li class=""><a href="#examples-Auth-login-0-java">Java</a></li>
+                          <li class=""><a href="#examples-Auth-login-0-android">Android</a></li>
+                          <!--<li class=""><a href="#examples-Auth-login-0-groovy">Groovy</a></li>-->
+                          <li class=""><a href="#examples-Auth-login-0-objc">Obj-C</a></li>
+                          <li class=""><a href="#examples-Auth-login-0-javascript">JavaScript</a></li>
+                          <!--<li class=""><a href="#examples-Auth-login-0-angular">Angular</a></li>-->
+                          <li class=""><a href="#examples-Auth-login-0-csharp">C#</a></li>
+                          <li class=""><a href="#examples-Auth-login-0-php">PHP</a></li>
+                          <li class=""><a href="#examples-Auth-login-0-perl">Perl</a></li>
+                          <li class=""><a href="#examples-Auth-login-0-python">Python</a></li>
                         </ul>
 
                         <div class="tab-content">
-                          <div class="tab-pane active" id="examples-Tours-getTourById-0-curl">
-                            <pre class="prettyprint"><code class="language-bsh">curl -X GET "https://api.wejunket.com/mobile/tours/{tour_id}"</code></pre>
+                          <div class="tab-pane active" id="examples-Auth-login-0-curl">
+                            <pre class="prettyprint"><code class="language-bsh">curl -X POST "https://api.wejunket.com/mobile/auth/login"</code></pre>
                           </div>
-                          <div class="tab-pane" id="examples-Tours-getTourById-0-java">
+                          <div class="tab-pane" id="examples-Auth-login-0-java">
                             <pre class="prettyprint"><code class="language-java">import io.swagger.client.*;
 import io.swagger.client.auth.*;
 import io.swagger.client.model.*;
-import io.swagger.client.api.ToursApi;
+import io.swagger.client.api.AuthApi;
 
 import java.io.File;
 import java.util.*;
 
-public class ToursApiExample {
+public class AuthApiExample {
 
     public static void main(String[] args) {
         
-        ToursApi apiInstance = new ToursApi();
-        Long tourId = 789; // Long | ID of the Tour to return
+        AuthApi apiInstance = new AuthApi();
+        Credentials credentials = ; // Credentials | The user's logim credentials.
         try {
-            Tour result = apiInstance.getTourById(tourId);
+            inline_response_200 result = apiInstance.login(credentials);
             System.out.println(result);
         } catch (ApiException e) {
-            System.err.println("Exception when calling ToursApi#getTourById");
+            System.err.println("Exception when calling AuthApi#login");
             e.printStackTrace();
         }
     }
 }</code></pre>
                           </div>
 
-                          <div class="tab-pane" id="examples-Tours-getTourById-0-android">
-                            <pre class="prettyprint"><code class="language-java">import io.swagger.client.api.ToursApi;
+                          <div class="tab-pane" id="examples-Auth-login-0-android">
+                            <pre class="prettyprint"><code class="language-java">import io.swagger.client.api.AuthApi;
 
-public class ToursApiExample {
+public class AuthApiExample {
 
     public static void main(String[] args) {
-        ToursApi apiInstance = new ToursApi();
-        Long tourId = 789; // Long | ID of the Tour to return
+        AuthApi apiInstance = new AuthApi();
+        Credentials credentials = ; // Credentials | The user's logim credentials.
         try {
-            Tour result = apiInstance.getTourById(tourId);
+            inline_response_200 result = apiInstance.login(credentials);
             System.out.println(result);
         } catch (ApiException e) {
-            System.err.println("Exception when calling ToursApi#getTourById");
+            System.err.println("Exception when calling AuthApi#login");
             e.printStackTrace();
         }
     }
 }</code></pre>
                           </div>
   <!--
-  <div class="tab-pane" id="examples-Tours-getTourById-0-groovy">
+  <div class="tab-pane" id="examples-Auth-login-0-groovy">
   <pre class="prettyprint language-json prettyprinted" data-type="json"><code>Coming Soon!</code></pre>
   </div> -->
-                            <div class="tab-pane" id="examples-Tours-getTourById-0-objc">
-                              <pre class="prettyprint"><code class="language-cpp">Long *tourId = 789; // ID of the Tour to return
+                            <div class="tab-pane" id="examples-Auth-login-0-objc">
+                              <pre class="prettyprint"><code class="language-cpp">Credentials *credentials = ; // The user's logim credentials. (optional)
 
-ToursApi *apiInstance = [[ToursApi alloc] init];
+AuthApi *apiInstance = [[AuthApi alloc] init];
 
-// Get Tour details
-[apiInstance getTourByIdWith:tourId
-              completionHandler: ^(Tour output, NSError* error) {
+// Login
+[apiInstance loginWith:credentials
+              completionHandler: ^(inline_response_200 output, NSError* error) {
                             if (output) {
                                 NSLog(@"%@", output);
                             }
@@ -1209,13 +1179,14 @@ ToursApi *apiInstance = [[ToursApi alloc] init];
 </code></pre>
                             </div>
 
-                            <div class="tab-pane" id="examples-Tours-getTourById-0-javascript">
+                            <div class="tab-pane" id="examples-Auth-login-0-javascript">
                               <pre class="prettyprint"><code class="language-js">var JunketApi = require('junket_api');
 
-var api = new JunketApi.ToursApi()
+var api = new JunketApi.AuthApi()
 
-var tourId = 789; // {Long} ID of the Tour to return
-
+var opts = { 
+  'credentials':  // {Credentials} The user's logim credentials.
+};
 
 var callback = function(error, data, response) {
   if (error) {
@@ -1224,14 +1195,14 @@ var callback = function(error, data, response) {
     console.log('API called successfully. Returned data: ' + data);
   }
 };
-api.getTourById(tourId, callback);
+api.login(opts, callback);
 </code></pre>
                             </div>
 
-                            <!--<div class="tab-pane" id="examples-Tours-getTourById-0-angular">
+                            <!--<div class="tab-pane" id="examples-Auth-login-0-angular">
               <pre class="prettyprint language-json prettyprinted" data-type="json"><code>Coming Soon!</code></pre>
             </div>-->
-                            <div class="tab-pane" id="examples-Tours-getTourById-0-csharp">
+                            <div class="tab-pane" id="examples-Auth-login-0-csharp">
                               <pre class="prettyprint"><code class="language-cs">using System;
 using System.Diagnostics;
 using IO.Swagger.Api;
@@ -1240,23 +1211,23 @@ using IO.Swagger.Model;
 
 namespace Example
 {
-    public class getTourByIdExample
+    public class loginExample
     {
         public void main()
         {
             
-            var apiInstance = new ToursApi();
-            var tourId = 789;  // Long | ID of the Tour to return
+            var apiInstance = new AuthApi();
+            var credentials = new Credentials(); // Credentials | The user's logim credentials. (optional) 
 
             try
             {
-                // Get Tour details
-                Tour result = apiInstance.getTourById(tourId);
+                // Login
+                inline_response_200 result = apiInstance.login(credentials);
                 Debug.WriteLine(result);
             }
             catch (Exception e)
             {
-                Debug.Print("Exception when calling ToursApi.getTourById: " + e.Message );
+                Debug.Print("Exception when calling AuthApi.login: " + e.Message );
             }
         }
     }
@@ -1264,40 +1235,40 @@ namespace Example
 </code></pre>
                             </div>
 
-                            <div class="tab-pane" id="examples-Tours-getTourById-0-php">
+                            <div class="tab-pane" id="examples-Auth-login-0-php">
                               <pre class="prettyprint"><code class="language-php"><&#63;php
 require_once(__DIR__ . '/vendor/autoload.php');
 
-$api_instance = new Swagger\Client\Api\ToursApi();
-$tourId = 789; // Long | ID of the Tour to return
+$api_instance = new Swagger\Client\Api\AuthApi();
+$credentials = ; // Credentials | The user's logim credentials.
 
 try {
-    $result = $api_instance->getTourById($tourId);
+    $result = $api_instance->login($credentials);
     print_r($result);
 } catch (Exception $e) {
-    echo 'Exception when calling ToursApi->getTourById: ', $e->getMessage(), PHP_EOL;
+    echo 'Exception when calling AuthApi->login: ', $e->getMessage(), PHP_EOL;
 }
 ?></code></pre>
                             </div>
 
-                            <div class="tab-pane" id="examples-Tours-getTourById-0-perl">
+                            <div class="tab-pane" id="examples-Auth-login-0-perl">
                               <pre class="prettyprint"><code class="language-perl">use Data::Dumper;
 use WWW::SwaggerClient::Configuration;
-use WWW::SwaggerClient::ToursApi;
+use WWW::SwaggerClient::AuthApi;
 
-my $api_instance = WWW::SwaggerClient::ToursApi->new();
-my $tourId = 789; # Long | ID of the Tour to return
+my $api_instance = WWW::SwaggerClient::AuthApi->new();
+my $credentials = WWW::SwaggerClient::Object::Credentials->new(); # Credentials | The user's logim credentials.
 
 eval { 
-    my $result = $api_instance->getTourById(tourId => $tourId);
+    my $result = $api_instance->login(credentials => $credentials);
     print Dumper($result);
 };
 if ($@) {
-    warn "Exception when calling ToursApi->getTourById: $@\n";
+    warn "Exception when calling AuthApi->login: $@\n";
 }</code></pre>
                             </div>
 
-                            <div class="tab-pane" id="examples-Tours-getTourById-0-python">
+                            <div class="tab-pane" id="examples-Auth-login-0-python">
                               <pre class="prettyprint"><code class="language-python">from __future__ import print_statement
 import time
 import swagger_client
@@ -1305,42 +1276,514 @@ from swagger_client.rest import ApiException
 from pprint import pprint
 
 # create an instance of the API class
-api_instance = swagger_client.ToursApi()
-tourId = 789 # Long | ID of the Tour to return
+api_instance = swagger_client.AuthApi()
+credentials =  # Credentials | The user's logim credentials. (optional)
 
 try: 
-    # Get Tour details
-    api_response = api_instance.get_tour_by_id(tourId)
+    # Login
+    api_response = api_instance.login(credentials=credentials)
     pprint(api_response)
 except ApiException as e:
-    print("Exception when calling ToursApi->getTourById: %s\n" % e)</code></pre>
+    print("Exception when calling AuthApi->login: %s\n" % e)</code></pre>
                             </div>
                           </div>
 
                           <h2>Parameters</h2>
 
-                            <div class="methodsubtabletitle">Path parameters</div>
+
+
+                            <div class="methodsubtabletitle">Body parameters</div>
                             <table id="methodsubtable">
-                                <tr>
-                                  <th width="150px">Name</th>
-                                  <th>Description</th>
-                                </tr>
-                                  <tr><td style="width:150px;">tour_id*</td>
+                              <tr>
+                                <th width="150px">Name</th>
+                                <th>Description</th>
+                              </tr>
+                                <tr><td style="width:150px;">credentials </td>
 <td>
 
 
-    <div id="d2e199_getTourById_tourId">
+<script>
+$(document).ready(function() {
+  var schemaWrapper = {
+  "in" : "body",
+  "name" : "credentials",
+  "description" : "The user's logim credentials.",
+  "required" : false,
+  "schema" : {
+    "$ref" : "#/definitions/credentials"
+  }
+};
+  var schema = schemaWrapper.schema;
+  if (schema.$ref != null) {
+    schema = defsParser.$refs.get(schema.$ref);
+  } else {
+    schemaWrapper.definitions = Object.assign({}, defs);
+    $RefParser.dereference(schemaWrapper).catch(function(err) {
+      console.log(err);
+    });
+  }
+
+  var view = new JSONSchemaView(schema,2,{isBodyParam: true});
+  var result = $('#d2e199_login_credentials');
+  result.empty();
+  result.append(view.render());
+});
+</script>
+<div id="d2e199_login_credentials"></div>
+</td>
+</tr>
+
+                            </table>
+
+
+
+                          <h2>Responses</h2>
+                            <h3> Status: 200 - Successful login </h3>
+
+                            <ul class="nav nav-tabs nav-tabs-examples" >
+                                <li class="active">
+                                  <a data-toggle="tab" href="#responses-login-200-schema">Schema</a>
+                                </li>
+
+                            </ul>
+
+                            <div class="tab-content" style='margin-bottom: 10px;'>
+                                <div class="tab-pane active" id="responses-login-200-schema">
+                                  <div id='responses-login-200-schema-200' style="padding: 30px; border-left: 1px solid #eee; border-right: 1px solid #eee; border-bottom: 1px solid #eee;">
+                                    <script>
+                                      $(document).ready(function() {
+                                        var schemaWrapper = {
+  "description" : "Successful login",
+  "schema" : {
+    "$ref" : "#/definitions/inline_response_200"
+  }
+};
+                                        var schema = schemaWrapper.schema;
+                                        if (schema.$ref != null) {
+                                          schema = defsParser.$refs.get(schema.$ref);
+                                        } else {
+                                          schemaWrapper.definitions = Object.assign({}, defs);
+                                          $RefParser.dereference(schemaWrapper).catch(function(err) {
+                                            console.log(err);
+                                          });
+                                        }
+
+                                        //console.log(JSON.stringify(schema));
+                                        var view = new JSONSchemaView(schema, 3);
+                                        $('#responses-login-200-schema-data').val(stringify(schema));
+                                        var result = $('#responses-login-200-schema-200');
+                                        result.empty();
+                                        result.append(view.render());
+                                      });
+                                    </script>
+                                  </div>
+                                  <input id='responses-login-200-schema-data' type='hidden' value=''></input>
+                                </div>
+                            </div>
+
+                            <h3> Status: 401 - Unauthorized.  Invalid or expired auth token or credentials provided. </h3>
+
+                            <ul class="nav nav-tabs nav-tabs-examples" >
+                                <li class="active">
+                                  <a data-toggle="tab" href="#responses-login-401-schema">Schema</a>
+                                </li>
+
+                            </ul>
+
+                            <div class="tab-content" style='margin-bottom: 10px;'>
+                                <div class="tab-pane active" id="responses-login-401-schema">
+                                  <div id='responses-login-401-schema-401' style="padding: 30px; border-left: 1px solid #eee; border-right: 1px solid #eee; border-bottom: 1px solid #eee;">
+                                    <script>
+                                      $(document).ready(function() {
+                                        var schemaWrapper = {
+  "description" : "Unauthorized.  Invalid or expired auth token or credentials provided.",
+  "schema" : {
+    "$ref" : "#/definitions/inline_response_401"
+  }
+};
+                                        var schema = schemaWrapper.schema;
+                                        if (schema.$ref != null) {
+                                          schema = defsParser.$refs.get(schema.$ref);
+                                        } else {
+                                          schemaWrapper.definitions = Object.assign({}, defs);
+                                          $RefParser.dereference(schemaWrapper).catch(function(err) {
+                                            console.log(err);
+                                          });
+                                        }
+
+                                        //console.log(JSON.stringify(schema));
+                                        var view = new JSONSchemaView(schema, 3);
+                                        $('#responses-login-401-schema-data').val(stringify(schema));
+                                        var result = $('#responses-login-401-schema-401');
+                                        result.empty();
+                                        result.append(view.render());
+                                      });
+                                    </script>
+                                  </div>
+                                  <input id='responses-login-401-schema-data' type='hidden' value=''></input>
+                                </div>
+                            </div>
+
+                            <h3> Status: 422 - Validation errors in the request body. </h3>
+
+                            <ul class="nav nav-tabs nav-tabs-examples" >
+                                <li class="active">
+                                  <a data-toggle="tab" href="#responses-login-422-schema">Schema</a>
+                                </li>
+
+                            </ul>
+
+                            <div class="tab-content" style='margin-bottom: 10px;'>
+                                <div class="tab-pane active" id="responses-login-422-schema">
+                                  <div id='responses-login-422-schema-422' style="padding: 30px; border-left: 1px solid #eee; border-right: 1px solid #eee; border-bottom: 1px solid #eee;">
+                                    <script>
+                                      $(document).ready(function() {
+                                        var schemaWrapper = {
+  "description" : "Validation errors in the request body.",
+  "schema" : {
+    "$ref" : "#/definitions/inline_response_422"
+  }
+};
+                                        var schema = schemaWrapper.schema;
+                                        if (schema.$ref != null) {
+                                          schema = defsParser.$refs.get(schema.$ref);
+                                        } else {
+                                          schemaWrapper.definitions = Object.assign({}, defs);
+                                          $RefParser.dereference(schemaWrapper).catch(function(err) {
+                                            console.log(err);
+                                          });
+                                        }
+
+                                        //console.log(JSON.stringify(schema));
+                                        var view = new JSONSchemaView(schema, 3);
+                                        $('#responses-login-422-schema-data').val(stringify(schema));
+                                        var result = $('#responses-login-422-schema-422');
+                                        result.empty();
+                                        result.append(view.render());
+                                      });
+                                    </script>
+                                  </div>
+                                  <input id='responses-login-422-schema-data' type='hidden' value=''></input>
+                                </div>
+                            </div>
+
+                            <h3> Status: 500 - An unexpected error occurred. </h3>
+
+                            <ul class="nav nav-tabs nav-tabs-examples" >
+                                <li class="active">
+                                  <a data-toggle="tab" href="#responses-login-500-schema">Schema</a>
+                                </li>
+
+                            </ul>
+
+                            <div class="tab-content" style='margin-bottom: 10px;'>
+                                <div class="tab-pane active" id="responses-login-500-schema">
+                                  <div id='responses-login-500-schema-500' style="padding: 30px; border-left: 1px solid #eee; border-right: 1px solid #eee; border-bottom: 1px solid #eee;">
+                                    <script>
+                                      $(document).ready(function() {
+                                        var schemaWrapper = {
+  "description" : "An unexpected error occurred.",
+  "schema" : {
+    "$ref" : "#/definitions/inline_response_500"
+  }
+};
+                                        var schema = schemaWrapper.schema;
+                                        if (schema.$ref != null) {
+                                          schema = defsParser.$refs.get(schema.$ref);
+                                        } else {
+                                          schemaWrapper.definitions = Object.assign({}, defs);
+                                          $RefParser.dereference(schemaWrapper).catch(function(err) {
+                                            console.log(err);
+                                          });
+                                        }
+
+                                        //console.log(JSON.stringify(schema));
+                                        var view = new JSONSchemaView(schema, 3);
+                                        $('#responses-login-500-schema-data').val(stringify(schema));
+                                        var result = $('#responses-login-500-schema-500');
+                                        result.empty();
+                                        result.append(view.render());
+                                      });
+                                    </script>
+                                  </div>
+                                  <input id='responses-login-500-schema-data' type='hidden' value=''></input>
+                                </div>
+                            </div>
+
+                        </article>
+                      </div>
+                      <hr>
+                    <div id="api-Auth-refresh">
+                      <article id="api-Auth-refresh-0" data-group="User" data-name="refresh" data-version="0">
+                        <div class="pull-left">
+                          <h1>refresh</h1>
+                          <p>Refresh JWT Token</p>
+                        </div>
+                        <div class="pull-right"></div>
+                        <div class="clearfix"></div>
+                        <p></p>
+                        <p class="marked">Submit an expired JWT token and get a new active one.</p>
+                        <p></p>
+                        <br />
+                        <pre class="prettyprint language-html prettyprinted" data-type="get"><code><span class="pln">/auth/refresh</span></code></pre>
+                        <p>
+                          <h3>Usage and SDK Samples</h3>
+                        </p>
+                        <ul class="nav nav-tabs nav-tabs-examples">
+                          <li class="active"><a href="#examples-Auth-refresh-0-curl">Curl</a></li>
+                          <li class=""><a href="#examples-Auth-refresh-0-java">Java</a></li>
+                          <li class=""><a href="#examples-Auth-refresh-0-android">Android</a></li>
+                          <!--<li class=""><a href="#examples-Auth-refresh-0-groovy">Groovy</a></li>-->
+                          <li class=""><a href="#examples-Auth-refresh-0-objc">Obj-C</a></li>
+                          <li class=""><a href="#examples-Auth-refresh-0-javascript">JavaScript</a></li>
+                          <!--<li class=""><a href="#examples-Auth-refresh-0-angular">Angular</a></li>-->
+                          <li class=""><a href="#examples-Auth-refresh-0-csharp">C#</a></li>
+                          <li class=""><a href="#examples-Auth-refresh-0-php">PHP</a></li>
+                          <li class=""><a href="#examples-Auth-refresh-0-perl">Perl</a></li>
+                          <li class=""><a href="#examples-Auth-refresh-0-python">Python</a></li>
+                        </ul>
+
+                        <div class="tab-content">
+                          <div class="tab-pane active" id="examples-Auth-refresh-0-curl">
+                            <pre class="prettyprint"><code class="language-bsh">curl -X GET -H "Authorization: [[apiKey]]" "https://api.wejunket.com/mobile/auth/refresh"</code></pre>
+                          </div>
+                          <div class="tab-pane" id="examples-Auth-refresh-0-java">
+                            <pre class="prettyprint"><code class="language-java">import io.swagger.client.*;
+import io.swagger.client.auth.*;
+import io.swagger.client.model.*;
+import io.swagger.client.api.AuthApi;
+
+import java.io.File;
+import java.util.*;
+
+public class AuthApiExample {
+
+    public static void main(String[] args) {
+        ApiClient defaultClient = Configuration.getDefaultApiClient();
+        
+        // Configure API key authorization: Bearer
+        ApiKeyAuth Bearer = (ApiKeyAuth) defaultClient.getAuthentication("Bearer");
+        Bearer.setApiKey("YOUR API KEY");
+        // Uncomment the following line to set a prefix for the API key, e.g. "Token" (defaults to null)
+        //Bearer.setApiKeyPrefix("Token");
+
+        AuthApi apiInstance = new AuthApi();
+        String authorization = authorization_example; // String | JTW auth bearer token in the format of "Authorization: Bearer {token_here}"
+
+        try {
+            apiInstance.refresh(authorization);
+        } catch (ApiException e) {
+            System.err.println("Exception when calling AuthApi#refresh");
+            e.printStackTrace();
+        }
+    }
+}</code></pre>
+                          </div>
+
+                          <div class="tab-pane" id="examples-Auth-refresh-0-android">
+                            <pre class="prettyprint"><code class="language-java">import io.swagger.client.api.AuthApi;
+
+public class AuthApiExample {
+
+    public static void main(String[] args) {
+        AuthApi apiInstance = new AuthApi();
+        String authorization = authorization_example; // String | JTW auth bearer token in the format of "Authorization: Bearer {token_here}"
+
+        try {
+            apiInstance.refresh(authorization);
+        } catch (ApiException e) {
+            System.err.println("Exception when calling AuthApi#refresh");
+            e.printStackTrace();
+        }
+    }
+}</code></pre>
+                          </div>
+  <!--
+  <div class="tab-pane" id="examples-Auth-refresh-0-groovy">
+  <pre class="prettyprint language-json prettyprinted" data-type="json"><code>Coming Soon!</code></pre>
+  </div> -->
+                            <div class="tab-pane" id="examples-Auth-refresh-0-objc">
+                              <pre class="prettyprint"><code class="language-cpp">Configuration *apiConfig = [Configuration sharedConfig];
+
+// Configure API key authorization: (authentication scheme: Bearer)
+[apiConfig setApiKey:@"YOUR_API_KEY" forApiKeyIdentifier:@"Authorization"];
+// Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+//[apiConfig setApiKeyPrefix:@"Bearer" forApiKeyIdentifier:@"Authorization"];
+
+String *authorization = authorization_example; // JTW auth bearer token in the format of "Authorization: Bearer {token_here}"
+
+
+AuthApi *apiInstance = [[AuthApi alloc] init];
+
+// Refresh JWT Token
+[apiInstance refreshWith:authorization
+              completionHandler: ^(NSError* error) {
+                            if (error) {
+                                NSLog(@"Error: %@", error);
+                            }
+                        }];
+</code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-Auth-refresh-0-javascript">
+                              <pre class="prettyprint"><code class="language-js">var JunketApi = require('junket_api');
+var defaultClient = JunketApi.ApiClient.instance;
+
+// Configure API key authorization: Bearer
+var Bearer = defaultClient.authentications['Bearer'];
+Bearer.apiKey = "YOUR API KEY"
+// Uncomment the following line to set a prefix for the API key, e.g. "Token" (defaults to null)
+//Bearer.apiKeyPrefix['Authorization'] = "Token"
+
+var api = new JunketApi.AuthApi()
+
+var authorization = authorization_example; // {String} JTW auth bearer token in the format of "Authorization: Bearer {token_here}"
+
+
+
+var callback = function(error, data, response) {
+  if (error) {
+    console.error(error);
+  } else {
+    console.log('API called successfully.');
+  }
+};
+api.refresh(authorization, , callback);
+</code></pre>
+                            </div>
+
+                            <!--<div class="tab-pane" id="examples-Auth-refresh-0-angular">
+              <pre class="prettyprint language-json prettyprinted" data-type="json"><code>Coming Soon!</code></pre>
+            </div>-->
+                            <div class="tab-pane" id="examples-Auth-refresh-0-csharp">
+                              <pre class="prettyprint"><code class="language-cs">using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class refreshExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new AuthApi();
+            var authorization = authorization_example;  // String | JTW auth bearer token in the format of "Authorization: Bearer {token_here}"
+
+
+            try
+            {
+                // Refresh JWT Token
+                apiInstance.refresh(authorization);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling AuthApi.refresh: " + e.Message );
+            }
+        }
+    }
+}
+</code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-Auth-refresh-0-php">
+                              <pre class="prettyprint"><code class="language-php"><&#63;php
+require_once(__DIR__ . '/vendor/autoload.php');
+
+// Configure API key authorization: Bearer
+Swagger\Client\Configuration::getDefaultConfiguration()->setApiKey('Authorization', 'YOUR_API_KEY');
+// Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+// Swagger\Client\Configuration::getDefaultConfiguration()->setApiKeyPrefix('Authorization', 'Bearer');
+
+$api_instance = new Swagger\Client\Api\AuthApi();
+$authorization = authorization_example; // String | JTW auth bearer token in the format of "Authorization: Bearer {token_here}"
+
+
+try {
+    $api_instance->refresh($authorization);
+} catch (Exception $e) {
+    echo 'Exception when calling AuthApi->refresh: ', $e->getMessage(), PHP_EOL;
+}
+?></code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-Auth-refresh-0-perl">
+                              <pre class="prettyprint"><code class="language-perl">use Data::Dumper;
+use WWW::SwaggerClient::Configuration;
+use WWW::SwaggerClient::AuthApi;
+
+# Configure API key authorization: Bearer
+$WWW::SwaggerClient::Configuration::api_key->{'Authorization'} = 'YOUR_API_KEY';
+# uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+#$WWW::SwaggerClient::Configuration::api_key_prefix->{'Authorization'} = "Bearer";
+
+my $api_instance = WWW::SwaggerClient::AuthApi->new();
+my $authorization = authorization_example; # String | JTW auth bearer token in the format of "Authorization: Bearer {token_here}"
+
+
+eval { 
+    $api_instance->refresh(authorization => $authorization);
+};
+if ($@) {
+    warn "Exception when calling AuthApi->refresh: $@\n";
+}</code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-Auth-refresh-0-python">
+                              <pre class="prettyprint"><code class="language-python">from __future__ import print_statement
+import time
+import swagger_client
+from swagger_client.rest import ApiException
+from pprint import pprint
+
+# Configure API key authorization: Bearer
+swagger_client.configuration.api_key['Authorization'] = 'YOUR_API_KEY'
+# Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+# swagger_client.configuration.api_key_prefix['Authorization'] = 'Bearer'
+
+# create an instance of the API class
+api_instance = swagger_client.AuthApi()
+authorization = authorization_example # String | JTW auth bearer token in the format of "Authorization: Bearer {token_here}"
+
+
+try: 
+    # Refresh JWT Token
+    api_instance.refresh(authorization)
+except ApiException as e:
+    print("Exception when calling AuthApi->refresh: %s\n" % e)</code></pre>
+                            </div>
+                          </div>
+
+                          <h2>Parameters</h2>
+
+
+                            <div class="methodsubtabletitle">Header parameters</div>
+                            <table id="methodsubtable">
+                              <tr>
+                                <th width="150px">Name</th>
+                                <th>Description</th>
+                              </tr>
+                                  <tr><td style="width:150px;">Authorization*</td>
+<td>
+
+
+    <div id="d2e199_refresh_authorization">
         <div class="json-schema-view">
             <div class="primitive">
                 <span class="type">
-                    Long
+                    String
                 </span>
-                    <span class="format">
-                        (int64)
-                    </span>
 
                     <div class="inner description">
-                        ID of the Tour to return
+                        JTW auth bearer token in the format of &quot;Authorization: Bearer {token_here}&quot;
+
                     </div>
             </div>
                 <div class="inner required">
@@ -1356,24 +1799,1429 @@ except ApiException as e:
 
 
 
-
                           <h2>Responses</h2>
-                            <h3> Status: 200 - successful operation </h3>
+                            <h3> Status: 204 - OK </h3>
+
+                            <ul class="nav nav-tabs nav-tabs-examples" >
+                                <li class="">
+                                  <a data-toggle="tab" href="#responses-refresh-204-headers">Headers</a>
+                                </li>
+                            </ul>
+
+                            <div class="tab-content" style='margin-bottom: 10px;'>
+                                <div class="tab-pane" id="responses-refresh-204-headers">
+                                    <table>
+                                        <tr>
+                                            <th width="150px">Name</th>
+                                            <th width="100px">Type</th>
+                                            <th width="100px">Format</th>
+                                            <th>Description</th>
+                                        </tr>
+                                        <tr>
+                                            <td>Authorization</td>
+                                            <td>String</td>
+                                            <td></td>
+                                            <td>The new JWT bearer auth token.</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <h3> Status: 400 - Invalid auth token provided. </h3>
 
                             <ul class="nav nav-tabs nav-tabs-examples" >
                                 <li class="active">
-                                  <a data-toggle="tab" href="#responses-getTourById-200-schema">Schema</a>
+                                  <a data-toggle="tab" href="#responses-refresh-400-schema">Schema</a>
                                 </li>
 
                             </ul>
 
                             <div class="tab-content" style='margin-bottom: 10px;'>
-                                <div class="tab-pane active" id="responses-getTourById-200-schema">
-                                  <div id='responses-getTourById-200-schema-200' style="padding: 30px; border-left: 1px solid #eee; border-right: 1px solid #eee; border-bottom: 1px solid #eee;">
+                                <div class="tab-pane active" id="responses-refresh-400-schema">
+                                  <div id='responses-refresh-400-schema-400' style="padding: 30px; border-left: 1px solid #eee; border-right: 1px solid #eee; border-bottom: 1px solid #eee;">
                                     <script>
                                       $(document).ready(function() {
                                         var schemaWrapper = {
-  "description" : "successful operation",
+  "description" : "Invalid auth token provided.",
+  "schema" : {
+    "$ref" : "#/definitions/inline_response_400"
+  }
+};
+                                        var schema = schemaWrapper.schema;
+                                        if (schema.$ref != null) {
+                                          schema = defsParser.$refs.get(schema.$ref);
+                                        } else {
+                                          schemaWrapper.definitions = Object.assign({}, defs);
+                                          $RefParser.dereference(schemaWrapper).catch(function(err) {
+                                            console.log(err);
+                                          });
+                                        }
+
+                                        //console.log(JSON.stringify(schema));
+                                        var view = new JSONSchemaView(schema, 3);
+                                        $('#responses-refresh-400-schema-data').val(stringify(schema));
+                                        var result = $('#responses-refresh-400-schema-400');
+                                        result.empty();
+                                        result.append(view.render());
+                                      });
+                                    </script>
+                                  </div>
+                                  <input id='responses-refresh-400-schema-data' type='hidden' value=''></input>
+                                </div>
+                            </div>
+
+                            <h3> Status: 401 - Unauthorized.  Invalid or expired auth token or credentials provided. </h3>
+
+                            <ul class="nav nav-tabs nav-tabs-examples" >
+                                <li class="active">
+                                  <a data-toggle="tab" href="#responses-refresh-401-schema">Schema</a>
+                                </li>
+
+                            </ul>
+
+                            <div class="tab-content" style='margin-bottom: 10px;'>
+                                <div class="tab-pane active" id="responses-refresh-401-schema">
+                                  <div id='responses-refresh-401-schema-401' style="padding: 30px; border-left: 1px solid #eee; border-right: 1px solid #eee; border-bottom: 1px solid #eee;">
+                                    <script>
+                                      $(document).ready(function() {
+                                        var schemaWrapper = {
+  "description" : "Unauthorized.  Invalid or expired auth token or credentials provided.",
+  "schema" : {
+    "$ref" : "#/definitions/inline_response_401"
+  }
+};
+                                        var schema = schemaWrapper.schema;
+                                        if (schema.$ref != null) {
+                                          schema = defsParser.$refs.get(schema.$ref);
+                                        } else {
+                                          schemaWrapper.definitions = Object.assign({}, defs);
+                                          $RefParser.dereference(schemaWrapper).catch(function(err) {
+                                            console.log(err);
+                                          });
+                                        }
+
+                                        //console.log(JSON.stringify(schema));
+                                        var view = new JSONSchemaView(schema, 3);
+                                        $('#responses-refresh-401-schema-data').val(stringify(schema));
+                                        var result = $('#responses-refresh-401-schema-401');
+                                        result.empty();
+                                        result.append(view.render());
+                                      });
+                                    </script>
+                                  </div>
+                                  <input id='responses-refresh-401-schema-data' type='hidden' value=''></input>
+                                </div>
+                            </div>
+
+                            <h3> Status: 500 - An unexpected error occurred. </h3>
+
+                            <ul class="nav nav-tabs nav-tabs-examples" >
+                                <li class="active">
+                                  <a data-toggle="tab" href="#responses-refresh-500-schema">Schema</a>
+                                </li>
+
+                            </ul>
+
+                            <div class="tab-content" style='margin-bottom: 10px;'>
+                                <div class="tab-pane active" id="responses-refresh-500-schema">
+                                  <div id='responses-refresh-500-schema-500' style="padding: 30px; border-left: 1px solid #eee; border-right: 1px solid #eee; border-bottom: 1px solid #eee;">
+                                    <script>
+                                      $(document).ready(function() {
+                                        var schemaWrapper = {
+  "description" : "An unexpected error occurred.",
+  "schema" : {
+    "$ref" : "#/definitions/inline_response_500"
+  }
+};
+                                        var schema = schemaWrapper.schema;
+                                        if (schema.$ref != null) {
+                                          schema = defsParser.$refs.get(schema.$ref);
+                                        } else {
+                                          schemaWrapper.definitions = Object.assign({}, defs);
+                                          $RefParser.dereference(schemaWrapper).catch(function(err) {
+                                            console.log(err);
+                                          });
+                                        }
+
+                                        //console.log(JSON.stringify(schema));
+                                        var view = new JSONSchemaView(schema, 3);
+                                        $('#responses-refresh-500-schema-data').val(stringify(schema));
+                                        var result = $('#responses-refresh-500-schema-500');
+                                        result.empty();
+                                        result.append(view.render());
+                                      });
+                                    </script>
+                                  </div>
+                                  <input id='responses-refresh-500-schema-data' type='hidden' value=''></input>
+                                </div>
+                            </div>
+
+                        </article>
+                      </div>
+                      <hr>
+                    <div id="api-Auth-session">
+                      <article id="api-Auth-session-0" data-group="User" data-name="session" data-version="0">
+                        <div class="pull-left">
+                          <h1>session</h1>
+                          <p>Profile</p>
+                        </div>
+                        <div class="pull-right"></div>
+                        <div class="clearfix"></div>
+                        <p></p>
+                        <p class="marked">Get the logged in user&#39;s profile information.</p>
+                        <p></p>
+                        <br />
+                        <pre class="prettyprint language-html prettyprinted" data-type="get"><code><span class="pln">/auth/session</span></code></pre>
+                        <p>
+                          <h3>Usage and SDK Samples</h3>
+                        </p>
+                        <ul class="nav nav-tabs nav-tabs-examples">
+                          <li class="active"><a href="#examples-Auth-session-0-curl">Curl</a></li>
+                          <li class=""><a href="#examples-Auth-session-0-java">Java</a></li>
+                          <li class=""><a href="#examples-Auth-session-0-android">Android</a></li>
+                          <!--<li class=""><a href="#examples-Auth-session-0-groovy">Groovy</a></li>-->
+                          <li class=""><a href="#examples-Auth-session-0-objc">Obj-C</a></li>
+                          <li class=""><a href="#examples-Auth-session-0-javascript">JavaScript</a></li>
+                          <!--<li class=""><a href="#examples-Auth-session-0-angular">Angular</a></li>-->
+                          <li class=""><a href="#examples-Auth-session-0-csharp">C#</a></li>
+                          <li class=""><a href="#examples-Auth-session-0-php">PHP</a></li>
+                          <li class=""><a href="#examples-Auth-session-0-perl">Perl</a></li>
+                          <li class=""><a href="#examples-Auth-session-0-python">Python</a></li>
+                        </ul>
+
+                        <div class="tab-content">
+                          <div class="tab-pane active" id="examples-Auth-session-0-curl">
+                            <pre class="prettyprint"><code class="language-bsh">curl -X GET -H "Authorization: [[apiKey]]" "https://api.wejunket.com/mobile/auth/session"</code></pre>
+                          </div>
+                          <div class="tab-pane" id="examples-Auth-session-0-java">
+                            <pre class="prettyprint"><code class="language-java">import io.swagger.client.*;
+import io.swagger.client.auth.*;
+import io.swagger.client.model.*;
+import io.swagger.client.api.AuthApi;
+
+import java.io.File;
+import java.util.*;
+
+public class AuthApiExample {
+
+    public static void main(String[] args) {
+        ApiClient defaultClient = Configuration.getDefaultApiClient();
+        
+        // Configure API key authorization: Bearer
+        ApiKeyAuth Bearer = (ApiKeyAuth) defaultClient.getAuthentication("Bearer");
+        Bearer.setApiKey("YOUR API KEY");
+        // Uncomment the following line to set a prefix for the API key, e.g. "Token" (defaults to null)
+        //Bearer.setApiKeyPrefix("Token");
+
+        AuthApi apiInstance = new AuthApi();
+        String authorization = authorization_example; // String | JTW auth bearer token in the format of "Authorization: Bearer {token_here}"
+
+        try {
+            User result = apiInstance.session(authorization);
+            System.out.println(result);
+        } catch (ApiException e) {
+            System.err.println("Exception when calling AuthApi#session");
+            e.printStackTrace();
+        }
+    }
+}</code></pre>
+                          </div>
+
+                          <div class="tab-pane" id="examples-Auth-session-0-android">
+                            <pre class="prettyprint"><code class="language-java">import io.swagger.client.api.AuthApi;
+
+public class AuthApiExample {
+
+    public static void main(String[] args) {
+        AuthApi apiInstance = new AuthApi();
+        String authorization = authorization_example; // String | JTW auth bearer token in the format of "Authorization: Bearer {token_here}"
+
+        try {
+            User result = apiInstance.session(authorization);
+            System.out.println(result);
+        } catch (ApiException e) {
+            System.err.println("Exception when calling AuthApi#session");
+            e.printStackTrace();
+        }
+    }
+}</code></pre>
+                          </div>
+  <!--
+  <div class="tab-pane" id="examples-Auth-session-0-groovy">
+  <pre class="prettyprint language-json prettyprinted" data-type="json"><code>Coming Soon!</code></pre>
+  </div> -->
+                            <div class="tab-pane" id="examples-Auth-session-0-objc">
+                              <pre class="prettyprint"><code class="language-cpp">Configuration *apiConfig = [Configuration sharedConfig];
+
+// Configure API key authorization: (authentication scheme: Bearer)
+[apiConfig setApiKey:@"YOUR_API_KEY" forApiKeyIdentifier:@"Authorization"];
+// Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+//[apiConfig setApiKeyPrefix:@"Bearer" forApiKeyIdentifier:@"Authorization"];
+
+String *authorization = authorization_example; // JTW auth bearer token in the format of "Authorization: Bearer {token_here}"
+
+
+AuthApi *apiInstance = [[AuthApi alloc] init];
+
+// Profile
+[apiInstance sessionWith:authorization
+              completionHandler: ^(User output, NSError* error) {
+                            if (output) {
+                                NSLog(@"%@", output);
+                            }
+                            if (error) {
+                                NSLog(@"Error: %@", error);
+                            }
+                        }];
+</code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-Auth-session-0-javascript">
+                              <pre class="prettyprint"><code class="language-js">var JunketApi = require('junket_api');
+var defaultClient = JunketApi.ApiClient.instance;
+
+// Configure API key authorization: Bearer
+var Bearer = defaultClient.authentications['Bearer'];
+Bearer.apiKey = "YOUR API KEY"
+// Uncomment the following line to set a prefix for the API key, e.g. "Token" (defaults to null)
+//Bearer.apiKeyPrefix['Authorization'] = "Token"
+
+var api = new JunketApi.AuthApi()
+
+var authorization = authorization_example; // {String} JTW auth bearer token in the format of "Authorization: Bearer {token_here}"
+
+
+
+var callback = function(error, data, response) {
+  if (error) {
+    console.error(error);
+  } else {
+    console.log('API called successfully. Returned data: ' + data);
+  }
+};
+api.session(authorization, , callback);
+</code></pre>
+                            </div>
+
+                            <!--<div class="tab-pane" id="examples-Auth-session-0-angular">
+              <pre class="prettyprint language-json prettyprinted" data-type="json"><code>Coming Soon!</code></pre>
+            </div>-->
+                            <div class="tab-pane" id="examples-Auth-session-0-csharp">
+                              <pre class="prettyprint"><code class="language-cs">using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class sessionExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new AuthApi();
+            var authorization = authorization_example;  // String | JTW auth bearer token in the format of "Authorization: Bearer {token_here}"
+
+
+            try
+            {
+                // Profile
+                User result = apiInstance.session(authorization);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling AuthApi.session: " + e.Message );
+            }
+        }
+    }
+}
+</code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-Auth-session-0-php">
+                              <pre class="prettyprint"><code class="language-php"><&#63;php
+require_once(__DIR__ . '/vendor/autoload.php');
+
+// Configure API key authorization: Bearer
+Swagger\Client\Configuration::getDefaultConfiguration()->setApiKey('Authorization', 'YOUR_API_KEY');
+// Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+// Swagger\Client\Configuration::getDefaultConfiguration()->setApiKeyPrefix('Authorization', 'Bearer');
+
+$api_instance = new Swagger\Client\Api\AuthApi();
+$authorization = authorization_example; // String | JTW auth bearer token in the format of "Authorization: Bearer {token_here}"
+
+
+try {
+    $result = $api_instance->session($authorization);
+    print_r($result);
+} catch (Exception $e) {
+    echo 'Exception when calling AuthApi->session: ', $e->getMessage(), PHP_EOL;
+}
+?></code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-Auth-session-0-perl">
+                              <pre class="prettyprint"><code class="language-perl">use Data::Dumper;
+use WWW::SwaggerClient::Configuration;
+use WWW::SwaggerClient::AuthApi;
+
+# Configure API key authorization: Bearer
+$WWW::SwaggerClient::Configuration::api_key->{'Authorization'} = 'YOUR_API_KEY';
+# uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+#$WWW::SwaggerClient::Configuration::api_key_prefix->{'Authorization'} = "Bearer";
+
+my $api_instance = WWW::SwaggerClient::AuthApi->new();
+my $authorization = authorization_example; # String | JTW auth bearer token in the format of "Authorization: Bearer {token_here}"
+
+
+eval { 
+    my $result = $api_instance->session(authorization => $authorization);
+    print Dumper($result);
+};
+if ($@) {
+    warn "Exception when calling AuthApi->session: $@\n";
+}</code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-Auth-session-0-python">
+                              <pre class="prettyprint"><code class="language-python">from __future__ import print_statement
+import time
+import swagger_client
+from swagger_client.rest import ApiException
+from pprint import pprint
+
+# Configure API key authorization: Bearer
+swagger_client.configuration.api_key['Authorization'] = 'YOUR_API_KEY'
+# Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+# swagger_client.configuration.api_key_prefix['Authorization'] = 'Bearer'
+
+# create an instance of the API class
+api_instance = swagger_client.AuthApi()
+authorization = authorization_example # String | JTW auth bearer token in the format of "Authorization: Bearer {token_here}"
+
+
+try: 
+    # Profile
+    api_response = api_instance.session(authorization)
+    pprint(api_response)
+except ApiException as e:
+    print("Exception when calling AuthApi->session: %s\n" % e)</code></pre>
+                            </div>
+                          </div>
+
+                          <h2>Parameters</h2>
+
+
+                            <div class="methodsubtabletitle">Header parameters</div>
+                            <table id="methodsubtable">
+                              <tr>
+                                <th width="150px">Name</th>
+                                <th>Description</th>
+                              </tr>
+                                  <tr><td style="width:150px;">Authorization*</td>
+<td>
+
+
+    <div id="d2e199_session_authorization">
+        <div class="json-schema-view">
+            <div class="primitive">
+                <span class="type">
+                    String
+                </span>
+
+                    <div class="inner description">
+                        JTW auth bearer token in the format of &quot;Authorization: Bearer {token_here}&quot;
+
+                    </div>
+            </div>
+                <div class="inner required">
+                    Required
+                </div>
+        </div>
+    </div>
+</td>
+</tr>
+
+                            </table>
+
+
+
+
+                          <h2>Responses</h2>
+                            <h3> Status: 200 - OK </h3>
+
+                            <ul class="nav nav-tabs nav-tabs-examples" >
+                                <li class="active">
+                                  <a data-toggle="tab" href="#responses-session-200-schema">Schema</a>
+                                </li>
+
+                            </ul>
+
+                            <div class="tab-content" style='margin-bottom: 10px;'>
+                                <div class="tab-pane active" id="responses-session-200-schema">
+                                  <div id='responses-session-200-schema-200' style="padding: 30px; border-left: 1px solid #eee; border-right: 1px solid #eee; border-bottom: 1px solid #eee;">
+                                    <script>
+                                      $(document).ready(function() {
+                                        var schemaWrapper = {
+  "description" : "OK",
+  "schema" : {
+    "$ref" : "#/definitions/User"
+  }
+};
+                                        var schema = schemaWrapper.schema;
+                                        if (schema.$ref != null) {
+                                          schema = defsParser.$refs.get(schema.$ref);
+                                        } else {
+                                          schemaWrapper.definitions = Object.assign({}, defs);
+                                          $RefParser.dereference(schemaWrapper).catch(function(err) {
+                                            console.log(err);
+                                          });
+                                        }
+
+                                        //console.log(JSON.stringify(schema));
+                                        var view = new JSONSchemaView(schema, 3);
+                                        $('#responses-session-200-schema-data').val(stringify(schema));
+                                        var result = $('#responses-session-200-schema-200');
+                                        result.empty();
+                                        result.append(view.render());
+                                      });
+                                    </script>
+                                  </div>
+                                  <input id='responses-session-200-schema-data' type='hidden' value=''></input>
+                                </div>
+                            </div>
+
+                            <h3> Status: 400 - Invalid auth token provided. </h3>
+
+                            <ul class="nav nav-tabs nav-tabs-examples" >
+                                <li class="active">
+                                  <a data-toggle="tab" href="#responses-session-400-schema">Schema</a>
+                                </li>
+
+                            </ul>
+
+                            <div class="tab-content" style='margin-bottom: 10px;'>
+                                <div class="tab-pane active" id="responses-session-400-schema">
+                                  <div id='responses-session-400-schema-400' style="padding: 30px; border-left: 1px solid #eee; border-right: 1px solid #eee; border-bottom: 1px solid #eee;">
+                                    <script>
+                                      $(document).ready(function() {
+                                        var schemaWrapper = {
+  "description" : "Invalid auth token provided.",
+  "schema" : {
+    "$ref" : "#/definitions/inline_response_400"
+  }
+};
+                                        var schema = schemaWrapper.schema;
+                                        if (schema.$ref != null) {
+                                          schema = defsParser.$refs.get(schema.$ref);
+                                        } else {
+                                          schemaWrapper.definitions = Object.assign({}, defs);
+                                          $RefParser.dereference(schemaWrapper).catch(function(err) {
+                                            console.log(err);
+                                          });
+                                        }
+
+                                        //console.log(JSON.stringify(schema));
+                                        var view = new JSONSchemaView(schema, 3);
+                                        $('#responses-session-400-schema-data').val(stringify(schema));
+                                        var result = $('#responses-session-400-schema-400');
+                                        result.empty();
+                                        result.append(view.render());
+                                      });
+                                    </script>
+                                  </div>
+                                  <input id='responses-session-400-schema-data' type='hidden' value=''></input>
+                                </div>
+                            </div>
+
+                            <h3> Status: 401 - Unauthorized.  Invalid or expired auth token or credentials provided. </h3>
+
+                            <ul class="nav nav-tabs nav-tabs-examples" >
+                                <li class="active">
+                                  <a data-toggle="tab" href="#responses-session-401-schema">Schema</a>
+                                </li>
+
+                            </ul>
+
+                            <div class="tab-content" style='margin-bottom: 10px;'>
+                                <div class="tab-pane active" id="responses-session-401-schema">
+                                  <div id='responses-session-401-schema-401' style="padding: 30px; border-left: 1px solid #eee; border-right: 1px solid #eee; border-bottom: 1px solid #eee;">
+                                    <script>
+                                      $(document).ready(function() {
+                                        var schemaWrapper = {
+  "description" : "Unauthorized.  Invalid or expired auth token or credentials provided.",
+  "schema" : {
+    "$ref" : "#/definitions/inline_response_401"
+  }
+};
+                                        var schema = schemaWrapper.schema;
+                                        if (schema.$ref != null) {
+                                          schema = defsParser.$refs.get(schema.$ref);
+                                        } else {
+                                          schemaWrapper.definitions = Object.assign({}, defs);
+                                          $RefParser.dereference(schemaWrapper).catch(function(err) {
+                                            console.log(err);
+                                          });
+                                        }
+
+                                        //console.log(JSON.stringify(schema));
+                                        var view = new JSONSchemaView(schema, 3);
+                                        $('#responses-session-401-schema-data').val(stringify(schema));
+                                        var result = $('#responses-session-401-schema-401');
+                                        result.empty();
+                                        result.append(view.render());
+                                      });
+                                    </script>
+                                  </div>
+                                  <input id='responses-session-401-schema-data' type='hidden' value=''></input>
+                                </div>
+                            </div>
+
+                            <h3> Status: 500 - An unexpected error occurred. </h3>
+
+                            <ul class="nav nav-tabs nav-tabs-examples" >
+                                <li class="active">
+                                  <a data-toggle="tab" href="#responses-session-500-schema">Schema</a>
+                                </li>
+
+                            </ul>
+
+                            <div class="tab-content" style='margin-bottom: 10px;'>
+                                <div class="tab-pane active" id="responses-session-500-schema">
+                                  <div id='responses-session-500-schema-500' style="padding: 30px; border-left: 1px solid #eee; border-right: 1px solid #eee; border-bottom: 1px solid #eee;">
+                                    <script>
+                                      $(document).ready(function() {
+                                        var schemaWrapper = {
+  "description" : "An unexpected error occurred.",
+  "schema" : {
+    "$ref" : "#/definitions/inline_response_500"
+  }
+};
+                                        var schema = schemaWrapper.schema;
+                                        if (schema.$ref != null) {
+                                          schema = defsParser.$refs.get(schema.$ref);
+                                        } else {
+                                          schemaWrapper.definitions = Object.assign({}, defs);
+                                          $RefParser.dereference(schemaWrapper).catch(function(err) {
+                                            console.log(err);
+                                          });
+                                        }
+
+                                        //console.log(JSON.stringify(schema));
+                                        var view = new JSONSchemaView(schema, 3);
+                                        $('#responses-session-500-schema-data').val(stringify(schema));
+                                        var result = $('#responses-session-500-schema-500');
+                                        result.empty();
+                                        result.append(view.render());
+                                      });
+                                    </script>
+                                  </div>
+                                  <input id='responses-session-500-schema-data' type='hidden' value=''></input>
+                                </div>
+                            </div>
+
+                        </article>
+                      </div>
+                      <hr>
+                    <div id="api-Auth-signup">
+                      <article id="api-Auth-signup-0" data-group="User" data-name="signup" data-version="0">
+                        <div class="pull-left">
+                          <h1>signup</h1>
+                          <p>Sign up</p>
+                        </div>
+                        <div class="pull-right"></div>
+                        <div class="clearfix"></div>
+                        <p></p>
+                        <p class="marked">Register for an account.</p>
+                        <p></p>
+                        <br />
+                        <pre class="prettyprint language-html prettyprinted" data-type="post"><code><span class="pln">/auth/signup</span></code></pre>
+                        <p>
+                          <h3>Usage and SDK Samples</h3>
+                        </p>
+                        <ul class="nav nav-tabs nav-tabs-examples">
+                          <li class="active"><a href="#examples-Auth-signup-0-curl">Curl</a></li>
+                          <li class=""><a href="#examples-Auth-signup-0-java">Java</a></li>
+                          <li class=""><a href="#examples-Auth-signup-0-android">Android</a></li>
+                          <!--<li class=""><a href="#examples-Auth-signup-0-groovy">Groovy</a></li>-->
+                          <li class=""><a href="#examples-Auth-signup-0-objc">Obj-C</a></li>
+                          <li class=""><a href="#examples-Auth-signup-0-javascript">JavaScript</a></li>
+                          <!--<li class=""><a href="#examples-Auth-signup-0-angular">Angular</a></li>-->
+                          <li class=""><a href="#examples-Auth-signup-0-csharp">C#</a></li>
+                          <li class=""><a href="#examples-Auth-signup-0-php">PHP</a></li>
+                          <li class=""><a href="#examples-Auth-signup-0-perl">Perl</a></li>
+                          <li class=""><a href="#examples-Auth-signup-0-python">Python</a></li>
+                        </ul>
+
+                        <div class="tab-content">
+                          <div class="tab-pane active" id="examples-Auth-signup-0-curl">
+                            <pre class="prettyprint"><code class="language-bsh">curl -X POST "https://api.wejunket.com/mobile/auth/signup"</code></pre>
+                          </div>
+                          <div class="tab-pane" id="examples-Auth-signup-0-java">
+                            <pre class="prettyprint"><code class="language-java">import io.swagger.client.*;
+import io.swagger.client.auth.*;
+import io.swagger.client.model.*;
+import io.swagger.client.api.AuthApi;
+
+import java.io.File;
+import java.util.*;
+
+public class AuthApiExample {
+
+    public static void main(String[] args) {
+        
+        AuthApi apiInstance = new AuthApi();
+        User user = ; // User | The user to create.
+        try {
+            inline_response_200 result = apiInstance.signup(user);
+            System.out.println(result);
+        } catch (ApiException e) {
+            System.err.println("Exception when calling AuthApi#signup");
+            e.printStackTrace();
+        }
+    }
+}</code></pre>
+                          </div>
+
+                          <div class="tab-pane" id="examples-Auth-signup-0-android">
+                            <pre class="prettyprint"><code class="language-java">import io.swagger.client.api.AuthApi;
+
+public class AuthApiExample {
+
+    public static void main(String[] args) {
+        AuthApi apiInstance = new AuthApi();
+        User user = ; // User | The user to create.
+        try {
+            inline_response_200 result = apiInstance.signup(user);
+            System.out.println(result);
+        } catch (ApiException e) {
+            System.err.println("Exception when calling AuthApi#signup");
+            e.printStackTrace();
+        }
+    }
+}</code></pre>
+                          </div>
+  <!--
+  <div class="tab-pane" id="examples-Auth-signup-0-groovy">
+  <pre class="prettyprint language-json prettyprinted" data-type="json"><code>Coming Soon!</code></pre>
+  </div> -->
+                            <div class="tab-pane" id="examples-Auth-signup-0-objc">
+                              <pre class="prettyprint"><code class="language-cpp">User *user = ; // The user to create. (optional)
+
+AuthApi *apiInstance = [[AuthApi alloc] init];
+
+// Sign up
+[apiInstance signupWith:user
+              completionHandler: ^(inline_response_200 output, NSError* error) {
+                            if (output) {
+                                NSLog(@"%@", output);
+                            }
+                            if (error) {
+                                NSLog(@"Error: %@", error);
+                            }
+                        }];
+</code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-Auth-signup-0-javascript">
+                              <pre class="prettyprint"><code class="language-js">var JunketApi = require('junket_api');
+
+var api = new JunketApi.AuthApi()
+
+var opts = { 
+  'user':  // {User} The user to create.
+};
+
+var callback = function(error, data, response) {
+  if (error) {
+    console.error(error);
+  } else {
+    console.log('API called successfully. Returned data: ' + data);
+  }
+};
+api.signup(opts, callback);
+</code></pre>
+                            </div>
+
+                            <!--<div class="tab-pane" id="examples-Auth-signup-0-angular">
+              <pre class="prettyprint language-json prettyprinted" data-type="json"><code>Coming Soon!</code></pre>
+            </div>-->
+                            <div class="tab-pane" id="examples-Auth-signup-0-csharp">
+                              <pre class="prettyprint"><code class="language-cs">using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class signupExample
+    {
+        public void main()
+        {
+            
+            var apiInstance = new AuthApi();
+            var user = new User(); // User | The user to create. (optional) 
+
+            try
+            {
+                // Sign up
+                inline_response_200 result = apiInstance.signup(user);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling AuthApi.signup: " + e.Message );
+            }
+        }
+    }
+}
+</code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-Auth-signup-0-php">
+                              <pre class="prettyprint"><code class="language-php"><&#63;php
+require_once(__DIR__ . '/vendor/autoload.php');
+
+$api_instance = new Swagger\Client\Api\AuthApi();
+$user = ; // User | The user to create.
+
+try {
+    $result = $api_instance->signup($user);
+    print_r($result);
+} catch (Exception $e) {
+    echo 'Exception when calling AuthApi->signup: ', $e->getMessage(), PHP_EOL;
+}
+?></code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-Auth-signup-0-perl">
+                              <pre class="prettyprint"><code class="language-perl">use Data::Dumper;
+use WWW::SwaggerClient::Configuration;
+use WWW::SwaggerClient::AuthApi;
+
+my $api_instance = WWW::SwaggerClient::AuthApi->new();
+my $user = WWW::SwaggerClient::Object::User->new(); # User | The user to create.
+
+eval { 
+    my $result = $api_instance->signup(user => $user);
+    print Dumper($result);
+};
+if ($@) {
+    warn "Exception when calling AuthApi->signup: $@\n";
+}</code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-Auth-signup-0-python">
+                              <pre class="prettyprint"><code class="language-python">from __future__ import print_statement
+import time
+import swagger_client
+from swagger_client.rest import ApiException
+from pprint import pprint
+
+# create an instance of the API class
+api_instance = swagger_client.AuthApi()
+user =  # User | The user to create. (optional)
+
+try: 
+    # Sign up
+    api_response = api_instance.signup(user=user)
+    pprint(api_response)
+except ApiException as e:
+    print("Exception when calling AuthApi->signup: %s\n" % e)</code></pre>
+                            </div>
+                          </div>
+
+                          <h2>Parameters</h2>
+
+
+
+                            <div class="methodsubtabletitle">Body parameters</div>
+                            <table id="methodsubtable">
+                              <tr>
+                                <th width="150px">Name</th>
+                                <th>Description</th>
+                              </tr>
+                                <tr><td style="width:150px;">user </td>
+<td>
+
+
+<script>
+$(document).ready(function() {
+  var schemaWrapper = {
+  "in" : "body",
+  "name" : "user",
+  "description" : "The user to create.",
+  "required" : false,
+  "schema" : {
+    "$ref" : "#/definitions/user"
+  }
+};
+  var schema = schemaWrapper.schema;
+  if (schema.$ref != null) {
+    schema = defsParser.$refs.get(schema.$ref);
+  } else {
+    schemaWrapper.definitions = Object.assign({}, defs);
+    $RefParser.dereference(schemaWrapper).catch(function(err) {
+      console.log(err);
+    });
+  }
+
+  var view = new JSONSchemaView(schema,2,{isBodyParam: true});
+  var result = $('#d2e199_signup_user');
+  result.empty();
+  result.append(view.render());
+});
+</script>
+<div id="d2e199_signup_user"></div>
+</td>
+</tr>
+
+                            </table>
+
+
+
+                          <h2>Responses</h2>
+                            <h3> Status: 200 - Successful registration </h3>
+
+                            <ul class="nav nav-tabs nav-tabs-examples" >
+                                <li class="active">
+                                  <a data-toggle="tab" href="#responses-signup-200-schema">Schema</a>
+                                </li>
+
+                            </ul>
+
+                            <div class="tab-content" style='margin-bottom: 10px;'>
+                                <div class="tab-pane active" id="responses-signup-200-schema">
+                                  <div id='responses-signup-200-schema-200' style="padding: 30px; border-left: 1px solid #eee; border-right: 1px solid #eee; border-bottom: 1px solid #eee;">
+                                    <script>
+                                      $(document).ready(function() {
+                                        var schemaWrapper = {
+  "description" : "Successful registration",
+  "schema" : {
+    "$ref" : "#/definitions/inline_response_200"
+  }
+};
+                                        var schema = schemaWrapper.schema;
+                                        if (schema.$ref != null) {
+                                          schema = defsParser.$refs.get(schema.$ref);
+                                        } else {
+                                          schemaWrapper.definitions = Object.assign({}, defs);
+                                          $RefParser.dereference(schemaWrapper).catch(function(err) {
+                                            console.log(err);
+                                          });
+                                        }
+
+                                        //console.log(JSON.stringify(schema));
+                                        var view = new JSONSchemaView(schema, 3);
+                                        $('#responses-signup-200-schema-data').val(stringify(schema));
+                                        var result = $('#responses-signup-200-schema-200');
+                                        result.empty();
+                                        result.append(view.render());
+                                      });
+                                    </script>
+                                  </div>
+                                  <input id='responses-signup-200-schema-data' type='hidden' value=''></input>
+                                </div>
+                            </div>
+
+                            <h3> Status: 401 - Unauthorized.  Invalid or expired auth token or credentials provided. </h3>
+
+                            <ul class="nav nav-tabs nav-tabs-examples" >
+                                <li class="active">
+                                  <a data-toggle="tab" href="#responses-signup-401-schema">Schema</a>
+                                </li>
+
+                            </ul>
+
+                            <div class="tab-content" style='margin-bottom: 10px;'>
+                                <div class="tab-pane active" id="responses-signup-401-schema">
+                                  <div id='responses-signup-401-schema-401' style="padding: 30px; border-left: 1px solid #eee; border-right: 1px solid #eee; border-bottom: 1px solid #eee;">
+                                    <script>
+                                      $(document).ready(function() {
+                                        var schemaWrapper = {
+  "description" : "Unauthorized.  Invalid or expired auth token or credentials provided.",
+  "schema" : {
+    "$ref" : "#/definitions/inline_response_401"
+  }
+};
+                                        var schema = schemaWrapper.schema;
+                                        if (schema.$ref != null) {
+                                          schema = defsParser.$refs.get(schema.$ref);
+                                        } else {
+                                          schemaWrapper.definitions = Object.assign({}, defs);
+                                          $RefParser.dereference(schemaWrapper).catch(function(err) {
+                                            console.log(err);
+                                          });
+                                        }
+
+                                        //console.log(JSON.stringify(schema));
+                                        var view = new JSONSchemaView(schema, 3);
+                                        $('#responses-signup-401-schema-data').val(stringify(schema));
+                                        var result = $('#responses-signup-401-schema-401');
+                                        result.empty();
+                                        result.append(view.render());
+                                      });
+                                    </script>
+                                  </div>
+                                  <input id='responses-signup-401-schema-data' type='hidden' value=''></input>
+                                </div>
+                            </div>
+
+                            <h3> Status: 422 - Validation errors in the request body. </h3>
+
+                            <ul class="nav nav-tabs nav-tabs-examples" >
+                                <li class="active">
+                                  <a data-toggle="tab" href="#responses-signup-422-schema">Schema</a>
+                                </li>
+
+                            </ul>
+
+                            <div class="tab-content" style='margin-bottom: 10px;'>
+                                <div class="tab-pane active" id="responses-signup-422-schema">
+                                  <div id='responses-signup-422-schema-422' style="padding: 30px; border-left: 1px solid #eee; border-right: 1px solid #eee; border-bottom: 1px solid #eee;">
+                                    <script>
+                                      $(document).ready(function() {
+                                        var schemaWrapper = {
+  "description" : "Validation errors in the request body.",
+  "schema" : {
+    "$ref" : "#/definitions/inline_response_422"
+  }
+};
+                                        var schema = schemaWrapper.schema;
+                                        if (schema.$ref != null) {
+                                          schema = defsParser.$refs.get(schema.$ref);
+                                        } else {
+                                          schemaWrapper.definitions = Object.assign({}, defs);
+                                          $RefParser.dereference(schemaWrapper).catch(function(err) {
+                                            console.log(err);
+                                          });
+                                        }
+
+                                        //console.log(JSON.stringify(schema));
+                                        var view = new JSONSchemaView(schema, 3);
+                                        $('#responses-signup-422-schema-data').val(stringify(schema));
+                                        var result = $('#responses-signup-422-schema-422');
+                                        result.empty();
+                                        result.append(view.render());
+                                      });
+                                    </script>
+                                  </div>
+                                  <input id='responses-signup-422-schema-data' type='hidden' value=''></input>
+                                </div>
+                            </div>
+
+                            <h3> Status: 500 - An unexpected error occurred. </h3>
+
+                            <ul class="nav nav-tabs nav-tabs-examples" >
+                                <li class="active">
+                                  <a data-toggle="tab" href="#responses-signup-500-schema">Schema</a>
+                                </li>
+
+                            </ul>
+
+                            <div class="tab-content" style='margin-bottom: 10px;'>
+                                <div class="tab-pane active" id="responses-signup-500-schema">
+                                  <div id='responses-signup-500-schema-500' style="padding: 30px; border-left: 1px solid #eee; border-right: 1px solid #eee; border-bottom: 1px solid #eee;">
+                                    <script>
+                                      $(document).ready(function() {
+                                        var schemaWrapper = {
+  "description" : "An unexpected error occurred.",
+  "schema" : {
+    "$ref" : "#/definitions/inline_response_500"
+  }
+};
+                                        var schema = schemaWrapper.schema;
+                                        if (schema.$ref != null) {
+                                          schema = defsParser.$refs.get(schema.$ref);
+                                        } else {
+                                          schemaWrapper.definitions = Object.assign({}, defs);
+                                          $RefParser.dereference(schemaWrapper).catch(function(err) {
+                                            console.log(err);
+                                          });
+                                        }
+
+                                        //console.log(JSON.stringify(schema));
+                                        var view = new JSONSchemaView(schema, 3);
+                                        $('#responses-signup-500-schema-data').val(stringify(schema));
+                                        var result = $('#responses-signup-500-schema-500');
+                                        result.empty();
+                                        result.append(view.render());
+                                      });
+                                    </script>
+                                  </div>
+                                  <input id='responses-signup-500-schema-data' type='hidden' value=''></input>
+                                </div>
+                            </div>
+
+                        </article>
+                      </div>
+                      <hr>
+                  </section>
+                <section id="api-Tours">
+                  <h1>Tours</h1>
+                    <div id="api-Tours-tour">
+                      <article id="api-Tours-tour-0" data-group="User" data-name="tour" data-version="0">
+                        <div class="pull-left">
+                          <h1>tour</h1>
+                          <p>Get Tour details</p>
+                        </div>
+                        <div class="pull-right"></div>
+                        <div class="clearfix"></div>
+                        <p></p>
+                        <p class="marked">Returns all of the information for the given tour.</p>
+                        <p></p>
+                        <br />
+                        <pre class="prettyprint language-html prettyprinted" data-type="get"><code><span class="pln">/tours/{tour_id}</span></code></pre>
+                        <p>
+                          <h3>Usage and SDK Samples</h3>
+                        </p>
+                        <ul class="nav nav-tabs nav-tabs-examples">
+                          <li class="active"><a href="#examples-Tours-tour-0-curl">Curl</a></li>
+                          <li class=""><a href="#examples-Tours-tour-0-java">Java</a></li>
+                          <li class=""><a href="#examples-Tours-tour-0-android">Android</a></li>
+                          <!--<li class=""><a href="#examples-Tours-tour-0-groovy">Groovy</a></li>-->
+                          <li class=""><a href="#examples-Tours-tour-0-objc">Obj-C</a></li>
+                          <li class=""><a href="#examples-Tours-tour-0-javascript">JavaScript</a></li>
+                          <!--<li class=""><a href="#examples-Tours-tour-0-angular">Angular</a></li>-->
+                          <li class=""><a href="#examples-Tours-tour-0-csharp">C#</a></li>
+                          <li class=""><a href="#examples-Tours-tour-0-php">PHP</a></li>
+                          <li class=""><a href="#examples-Tours-tour-0-perl">Perl</a></li>
+                          <li class=""><a href="#examples-Tours-tour-0-python">Python</a></li>
+                        </ul>
+
+                        <div class="tab-content">
+                          <div class="tab-pane active" id="examples-Tours-tour-0-curl">
+                            <pre class="prettyprint"><code class="language-bsh">curl -X GET -H "Authorization: [[apiKey]]" "https://api.wejunket.com/mobile/tours/{tour_id}"</code></pre>
+                          </div>
+                          <div class="tab-pane" id="examples-Tours-tour-0-java">
+                            <pre class="prettyprint"><code class="language-java">import io.swagger.client.*;
+import io.swagger.client.auth.*;
+import io.swagger.client.model.*;
+import io.swagger.client.api.ToursApi;
+
+import java.io.File;
+import java.util.*;
+
+public class ToursApiExample {
+
+    public static void main(String[] args) {
+        ApiClient defaultClient = Configuration.getDefaultApiClient();
+        
+        // Configure API key authorization: Bearer
+        ApiKeyAuth Bearer = (ApiKeyAuth) defaultClient.getAuthentication("Bearer");
+        Bearer.setApiKey("YOUR API KEY");
+        // Uncomment the following line to set a prefix for the API key, e.g. "Token" (defaults to null)
+        //Bearer.setApiKeyPrefix("Token");
+
+        ToursApi apiInstance = new ToursApi();
+        String authorization = authorization_example; // String | JTW auth bearer token in the format of "Authorization: Bearer {token_here}"
+
+        Long tourId = 789; // Long | ID of the desired Tour
+        try {
+            Tour result = apiInstance.tour(authorization, tourId);
+            System.out.println(result);
+        } catch (ApiException e) {
+            System.err.println("Exception when calling ToursApi#tour");
+            e.printStackTrace();
+        }
+    }
+}</code></pre>
+                          </div>
+
+                          <div class="tab-pane" id="examples-Tours-tour-0-android">
+                            <pre class="prettyprint"><code class="language-java">import io.swagger.client.api.ToursApi;
+
+public class ToursApiExample {
+
+    public static void main(String[] args) {
+        ToursApi apiInstance = new ToursApi();
+        String authorization = authorization_example; // String | JTW auth bearer token in the format of "Authorization: Bearer {token_here}"
+
+        Long tourId = 789; // Long | ID of the desired Tour
+        try {
+            Tour result = apiInstance.tour(authorization, tourId);
+            System.out.println(result);
+        } catch (ApiException e) {
+            System.err.println("Exception when calling ToursApi#tour");
+            e.printStackTrace();
+        }
+    }
+}</code></pre>
+                          </div>
+  <!--
+  <div class="tab-pane" id="examples-Tours-tour-0-groovy">
+  <pre class="prettyprint language-json prettyprinted" data-type="json"><code>Coming Soon!</code></pre>
+  </div> -->
+                            <div class="tab-pane" id="examples-Tours-tour-0-objc">
+                              <pre class="prettyprint"><code class="language-cpp">Configuration *apiConfig = [Configuration sharedConfig];
+
+// Configure API key authorization: (authentication scheme: Bearer)
+[apiConfig setApiKey:@"YOUR_API_KEY" forApiKeyIdentifier:@"Authorization"];
+// Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+//[apiConfig setApiKeyPrefix:@"Bearer" forApiKeyIdentifier:@"Authorization"];
+
+String *authorization = authorization_example; // JTW auth bearer token in the format of "Authorization: Bearer {token_here}"
+
+Long *tourId = 789; // ID of the desired Tour
+
+ToursApi *apiInstance = [[ToursApi alloc] init];
+
+// Get Tour details
+[apiInstance tourWith:authorization
+    tourId:tourId
+              completionHandler: ^(Tour output, NSError* error) {
+                            if (output) {
+                                NSLog(@"%@", output);
+                            }
+                            if (error) {
+                                NSLog(@"Error: %@", error);
+                            }
+                        }];
+</code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-Tours-tour-0-javascript">
+                              <pre class="prettyprint"><code class="language-js">var JunketApi = require('junket_api');
+var defaultClient = JunketApi.ApiClient.instance;
+
+// Configure API key authorization: Bearer
+var Bearer = defaultClient.authentications['Bearer'];
+Bearer.apiKey = "YOUR API KEY"
+// Uncomment the following line to set a prefix for the API key, e.g. "Token" (defaults to null)
+//Bearer.apiKeyPrefix['Authorization'] = "Token"
+
+var api = new JunketApi.ToursApi()
+
+var authorization = authorization_example; // {String} JTW auth bearer token in the format of "Authorization: Bearer {token_here}"
+
+
+var tourId = 789; // {Long} ID of the desired Tour
+
+
+var callback = function(error, data, response) {
+  if (error) {
+    console.error(error);
+  } else {
+    console.log('API called successfully. Returned data: ' + data);
+  }
+};
+api.tour(authorization, tourId, callback);
+</code></pre>
+                            </div>
+
+                            <!--<div class="tab-pane" id="examples-Tours-tour-0-angular">
+              <pre class="prettyprint language-json prettyprinted" data-type="json"><code>Coming Soon!</code></pre>
+            </div>-->
+                            <div class="tab-pane" id="examples-Tours-tour-0-csharp">
+                              <pre class="prettyprint"><code class="language-cs">using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class tourExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new ToursApi();
+            var authorization = authorization_example;  // String | JTW auth bearer token in the format of "Authorization: Bearer {token_here}"
+
+            var tourId = 789;  // Long | ID of the desired Tour
+
+            try
+            {
+                // Get Tour details
+                Tour result = apiInstance.tour(authorization, tourId);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling ToursApi.tour: " + e.Message );
+            }
+        }
+    }
+}
+</code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-Tours-tour-0-php">
+                              <pre class="prettyprint"><code class="language-php"><&#63;php
+require_once(__DIR__ . '/vendor/autoload.php');
+
+// Configure API key authorization: Bearer
+Swagger\Client\Configuration::getDefaultConfiguration()->setApiKey('Authorization', 'YOUR_API_KEY');
+// Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+// Swagger\Client\Configuration::getDefaultConfiguration()->setApiKeyPrefix('Authorization', 'Bearer');
+
+$api_instance = new Swagger\Client\Api\ToursApi();
+$authorization = authorization_example; // String | JTW auth bearer token in the format of "Authorization: Bearer {token_here}"
+
+$tourId = 789; // Long | ID of the desired Tour
+
+try {
+    $result = $api_instance->tour($authorization, $tourId);
+    print_r($result);
+} catch (Exception $e) {
+    echo 'Exception when calling ToursApi->tour: ', $e->getMessage(), PHP_EOL;
+}
+?></code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-Tours-tour-0-perl">
+                              <pre class="prettyprint"><code class="language-perl">use Data::Dumper;
+use WWW::SwaggerClient::Configuration;
+use WWW::SwaggerClient::ToursApi;
+
+# Configure API key authorization: Bearer
+$WWW::SwaggerClient::Configuration::api_key->{'Authorization'} = 'YOUR_API_KEY';
+# uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+#$WWW::SwaggerClient::Configuration::api_key_prefix->{'Authorization'} = "Bearer";
+
+my $api_instance = WWW::SwaggerClient::ToursApi->new();
+my $authorization = authorization_example; # String | JTW auth bearer token in the format of "Authorization: Bearer {token_here}"
+
+my $tourId = 789; # Long | ID of the desired Tour
+
+eval { 
+    my $result = $api_instance->tour(authorization => $authorization, tourId => $tourId);
+    print Dumper($result);
+};
+if ($@) {
+    warn "Exception when calling ToursApi->tour: $@\n";
+}</code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-Tours-tour-0-python">
+                              <pre class="prettyprint"><code class="language-python">from __future__ import print_statement
+import time
+import swagger_client
+from swagger_client.rest import ApiException
+from pprint import pprint
+
+# Configure API key authorization: Bearer
+swagger_client.configuration.api_key['Authorization'] = 'YOUR_API_KEY'
+# Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+# swagger_client.configuration.api_key_prefix['Authorization'] = 'Bearer'
+
+# create an instance of the API class
+api_instance = swagger_client.ToursApi()
+authorization = authorization_example # String | JTW auth bearer token in the format of "Authorization: Bearer {token_here}"
+
+tourId = 789 # Long | ID of the desired Tour
+
+try: 
+    # Get Tour details
+    api_response = api_instance.tour(authorization, tourId)
+    pprint(api_response)
+except ApiException as e:
+    print("Exception when calling ToursApi->tour: %s\n" % e)</code></pre>
+                            </div>
+                          </div>
+
+                          <h2>Parameters</h2>
+
+                            <div class="methodsubtabletitle">Path parameters</div>
+                            <table id="methodsubtable">
+                                <tr>
+                                  <th width="150px">Name</th>
+                                  <th>Description</th>
+                                </tr>
+                                  <tr><td style="width:150px;">tour_id*</td>
+<td>
+
+
+    <div id="d2e199_tour_tourId">
+        <div class="json-schema-view">
+            <div class="primitive">
+                <span class="type">
+                    Long
+                </span>
+                    <span class="format">
+                        (int64)
+                    </span>
+
+                    <div class="inner description">
+                        ID of the desired Tour
+                    </div>
+            </div>
+                <div class="inner required">
+                    Required
+                </div>
+        </div>
+    </div>
+</td>
+</tr>
+
+                            </table>
+
+                            <div class="methodsubtabletitle">Header parameters</div>
+                            <table id="methodsubtable">
+                              <tr>
+                                <th width="150px">Name</th>
+                                <th>Description</th>
+                              </tr>
+                                  <tr><td style="width:150px;">Authorization*</td>
+<td>
+
+
+    <div id="d2e199_tour_authorization">
+        <div class="json-schema-view">
+            <div class="primitive">
+                <span class="type">
+                    String
+                </span>
+
+                    <div class="inner description">
+                        JTW auth bearer token in the format of &quot;Authorization: Bearer {token_here}&quot;
+
+                    </div>
+            </div>
+                <div class="inner required">
+                    Required
+                </div>
+        </div>
+    </div>
+</td>
+</tr>
+
+                            </table>
+
+
+
+
+                          <h2>Responses</h2>
+                            <h3> Status: 200 - OK </h3>
+
+                            <ul class="nav nav-tabs nav-tabs-examples" >
+                                <li class="active">
+                                  <a data-toggle="tab" href="#responses-tour-200-schema">Schema</a>
+                                </li>
+
+                            </ul>
+
+                            <div class="tab-content" style='margin-bottom: 10px;'>
+                                <div class="tab-pane active" id="responses-tour-200-schema">
+                                  <div id='responses-tour-200-schema-200' style="padding: 30px; border-left: 1px solid #eee; border-right: 1px solid #eee; border-bottom: 1px solid #eee;">
+                                    <script>
+                                      $(document).ready(function() {
+                                        var schemaWrapper = {
+  "description" : "OK",
   "schema" : {
     "$ref" : "#/definitions/Tour"
   }
@@ -1390,38 +3238,202 @@ except ApiException as e:
 
                                         //console.log(JSON.stringify(schema));
                                         var view = new JSONSchemaView(schema, 3);
-                                        $('#responses-getTourById-200-schema-data').val(stringify(schema));
-                                        var result = $('#responses-getTourById-200-schema-200');
+                                        $('#responses-tour-200-schema-data').val(stringify(schema));
+                                        var result = $('#responses-tour-200-schema-200');
                                         result.empty();
                                         result.append(view.render());
                                       });
                                     </script>
                                   </div>
-                                  <input id='responses-getTourById-200-schema-data' type='hidden' value=''></input>
+                                  <input id='responses-tour-200-schema-data' type='hidden' value=''></input>
                                 </div>
                             </div>
 
-                            <h3> Status: 404 - Tour not found </h3>
+                            <h3> Status: 400 - Invalid auth token provided. </h3>
 
                             <ul class="nav nav-tabs nav-tabs-examples" >
+                                <li class="active">
+                                  <a data-toggle="tab" href="#responses-tour-400-schema">Schema</a>
+                                </li>
+
                             </ul>
 
                             <div class="tab-content" style='margin-bottom: 10px;'>
+                                <div class="tab-pane active" id="responses-tour-400-schema">
+                                  <div id='responses-tour-400-schema-400' style="padding: 30px; border-left: 1px solid #eee; border-right: 1px solid #eee; border-bottom: 1px solid #eee;">
+                                    <script>
+                                      $(document).ready(function() {
+                                        var schemaWrapper = {
+  "description" : "Invalid auth token provided.",
+  "schema" : {
+    "$ref" : "#/definitions/inline_response_400"
+  }
+};
+                                        var schema = schemaWrapper.schema;
+                                        if (schema.$ref != null) {
+                                          schema = defsParser.$refs.get(schema.$ref);
+                                        } else {
+                                          schemaWrapper.definitions = Object.assign({}, defs);
+                                          $RefParser.dereference(schemaWrapper).catch(function(err) {
+                                            console.log(err);
+                                          });
+                                        }
+
+                                        //console.log(JSON.stringify(schema));
+                                        var view = new JSONSchemaView(schema, 3);
+                                        $('#responses-tour-400-schema-data').val(stringify(schema));
+                                        var result = $('#responses-tour-400-schema-400');
+                                        result.empty();
+                                        result.append(view.render());
+                                      });
+                                    </script>
+                                  </div>
+                                  <input id='responses-tour-400-schema-data' type='hidden' value=''></input>
+                                </div>
+                            </div>
+
+                            <h3> Status: 401 - Unauthorized.  Invalid or expired auth token or credentials provided. </h3>
+
+                            <ul class="nav nav-tabs nav-tabs-examples" >
+                                <li class="active">
+                                  <a data-toggle="tab" href="#responses-tour-401-schema">Schema</a>
+                                </li>
+
+                            </ul>
+
+                            <div class="tab-content" style='margin-bottom: 10px;'>
+                                <div class="tab-pane active" id="responses-tour-401-schema">
+                                  <div id='responses-tour-401-schema-401' style="padding: 30px; border-left: 1px solid #eee; border-right: 1px solid #eee; border-bottom: 1px solid #eee;">
+                                    <script>
+                                      $(document).ready(function() {
+                                        var schemaWrapper = {
+  "description" : "Unauthorized.  Invalid or expired auth token or credentials provided.",
+  "schema" : {
+    "$ref" : "#/definitions/inline_response_401"
+  }
+};
+                                        var schema = schemaWrapper.schema;
+                                        if (schema.$ref != null) {
+                                          schema = defsParser.$refs.get(schema.$ref);
+                                        } else {
+                                          schemaWrapper.definitions = Object.assign({}, defs);
+                                          $RefParser.dereference(schemaWrapper).catch(function(err) {
+                                            console.log(err);
+                                          });
+                                        }
+
+                                        //console.log(JSON.stringify(schema));
+                                        var view = new JSONSchemaView(schema, 3);
+                                        $('#responses-tour-401-schema-data').val(stringify(schema));
+                                        var result = $('#responses-tour-401-schema-401');
+                                        result.empty();
+                                        result.append(view.render());
+                                      });
+                                    </script>
+                                  </div>
+                                  <input id='responses-tour-401-schema-data' type='hidden' value=''></input>
+                                </div>
+                            </div>
+
+                            <h3> Status: 404 - Object not found. </h3>
+
+                            <ul class="nav nav-tabs nav-tabs-examples" >
+                                <li class="active">
+                                  <a data-toggle="tab" href="#responses-tour-404-schema">Schema</a>
+                                </li>
+
+                            </ul>
+
+                            <div class="tab-content" style='margin-bottom: 10px;'>
+                                <div class="tab-pane active" id="responses-tour-404-schema">
+                                  <div id='responses-tour-404-schema-404' style="padding: 30px; border-left: 1px solid #eee; border-right: 1px solid #eee; border-bottom: 1px solid #eee;">
+                                    <script>
+                                      $(document).ready(function() {
+                                        var schemaWrapper = {
+  "description" : "Object not found.",
+  "schema" : {
+    "$ref" : "#/definitions/inline_response_404"
+  }
+};
+                                        var schema = schemaWrapper.schema;
+                                        if (schema.$ref != null) {
+                                          schema = defsParser.$refs.get(schema.$ref);
+                                        } else {
+                                          schemaWrapper.definitions = Object.assign({}, defs);
+                                          $RefParser.dereference(schemaWrapper).catch(function(err) {
+                                            console.log(err);
+                                          });
+                                        }
+
+                                        //console.log(JSON.stringify(schema));
+                                        var view = new JSONSchemaView(schema, 3);
+                                        $('#responses-tour-404-schema-data').val(stringify(schema));
+                                        var result = $('#responses-tour-404-schema-404');
+                                        result.empty();
+                                        result.append(view.render());
+                                      });
+                                    </script>
+                                  </div>
+                                  <input id='responses-tour-404-schema-data' type='hidden' value=''></input>
+                                </div>
+                            </div>
+
+                            <h3> Status: 500 - An unexpected error occurred. </h3>
+
+                            <ul class="nav nav-tabs nav-tabs-examples" >
+                                <li class="active">
+                                  <a data-toggle="tab" href="#responses-tour-500-schema">Schema</a>
+                                </li>
+
+                            </ul>
+
+                            <div class="tab-content" style='margin-bottom: 10px;'>
+                                <div class="tab-pane active" id="responses-tour-500-schema">
+                                  <div id='responses-tour-500-schema-500' style="padding: 30px; border-left: 1px solid #eee; border-right: 1px solid #eee; border-bottom: 1px solid #eee;">
+                                    <script>
+                                      $(document).ready(function() {
+                                        var schemaWrapper = {
+  "description" : "An unexpected error occurred.",
+  "schema" : {
+    "$ref" : "#/definitions/inline_response_500"
+  }
+};
+                                        var schema = schemaWrapper.schema;
+                                        if (schema.$ref != null) {
+                                          schema = defsParser.$refs.get(schema.$ref);
+                                        } else {
+                                          schemaWrapper.definitions = Object.assign({}, defs);
+                                          $RefParser.dereference(schemaWrapper).catch(function(err) {
+                                            console.log(err);
+                                          });
+                                        }
+
+                                        //console.log(JSON.stringify(schema));
+                                        var view = new JSONSchemaView(schema, 3);
+                                        $('#responses-tour-500-schema-data').val(stringify(schema));
+                                        var result = $('#responses-tour-500-schema-500');
+                                        result.empty();
+                                        result.append(view.render());
+                                      });
+                                    </script>
+                                  </div>
+                                  <input id='responses-tour-500-schema-data' type='hidden' value=''></input>
+                                </div>
                             </div>
 
                         </article>
                       </div>
                       <hr>
-                    <div id="api-Tours-getTours">
-                      <article id="api-Tours-getTours-0" data-group="User" data-name="getTours" data-version="0">
+                    <div id="api-Tours-tours">
+                      <article id="api-Tours-tours-0" data-group="User" data-name="tours" data-version="0">
                         <div class="pull-left">
-                          <h1>getTours</h1>
-                          <p>Get all published Tours.</p>
+                          <h1>tours</h1>
+                          <p>Tour listing</p>
                         </div>
                         <div class="pull-right"></div>
                         <div class="clearfix"></div>
                         <p></p>
-                        <p class="marked">Lists all available published Tours.</p>
+                        <p class="marked">Get listing of all published Tours.</p>
                         <p></p>
                         <br />
                         <pre class="prettyprint language-html prettyprinted" data-type="get"><code><span class="pln">/tours</span></code></pre>
@@ -1429,24 +3441,24 @@ except ApiException as e:
                           <h3>Usage and SDK Samples</h3>
                         </p>
                         <ul class="nav nav-tabs nav-tabs-examples">
-                          <li class="active"><a href="#examples-Tours-getTours-0-curl">Curl</a></li>
-                          <li class=""><a href="#examples-Tours-getTours-0-java">Java</a></li>
-                          <li class=""><a href="#examples-Tours-getTours-0-android">Android</a></li>
-                          <!--<li class=""><a href="#examples-Tours-getTours-0-groovy">Groovy</a></li>-->
-                          <li class=""><a href="#examples-Tours-getTours-0-objc">Obj-C</a></li>
-                          <li class=""><a href="#examples-Tours-getTours-0-javascript">JavaScript</a></li>
-                          <!--<li class=""><a href="#examples-Tours-getTours-0-angular">Angular</a></li>-->
-                          <li class=""><a href="#examples-Tours-getTours-0-csharp">C#</a></li>
-                          <li class=""><a href="#examples-Tours-getTours-0-php">PHP</a></li>
-                          <li class=""><a href="#examples-Tours-getTours-0-perl">Perl</a></li>
-                          <li class=""><a href="#examples-Tours-getTours-0-python">Python</a></li>
+                          <li class="active"><a href="#examples-Tours-tours-0-curl">Curl</a></li>
+                          <li class=""><a href="#examples-Tours-tours-0-java">Java</a></li>
+                          <li class=""><a href="#examples-Tours-tours-0-android">Android</a></li>
+                          <!--<li class=""><a href="#examples-Tours-tours-0-groovy">Groovy</a></li>-->
+                          <li class=""><a href="#examples-Tours-tours-0-objc">Obj-C</a></li>
+                          <li class=""><a href="#examples-Tours-tours-0-javascript">JavaScript</a></li>
+                          <!--<li class=""><a href="#examples-Tours-tours-0-angular">Angular</a></li>-->
+                          <li class=""><a href="#examples-Tours-tours-0-csharp">C#</a></li>
+                          <li class=""><a href="#examples-Tours-tours-0-php">PHP</a></li>
+                          <li class=""><a href="#examples-Tours-tours-0-perl">Perl</a></li>
+                          <li class=""><a href="#examples-Tours-tours-0-python">Python</a></li>
                         </ul>
 
                         <div class="tab-content">
-                          <div class="tab-pane active" id="examples-Tours-getTours-0-curl">
-                            <pre class="prettyprint"><code class="language-bsh">curl -X GET "https://api.wejunket.com/mobile/tours"</code></pre>
+                          <div class="tab-pane active" id="examples-Tours-tours-0-curl">
+                            <pre class="prettyprint"><code class="language-bsh">curl -X GET -H "Authorization: [[apiKey]]" "https://api.wejunket.com/mobile/tours"</code></pre>
                           </div>
-                          <div class="tab-pane" id="examples-Tours-getTours-0-java">
+                          <div class="tab-pane" id="examples-Tours-tours-0-java">
                             <pre class="prettyprint"><code class="language-java">import io.swagger.client.*;
 import io.swagger.client.auth.*;
 import io.swagger.client.model.*;
@@ -1458,47 +3470,67 @@ import java.util.*;
 public class ToursApiExample {
 
     public static void main(String[] args) {
+        ApiClient defaultClient = Configuration.getDefaultApiClient();
         
+        // Configure API key authorization: Bearer
+        ApiKeyAuth Bearer = (ApiKeyAuth) defaultClient.getAuthentication("Bearer");
+        Bearer.setApiKey("YOUR API KEY");
+        // Uncomment the following line to set a prefix for the API key, e.g. "Token" (defaults to null)
+        //Bearer.setApiKeyPrefix("Token");
+
         ToursApi apiInstance = new ToursApi();
+        String authorization = authorization_example; // String | JTW auth bearer token in the format of "Authorization: Bearer {token_here}"
+
         try {
-            array[Tour] result = apiInstance.getTours();
+            array[Tour] result = apiInstance.tours(authorization);
             System.out.println(result);
         } catch (ApiException e) {
-            System.err.println("Exception when calling ToursApi#getTours");
+            System.err.println("Exception when calling ToursApi#tours");
             e.printStackTrace();
         }
     }
 }</code></pre>
                           </div>
 
-                          <div class="tab-pane" id="examples-Tours-getTours-0-android">
+                          <div class="tab-pane" id="examples-Tours-tours-0-android">
                             <pre class="prettyprint"><code class="language-java">import io.swagger.client.api.ToursApi;
 
 public class ToursApiExample {
 
     public static void main(String[] args) {
         ToursApi apiInstance = new ToursApi();
+        String authorization = authorization_example; // String | JTW auth bearer token in the format of "Authorization: Bearer {token_here}"
+
         try {
-            array[Tour] result = apiInstance.getTours();
+            array[Tour] result = apiInstance.tours(authorization);
             System.out.println(result);
         } catch (ApiException e) {
-            System.err.println("Exception when calling ToursApi#getTours");
+            System.err.println("Exception when calling ToursApi#tours");
             e.printStackTrace();
         }
     }
 }</code></pre>
                           </div>
   <!--
-  <div class="tab-pane" id="examples-Tours-getTours-0-groovy">
+  <div class="tab-pane" id="examples-Tours-tours-0-groovy">
   <pre class="prettyprint language-json prettyprinted" data-type="json"><code>Coming Soon!</code></pre>
   </div> -->
-                            <div class="tab-pane" id="examples-Tours-getTours-0-objc">
-                              <pre class="prettyprint"><code class="language-cpp">
+                            <div class="tab-pane" id="examples-Tours-tours-0-objc">
+                              <pre class="prettyprint"><code class="language-cpp">Configuration *apiConfig = [Configuration sharedConfig];
+
+// Configure API key authorization: (authentication scheme: Bearer)
+[apiConfig setApiKey:@"YOUR_API_KEY" forApiKeyIdentifier:@"Authorization"];
+// Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+//[apiConfig setApiKeyPrefix:@"Bearer" forApiKeyIdentifier:@"Authorization"];
+
+String *authorization = authorization_example; // JTW auth bearer token in the format of "Authorization: Bearer {token_here}"
+
+
 ToursApi *apiInstance = [[ToursApi alloc] init];
 
-// Get all published Tours.
-[apiInstance getToursWithCompletionHandler: 
-              ^(array[Tour] output, NSError* error) {
+// Tour listing
+[apiInstance toursWith:authorization
+              completionHandler: ^(array[Tour] output, NSError* error) {
                             if (output) {
                                 NSLog(@"%@", output);
                             }
@@ -1509,10 +3541,21 @@ ToursApi *apiInstance = [[ToursApi alloc] init];
 </code></pre>
                             </div>
 
-                            <div class="tab-pane" id="examples-Tours-getTours-0-javascript">
+                            <div class="tab-pane" id="examples-Tours-tours-0-javascript">
                               <pre class="prettyprint"><code class="language-js">var JunketApi = require('junket_api');
+var defaultClient = JunketApi.ApiClient.instance;
+
+// Configure API key authorization: Bearer
+var Bearer = defaultClient.authentications['Bearer'];
+Bearer.apiKey = "YOUR API KEY"
+// Uncomment the following line to set a prefix for the API key, e.g. "Token" (defaults to null)
+//Bearer.apiKeyPrefix['Authorization'] = "Token"
 
 var api = new JunketApi.ToursApi()
+
+var authorization = authorization_example; // {String} JTW auth bearer token in the format of "Authorization: Bearer {token_here}"
+
+
 
 var callback = function(error, data, response) {
   if (error) {
@@ -1521,14 +3564,14 @@ var callback = function(error, data, response) {
     console.log('API called successfully. Returned data: ' + data);
   }
 };
-api.getTours(callback);
+api.tours(authorization, , callback);
 </code></pre>
                             </div>
 
-                            <!--<div class="tab-pane" id="examples-Tours-getTours-0-angular">
+                            <!--<div class="tab-pane" id="examples-Tours-tours-0-angular">
               <pre class="prettyprint language-json prettyprinted" data-type="json"><code>Coming Soon!</code></pre>
             </div>-->
-                            <div class="tab-pane" id="examples-Tours-getTours-0-csharp">
+                            <div class="tab-pane" id="examples-Tours-tours-0-csharp">
                               <pre class="prettyprint"><code class="language-cs">using System;
 using System.Diagnostics;
 using IO.Swagger.Api;
@@ -1537,22 +3580,29 @@ using IO.Swagger.Model;
 
 namespace Example
 {
-    public class getToursExample
+    public class toursExample
     {
         public void main()
         {
             
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
             var apiInstance = new ToursApi();
+            var authorization = authorization_example;  // String | JTW auth bearer token in the format of "Authorization: Bearer {token_here}"
+
 
             try
             {
-                // Get all published Tours.
-                array[Tour] result = apiInstance.getTours();
+                // Tour listing
+                array[Tour] result = apiInstance.tours(authorization);
                 Debug.WriteLine(result);
             }
             catch (Exception e)
             {
-                Debug.Print("Exception when calling ToursApi.getTours: " + e.Message );
+                Debug.Print("Exception when calling ToursApi.tours: " + e.Message );
             }
         }
     }
@@ -1560,80 +3610,132 @@ namespace Example
 </code></pre>
                             </div>
 
-                            <div class="tab-pane" id="examples-Tours-getTours-0-php">
+                            <div class="tab-pane" id="examples-Tours-tours-0-php">
                               <pre class="prettyprint"><code class="language-php"><&#63;php
 require_once(__DIR__ . '/vendor/autoload.php');
 
+// Configure API key authorization: Bearer
+Swagger\Client\Configuration::getDefaultConfiguration()->setApiKey('Authorization', 'YOUR_API_KEY');
+// Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+// Swagger\Client\Configuration::getDefaultConfiguration()->setApiKeyPrefix('Authorization', 'Bearer');
+
 $api_instance = new Swagger\Client\Api\ToursApi();
+$authorization = authorization_example; // String | JTW auth bearer token in the format of "Authorization: Bearer {token_here}"
+
 
 try {
-    $result = $api_instance->getTours();
+    $result = $api_instance->tours($authorization);
     print_r($result);
 } catch (Exception $e) {
-    echo 'Exception when calling ToursApi->getTours: ', $e->getMessage(), PHP_EOL;
+    echo 'Exception when calling ToursApi->tours: ', $e->getMessage(), PHP_EOL;
 }
 ?></code></pre>
                             </div>
 
-                            <div class="tab-pane" id="examples-Tours-getTours-0-perl">
+                            <div class="tab-pane" id="examples-Tours-tours-0-perl">
                               <pre class="prettyprint"><code class="language-perl">use Data::Dumper;
 use WWW::SwaggerClient::Configuration;
 use WWW::SwaggerClient::ToursApi;
 
+# Configure API key authorization: Bearer
+$WWW::SwaggerClient::Configuration::api_key->{'Authorization'} = 'YOUR_API_KEY';
+# uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+#$WWW::SwaggerClient::Configuration::api_key_prefix->{'Authorization'} = "Bearer";
+
 my $api_instance = WWW::SwaggerClient::ToursApi->new();
+my $authorization = authorization_example; # String | JTW auth bearer token in the format of "Authorization: Bearer {token_here}"
+
 
 eval { 
-    my $result = $api_instance->getTours();
+    my $result = $api_instance->tours(authorization => $authorization);
     print Dumper($result);
 };
 if ($@) {
-    warn "Exception when calling ToursApi->getTours: $@\n";
+    warn "Exception when calling ToursApi->tours: $@\n";
 }</code></pre>
                             </div>
 
-                            <div class="tab-pane" id="examples-Tours-getTours-0-python">
+                            <div class="tab-pane" id="examples-Tours-tours-0-python">
                               <pre class="prettyprint"><code class="language-python">from __future__ import print_statement
 import time
 import swagger_client
 from swagger_client.rest import ApiException
 from pprint import pprint
 
+# Configure API key authorization: Bearer
+swagger_client.configuration.api_key['Authorization'] = 'YOUR_API_KEY'
+# Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+# swagger_client.configuration.api_key_prefix['Authorization'] = 'Bearer'
+
 # create an instance of the API class
 api_instance = swagger_client.ToursApi()
+authorization = authorization_example # String | JTW auth bearer token in the format of "Authorization: Bearer {token_here}"
+
 
 try: 
-    # Get all published Tours.
-    api_response = api_instance.get_tours()
+    # Tour listing
+    api_response = api_instance.tours(authorization)
     pprint(api_response)
 except ApiException as e:
-    print("Exception when calling ToursApi->getTours: %s\n" % e)</code></pre>
+    print("Exception when calling ToursApi->tours: %s\n" % e)</code></pre>
                             </div>
                           </div>
 
                           <h2>Parameters</h2>
 
 
+                            <div class="methodsubtabletitle">Header parameters</div>
+                            <table id="methodsubtable">
+                              <tr>
+                                <th width="150px">Name</th>
+                                <th>Description</th>
+                              </tr>
+                                  <tr><td style="width:150px;">Authorization*</td>
+<td>
+
+
+    <div id="d2e199_tours_authorization">
+        <div class="json-schema-view">
+            <div class="primitive">
+                <span class="type">
+                    String
+                </span>
+
+                    <div class="inner description">
+                        JTW auth bearer token in the format of &quot;Authorization: Bearer {token_here}&quot;
+
+                    </div>
+            </div>
+                <div class="inner required">
+                    Required
+                </div>
+        </div>
+    </div>
+</td>
+</tr>
+
+                            </table>
 
 
 
 
                           <h2>Responses</h2>
-                            <h3> Status: 200 - successful operation </h3>
+                            <h3> Status: 200 - OK </h3>
 
                             <ul class="nav nav-tabs nav-tabs-examples" >
                                 <li class="active">
-                                  <a data-toggle="tab" href="#responses-getTours-200-schema">Schema</a>
+                                  <a data-toggle="tab" href="#responses-tours-200-schema">Schema</a>
                                 </li>
 
                             </ul>
 
                             <div class="tab-content" style='margin-bottom: 10px;'>
-                                <div class="tab-pane active" id="responses-getTours-200-schema">
-                                  <div id='responses-getTours-200-schema-200' style="padding: 30px; border-left: 1px solid #eee; border-right: 1px solid #eee; border-bottom: 1px solid #eee;">
+                                <div class="tab-pane active" id="responses-tours-200-schema">
+                                  <div id='responses-tours-200-schema-200' style="padding: 30px; border-left: 1px solid #eee; border-right: 1px solid #eee; border-bottom: 1px solid #eee;">
                                     <script>
                                       $(document).ready(function() {
                                         var schemaWrapper = {
-  "description" : "successful operation",
+  "description" : "OK",
   "schema" : {
     "type" : "array",
     "items" : {
@@ -1653,23 +3755,144 @@ except ApiException as e:
 
                                         //console.log(JSON.stringify(schema));
                                         var view = new JSONSchemaView(schema, 3);
-                                        $('#responses-getTours-200-schema-data').val(stringify(schema));
-                                        var result = $('#responses-getTours-200-schema-200');
+                                        $('#responses-tours-200-schema-data').val(stringify(schema));
+                                        var result = $('#responses-tours-200-schema-200');
                                         result.empty();
                                         result.append(view.render());
                                       });
                                     </script>
                                   </div>
-                                  <input id='responses-getTours-200-schema-data' type='hidden' value=''></input>
+                                  <input id='responses-tours-200-schema-data' type='hidden' value=''></input>
                                 </div>
                             </div>
 
-                            <h3> Status: 500 - Unexpected Error </h3>
+                            <h3> Status: 400 - Invalid auth token provided. </h3>
 
                             <ul class="nav nav-tabs nav-tabs-examples" >
+                                <li class="active">
+                                  <a data-toggle="tab" href="#responses-tours-400-schema">Schema</a>
+                                </li>
+
                             </ul>
 
                             <div class="tab-content" style='margin-bottom: 10px;'>
+                                <div class="tab-pane active" id="responses-tours-400-schema">
+                                  <div id='responses-tours-400-schema-400' style="padding: 30px; border-left: 1px solid #eee; border-right: 1px solid #eee; border-bottom: 1px solid #eee;">
+                                    <script>
+                                      $(document).ready(function() {
+                                        var schemaWrapper = {
+  "description" : "Invalid auth token provided.",
+  "schema" : {
+    "$ref" : "#/definitions/inline_response_400"
+  }
+};
+                                        var schema = schemaWrapper.schema;
+                                        if (schema.$ref != null) {
+                                          schema = defsParser.$refs.get(schema.$ref);
+                                        } else {
+                                          schemaWrapper.definitions = Object.assign({}, defs);
+                                          $RefParser.dereference(schemaWrapper).catch(function(err) {
+                                            console.log(err);
+                                          });
+                                        }
+
+                                        //console.log(JSON.stringify(schema));
+                                        var view = new JSONSchemaView(schema, 3);
+                                        $('#responses-tours-400-schema-data').val(stringify(schema));
+                                        var result = $('#responses-tours-400-schema-400');
+                                        result.empty();
+                                        result.append(view.render());
+                                      });
+                                    </script>
+                                  </div>
+                                  <input id='responses-tours-400-schema-data' type='hidden' value=''></input>
+                                </div>
+                            </div>
+
+                            <h3> Status: 401 - Unauthorized.  Invalid or expired auth token or credentials provided. </h3>
+
+                            <ul class="nav nav-tabs nav-tabs-examples" >
+                                <li class="active">
+                                  <a data-toggle="tab" href="#responses-tours-401-schema">Schema</a>
+                                </li>
+
+                            </ul>
+
+                            <div class="tab-content" style='margin-bottom: 10px;'>
+                                <div class="tab-pane active" id="responses-tours-401-schema">
+                                  <div id='responses-tours-401-schema-401' style="padding: 30px; border-left: 1px solid #eee; border-right: 1px solid #eee; border-bottom: 1px solid #eee;">
+                                    <script>
+                                      $(document).ready(function() {
+                                        var schemaWrapper = {
+  "description" : "Unauthorized.  Invalid or expired auth token or credentials provided.",
+  "schema" : {
+    "$ref" : "#/definitions/inline_response_401"
+  }
+};
+                                        var schema = schemaWrapper.schema;
+                                        if (schema.$ref != null) {
+                                          schema = defsParser.$refs.get(schema.$ref);
+                                        } else {
+                                          schemaWrapper.definitions = Object.assign({}, defs);
+                                          $RefParser.dereference(schemaWrapper).catch(function(err) {
+                                            console.log(err);
+                                          });
+                                        }
+
+                                        //console.log(JSON.stringify(schema));
+                                        var view = new JSONSchemaView(schema, 3);
+                                        $('#responses-tours-401-schema-data').val(stringify(schema));
+                                        var result = $('#responses-tours-401-schema-401');
+                                        result.empty();
+                                        result.append(view.render());
+                                      });
+                                    </script>
+                                  </div>
+                                  <input id='responses-tours-401-schema-data' type='hidden' value=''></input>
+                                </div>
+                            </div>
+
+                            <h3> Status: 500 - An unexpected error occurred. </h3>
+
+                            <ul class="nav nav-tabs nav-tabs-examples" >
+                                <li class="active">
+                                  <a data-toggle="tab" href="#responses-tours-500-schema">Schema</a>
+                                </li>
+
+                            </ul>
+
+                            <div class="tab-content" style='margin-bottom: 10px;'>
+                                <div class="tab-pane active" id="responses-tours-500-schema">
+                                  <div id='responses-tours-500-schema-500' style="padding: 30px; border-left: 1px solid #eee; border-right: 1px solid #eee; border-bottom: 1px solid #eee;">
+                                    <script>
+                                      $(document).ready(function() {
+                                        var schemaWrapper = {
+  "description" : "An unexpected error occurred.",
+  "schema" : {
+    "$ref" : "#/definitions/inline_response_500"
+  }
+};
+                                        var schema = schemaWrapper.schema;
+                                        if (schema.$ref != null) {
+                                          schema = defsParser.$refs.get(schema.$ref);
+                                        } else {
+                                          schemaWrapper.definitions = Object.assign({}, defs);
+                                          $RefParser.dereference(schemaWrapper).catch(function(err) {
+                                            console.log(err);
+                                          });
+                                        }
+
+                                        //console.log(JSON.stringify(schema));
+                                        var view = new JSONSchemaView(schema, 3);
+                                        $('#responses-tours-500-schema-data').val(stringify(schema));
+                                        var result = $('#responses-tours-500-schema-500');
+                                        result.empty();
+                                        result.append(view.render());
+                                      });
+                                    </script>
+                                  </div>
+                                  <input id='responses-tours-500-schema-data' type='hidden' value=''></input>
+                                </div>
                             </div>
 
                         </article>
@@ -1689,7 +3912,7 @@ except ApiException as e:
           </div>
           <div id="generator">
             <div class="content">
-              Generated 2018-08-02T17:11:59.860-04:00
+              Generated 2018-08-03T11:14:47.438-04:00
             </div>
           </div>
       </div>

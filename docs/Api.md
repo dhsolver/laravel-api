@@ -1,6 +1,6 @@
 ## API Docs
 
-API documentation is generated using the OpenApi 3.0 specification.  
+API documentation is generated using the OpenApi 2.0 specification.  
 
 | File          | Description                          |
 |---------------|--------------------------------------|
