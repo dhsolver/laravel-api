@@ -180,7 +180,7 @@ paths:
       tags:
       - tours
       summary: Tour listing
-      description: Get listing of all published Tours.
+      description: Get a paginated listing of all published Tours.
       operationId: tours
       produces:
       - application/json
@@ -192,9 +192,19 @@ paths:
         200:
           description: OK
           schema:
-            type: array
-            items:
-              $ref: '#/definitions/Tour'
+            type: object
+            properties:
+              data:
+                description: Array of Tours.
+                type: array
+                items:
+                  $ref: '#/definitions/Tour'
+              links:
+                description: Pagination links
+                $ref: '#/definitions/PaginationLinks'
+              meta:
+                description: Pagination meta
+                $ref: '#/definitions/PaginationMeta'
         400:
           $ref: '#/responses/NoToken'
         401:
@@ -671,24 +681,90 @@ definitions:
     properties:
       address1:
         type: string
+        description: Address line 1
         example: 150 5th Avenue
       address2:
         type: string
+        description: Address line 2
         example: Unit 405
       city:
         type: string
+        description: City
         example: New York
       state:
         type: string
+        description: State
         example: NY
       zipcode:
         type: string
+        description: Postal code
         example: 10001
       latitude:
         type: number
         format: float
+        description: Latitude coordinate
         example: 40.7395956
       longitude:
         type: number
         format: float
+        description: Longitude coordinate
         example: -73.9913727
+
+  PaginationLinks:
+    type: object
+    properties:
+      first:
+        type: string
+        description: URL to fetch the first page of records.
+        example: http://api.wejunket.com/mobile/tours?page=1
+      last:
+        type: string
+        description: URL to fetch the last page of records.
+        example: http://api.wejunket.com/mobile/tours?page=99
+      prev:
+        type: string
+        description: URL to fetch the previous page of records.
+        example: http://api.wejunket.com/mobile/tours?page=1
+      next:
+        type: string
+        description: URL to fetch the next page of records.
+        example: http://api.wejunket.com/mobile/tours?page=2
+
+  PaginationMeta:
+    type: object
+    properties:
+      current_page:
+        type: integer
+        format: int32
+        description: The current page number.
+        example: 2
+      from:
+        type: integer
+        format: int32
+        description: The position of the first item in the resultset.
+        example: 16
+      last_page:
+        type: integer
+        format: int32
+        description: The number of the last page.
+        example: 99
+      path:
+        type: string
+        description: The base URL for the resource.
+        example: http://api.wejunket.com/mobile/tours
+      per_page:
+        type: integer
+        format: int32
+        description: The number of results shown per page.
+        example: 15
+      to:
+        type: integer
+        format: int32
+        description: The position of the last item in the resultset.
+        example: 30
+      total:
+        type: integer
+        format: int32
+        description: The total number of records.
+        example: 1481
+      

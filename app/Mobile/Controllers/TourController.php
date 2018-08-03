@@ -5,7 +5,6 @@ namespace App\Mobile\Controllers;
 use App\Tour;
 use App\Http\Controllers\Controller;
 use App\Mobile\Resources\TourResource;
-use App\Mobile\Resources\TourCollection;
 use App\Mobile\Resources\StopResource;
 use App\Mobile\Resources\TourRouteResource;
 
@@ -18,11 +17,7 @@ class TourController extends Controller
      */
     public function index()
     {
-        // TODO: implement pagination
-        return TourResource::collection(Tour::all());
-        // return new TourCollection(
-        //     Tour::all()
-        // );
+        return TourResource::collection(Tour::paginate());
     }
 
     /**
