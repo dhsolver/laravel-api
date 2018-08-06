@@ -276,6 +276,9 @@ class RestoreItourMobile extends Command
                 } catch (NotReadableException $ex) {
                     echo 'Bad image format: ' . $old->icon->url . "\n";
                     continue;
+                } catch (ImageTooSmallException $ex) {
+                    echo 'Image too small: ' . $old->stop_photo_original . "\n";
+                    continue;
                 }
             }
 
