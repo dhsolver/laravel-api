@@ -21,6 +21,8 @@ use App\User;
 use App\Media;
 use App\Admin;
 use Intervention\Image\Exception\NotReadableException;
+use App\Exceptions\InvalidImageException;
+use App\Exceptions\ImageTooSmallException;
 
 class RestoreItourMobile extends Command
 {
@@ -31,14 +33,14 @@ class RestoreItourMobile extends Command
      *
      * @var string
      */
-    protected $signature = 'itourmobile:restore';
+    protected $signature = 'itourmobile:restore {password}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Restore all tour data directly from iTourMobile database.';
+    protected $description = 'Restore all tour data directly from iTourMobile database.  The password parameter is used to create a password for all users in the system.';
 
     /**
      * Holds a list of user ids of the users that have tours.
@@ -96,6 +98,8 @@ class RestoreItourMobile extends Command
      */
     public function handle()
     {
+        $this->passwordOverride = $this->argument('password');
+
         $this->loadUsersWithTours();
         Admin::unguard();
         Client::unguard();
@@ -196,6 +200,10 @@ class RestoreItourMobile extends Command
     public function convertTours()
     {
         foreach (OldTour::all() as $old) {
+            if (empty($old->tour_title)) {
+                $this->info("Tour has no title: {$old->tour_id}, skipping...\n");
+                continue;
+            }
             $tour = Tour::make([
                 'id' => $this->idPrefix . $old->tour_id,
                 'user_id' => $this->idPrefix . $old->tour_owner,
@@ -222,6 +230,12 @@ class RestoreItourMobile extends Command
             } catch (NotReadableException $ex) {
                 echo 'Bad image format: ' . $old->tour_image_large . "\n";
                 continue;
+            } catch (InvalidImageException $ex) {
+                echo 'Bad image format: ' . $old->stop_photo_original . "\n";
+                continue;
+            } catch (ImageTooSmallException $ex) {
+                echo 'Image too small: ' . $old->stop_photo_original . "\n";
+                continue;
             }
 
             try {
@@ -232,6 +246,12 @@ class RestoreItourMobile extends Command
             } catch (NotReadableException $ex) {
                 echo 'Bad audio format: ' . $old->tour_intro_music . "\n";
                 continue;
+            } catch (InvalidImageException $ex) {
+                echo 'Bad image format: ' . $old->stop_photo_original . "\n";
+                continue;
+            } catch (ImageTooSmallException $ex) {
+                echo 'Image too small: ' . $old->stop_photo_original . "\n";
+                continue;
             }
 
             try {
@@ -241,6 +261,9 @@ class RestoreItourMobile extends Command
                 continue;
             } catch (NotReadableException $ex) {
                 echo 'Bad audio format: ' . $old->tour_music . "\n";
+                continue;
+            } catch (InvalidImageException $ex) {
+                echo 'Bad audio format: ' . $old->stop_photo_original . "\n";
                 continue;
             }
 
@@ -282,6 +305,9 @@ class RestoreItourMobile extends Command
 
     public function createMedia($type, $oldFilename, $user_id)
     {
+        // TODO: REMOVE THIS LINE JUST FOR DEBUG!!!!!!!!!!!!!!!!!!!!!!!
+        return null;
+
         if (empty($oldFilename)) {
             return null;
         }
@@ -405,6 +431,12 @@ class RestoreItourMobile extends Command
             } catch (NotReadableException $ex) {
                 echo 'Bad image format: ' . $old->stop_photo_original . "\n";
                 continue;
+            } catch (InvalidImageException $ex) {
+                echo 'Bad image format: ' . $old->stop_photo_original . "\n";
+                continue;
+            } catch (ImageTooSmallException $ex) {
+                echo 'Image too small: ' . $old->stop_photo_original . "\n";
+                continue;
             }
 
             try {
@@ -414,6 +446,9 @@ class RestoreItourMobile extends Command
                 continue;
             } catch (NotReadableException $ex) {
                 echo 'Bad audio format: ' . $old->stop_audio_url . "\n";
+                continue;
+            } catch (InvalidImageException $ex) {
+                echo 'Bad image format: ' . $old->stop_photo_original . "\n";
                 continue;
             }
 
@@ -440,6 +475,12 @@ class RestoreItourMobile extends Command
                     continue;
                 } catch (NotReadableException $ex) {
                     echo 'Bad image format: ' . $image->image_url . "\n";
+                    continue;
+                } catch (NotReadableException $ex) {
+                    echo 'Bad audio format: ' . $old->stop_audio_url . "\n";
+                    continue;
+                } catch (InvalidImageException $ex) {
+                    echo 'Bad image format: ' . $old->stop_photo_original . "\n";
                     continue;
                 }
             }
