@@ -316,13 +316,20 @@ class RestoreItourMobile extends Command
         }
 
         $file = $this->iTourPath($oldFilename);
-        if (!file_exists($file)) {
+        if (! file_exists($file)) {
             // image file not found
             $this->addMissingFile($file);
             return;
         }
 
-        $f = new UploadedFile($file, basename($file), mime_content_type($file));
+        try {
+            $f = new UploadedFile($file, basename($file), mime_content_type($file));
+        } catch (\Exception $ex) {
+            // file could be missing or some other issue
+            $this->addMissingFile($file);
+            return;
+        }
+        
         if ($type == 'image') {
             $filename = $this->storeImage($f, 'images', 'jpg', true);
         } elseif ($type == 'icon') {
