@@ -1,6 +1,6 @@
 ## API Docs
 
-API documentation is generated using the [https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md](OpenAPI 2.0 specification).
+API documentation is generated using the [OpenAPI 2.0 specification](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md).
 
 | File          | Description                          |
 |---------------|--------------------------------------|
@@ -10,7 +10,7 @@ API documentation is generated using the [https://github.com/OAI/OpenAPI-Specifi
 
 ### Updating the docs
 
-Documentation is generated with [](Redoc) using the [](redoc-cli) tool.
+Documentation is generated with [Redoc](https://github.com/Rebilly/ReDoc) using the [redoc-cli](https://github.com/Rebilly/ReDoc/blob/master/cli/README.md) tool.
 
 First, install redoc-cli globally:
 ```
