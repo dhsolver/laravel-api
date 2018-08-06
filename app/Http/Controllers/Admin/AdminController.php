@@ -72,6 +72,10 @@ class AdminController extends Controller
      */
     public function destroy(Admin $admin)
     {
+        if ($admin->role == 'superadmin') {
+            return $this->fail(403, 'You cannot delete the Root user.');
+        }
+
         if ($admin->delete()) {
             return $this->success("{$admin->name} was archived successfully.");
         }
