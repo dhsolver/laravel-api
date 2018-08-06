@@ -38,11 +38,23 @@ class Tour extends Model
      */
     public function getLocationAttribute()
     {
+        $zip = empty($this->tour_weather_zip) ? null : $this->tour_weather_zip;
+
+        if (!empty($zip)) {
+            if (strpos($zip, ', ') > 0) {
+                $zips = explode(', ', $zip);
+                $zip = $zips[0];
+            } elseif (strlen($zip) > 12) {
+                // why
+                $zip = substr($zip, 0, 12);
+            }
+        }
+
         return [
             'address1' => empty($this->tour_street_address) ? null : $this->tour_street_address,
             'city' => empty($this->tour_city) ? null : $this->tour_city,
             'state' => empty($this->tour_state) ? null : $this->tour_state,
-            'zipcode' => empty($this->tour_weather_zip) ? null : $this->tour_weather_zip,
+            'zipcode' => empty($zip) ? null : $zip,
             'latitude' => empty($this->tour_lat) ? null : $this->tour_lat,
             'longitude' => empty($this->tour_lon) ? null : $this->tour_lon,
         ];
