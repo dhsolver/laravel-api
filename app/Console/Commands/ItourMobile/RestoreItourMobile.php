@@ -305,9 +305,6 @@ class RestoreItourMobile extends Command
 
     public function createMedia($type, $oldFilename, $user_id)
     {
-        // TODO: REMOVE THIS LINE JUST FOR DEBUG!!!!!!!!!!!!!!!!!!!!!!!
-        return null;
-
         if (empty($oldFilename)) {
             return null;
         }
