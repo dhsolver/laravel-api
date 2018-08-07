@@ -45,6 +45,8 @@ class SignupRequest extends FormRequest
         return [
             'name.max' => 'Your name is too long.',
             'email.*' => 'A valid email is required.',
+            'password.min' => 'Your password must be at least 6 characters.',
+            'password.confirmed' => 'Passwords did not match.',
             'password.*' => 'Your password is required.',
             'role.*' => 'A role of client or user is required.',
         ];
