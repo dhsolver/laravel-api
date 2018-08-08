@@ -6,6 +6,7 @@
 |
 */
 
+Route::post('auth/login/facebook', 'AuthController@facebook');
 Route::post('auth/login', 'AuthController@login');
 Route::post('auth/signup', 'AuthController@signup');
 

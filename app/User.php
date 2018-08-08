@@ -16,7 +16,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'name', 'email', 'password', 'fb_id', 'fb_token',
     ];
 
     /**
@@ -87,5 +87,27 @@ class User extends Authenticatable
             return $this->hasOne($this->getRoleClass(), 'id', 'id');
         }
         return null;
+    }
+
+    /**
+     * Lookup User by their Facebook ID
+     *
+     * @param string $fbId
+     * @return mixed
+     */
+    public static function findByFacebookId($fbId)
+    {
+        return self::where('fb_id', $fbId)->first();
+    }
+
+    /**
+     * Lookup User by their Facebook ID
+     *
+     * @param string $fbId
+     * @return mixed
+     */
+    public static function findByEmail($email)
+    {
+        return self::where('email', strtolower($email))->first();
     }
 }

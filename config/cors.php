@@ -14,6 +14,7 @@ return [
     'supportsCredentials' => false,
     'allowedOrigins' => [
         'http://junket-cms.test',
+        'https://junket-cms.test',
         'https://cms.wejunket.com',
         'https://cms-dev.wejunket.com'
     ],
