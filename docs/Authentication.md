@@ -16,3 +16,13 @@ Mobile : https://api.wejunket.com/mobile/auth/login
 | admin      |       Yes      |        Yes        |        Yes       |
 | client     |       Yes      |        Yes        |        No        |
 | user       |       Yes      |         No        |        No        |
+
+
+### Facebook Login
+
+Users have the option to utilize the Facebook OAuth API to create and login to accounts.  The following .env variables are required:
+
+```
+FACEBOOK_APP_ID={your_app_id}
+FACEBOOK_TOKEN={your_facebook_token}
+```
