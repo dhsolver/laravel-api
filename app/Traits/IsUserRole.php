@@ -30,7 +30,7 @@ trait IsUserRole
 
     protected function appendAttributesToRoleModel()
     {
-        $this->append(['name', 'email', 'role']);
+        $this->append(['name', 'email', 'role', 'fb_id']);
     }
 
     /**
@@ -138,5 +138,10 @@ trait IsUserRole
     public function getRoleAttribute()
     {
         return $this->user->role;
+    }
+
+    public function getFbIdAttribute()
+    {
+        return $this->user->fb_id;
     }
 }

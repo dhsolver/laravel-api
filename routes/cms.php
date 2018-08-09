@@ -8,6 +8,9 @@
 
 Route::middleware(['jwt.auth', 'role:client|admin|superadmin'])->group(function () {
     Route::get('session', 'AuthController@userSession');
+    Route::get('profile', 'AccountController@show');
+    Route::patch('profile', 'AccountController@update');
+    Route::patch('profile/password', 'AccountController@changePassword');
 
     Route::get('tours', 'TourController@index')->name('cms.tours.index');
     Route::post('tours', 'TourController@store')->name('cms.tours.store')->middleware(['can:create,App\Tour']);
