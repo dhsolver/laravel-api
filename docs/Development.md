@@ -43,3 +43,9 @@ AWS_DEFAULT_REGION=us-east-1
 AWS_BUCKET=staging.wejunket.com
 AWS_URL=http://staging.wejunket.com/
 ```
+
+8. Other config
+
+Facebook API keys are required to enable FB login as per [Authentication Docs](docs/Authentication.md)
+
+In order for password reset emails to dispatch properly the env variable CMS_URL needs to be set.
