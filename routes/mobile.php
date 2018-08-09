@@ -11,7 +11,6 @@ Route::namespace('App\Http\Controllers')->group(function () {
     Route::post('auth/signup', 'AuthController@signup');
     Route::post('auth/login/facebook', 'AuthController@facebook');
     Route::post('auth/forgot-password', 'ResetPasswordController@forgot');
-    Route::post('auth/reset-password', 'ResetPasswordController@reset');
 
     Route::middleware(['jwt.refresh'])->group(function () {
         Route::get('auth/refresh', function () {

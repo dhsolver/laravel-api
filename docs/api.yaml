@@ -207,6 +207,36 @@ paths:
           $ref: '#/responses/Unauthroized'
         500:
           $ref: '#/responses/UnexpectedError'
+  
+  /auth/forgot-password:
+    get:
+      tags:
+        - auth
+      summary: Forgot password
+      description: Submit a forgot password request and dispatch an email to the user on how to reset their password.
+      operationId: forgotPassword
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: credentials
+          schema:
+            required:
+              - email
+            properties:
+              email:
+                type: string
+                example: test@test.com
+                description: The user's email.
+      responses:
+        200:
+          description: OK - Email has been sent
+        401:
+          $ref: '#/responses/Unauthroized'
+        500:
+          $ref: '#/responses/UnexpectedError'
 
   /tours:
     get:
