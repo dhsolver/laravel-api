@@ -169,5 +169,6 @@ class AuthTest extends TestCase
         ])->assertStatus(200);
 
         $this->assertTrue(Hash::check($password, $user->fresh()->password));
+        $this->assertFalse(Hash::check('invalid', $user->fresh()->password));
     }
 }
