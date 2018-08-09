@@ -5,6 +5,10 @@ namespace Tests\Feature;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\Concerns\AttachJwtToken;
+use App\User;
+use Notification;
+use App\Notifications\ResetPasswordNotification;
+use Hash;
 
 class AuthTest extends TestCase
 {
@@ -136,5 +140,34 @@ class AuthTest extends TestCase
             'role' => 'admin',
         ])->assertStatus(422)
             ->assertJsonValidationErrors(['role']);
+    }
+
+    /** @test */
+    public function a_user_can_forget_and_reset_their_password()
+    {
+        Notification::fake();
+
+        $user = create(User::class);
+
+        $this->json('POST', '/auth/forgot-password', ['email' => $user->email])
+            ->assertStatus(200);
+
+        $token = '';
+
+        Notification::assertSentTo($user, ResetPasswordNotification::class, function ($notification) use ($user, &$token) {
+            $token = $notification->token;
+            return $user->email == $notification->email;
+        });
+
+        $password = 'new password';
+
+        $this->json('POST', '/auth/reset-password', [
+            'email' => $user->email,
+            'token' => $token,
+            'password' => $password,
+            'password_confirmation' => $password
+        ])->assertStatus(200);
+
+        $this->assertTrue(Hash::check($password, $user->fresh()->password));
     }
 }
