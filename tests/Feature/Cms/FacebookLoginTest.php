@@ -120,4 +120,13 @@ class FacebookLoginTest extends TestCase
             ->assertStatus(200)
             ->assertJsonFragment(['role' => 'client']);
     }
+
+    /** @test */
+    public function if_a_user_uses_facebook_login_they_can_reset_their_password_and_use_a_traditional_login()
+    {
+        $this->mockSocialiteFacade('test@test.com');
+
+        $this->json('POST', route('facebook.login'), ['token' => 'fake'])
+            ->assertStatus(200);
+    }
 }

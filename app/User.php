@@ -5,6 +5,7 @@ namespace App;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Spatie\Permission\Traits\HasRoles;
+use App\Notifications\ResetPasswordNotification;
 
 class User extends Authenticatable
 {
@@ -103,11 +104,22 @@ class User extends Authenticatable
     /**
      * Lookup User by their Facebook ID
      *
-     * @param string $fbId
+     * @param string $email
      * @return mixed
      */
     public static function findByEmail($email)
     {
         return self::where('email', strtolower($email))->first();
+    }
+
+    /**
+     * Send the password reset notification.
+     *
+     * @param  string  $token
+     * @return void
+     */
+    public function sendPasswordResetNotification($token)
+    {
+        $this->notify(new ResetPasswordNotification($token, $this->email));
     }
 }

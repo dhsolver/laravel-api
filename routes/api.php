@@ -9,6 +9,8 @@
 Route::post('auth/login/facebook', 'AuthController@facebook')->name('facebook.login');
 Route::post('auth/login', 'AuthController@login');
 Route::post('auth/signup', 'AuthController@signup');
+Route::post('auth/forgot-password', 'ResetPasswordController@forgot');
+Route::post('auth/reset-password', 'ResetPasswordController@reset');
 
 Route::get('test', 'Controller@test');
 
