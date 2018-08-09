@@ -143,7 +143,7 @@ paths:
       parameters:
         - in: body
           name: credentials
-          description: The user's logim credentials.
+          description: The user's login credentials.
           schema:
             required:
               - email
@@ -175,6 +175,39 @@ paths:
         500:
           $ref: '#/responses/UnexpectedError'
           
+  /auth/login/facebook:
+    get:
+      tags:
+        - auth
+      summary: Facebook Login
+      description: Login and/or create an account using a Facebook Access Token.
+      operationId: facebookLogin
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: access_token
+          description: The user's Facebook Access Token.
+          schema:
+            required:
+              - token
+            properties:
+              token:
+                type: string
+                example: ___access_token___
+                description: Facebook Access Token.
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/User'
+        401:
+          $ref: '#/responses/Unauthroized'
+        500:
+          $ref: '#/responses/UnexpectedError'
+
   /tours:
     get:
       tags:
