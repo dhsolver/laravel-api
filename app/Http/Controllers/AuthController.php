@@ -53,7 +53,7 @@ class AuthController extends Controller
             'password' => bcrypt($data['password']),
         ];
 
-        switch ($data['role']) {
+        switch ($req->role) {
             case 'client':
                 $user = \App\Client::create($attributes);
                 break;

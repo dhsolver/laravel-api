@@ -3,7 +3,6 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
 class SignupRequest extends FormRequest
 {
@@ -28,10 +27,6 @@ class SignupRequest extends FormRequest
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:6|confirmed',
-            'role' => [
-                'required',
-                Rule::in(['client', 'user']),
-            ]
         ];
     }
 
@@ -44,11 +39,11 @@ class SignupRequest extends FormRequest
     {
         return [
             'name.max' => 'Your name is too long.',
+            'email.unique' => 'A user with that email already exists.',
             'email.*' => 'A valid email is required.',
             'password.min' => 'Your password must be at least 6 characters.',
             'password.confirmed' => 'Passwords did not match.',
             'password.*' => 'Your password is required.',
-            'role.*' => 'A role of client or user is required.',
         ];
     }
 }
