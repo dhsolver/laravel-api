@@ -29,6 +29,11 @@ class User extends Authenticatable
         'password', 'remember_token',
     ];
 
+    /**
+     * The attributes that should be added for arrays.
+     *
+     * @var array
+     */
     protected $appends = ['role'];
 
     /**
@@ -121,5 +126,15 @@ class User extends Authenticatable
     public function sendPasswordResetNotification($token)
     {
         $this->notify(new ResetPasswordNotification($token, $this->email));
+    }
+
+    /**
+     * A User has many Devices.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function devices()
+    {
+        return $this->belongsToMany(Device::class, 'user_devices');
     }
 }

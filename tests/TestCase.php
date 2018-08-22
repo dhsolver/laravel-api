@@ -11,6 +11,8 @@ abstract class TestCase extends BaseTestCase
 {
     use CreatesApplication;
 
+    protected $signInUser;
+
     protected function setUp()
     {
         parent::setUp();
@@ -23,9 +25,9 @@ abstract class TestCase extends BaseTestCase
 
     protected function signIn($role = 'user')
     {
-        $user = createUser($role);
+        $this->signInUser = createUser($role);
 
-        $this->loginAs($user->user);
+        $this->loginAs($this->signInUser->user);
 
         return $this;
     }

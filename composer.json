@@ -15,7 +15,8 @@
         "league/flysystem-aws-s3-v3": "^1.0",
         "michaelachrisco/readonly": "^0.31.0",
         "spatie/laravel-permission": "^2.9",
-        "tymon/jwt-auth": "^0.5.12"
+        "tymon/jwt-auth": "^0.5.12",
+        "webpatser/laravel-uuid": "^3.0"
     },
     "require-dev": {
         "filp/whoops": "^2.0",

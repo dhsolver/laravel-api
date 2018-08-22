@@ -7,6 +7,7 @@ use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\Concerns\AttachJwtToken;
 use App\Tour;
 use App\Mobile\Resources\TourResource;
+use App\TourStop;
 
 class ViewToursTest extends TestCase
 {
@@ -26,7 +27,7 @@ class ViewToursTest extends TestCase
 
         $this->signIn('user');
 
-        $this->get('/mobile/tours')
+        $this->getJson('/mobile/tours')
             ->assertJsonStructure([
                 'data' => ['*' => array_keys($tour->toArray(null))],
                 'links' => ['first', 'last', 'prev', 'next'],
@@ -50,7 +51,7 @@ class ViewToursTest extends TestCase
 
         $this->signIn('user');
 
-        $this->get("/mobile/tours?search=$keyword")
+        $this->getJson("/mobile/tours?search=$keyword")
             ->assertStatus(200)
             ->assertJsonStructure([
                 'data' => ['*' => array_keys($tour->toArray(null))],
@@ -58,6 +59,32 @@ class ViewToursTest extends TestCase
                 'meta' => ['current_page', 'from', 'last_page', 'path', 'per_page', 'to', 'total'],
             ])
             ->assertJsonCount(1, 'data')
+            ->assertJsonFragment(['title' => $tour->title]);
+    }
+
+    /** @test */
+    public function a_mobile_user_can_get_a_single_tour_with_all_stops_and_routes()
+    {
+        $this->signIn('user');
+
+        $tour = factory(Tour::class)->create([
+            'title' => 'Test Tour',
+        ]);
+
+        factory(TourStop::class, 10)->create([
+            'tour_id' => $tour->id,
+        ]);
+
+        $tourData = new TourResource($tour);
+
+        $this->getJson("/mobile/tours/{$tour->id}")
+            ->assertStatus(200)
+            ->assertJsonStructure([
+                'tour' => array_keys($tourData->toArray(null)),
+                'stops',
+                'route',
+            ])
+            ->assertJsonCount(10, 'stops')
             ->assertJsonFragment(['title' => $tour->title]);
     }
 }

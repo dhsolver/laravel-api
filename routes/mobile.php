@@ -22,6 +22,7 @@ Route::namespace('App\Http\Controllers')->group(function () {
 Route::namespace('App\Mobile\Controllers')->middleware(['jwt.auth', 'role:user|client|admin|superadmin'])->group(function () {
     Route::get('tours', 'TourController@index')->name('mobile.tours.index');
     Route::get('tours/{tour}', 'TourController@show')->name('mobile.tours.show');
+    Route::post('device', 'DeviceController@store')->name('mobile.device.store');
 });
 
 Route::namespace('App\Http\Controllers')->middleware(['jwt.auth', 'role:user|client|admin|superadmin'])->group(function () {
