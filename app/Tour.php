@@ -181,6 +181,16 @@ class Tour extends Model
             ->orderBy('order');
     }
 
+    /**
+     * A Tour morphs to many actionables.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
+     */
+    public function activity()
+    {
+        return $this->morphMany(Activity::class, 'actionable');
+    }
+
     // **********************************************************
     // MUTATORS
     // **********************************************************

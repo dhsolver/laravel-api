@@ -10,6 +10,7 @@ use App\TourStop;
 use App\DeviceType;
 use App\Os;
 use App\Device;
+use App\Activity;
 
 class RecordsAnalyticsTest extends TestCase
 {
@@ -92,4 +93,39 @@ class RecordsAnalyticsTest extends TestCase
         $this->assertCount(1, Device::all());
     }
 
+    /** @test */
+    public function a_mobile_device_can_record_tour_activity()
+    {
+        $this->withoutExceptionHandling();
+
+        $deviceId = $this->createDevice();
+
+        $this->postJson("/mobile/tours/{$this->tour->id}/track", [
+            'action' => 'like',
+            'device_id' => $deviceId,
+        ])
+            ->assertStatus(200);
+
+        $this->assertCount(1, Activity::all());
+        $this->assertCount(1, $this->tour->fresh()->activity);
+    }
+
+    /** @test */
+    public function a_mobile_device_can_record_stop_activity()
+    {
+        $this->withoutExceptionHandling();
+
+        $deviceId = $this->createDevice();
+
+        $stop = $this->tour->stops()->first();
+
+        $this->postJson("/mobile/stops/{$stop->id}/track", [
+            'action' => 'like',
+            'device_id' => $deviceId,
+        ])
+            ->assertStatus(200);
+
+        $this->assertCount(1, Activity::all());
+        $this->assertCount(1, $stop->fresh()->activity);
+    }
 }
