@@ -138,8 +138,10 @@ class AuthTest extends TestCase
             'password' => 'sdgdhe2354',
             'password_confirmation' => 'sdgdhe2354',
             'role' => 'admin',
-        ])->assertStatus(422)
-            ->assertJsonValidationErrors(['role']);
+        ])->assertStatus(200);
+
+        $user = User::where('email', 'admin@test.com')->first();
+        $this->assertEquals('user', $user->role);
     }
 
     /** @test */
