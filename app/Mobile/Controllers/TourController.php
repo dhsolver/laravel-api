@@ -17,7 +17,9 @@ class TourController extends Controller
      */
     public function index()
     {
-        return TourResource::collection(Tour::paginate());
+        return TourResource::collection(
+            Tour::search(request()->search)->paginate()
+        );
     }
 
     /**

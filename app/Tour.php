@@ -341,6 +341,18 @@ class Tour extends Model
     // QUERY SCOPES
     // **********************************************************
 
+    public function scopeSearch($query, $keyword)
+    {
+        if (empty($keyword)) {
+            return $query;
+        }
+
+        return $query->where(function ($query) use ($keyword) {
+            $query->where('title', 'like', "%$keyword%")
+                ->orWhere('description', 'like', "%$keyword%");
+        });
+    }
+
     /**
      * Defines the default ordering for stops using order column.
      *
