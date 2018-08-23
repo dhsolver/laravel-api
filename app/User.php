@@ -137,4 +137,42 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Device::class, 'user_devices');
     }
+
+    /**
+     * Get the User's joined tours relation.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function joinedTours()
+    {
+        return $this->belongsToMany(Tour::class, 'user_joined_tours');
+    }
+
+    /**
+     * Check whether the User has already joined the given Tour.
+     *
+     * @param array|object|int $tour
+     * @return boolean
+     */
+    public function hasJoinedTour($tour)
+    {
+        $tour = is_object($tour) ? $tour->id : is_array($tour) ? $tour['id'] : $tour;
+
+        return $this->joinedTours()->where('tour_id', $tour)->exists();
+    }
+
+    /**
+     * Add user to the given Tour.
+     *
+     * @param object|int $tour
+     * @return \Illuminate\Database\Eloquent\Model
+     */
+    public function joinTour($tour)
+    {
+        if (is_numeric($tour)) {
+            $tour = Tour::findOrFail($tour);
+        }
+
+        $this->joinedTours()->attach($tour);
+    }
 }

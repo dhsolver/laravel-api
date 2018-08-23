@@ -438,4 +438,24 @@ class Tour extends Model
             ]);
         }
     }
+
+    /**
+     * Determine if the Tour is free.
+     *
+     * @return boolean
+     */
+    public function isFree()
+    {
+        return $this->pricing_type == 'free';
+    }
+
+    /**
+     * Get the Tour's participants relation.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function participants()
+    {
+        return $this->belongsToMany(User::class, 'user_joined_tours', 'tour_id', 'user_id');
+    }
 }
