@@ -70,4 +70,16 @@ class JoinToursTest extends TestCase
 
         Event::assertDispatched(TourJoined::class);
     }
+
+    /** @test */
+    public function a_user_can_get_a_list_of_all_their_joined_tours()
+    {
+        factory(Tour::class)->create(['pricing_type' => 'free'])->each(function ($tour) {
+            $this->user->joinTour($tour);
+        });
+
+        $this->getJson('/mobile/tours/mine')
+            ->assertStatus(200)
+            ->assertJsonFragment(['data' => $this->user->joinedTours->pluck('id')]);
+    }
 }

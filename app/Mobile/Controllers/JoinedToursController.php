@@ -5,25 +5,38 @@ namespace App\Mobile\Controllers;
 use App\Http\Controllers\Controller;
 use App\Tour;
 use App\Events\TourJoined;
-use App\Mobile\Resources\JoinedToursResource;
+use App\Http\Resources\JoinedTourCollection;
 
 class JoinedToursController extends Controller
 {
+    /**
+     * Get al list of Tour IDs that the User has joined.
+     *
+     * @return Illuminate/Http/Response
+     */
     public function index()
     {
+        return new JoinedTourCollection(auth()->user()->joinedTours);
     }
 
+    /**
+     * Add the current User to a specific Tour.
+     *
+     * @param Tour $tour
+     * @return Illuminate/Http/Response
+     */
     public function store(Tour $tour)
     {
         if (auth()->user()->hasJoinedTour($tour)) {
-            return response()->json(JoinedToursResource::collection(auth()->user()->joinedTours));
+            return new JoinedTourCollection(auth()->user()->joinedTours);
+        }
         }
 
         auth()->user()->joinTour($tour);
 
         event(new TourJoined($tour, auth()->user(), request()->device_id));
 
-        return response()->json(JoinedToursResource::collection(auth()->user()->fresh()->joinedTours));
+        return new JoinedTourCollection(auth()->user()->fresh()->joinedTours);
     }
 
     public function validateApplePurchase($tour)
