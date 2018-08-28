@@ -84,4 +84,10 @@ class Tour extends Model
         return $this->hasOne(TourIcon::class, 'tour_id', 'tour_id')
             ->where('type', 'base');
     }
+
+    public function activeIcon()
+    {
+        return $this->hasOne(TourIcon::class, 'tour_id', 'tour_id')
+            ->where('type', 'active');
+    }
 }
