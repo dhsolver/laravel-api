@@ -56,6 +56,13 @@ class Tour extends Model
     ];
 
     /**
+     * The attributes that should be converted to Carbon dates.
+     *
+     * @var array
+     */
+    protected $dates = ['published_at'];
+
+    /**
      * Handles the model boot options.
      *
      * @return void

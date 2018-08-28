@@ -53,6 +53,7 @@ class CreateToursTable extends Migration
             $table->unsignedInteger('pin_image_id')->nullable();
 
             $table->datetime('published_at')->nullable();
+            $table->boolean('is_draft')->default(0);
 
             $table->timestamps();
             $table->softDeletes();
