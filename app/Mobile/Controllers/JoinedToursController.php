@@ -30,6 +30,19 @@ class JoinedToursController extends Controller
         if (auth()->user()->hasJoinedTour($tour)) {
             return new JoinedTourCollection(auth()->user()->joinedTours);
         }
+
+        if (!$tour->isFree()) {
+            if (request()->has('receipt_data')) {
+                // validate apple purchase
+                if (!$this->validateApplePurchase()) {
+                    return $this->fail(402, 'Could not validate purchase.');
+                }
+            } else {
+                // validate google play purchase
+                if (!$this->validateGooglePurchase()) {
+                    return $this->fail(402, 'Could not validate purchase.');
+                }
+            }
         }
 
         auth()->user()->joinTour($tour);

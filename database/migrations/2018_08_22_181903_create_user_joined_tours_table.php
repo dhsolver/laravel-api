@@ -13,6 +13,35 @@ class CreateUserJoinedToursTable extends Migration
      */
     public function up()
     {
+        Schema::create('user_transactions', function (Blueprint $table) {
+            $table->increments('id');
+            $table->unsignedInteger('user_id');
+            $table->unsignedInteger('purchasable_id')->index();
+            $table->string('purchasable_type')->index();
+            $table->unsignedInteger('transactionable_id')->index();
+            $table->string('transactionable_type')->index();
+            $table->timestamps();
+
+            $table->foreign('user_id')->references('id')->on('users');
+        });
+
+        Schema::create('apple_transactions', function (Blueprint $table) {
+            $table->increments('id');
+            $table->unsignedInteger('user_id');
+            $table->longText('receipt_data');
+            $table->timestamps();
+
+            $table->foreign('user_id')->references('id')->on('users');
+        });
+
+        Schema::create('google_transactions', function (Blueprint $table) {
+            $table->increments('id');
+            $table->unsignedInteger('user_id');
+            $table->timestamps();
+
+            $table->foreign('user_id')->references('id')->on('users');
+        });
+
         Schema::create('user_joined_tours', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('user_id');
@@ -33,5 +62,8 @@ class CreateUserJoinedToursTable extends Migration
     public function down()
     {
         Schema::dropIfExists('user_joined_tours');
+        Schema::dropIfExists('google_transactions');
+        Schema::dropIfExists('apple_transactions');
+        Schema::dropIfExists('user_transactions');
     }
 }
