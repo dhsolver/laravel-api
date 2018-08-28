@@ -153,6 +153,7 @@ class ManageToursTest extends TestCase
                 'address1' => md5('123 Elm St.'),
                 'address2' => md5('APT 805'),
                 'city' => md5('New York'),
+                'country' => 'US',
                 'state' => 'NY',
                 'zipcode' => '10001',
                 'latitude' => 40.12343657,

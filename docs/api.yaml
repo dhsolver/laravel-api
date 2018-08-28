@@ -758,6 +758,10 @@ definitions:
         type: string
         description: State
         example: NY
+      country:
+        type: string
+        description: Country
+        example: US
       zipcode:
         type: string
         description: Postal code

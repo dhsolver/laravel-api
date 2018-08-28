@@ -23,6 +23,8 @@ use App\Admin;
 use Intervention\Image\Exception\NotReadableException;
 use App\Exceptions\InvalidImageException;
 use App\Exceptions\ImageTooSmallException;
+use Carbon\Carbon;
+use GuzzleHttp\Client as GuzzleClient;
 
 class RestoreItourMobile extends Command
 {
@@ -33,7 +35,7 @@ class RestoreItourMobile extends Command
      *
      * @var string
      */
-    protected $signature = 'itourmobile:restore {password}';
+    protected $signature = 'itourmobile:restore {password} {tour?}';
 
     /**
      * The console command description.
@@ -80,6 +82,7 @@ class RestoreItourMobile extends Command
     protected $superAdmin;
     protected $lostAndFound;
     protected $missingFiles = [];
+    protected $testTourId;
 
     /**
      * Create a new command instance.
@@ -99,6 +102,7 @@ class RestoreItourMobile extends Command
     public function handle()
     {
         $this->passwordOverride = $this->argument('password');
+        $this->testTourId = $this->argument('tour');
 
         $this->loadUsersWithTours();
         Admin::unguard();
@@ -119,7 +123,9 @@ class RestoreItourMobile extends Command
             'password' => bcrypt($this->passwordOverride),
         ]);
 
-        $this->convertUserAccounts();
+        if (empty($this->testTourId)) {
+            $this->convertUserAccounts();
+        }
 
         echo "Converting Tours...\n";
         $this->convertTours();
@@ -199,7 +205,13 @@ class RestoreItourMobile extends Command
 
     public function convertTours()
     {
-        foreach (OldTour::all() as $old) {
+        if (empty($this->testTourId)) {
+            $tours = OldTour::all();
+        } else {
+            $tours = OldTour::where('tour_id', $this->testTourId)->get();
+        }
+
+        foreach ($tours as $old) {
             if (empty($old->tour_title)) {
                 $this->info("Tour has no title: {$old->tour_id}, skipping...\n");
                 continue;
@@ -210,6 +222,7 @@ class RestoreItourMobile extends Command
                 'title' => $old->tour_title,
                 'description' => $old->tour_description,
                 'type' => $old->tour_type == 5 ? 'indoor' : 'outdoor',
+                'published_at' => $old->tour_ready_for_sale == 1 ? Carbon::now() : null,
             ]);
 
             if ($old->tour_owner == 0 || !User::where('id', $tour->user_id)->exists()) {
@@ -291,7 +304,6 @@ class RestoreItourMobile extends Command
 
             // TODO:
             // - handle inapp ids ?
-            // - handle tour_ready_for_sale = published
             // - pricing?
             // - subscriptions?
             // - tour_webapp?
@@ -300,7 +312,7 @@ class RestoreItourMobile extends Command
 
             $tour->save();
 
-            $tour->location()->update($old->location);
+            $tour->location()->update($this->convertLocation($old->location));
         }
     }
 
@@ -316,7 +328,7 @@ class RestoreItourMobile extends Command
         }
 
         $file = $this->iTourPath($oldFilename);
-        if (! file_exists($file)) {
+        if (!file_exists($file)) {
             // image file not found
             $this->addMissingFile($file);
             return;
@@ -329,7 +341,7 @@ class RestoreItourMobile extends Command
             $this->addMissingFile($file);
             return;
         }
-        
+
         if ($type == 'image') {
             $filename = $this->storeImage($f, 'images', 'jpg', true);
         } elseif ($type == 'icon') {
@@ -380,9 +392,15 @@ class RestoreItourMobile extends Command
 
     public function convertTourRoutes()
     {
+        if (empty($this->testTourId)) {
+            $oldRoutes = RoutePoint::orderBy('point_order')->get();
+        } else {
+            $oldRoutes = RoutePoint::where('tour_id', $this->testTourId)->orderBy('point_order')->get();
+        }
+
         $bad = [];
 
-        foreach (RoutePoint::orderBy('point_order')->get() as $old) {
+        foreach ($oldRoutes as $old) {
             if (empty($old->tour_id)) {
                 echo "No tour associated with route point\n";
                 array_push($bad, $old);
@@ -390,7 +408,7 @@ class RestoreItourMobile extends Command
             }
 
             if (!Tour::where('id', $this->idPrefix . $old->tour_id)->exists()) {
-                echo "Tour does not exist for route point\n";
+                // echo "Tour does not exist for route point\n";
                 array_push($bad, $old);
                 continue;
             }
@@ -414,12 +432,18 @@ class RestoreItourMobile extends Command
 
     public function convertStops()
     {
-        foreach (OldStop::orderBy('stop_order')->get() as $old) {
+        if (empty($this->testTourId)) {
+            $stops = OldStop::orderBy('stop_order')->get();
+        } else {
+            $stops = OldStop::where('tour_id', $this->testTourId)->orderBy('stop_order')->get();
+        }
+
+        foreach ($stops as $old) {
             $old->tour_id = $this->idPrefix . $old->tour_id;
 
             $tour = Tour::where('id', $old->tour_id)->first();
             if (empty($tour)) {
-                echo 'Tour does not exist for stop ' . $old->stop_id . "\n";
+                // echo 'Tour does not exist for stop ' . $old->stop_id . "\n";
                 continue;
             }
 
@@ -464,6 +488,7 @@ class RestoreItourMobile extends Command
 
             $i = 0;
             foreach ($old->images as $image) {
+                print_r($image->toArray());
                 $i++;
                 try {
                     switch ($i) {
@@ -497,7 +522,83 @@ class RestoreItourMobile extends Command
 
             $stop->save();
 
-            $stop->location()->update($old->location);
+            $stop->location()->update($this->convertLocation($old->location));
+        }
+    }
+
+    public function convertLocation($location)
+    {
+        if (
+            empty($location['address1'])
+            || empty($location['city'])
+            || empty($location['state'])
+            || empty($location['country'])
+            || empty($location['zipcode'])
+        ) {
+            if (!empty($location['latitude']) && !empty($location['longitude'])) {
+                $this->info('Looking up address from coordinates..');
+
+                return array_merge(
+                    $location,
+                    $this->reverseGeocode($location['latitude'], $location['longitude'])
+                );
+            } else {
+                $this->error('Incomplete address!');
+            }
+        }
+
+        return $location;
+    }
+
+    public function reverseGeocode($lat, $lon)
+    {
+        $apiKey = config('services.google-maps.api_key');
+
+        if (empty($apiKey)) {
+            $this->error('Google Maps API key is not set!');
+            exit();
+        }
+
+        $url = "https://maps.googleapis.com/maps/api/geocode/json?latlng={$lat},{$lon}&sensor=true&key={$apiKey}";
+
+        $client = new GuzzleClient();
+        $result = $client->get($url);
+
+        $data = json_decode($result->getBody());
+
+        if ($data->status == 'ZERO_RESULTS') {
+            return null;
+        } elseif ($data->status != 'OK') {
+            // error
+            $this->error('Google Maps API error: ' . $data->status);
+            exit();
+        }
+
+        $first = $data->results[0];
+        $components = $first->address_components;
+
+        $streetNo = $this->getAddressComponent('street_number', $components);
+        $route = $this->getAddressComponent('route', $components);
+
+        return [
+            'address1' => $streetNo ? "{$streetNo} {$route}" : $route,
+            'city' => $this->getAddressComponent('locality', $components),
+            'state' => $this->getAddressComponent('administrative_area_level_1', $components),
+            'zipcode' => $this->getAddressComponent('postal_code', $components),
+            'country' => $this->getAddressComponent('country', $components),
+        ];
+    }
+
+    public function getAddressComponent($type, $components)
+    {
+        foreach ($components as $c) {
+            if (in_array($type, $c->types)) {
+                if (in_array($type, ['administrative_area_level_1', 'postal_code', 'country'])) {
+                    return $c->short_name;
+                } else {
+                    return $c->long_name;
+                }
+            }
         }
     }
 }
