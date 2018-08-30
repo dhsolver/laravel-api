@@ -43,8 +43,8 @@ class MediaUploadRequest extends FormRequest
             'image.*' => 'Image must be a valid image file.',
             'icon.max' => 'Image must be less than ' . $max . ' KB',
             'icon.*' => 'Image must be a valid PNG file.',
-            'audio.max' => 'Image must be less than ' . $audioMax . ' KB',
-            'audio.*' => 'Image must be a valid MP3 file.',
+            'audio.max' => 'Audio file must be less than ' . $audioMax . ' KB',
+            'audio.*' => 'Audio file must be a valid MP3 file.',
         ];
     }
 }

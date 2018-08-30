@@ -54,6 +54,7 @@ class Tour extends Model
             'address1' => empty($this->tour_street_address) ? null : $this->tour_street_address,
             'city' => empty($this->tour_city) ? null : $this->tour_city,
             'state' => empty($this->tour_state) ? null : $this->tour_state,
+            'country' => empty($this->tour_country) ? null : $this->tour_country,
             'zipcode' => empty($zip) ? null : $zip,
             'latitude' => empty($this->tour_lat) ? null : $this->tour_lat,
             'longitude' => empty($this->tour_lon) ? null : $this->tour_lon,
@@ -82,5 +83,11 @@ class Tour extends Model
     {
         return $this->hasOne(TourIcon::class, 'tour_id', 'tour_id')
             ->where('type', 'base');
+    }
+
+    public function activeIcon()
+    {
+        return $this->hasOne(TourIcon::class, 'tour_id', 'tour_id')
+            ->where('type', 'active');
     }
 }

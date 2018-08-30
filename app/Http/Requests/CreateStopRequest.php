@@ -31,8 +31,9 @@ class CreateStopRequest extends FormRequest
 
             'location.address1' => 'nullable|string|max:255',
             'location.address2' => 'nullable|string|max:255',
-            'location.city' => 'nullable|string|max:100',
-            'location.state' => 'nullable|string|max:2',
+            'location.city' => 'nullable|string|max:155',
+            'location.state' => 'nullable|string|max:155',
+            'location.country' => 'nullable|string|max:2',
             'location.zipcode' => 'nullable|string|max:12',
             'location.latitude' => ['nullable', 'regex:/^[-]?(([0-8]?[0-9])\.(\d+))|(90(\.0+)?)$/'],
             'location.longitude' => ['nullable', 'regex:/^[-]?((((1[0-7][0-9])|([0-9]?[0-9]))\.(\d+))|180(\.0+)?)$/'],

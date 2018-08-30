@@ -56,6 +56,13 @@ class Tour extends Model
     ];
 
     /**
+     * The attributes that should be converted to Carbon dates.
+     *
+     * @var array
+     */
+    protected $dates = ['published_at'];
+
+    /**
      * Handles the model boot options.
      *
      * @return void
@@ -179,6 +186,16 @@ class Tour extends Model
     {
         return $this->hasMany(TourRoute::class, 'tour_id', 'id')
             ->orderBy('order');
+    }
+
+    /**
+     * A Tour morphs to many actionables.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
+     */
+    public function activity()
+    {
+        return $this->morphMany(Activity::class, 'actionable');
     }
 
     // **********************************************************
@@ -427,5 +444,25 @@ class Tour extends Model
                 'longitude' => $latLng['lng'],
             ]);
         }
+    }
+
+    /**
+     * Determine if the Tour is free.
+     *
+     * @return boolean
+     */
+    public function isFree()
+    {
+        return $this->pricing_type == 'free';
+    }
+
+    /**
+     * Get the Tour's participants relation.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function participants()
+    {
+        return $this->belongsToMany(User::class, 'user_joined_tours', 'tour_id', 'user_id');
     }
 }

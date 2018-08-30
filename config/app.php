@@ -1,5 +1,7 @@
 <?php
 
+use App\Providers\PurchaseValidatorProvider;
+
 return [
     /*
     |--------------------------------------------------------------------------
@@ -150,6 +152,7 @@ return [
          */
         'Tymon\JWTAuth\Providers\JWTAuthServiceProvider',
         Intervention\Image\ImageServiceProvider::class,
+        PurchaseValidatorProvider::class,
 
         /*
          * Application Service Providers...

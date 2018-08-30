@@ -126,6 +126,16 @@ class TourStop extends Model
             ->orderBy('order');
     }
 
+    /**
+     * A Stop morphs to many actionables.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
+     */
+    public function activity()
+    {
+        return $this->morphMany(Activity::class, 'actionable');
+    }
+
     // **********************************************************
     // MUTATORS
     // **********************************************************

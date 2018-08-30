@@ -24,12 +24,12 @@ class StopResource extends JsonResource
             'video_url' => $this->video_url,
             'location' => new LocationResource($this->location),
 
-            'main_image' => $this->main_image ? $this->main_image->path : null,
+            'main_image' => $this->mainImage ? $this->mainImage->path : null,
             'image1' => $this->image1 ? $this->image1->path : null,
             'image2' => $this->image2 ? $this->image2->path : null,
             'image3' => $this->image3 ? $this->image3->path : null,
-            'intro_audio' => $this->intro_audio ? $this->intro_audio->path : null,
-            'background_audio' => $this->background_audio ? $this->background_audio->path : null,
+            'intro_audio' => $this->introAudio ? $this->introAudio->path : null,
+            'background_audio' => $this->backgroundAudio ? $this->backgroundAudio->path : null,
 
             'is_multiple_choice' => $this->is_multiple_choice,
             'question' => $this->question,

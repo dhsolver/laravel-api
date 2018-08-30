@@ -35,7 +35,7 @@ To run the backup script you can use the custom Artisan command itourmobile:rest
 In order to ensure there are no issues with duplicate users, it is best to do this with an empty database.  You should run a fresh migration first.
 
 ```
-php artisan itourmobile:restore --password=secret
+php artisan itourmobile:restore {password}
 ```
 
 This will fetch data from the live database and copy it into the new database, as well as copy / upload all related files to the Tours.    This will take a long time, there are lots of files.
