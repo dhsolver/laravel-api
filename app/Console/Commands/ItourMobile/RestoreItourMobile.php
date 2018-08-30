@@ -129,10 +129,10 @@ class RestoreItourMobile extends Command
         $this->progress->finish();
         $this->line('');
 
-        // $this->line('Converting tour routes...');
-        // $this->convertTourRoutes();
-        // $this->progress->finish();
-        // $this->line('');
+        $this->line('Converting tour routes...');
+        $this->convertTourRoutes();
+        $this->progress->finish();
+        $this->line('');
 
         $this->line('Converting tour stops...');
         $this->convertStops();
@@ -406,12 +406,12 @@ class RestoreItourMobile extends Command
     {
         $this->issues++;
 
-        \Storage::append('restore.log', $text);
+        \Storage::disk('local')->append('restore.log', $text);
     }
 
     public function missingFileLog($text)
     {
-        \Storage::append('restore-files.log', $text);
+        \Storage::disk('local')->append('restore-files.log', $text);
     }
 
     public function setCurrentTour($tour)
