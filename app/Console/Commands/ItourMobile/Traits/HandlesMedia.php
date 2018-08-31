@@ -152,7 +152,7 @@ trait HandlesMedia
 
         $f = $this->generateFilename('jpg');
 
-        if (\Storage::disk('local')::put('temp/' . $f, $contents)) {
+        if (\Storage::disk('local')->put('temp/' . $f, $contents)) {
             return \Storage::disk('local')->getDriver()->getAdapter()->getPathPrefix() . 'temp/' . $f;
         }
 
