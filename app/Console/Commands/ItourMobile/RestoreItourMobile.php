@@ -286,7 +286,8 @@ class RestoreItourMobile extends Command
     public function convertTourRoutes()
     {
         if (empty($this->testTourId)) {
-            $tours = OldTour::all()->pluck('tour_id')->toArray();
+            // $tours = OldTour::all()->pluck('tour_id')->toArray();
+            $tours = OldTour::where('tour_ready_for_sale', 1)->get()->pluck('tour_id')->toArray();
             $oldRoutes = RoutePoint::whereIn('tour_id', $tours)->orderBy('point_order')->get();
         } else {
             $oldRoutes = RoutePoint::where('tour_id', $this->testTourId)->orderBy('point_order')->get();
