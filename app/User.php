@@ -175,4 +175,14 @@ class User extends Authenticatable
 
         $this->joinedTours()->attach($tour);
     }
+
+    /**
+     * Get the user's favorite tours.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function favorites()
+    {
+        return $this->belongsToMany(Tour::class, 'favorites');
+    }
 }
