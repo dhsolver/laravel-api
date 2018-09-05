@@ -28,6 +28,10 @@ Route::namespace('App\Mobile\Controllers')->middleware(['jwt.auth', 'role:user|c
     Route::get('tours/{tour}', 'TourController@show')->name('mobile.tours.show');
     Route::post('stops/{stop}/track', 'ActivityController@stop');
     Route::post('device', 'DeviceController@store')->name('mobile.device.store');
+
+    Route::get('profile', 'ProfileController@user')->name('mobile.profile.user');
+    Route::post('profile', 'ProfileController@update')->name('mobile.profile.update');
+    Route::get('{user}', 'ProfileController@show')->name('mobile.profile.show');
 });
 
 Route::namespace('App\Http\Controllers')->middleware(['jwt.auth', 'role:user|client|admin|superadmin'])->group(function () {
