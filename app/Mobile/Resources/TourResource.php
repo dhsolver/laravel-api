@@ -14,6 +14,17 @@ class TourResource extends JsonResource
      */
     public function toArray($request)
     {
+        $images = [];
+        if (!empty($this->image1)) {
+            array_push($images, $this->image1->path);
+        }
+        if (!empty($this->image2)) {
+            array_push($images, $this->image2->path);
+        }
+        if (!empty($this->image3)) {
+            array_push($images, $this->image3->path);
+        }
+
         return [
             'id' => $this->id,
             'user_id' => $this->user_id,
@@ -46,9 +57,10 @@ class TourResource extends JsonResource
             'end_image' => $this->endImage ? $this->endImage->path : null,
 
             'main_image' => $this->mainImage ? $this->mainImage->path : null,
-            'image1' => $this->image1 ? $this->image1->path : null,
-            'image2' => $this->image2 ? $this->image2->path : null,
-            'image3' => $this->image3 ? $this->image3->path : null,
+            'images' => $images,
+            // 'image1' => $this->image1 ? $this->image1->path : null,
+            // 'image2' => $this->image2 ? $this->image2->path : null,
+            // 'image3' => $this->image3 ? $this->image3->path : null,
             'pin_image' => $this->pinImage ? $this->pinImage->path : null,
 
             'intro_audio' => $this->introAudio ? $this->introAudio->path : null,

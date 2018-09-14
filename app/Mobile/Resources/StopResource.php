@@ -14,6 +14,17 @@ class StopResource extends JsonResource
      */
     public function toArray($request)
     {
+        $images = [];
+        if (!empty($this->image1)) {
+            array_push($images, $this->image1->path);
+        }
+        if (!empty($this->image2)) {
+            array_push($images, $this->image2->path);
+        }
+        if (!empty($this->image3)) {
+            array_push($images, $this->image3->path);
+        }
+
         return [
             'id' => $this->id,
             'tour_id' => $this->tour_id,
@@ -25,9 +36,10 @@ class StopResource extends JsonResource
             'location' => new LocationResource($this->location),
 
             'main_image' => $this->mainImage ? $this->mainImage->path : null,
-            'image1' => $this->image1 ? $this->image1->path : null,
-            'image2' => $this->image2 ? $this->image2->path : null,
-            'image3' => $this->image3 ? $this->image3->path : null,
+            'images' => $images,
+            // 'image1' => $this->image1 ? $this->image1->path : null,
+            // 'image2' => $this->image2 ? $this->image2->path : null,
+            // 'image3' => $this->image3 ? $this->image3->path : null,
             'intro_audio' => $this->introAudio ? $this->introAudio->path : null,
             'background_audio' => $this->backgroundAudio ? $this->backgroundAudio->path : null,
 
