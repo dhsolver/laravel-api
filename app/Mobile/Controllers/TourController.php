@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Mobile\Resources\TourResource;
 use App\Mobile\Resources\StopResource;
 use App\Mobile\Resources\TourRouteResource;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class TourController extends Controller
 {
@@ -18,7 +19,9 @@ class TourController extends Controller
     public function index()
     {
         return TourResource::collection(
-            Tour::search(request()->search)->paginate()
+            Tour::published()
+                ->search(request()->search)
+                ->paginate()
         );
     }
 
@@ -30,6 +33,10 @@ class TourController extends Controller
      */
     public function show(Tour $tour)
     {
+        if (!$tour->isPublished) {
+            throw new ModelNotFoundException('Tour not available');
+        }
+
         return response()->json([
             'tour' => new TourResource($tour),
             'stops' => StopResource::collection($tour->stops),
