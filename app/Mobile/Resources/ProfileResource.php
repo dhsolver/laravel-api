@@ -16,6 +16,8 @@ class ProfileResource extends JsonResource
     {
         $data = [
             'name' => $this->name,
+            'first_name' => $this->firstName,
+            'last_name' => $this->lastName,
             'role' => $this->role,
             'created_at' => $this->created_at->toDateTimeString(),
         ];

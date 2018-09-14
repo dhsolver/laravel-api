@@ -395,6 +395,14 @@ definitions:
         type: string
         description: The user's first and last name.
         example: John Doe
+      first_name:
+        type: string
+        description: The user's first name.
+        example: John
+      last_name:
+        type: string
+        description: The user's last name.
+        example: Doe
       email:
         type: string
         description: The user's email address.
@@ -525,18 +533,10 @@ definitions:
         type: string
         description: Tour cover image.
         example: http://media.wejunket.com/images/4fd1b212d98168645c0dce52bdb05189.jpg
-      image1:
-        type: string
-        description: First Tour image.
-        example: http://media.wejunket.com/images/4fd1b212d98168645c0dce52bdb05189.jpg
-      image2:
-        type: string
-        description: Second Tour image.
-        example: http://media.wejunket.com/images/4fd1b212d98168645c0dce52bdb05189.jpg
-      image3:
-        type: string
-        description: Third Tour image.
-        example: http://media.wejunket.com/images/4fd1b212d98168645c0dce52bdb05189.jpg
+      images:
+        type: array
+        description: Array of additional image paths.
+        example: ['http://media.wejunket.com/images/4fd1b212d98168645c0dce52bdb05189.jpg']
       pin_image:
         type: string
         description: Custom map pin icon.
@@ -608,18 +608,10 @@ definitions:
         type: string
         description: Stop cover image.
         example: http://media.wejunket.com/images/4fd1b212d98168645c0dce52bdb05189.jpg
-      image1:
-        type: string
-        description: First Stop image.
-        example: http://media.wejunket.com/images/4fd1b212d98168645c0dce52bdb05189.jpg
-      image2:
-        type: string
-        description: Second Stop image.
-        example: http://media.wejunket.com/images/4fd1b212d98168645c0dce52bdb05189.jpg
-      image3:
-        type: string
-        description: Third Stop image.
-        example: http://media.wejunket.com/images/4fd1b212d98168645c0dce52bdb05189.jpg
+      images:
+        type: array
+        description: Array of additional stop image paths.
+        example: ['http://media.wejunket.com/images/4fd1b212d98168645c0dce52bdb05189.jpg']
       intro_audio:
         type: string
         description: Intro audio MP3 path.

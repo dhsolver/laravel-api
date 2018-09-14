@@ -203,4 +203,22 @@ class User extends Authenticatable implements JWTSubject
 
         $this->joinedTours()->attach($tour);
     }
+
+    public function getFirstNameAttribute()
+    {
+        $names = explode(' ', $this->name, 2);
+
+        return $names[0];
+    }
+
+    public function getLastNameAttribute()
+    {
+        $names = explode(' ', $this->name, 2);
+
+        if (isset($names[1]) && !empty($names[1])) {
+            return $names[1];
+        }
+
+        return '';
+    }
 }

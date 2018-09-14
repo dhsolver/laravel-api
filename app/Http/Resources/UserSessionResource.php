@@ -17,6 +17,8 @@ class UserSessionResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
+            'first_name' => $this->firstName,
+            'last_name' => $this->lastName,
             'email' => $this->email,
             'role' => $this->role,
         ];
