@@ -5,6 +5,8 @@ namespace App\Exceptions;
 use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 
 class Handler extends ExceptionHandler
 {
@@ -55,17 +57,28 @@ class Handler extends ExceptionHandler
             ], 404);
         }
 
-        // if ($this->shouldntReport($exception)) {
+        // if ($exception instanceof ValidationException) {
         //     return parent::render($request, $exception);
         // }
+
+        if ($exception instanceof UnauthorizedHttpException) {
+            return response()->json([
+                'message' => $exception->getMessage(),
+                'code' => 401,
+            ], 401);
+        }
+
+        if ($this->shouldntReport($exception)) {
+            return parent::render($request, $exception);
+        }
 
         if (config('app.env') == 'local') {
             return parent::render($request, $exception);
         }
 
-        $code = $exception->getStatusCode();
+        $code = isset($exception->status) ? $exception->status : null;
         if (empty($code)) {
-            $code = 500;
+            $code = method_exists($exception, 'getStatusCode') ? $exception->getStatusCode() : 500;
         }
 
         return response()->json([
