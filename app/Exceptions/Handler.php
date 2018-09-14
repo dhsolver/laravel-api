@@ -55,16 +55,22 @@ class Handler extends ExceptionHandler
             ], 404);
         }
 
-        if ($this->shouldntReport($exception)) {
-            return parent::render($request, $exception);
-        }
+        // if ($this->shouldntReport($exception)) {
+        //     return parent::render($request, $exception);
+        // }
 
         if (config('app.env') == 'local') {
             return parent::render($request, $exception);
         }
 
+        $code = $exception->getStatusCode();
+        if (empty($code)) {
+            $code = 500;
+        }
+
         return response()->json([
-            'message' => $exception->getMessage()
-        ]);
+            'message' => $exception->getMessage(),
+            'code' => $code,
+        ], $code);
     }
 }
