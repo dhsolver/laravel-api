@@ -29,9 +29,6 @@ Route::namespace('App\Mobile\Controllers')->middleware(['jwt.auth', 'role:user|c
     Route::post('stops/{stop}/track', 'ActivityController@stop');
     Route::post('device', 'DeviceController@store')->name('mobile.device.store');
 
-    Route::post('favorites', 'FavoritesController@store')->name('mobile.favorites.store');
-    Route::delete('favorites', 'FavoritesController@destroy')->name('mobile.favorites.destroy');
-
     Route::get('profile', 'ProfileController@user')->name('mobile.profile.user');
     Route::post('profile', 'ProfileController@update')->name('mobile.profile.update');
     Route::get('{user}', 'ProfileController@show')->name('mobile.profile.show');

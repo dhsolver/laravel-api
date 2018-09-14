@@ -22,7 +22,6 @@ class ProfileResource extends JsonResource
 
         if ($this->id === auth()->user()->id) {
             $data['email'] = $this->email;
-            $data['favorites'] = $this->favorites->pluck('id');
         }
 
         return $data;
