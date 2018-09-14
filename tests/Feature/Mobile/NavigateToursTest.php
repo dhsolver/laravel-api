@@ -21,7 +21,7 @@ class ViewToursTest extends TestCase
     /** @test */
     public function a_mobile_user_can_get_a_paginated_list_of_all_published_tours()
     {
-        factory(Tour::class, 3)->create();
+        factory(Tour::class, 3)->states('published')->create();
 
         $tour = new TourResource(Tour::first());
 
@@ -42,8 +42,8 @@ class ViewToursTest extends TestCase
     {
         $keyword = 'uniquestring';
 
-        factory(Tour::class, 3)->create();
-        $tour = factory(Tour::class)->create([
+        factory(Tour::class, 3)->states('published')->create();
+        $tour = factory(Tour::class)->states('published')->create([
             'title' => "Blah blah $keyword blah",
         ]);
 
@@ -67,7 +67,7 @@ class ViewToursTest extends TestCase
     {
         $this->signIn('user');
 
-        $tour = factory(Tour::class)->create([
+        $tour = factory(Tour::class)->states('published')->create([
             'title' => 'Test Tour',
         ]);
 
@@ -86,5 +86,18 @@ class ViewToursTest extends TestCase
             ])
             ->assertJsonCount(10, 'stops')
             ->assertJsonFragment(['title' => $tour->title]);
+    }
+
+    /** @test */
+    public function a_mobile_user_can_only_see_published_tours()
+    {
+        factory(Tour::class, 1)->create();
+        factory(Tour::class, 3)->states('published')->create();
+
+        $this->signIn('user');
+
+        $this->getJson('/mobile/tours')
+            ->assertJsonCount(3, 'data')
+            ->assertStatus(200);
     }
 }
