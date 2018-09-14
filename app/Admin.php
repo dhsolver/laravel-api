@@ -5,8 +5,9 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use App\Traits\IsUserRole;
 use App\Traits\HasTours;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 
-class Admin extends Model
+class Admin extends Model implements JWTSubject
 {
     use IsUserRole, HasTours;
 

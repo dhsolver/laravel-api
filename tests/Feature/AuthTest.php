@@ -98,9 +98,9 @@ class AuthTest extends TestCase
     {
         $this->withExceptionHandling();
 
-        $this->json('GET', '/admin/session')->assertStatus(400);
-        $this->json('GET', '/cms/session')->assertStatus(400);
-        $this->json('GET', '/mobile/tours')->assertStatus(400);
+        $this->json('GET', '/admin/session')->assertStatus(401);
+        $this->json('GET', '/cms/session')->assertStatus(401);
+        $this->json('GET', '/mobile/tours')->assertStatus(401);
     }
 
     /** @test */

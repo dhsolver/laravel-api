@@ -16,8 +16,8 @@
         "laravel/tinker": "^1.0",
         "league/flysystem-aws-s3-v3": "^1.0",
         "michaelachrisco/readonly": "^0.31.0",
-        "spatie/laravel-permission": "^2.9",
-        "tymon/jwt-auth": "^0.5.12",
+        "spatie/laravel-permission": "2.12.1",
+        "tymon/jwt-auth": "^1.0.0-rc.2",
         "webpatser/laravel-uuid": "^3.0"
     },
     "require-dev": {

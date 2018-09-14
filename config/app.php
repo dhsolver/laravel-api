@@ -150,7 +150,6 @@ return [
         /*
          * Package Service Providers...
          */
-        'Tymon\JWTAuth\Providers\JWTAuthServiceProvider',
         Intervention\Image\ImageServiceProvider::class,
         PurchaseValidatorProvider::class,
 

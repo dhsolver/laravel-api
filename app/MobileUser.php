@@ -4,8 +4,9 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Traits\IsUserRole;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 
-class MobileUser extends Model
+class MobileUser extends Model implements JWTSubject
 {
     use IsUserRole;
 

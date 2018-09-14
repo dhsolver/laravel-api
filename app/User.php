@@ -6,8 +6,9 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Spatie\Permission\Traits\HasRoles;
 use App\Notifications\ResetPasswordNotification;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 
-class User extends Authenticatable
+class User extends Authenticatable implements JWTSubject
 {
     use Notifiable, HasRoles;
 
@@ -37,6 +38,33 @@ class User extends Authenticatable
     protected $appends = ['role'];
 
     /**
+     * Set the guard name for the JWTSubject.
+     *
+     * @var string
+     */
+    protected $guard_name = 'api';
+
+    /**
+     * Get the identifier that will be stored in the subject claim of the JWT.
+     *
+     * @return mixed
+     */
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();
+    }
+
+    /**
+     * Return a key value array, containing any custom claims to be added to the JWT.
+     *
+     * @return array
+     */
+    public function getJWTCustomClaims()
+    {
+        return [];
+    }
+
+    /**
      * Gets the users role
      *
      * @return String
@@ -62,7 +90,7 @@ class User extends Authenticatable
      * @param null $type
      * @return null|string
      */
-    public function getRoleClass($type = null)
+    public function getRoleClassObj($type = null)
     {
         if (!$type) {
             $type = $this->role;
@@ -89,8 +117,8 @@ class User extends Authenticatable
      */
     public function type()
     {
-        if ($this->getRoleClass()) {
-            return $this->hasOne($this->getRoleClass(), 'id', 'id');
+        if ($this->getRoleClassObj()) {
+            return $this->hasOne($this->getRoleClassObj(), 'id', 'id');
         }
         return null;
     }
