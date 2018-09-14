@@ -370,17 +370,6 @@ class Tour extends Model
         });
     }
 
-    /**
-     * Defines the default ordering for stops using order column.
-     *
-     * @param [type] $query
-     * @return void
-     */
-    public function scopeOrdered($query)
-    {
-        return $query->orderBy('order', 'ASC');
-    }
-
     // **********************************************************
     // OTHER METHODS
     // **********************************************************
