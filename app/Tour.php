@@ -465,4 +465,15 @@ class Tour extends Model
     {
         return $this->belongsToMany(User::class, 'user_joined_tours', 'tour_id', 'user_id');
     }
+
+    /**
+     * Scope to only show published Tours.
+     *
+     * @param [type] $query
+     * @return void
+     */
+    public function scopePublished($query)
+    {
+        return $query->whereNotNull('published_at');
+    }
 }

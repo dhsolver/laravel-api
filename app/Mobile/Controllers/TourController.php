@@ -36,4 +36,16 @@ class TourController extends Controller
             'route' => TourRouteResource::collection($tour->route),
         ]);
     }
+
+    /**
+     * Gets all tours without paging
+     *
+     * @return \App\Mobile\Resources\TourResource
+     */
+    public function all()
+    {
+        return TourResource::collection(
+            Tour::published()->get()
+        );
+    }
 }

@@ -20,6 +20,7 @@ Route::namespace('App\Http\Controllers')->group(function () {
 });
 
 Route::namespace('App\Mobile\Controllers')->middleware(['jwt.auth', 'role:user|client|admin|superadmin'])->group(function () {
+    Route::get('tours/all', 'TourController@all')->name('mobile.tours.all');
     Route::get('tours', 'TourController@index')->name('mobile.tours.index');
     Route::get('tours/mine', 'JoinedToursController@index');
     Route::post('tours/{tour}/purchase', 'JoinedToursController@store');
