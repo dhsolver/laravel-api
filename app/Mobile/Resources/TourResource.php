@@ -25,7 +25,7 @@ class TourResource extends JsonResource
             array_push($images, $this->image3->path);
         }
 
-        return [
+        $data = [
             'id' => $this->id,
             'user_id' => $this->user_id,
             'title' => $this->title,
@@ -70,5 +70,11 @@ class TourResource extends JsonResource
             'updated_at' => $this->updated_at ? $this->updated_at->toDateTimeString() : null,
             'published_at' => $this->published_at ? $this->published_at->toDateTimeString() : null,
         ];
+
+        if (isset($this->distance)) {
+            $data['distance'] = $this->distance;
+        }
+        
+        return $data;
     }
 }

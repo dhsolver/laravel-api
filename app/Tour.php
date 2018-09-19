@@ -251,7 +251,7 @@ class Tour extends Model
      */
     public function getIsPublishedAttribute()
     {
-        return !empty($this->published_at);
+        return ! empty($this->published_at);
     }
 
     /**
@@ -295,7 +295,7 @@ class Tour extends Model
      */
     public function setFacebookUrlAttribute($value)
     {
-        if (!empty($value) && !starts_with($value, ['http:', 'https:'])) {
+        if (! empty($value) && ! starts_with($value, ['http:', 'https:'])) {
             $this->attributes['facebook_url'] = 'https://' . $value;
         } else {
             $this->attributes['facebook_url'] = $value;
@@ -310,7 +310,7 @@ class Tour extends Model
      */
     public function setInstagramUrlAttribute($value)
     {
-        if (!empty($value) && !starts_with($value, ['http:', 'https:'])) {
+        if (! empty($value) && ! starts_with($value, ['http:', 'https:'])) {
             $this->attributes['instagram_url'] = 'https://' . $value;
         } else {
             $this->attributes['instagram_url'] = $value;
@@ -325,7 +325,7 @@ class Tour extends Model
      */
     public function setTwitterUrlAttribute($value)
     {
-        if (!empty($value) && !starts_with($value, ['http:', 'https:'])) {
+        if (! empty($value) && ! starts_with($value, ['http:', 'https:'])) {
             $this->attributes['twitter_url'] = 'https://' . $value;
         } else {
             $this->attributes['twitter_url'] = $value;
@@ -357,6 +357,32 @@ class Tour extends Model
     // **********************************************************
     // QUERY SCOPES
     // **********************************************************
+
+    /**
+     * Add distance field to the select query and sort by distance.
+     *
+     * @param QueryBuilder $query
+     * @param float $lat
+     * @param float $lon
+     * @return QueryBuilder
+     */
+    public function scopeDistanceFrom($query, $lat, $lon)
+    {
+        if ($lat == 0 || $lon == 0) {
+            return $query;
+        }
+
+        $distanceQuery = "round(3959 * acos( cos( radians($lat) ) * cos( radians(locations.latitude) ) * cos( radians(locations.longitude) - radians($lon)) + sin(radians($lat)) * sin( radians(locations.latitude) )), 2)";
+
+        return \App\Tour::leftJoin('locations', function ($join) {
+            $join->on('tours.id', '=', 'locations.locationable_id')
+                ->where('locations.locationable_type', '=', "App\Tour");
+        })
+            ->selectRaw("tours.*, ($distanceQuery) as distance")
+            ->whereNotNull('locations.latitude')
+            ->whereNotNull('locations.longitude')
+            ->orderBy('distance');
+    }
 
     public function scopeSearch($query, $keyword)
     {
