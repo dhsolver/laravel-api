@@ -14,7 +14,7 @@ class Tour extends Model
      *
      * @var array
      */
-    protected $guarded = ['id'];
+    protected $guarded = ['id', 'published_at', 'last_published_at'];
 
     /**
      * The connection name for the model.

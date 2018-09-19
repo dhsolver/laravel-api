@@ -69,4 +69,17 @@ class TourTest extends TestCase
         $this->assertContains('instagram.com', $tour->instagram_url_path);
         $this->assertContains('new_social_url', $tour->instagram_url_path);
     }
+
+    /** @test */
+    public function a_tour_can_be_published()
+    {
+        $client = createUser('client');
+        $tour = create('App\Tour', ['user_id' => $client->id]);
+
+        $this->assertFalse($tour->isPublished);
+
+        $tour->publish();
+
+        $this->assertTrue($tour->fresh()->isPublished);
+    }
 }

@@ -85,6 +85,16 @@ class Tour extends Model
     // **********************************************************
 
     /**
+     * Gets the publish submissions relation.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function publishSubmissions()
+    {
+        return $this->hasMany(PublishTourSubmission::class, 'tour_id', 'id');
+    }
+
+    /**
      * Defines the location relationship.
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
@@ -201,6 +211,22 @@ class Tour extends Model
     // **********************************************************
     // MUTATORS
     // **********************************************************
+
+    /**
+     * Get whether the tour is currently waiting for publish approval.
+     *
+     * @return boolean
+     */
+    public function getIsAwaitingApprovalAttribute()
+    {
+        if ($this->isPublished) {
+            return false;
+        }
+
+        return $this->publishSubmissions()
+            ->pending()
+            ->exists();
+    }
 
     /**
      * Returns the full facebook url.
@@ -361,10 +387,10 @@ class Tour extends Model
     /**
      * Add distance field to the select query and sort by distance.
      *
-     * @param QueryBuilder $query
+     * @param Illuminate\Database\Query\Builder $query
      * @param float $lat
      * @param float $lon
-     * @return QueryBuilder
+     * @return Illuminate\Database\Query\Builder
      */
     public function scopeDistanceFrom($query, $lat, $lon)
     {

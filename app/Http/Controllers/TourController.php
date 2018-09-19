@@ -116,4 +116,45 @@ class TourController extends Controller
 
         return $this->success('Stop order successfully saved.', ['order' => $request->order]);
     }
+
+    /**
+     * Submit tour for publish approval.
+     *
+     * @param Tour $tour
+     * @return Illuminate\Http\Response
+     */
+    public function publish(Tour $tour)
+    {
+        if ($tour->isAwaitingApproval) {
+            return $this->success('Tour has been submitted for publishing and awaiting approval.');
+        }
+
+        if ($tour->publishSubmissions()->create([
+            'tour_id' => $tour->id,
+            'user_id' => $tour->user_id,
+        ])) {
+            return $this->success('Tour has been submitted for publishing and awaiting approval.');
+        }
+
+        return $this->fail();
+    }
+
+    /**
+     * Unpublish the tour.
+     *
+     * @param Tour $tour
+     * @return Illuminate\Http\Response
+     */
+    public function unpublish(Tour $tour)
+    {
+        if ($tour->isAwaitingApproval) {
+            $tour->publishSubmissions()->pending()->first()->delete();
+            return $this->success('Tour has been removed from the approval queue.');
+        }
+
+        $tour->published_at = null;
+        $tour->save();
+
+        return $this->success('Tour has been unpublished and removed from the apps.');
+    }
 }
