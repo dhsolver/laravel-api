@@ -18,8 +18,26 @@ class TourController extends Controller
      */
     public function index()
     {
+        $lat = 0;
+        $lon = 0;
+        if (request()->has('nearby')) {
+            $coordinates = request()->nearby;
+
+            if (! strpos($coordinates, ',')) {
+                return $this->fail(422, 'Invalid nearby coordinates.');
+            }
+
+            $lat = floatval(substr($coordinates, 0, strpos($coordinates, ',')));
+            $lon = floatval(substr($coordinates, strpos($coordinates, ',') + 1));
+
+            if ($lat == 0 || $lon == 0) {
+                return $this->fail(422, 'Invalid distance_from coordinates.');
+            }
+        }
+
         return TourResource::collection(
             Tour::published()
+                ->distanceFrom($lat, $lon)
                 ->search(request()->search)
                 ->paginate()
         );
@@ -33,7 +51,7 @@ class TourController extends Controller
      */
     public function show(Tour $tour)
     {
-        if (!$tour->isPublished) {
+        if (! $tour->isPublished) {
             throw new ModelNotFoundException('Tour not available');
         }
 

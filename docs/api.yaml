@@ -249,6 +249,12 @@ paths:
         - application/json
       parameters:
         - $ref: '#/parameters/AuthToken'
+        - in: query
+          name: nearby
+          required: false
+          description: 'Coordinates to search for nearby tours.  Format: lat,lon (optional)'
+          type: string
+          example: '25.811481872869393,-80.13444900512695'
       security:
         - Bearer: []
       responses:
@@ -463,6 +469,11 @@ definitions:
       location:
         $ref: '#/definitions/Location'
         description: The location of the Tour, including GPS coordinates.
+      distance:
+        type: integer
+        format: float
+        description: The distance from the supplied coordinates in miles.  Only appears when getting a Tour listing with a set nearby cooridnates parameter.
+        example: 3.23
       facebook_url: 
         type: string
         description: Facebook URL
@@ -535,6 +546,8 @@ definitions:
         example: http://media.wejunket.com/images/4fd1b212d98168645c0dce52bdb05189.jpg
       images:
         type: array
+        items:
+          type: string
         description: Array of additional image paths.
         example: ['http://media.wejunket.com/images/4fd1b212d98168645c0dce52bdb05189.jpg']
       pin_image:
@@ -610,6 +623,8 @@ definitions:
         example: http://media.wejunket.com/images/4fd1b212d98168645c0dce52bdb05189.jpg
       images:
         type: array
+        items:
+          type: string
         description: Array of additional stop image paths.
         example: ['http://media.wejunket.com/images/4fd1b212d98168645c0dce52bdb05189.jpg']
       intro_audio:
