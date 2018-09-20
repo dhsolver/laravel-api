@@ -139,14 +139,16 @@ class TourController extends Controller
                 $submission->approve();
             }
 
-            return $this->success('Tour has been published.');
+            $tour = $tour->fresh();
+            return $this->success("{$tour->title} has been published.", new TourResource($tour));
         }
 
         if ($tour->isAwaitingApproval || $tour->publishSubmissions()->create([
             'tour_id' => $tour->id,
             'user_id' => $tour->user_id,
         ])) {
-            return $this->success('Tour has been submitted for publishing and awaiting approval.');
+            $tour = $tour->fresh();
+            return $this->success("{$tour->title} has been submitted for publishing and awaiting approval.", new TourResource($tour));
         }
 
         return $this->fail();
@@ -162,7 +164,8 @@ class TourController extends Controller
     {
         if ($tour->isAwaitingApproval) {
             $tour->publishSubmissions()->pending()->first()->delete();
-            return $this->success('Tour has been removed from the approval queue.');
+            $tour = $tour->fresh();
+            return $this->success("{$tour->title} has been removed from the approval queue.", new TourResource($tour));
         }
 
         $tour->published_at = null;
