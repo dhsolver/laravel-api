@@ -92,4 +92,24 @@ class PublishToursTest extends TestCase
 
         $this->assertFalse($this->tour->fresh()->isPublished);
     }
+
+    /** @test */
+    public function admin_owned_tours_auto_approve_when_submitted_for_publishing()
+    {
+        $admin = createUser('admin');
+
+        $tour = create('App\Tour', ['user_id' => $admin->id]);
+        $this->loginAs($admin);
+
+        $this->assertCount(0, $tour->publishSubmissions);
+        $this->assertFalse($tour->isAwaitingApproval);
+        $this->assertFalse($tour->isPublished);
+
+        $this->putJson(route('cms.tours.publish', ['tour' => $tour]))
+            ->assertStatus(200);
+
+        $this->assertFalse($tour->fresh()->isAwaitingApproval);
+        $this->assertTrue($tour->fresh()->isPublished);
+        $this->assertCount(1, $tour->fresh()->publishSubmissions);
+    }
 }

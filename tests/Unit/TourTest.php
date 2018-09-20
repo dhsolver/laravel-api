@@ -77,6 +77,7 @@ class TourTest extends TestCase
         $tour = create('App\Tour', ['user_id' => $client->id]);
 
         $this->assertFalse($tour->isPublished);
+        $this->assertNull($tour->fresh()->last_published_at);
 
         $tour->publish();
 

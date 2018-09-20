@@ -38,4 +38,29 @@ class PublishTourSubmission extends Model
         return $query->whereNull('approved_at')
             ->whereNull('denied_at');
     }
+
+    /**
+     * Get the related tour.
+     *
+     * @return Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function tour()
+    {
+        return $this->belongsTo(\App\Tour::class);
+    }
+
+    /**
+     * Approve the submission and publish the realted tour.
+     *
+     * @return void
+     */
+    public function approve()
+    {
+        $this->update([
+            'approved_at' => \Carbon\Carbon::now(),
+            'denied_at' => null,
+        ]);
+
+        $this->tour->publish();
+    }
 }

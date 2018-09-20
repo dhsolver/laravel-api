@@ -433,7 +433,10 @@ class Tour extends Model
      */
     public function publish()
     {
-        $this->update(['published_at' => Carbon::now()]);
+        $this->update([
+            'published_at' => Carbon::now(),
+            'last_published_at' => Carbon::now(),
+        ]);
     }
 
     /**

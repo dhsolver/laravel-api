@@ -125,11 +125,24 @@ class TourController extends Controller
      */
     public function publish(Tour $tour)
     {
-        if ($tour->isAwaitingApproval) {
-            return $this->success('Tour has been submitted for publishing and awaiting approval.');
+        // auto-approve tour for admins
+        if (auth()->user()->isAdmin()) {
+            if ($tour->isAwaitingApproval) {
+                $tour->publishSubmissions()
+                    ->pending()
+                    ->approve();
+            } else {
+                $submission = $tour->publishSubmissions()->create([
+                    'tour_id' => $tour->id,
+                    'user_id' => $tour->user_id,
+                ]);
+                $submission->approve();
+            }
+
+            return $this->success('Tour has been published.');
         }
 
-        if ($tour->publishSubmissions()->create([
+        if ($tour->isAwaitingApproval || $tour->publishSubmissions()->create([
             'tour_id' => $tour->id,
             'user_id' => $tour->user_id,
         ])) {
