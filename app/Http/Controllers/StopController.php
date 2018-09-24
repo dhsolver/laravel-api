@@ -116,6 +116,10 @@ class StopController extends Controller
             return $this->fail(422, 'You cannot delete this stop because it is referenced in another stops destination points.');
         }
 
+        if (TourStop::where('next_stop_id', $stop->id)->count() > 0) {
+            return $this->fail(422, 'You cannot delete this stop because it is referenced in another stops destination points.');
+        }
+
         if (Tour::where('start_point_id', $stop->id)->count() > 0) {
             return $this->fail(422, 'You cannot delete this stop because it set as the Tour\'s start point.');
         }
@@ -123,6 +127,9 @@ class StopController extends Controller
         if (Tour::where('end_point_id', $stop->id)->count() > 0) {
             return $this->fail(422, 'You cannot delete this stop because it set as the Tour\'s end point.');
         }
+
+        $stop->choices()->delete();
+        $stop->routes()->delete();
 
         if ($stop->delete()) {
             return $this->success("{$stop->title} was archived successfully.");
