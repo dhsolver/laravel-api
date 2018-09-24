@@ -16,7 +16,7 @@ class Controller extends BaseController
     /**
      * Helper function for success response.
      *
-     * @param [type] $message
+     * @param string $message
      * @param array $data
      * @return void
      */
@@ -28,7 +28,7 @@ class Controller extends BaseController
     /**
      * Helper function for error response
      *
-     * @param [type] $statusCode
+     * @param int $statusCode
      * @param string $messages
      * @param array $data
      * @return void

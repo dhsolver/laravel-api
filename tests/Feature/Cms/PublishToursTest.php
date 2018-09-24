@@ -6,6 +6,7 @@ use Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\Concerns\AttachJwtToken;
 use App\Tour;
+use Illuminate\Support\Carbon;
 
 class PublishToursTest extends TestCase
 {
@@ -22,6 +23,25 @@ class PublishToursTest extends TestCase
         $this->client = createUser('client');
 
         $this->tour = create('App\Tour', ['user_id' => $this->client->id]);
+
+        $stop = $this->tour->stops()->create(factory('App\TourStop')->make()->toArray());
+        $media = factory('App\Media')->create(['user_id' => $this->client->id]);
+
+        $this->tour->update(['main_image_id' => $media->id]);
+        $stop->update(['main_image_id' => $media->id]);
+
+        $this->tour->location()->delete();
+        $stop->location()->delete();
+
+        factory('App\Location')->create([
+            'locationable_type' => 'App\Tour',
+            'locationable_id' => $this->tour->id,
+        ]);
+
+        factory('App\Location')->create([
+            'locationable_type' => 'App\TourStop',
+            'locationable_id' => $this->tour->stops()->first()->id,
+        ]);
     }
 
     /**
@@ -36,14 +56,94 @@ class PublishToursTest extends TestCase
     }
 
     /** @test */
-    public function a_tour_can_be_published()
+    public function a_user_can_submit_a_tour_to_be_published()
     {
         $this->loginAs($this->client);
 
+        $this->assertCount(0, $this->tour->publishSubmissions);
+        $this->assertFalse($this->tour->isAwaitingApproval);
+
+        $this->putJson(route('cms.tours.publish', ['tour' => $this->tour]))
+            ->assertStatus(200);
+
+        $this->assertTrue($this->tour->fresh()->isAwaitingApproval);
+        $this->assertFalse($this->tour->fresh()->isPublished);
+    }
+
+    /** @test */
+    public function a_user_cannot_set_a_tour_as_published()
+    {
+        $data = array_merge($this->tour->toArray(), ['published_at' => Carbon::now()->toDateTimeString()]);
+
+        $this->json('PATCH', route('cms.tours.update', $this->tour->id), $data);
+
+        $this->assertNull($this->tour->fresh()->published_at);
+    }
+
+    /** @test */
+    public function a_user_can_revoke_their_publish_submission()
+    {
+        $this->loginAs($this->client);
+
+        $this->putJson(route('cms.tours.publish', ['tour' => $this->tour]))
+            ->assertStatus(200);
+
+        $this->assertTrue($this->tour->fresh()->isAwaitingApproval);
+
+        $this->putJson(route('cms.tours.unpublish', ['tour' => $this->tour]))
+            ->assertStatus(200);
+
+        $this->assertFalse($this->tour->fresh()->isAwaitingApproval);
+    }
+
+    /** @test */
+    public function a_user_can_unpublish_their_tour()
+    {
+        $this->withoutExceptionHandling();
+        $this->loginAs($this->client);
+
+        $this->tour->published_at = \Carbon\Carbon::now();
+        $this->tour->save();
+        $this->assertTrue($this->tour->fresh()->isPublished);
+
+        $this->putJson(route('cms.tours.unpublish', ['tour' => $this->tour]))
+            ->assertStatus(200);
+
+        $this->assertFalse($this->tour->fresh()->isPublished);
+    }
+
+    /** @test */
+    public function admin_owned_tours_auto_approve_when_submitted_for_publishing()
+    {
+        $admin = createUser('admin');
+
+        $this->tour->update(['user_id' => $admin->id]);
+        $this->loginAs($admin);
+
+        $this->assertCount(0, $this->tour->publishSubmissions);
+        $this->assertFalse($this->tour->isAwaitingApproval);
         $this->assertFalse($this->tour->isPublished);
 
-        $this->tour->publish();
+        $this->putJson(route('cms.tours.publish', ['tour' => $this->tour]))
+            ->assertStatus(200);
 
+        $this->assertFalse($this->tour->fresh()->isAwaitingApproval);
         $this->assertTrue($this->tour->fresh()->isPublished);
+        $this->assertCount(1, $this->tour->fresh()->publishSubmissions);
+    }
+
+    /** @test */
+    public function a_tour_must_have_all_required_data_to_be_published()
+    {
+        $this->withoutExceptionHandling();
+
+        $this->loginAs($this->client);
+
+        $this->tour->update(['description' => null]);
+
+        $this->putJson(route('cms.tours.publish', ['tour' => $this->tour->fresh()->id]))
+            ->assertStatus(422)
+            ->assertJsonStructure(['data' => ['errors', 'tour']])
+            ->assertSee('The tour has no description');
     }
 }

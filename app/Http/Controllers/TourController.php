@@ -97,6 +97,7 @@ class TourController extends Controller
         if ($tour->delete()) {
             return $this->success("{$tour->title} was archived successfully.");
         }
+
         return $this->fail();
     }
 
@@ -115,5 +116,70 @@ class TourController extends Controller
         }
 
         return $this->success('Stop order successfully saved.', ['order' => $request->order]);
+    }
+
+    /**
+     * Submit tour for publish approval.
+     *
+     * @param Tour $tour
+     * @return Illuminate\Http\Response
+     */
+    public function publish(Tour $tour)
+    {
+        if ($errors = $tour->audit()) {
+            return $this->fail(422, 'Cannot publish tour.', [
+                'tour' => new TourResource($tour),
+                'errors' => $errors,
+            ]);
+        }
+
+        if ($tour->isPublished) {
+            return $this->fail(422, "{$tour->title} has already been published.", new TourResource($tour));
+        }
+
+        // auto-approve tour for admins
+        if (auth()->user()->isAdmin()) {
+            if ($tour->isAwaitingApproval) {
+                $tour->publishSubmissions()
+                    ->pending()
+                    ->approve();
+            } else {
+                $submission = $tour->publishSubmissions()->create([
+                    'tour_id' => $tour->id,
+                    'user_id' => $tour->user_id,
+                ]);
+                $submission->approve();
+            }
+
+            $tour = $tour->fresh();
+            return $this->success("{$tour->title} has been published.", new TourResource($tour));
+        }
+
+        if ($tour->submitForPublishing()) {
+            $tour = $tour->fresh();
+            return $this->success("{$tour->title} has been submitted for publishing and awaiting approval.", new TourResource($tour));
+        }
+
+        return $this->fail();
+    }
+
+    /**
+     * Unpublish the tour, or cancel a publish request.
+     *
+     * @param Tour $tour
+     * @return Illuminate\Http\Response
+     */
+    public function unpublish(Tour $tour)
+    {
+        if ($tour->isAwaitingApproval) {
+            $tour->publishSubmissions()->pending()->first()->delete();
+            $tour = $tour->fresh();
+            return $this->success("{$tour->title} has been removed from the approval queue.", new TourResource($tour));
+        }
+
+        $tour->published_at = null;
+        $tour->save();
+
+        return $this->success("{$tour->title} has been unpublished and removed from the apps.", new TourResource($tour));
     }
 }
