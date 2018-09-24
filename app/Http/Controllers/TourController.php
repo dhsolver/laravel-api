@@ -97,6 +97,7 @@ class TourController extends Controller
         if ($tour->delete()) {
             return $this->success("{$tour->title} was archived successfully.");
         }
+
         return $this->fail();
     }
 
@@ -125,6 +126,17 @@ class TourController extends Controller
      */
     public function publish(Tour $tour)
     {
+        if ($errors = $tour->audit()) {
+            return $this->fail(422, 'Cannot publish tour.', [
+                'tour' => new TourResource($tour),
+                'errors' => $errors,
+            ]);
+        }
+
+        if ($tour->isPublished) {
+            return $this->fail(422, "{$tour->title} has already been published.", new TourResource($tour));
+        }
+
         // auto-approve tour for admins
         if (auth()->user()->isAdmin()) {
             if ($tour->isAwaitingApproval) {
@@ -143,10 +155,7 @@ class TourController extends Controller
             return $this->success("{$tour->title} has been published.", new TourResource($tour));
         }
 
-        if ($tour->isAwaitingApproval || $tour->publishSubmissions()->create([
-            'tour_id' => $tour->id,
-            'user_id' => $tour->user_id,
-        ])) {
+        if ($tour->submitForPublishing()) {
             $tour = $tour->fresh();
             return $this->success("{$tour->title} has been submitted for publishing and awaiting approval.", new TourResource($tour));
         }
@@ -155,7 +164,7 @@ class TourController extends Controller
     }
 
     /**
-     * Unpublish the tour.
+     * Unpublish the tour, or cancel a publish request.
      *
      * @param Tour $tour
      * @return Illuminate\Http\Response
@@ -171,6 +180,6 @@ class TourController extends Controller
         $tour->published_at = null;
         $tour->save();
 
-        return $this->success('Tour has been unpublished and removed from the apps.');
+        return $this->success("{$tour->title} has been unpublished and removed from the apps.", new TourResource($tour));
     }
 }

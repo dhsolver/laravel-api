@@ -112,4 +112,19 @@ class PublishToursTest extends TestCase
         $this->assertTrue($tour->fresh()->isPublished);
         $this->assertCount(1, $tour->fresh()->publishSubmissions);
     }
+
+    /** @test */
+    public function a_tour_must_have_all_required_data_to_be_published()
+    {
+        $this->withoutExceptionHandling();
+
+        $this->loginAs($this->client);
+
+        $this->tour->update(['description' => null]);
+
+        $this->putJson(route('cms.tours.publish', ['tour' => $this->tour->fresh()->id]))
+            ->assertStatus(422)
+            ->assertJsonStructure(['data' => ['errors', 'tour']])
+            ->assertSee('The tour has no description');
+    }
 }

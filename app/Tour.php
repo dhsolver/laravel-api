@@ -37,7 +37,7 @@ class Tour extends Model
      *
      * @var array
      */
-    protected $appends = ['stops_count'];
+    protected $appends = ['stops_count', 'status', 'is_published', 'is_awaiting_approval'];
 
     /**
      * Relationships to always load.
@@ -211,6 +211,22 @@ class Tour extends Model
     // **********************************************************
     // MUTATORS
     // **********************************************************
+
+    /**
+     * Get the tour's status.
+     *
+     * @return void
+     */
+    public function getStatusAttribute()
+    {
+        if ($this->isPublished) {
+            return 'live';
+        } elseif ($this->isAwaitingApproval) {
+            return 'pending';
+        } else {
+            return 'draft';
+        }
+    }
 
     /**
      * Get whether the tour is currently waiting for publish approval.
@@ -426,6 +442,17 @@ class Tour extends Model
     // OTHER METHODS
     // **********************************************************
 
+    public function audit()
+    {
+        $auditor = new TourAuditor($this);
+
+        if (! $auditor->run()) {
+            return $auditor->errors;
+        }
+
+        return false;
+    }
+
     /**
      * Publishes the tour.
      *
@@ -437,6 +464,21 @@ class Tour extends Model
             'published_at' => Carbon::now(),
             'last_published_at' => Carbon::now(),
         ]);
+    }
+
+    /**
+     * Creates a publish request for the tour.
+     *
+     * @return void
+     */
+    public function submitForPublishing()
+    {
+        if ($this->isAwaitingApproval || $this->publishSubmissions()->create([
+            'tour_id' => $this->id,
+            'user_id' => $this->user_id,
+        ])) {
+            return true;
+        }
     }
 
     /**
