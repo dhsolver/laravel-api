@@ -74,19 +74,23 @@ class TourAuditor
     public function common()
     {
         if (empty($this->tour->title)) {
-            $this->error('The tour has no title');
+            $this->error('The tour has no title.');
         }
 
         if (empty($this->tour->description)) {
-            $this->error('The tour has no description');
+            $this->error('The tour has no description.');
         }
 
         if (empty($this->tour->main_image_id)) {
-            $this->error("The tour doesn't have a main image");
+            $this->error("The tour doesn't have a main image.");
         }
 
         if (empty($this->tour->location) || ! $this->tour->location->hasCoordinates()) {
-            $this->error("The tour doesn't have a valid location");
+            $this->error("The tour doesn't have a valid location.");
+        }
+
+        if ($this->tour->stops()->count() < 1) {
+            $this->error("The tour must have at least one stop.");
         }
 
         foreach ($this->tour->stops as $stop) {
@@ -99,7 +103,7 @@ class TourAuditor
             }
 
             if (empty($stop->location) || ! $stop->location->hasCoordinates()) {
-                $this->error("The stop \"{$stop->title}\"  doesn't have a valid location");
+                $this->error("The stop \"{$stop->title}\"  doesn't have a valid location.");
             }
         }
     }

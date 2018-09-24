@@ -23,6 +23,25 @@ class PublishToursTest extends TestCase
         $this->client = createUser('client');
 
         $this->tour = create('App\Tour', ['user_id' => $this->client->id]);
+
+        $stop = $this->tour->stops()->create(factory('App\TourStop')->make()->toArray());
+        $media = factory('App\Media')->create(['user_id' => $this->client->id]);
+
+        $this->tour->update(['main_image_id' => $media->id]);
+        $stop->update(['main_image_id' => $media->id]);
+
+        $this->tour->location()->delete();
+        $stop->location()->delete();
+
+        factory('App\Location')->create([
+            'locationable_type' => 'App\Tour',
+            'locationable_id' => $this->tour->id,
+        ]);
+
+        factory('App\Location')->create([
+            'locationable_type' => 'App\TourStop',
+            'locationable_id' => $this->tour->stops()->first()->id,
+        ]);
     }
 
     /**
@@ -98,19 +117,19 @@ class PublishToursTest extends TestCase
     {
         $admin = createUser('admin');
 
-        $tour = create('App\Tour', ['user_id' => $admin->id]);
+        $this->tour->update(['user_id' => $admin->id]);
         $this->loginAs($admin);
 
-        $this->assertCount(0, $tour->publishSubmissions);
-        $this->assertFalse($tour->isAwaitingApproval);
-        $this->assertFalse($tour->isPublished);
+        $this->assertCount(0, $this->tour->publishSubmissions);
+        $this->assertFalse($this->tour->isAwaitingApproval);
+        $this->assertFalse($this->tour->isPublished);
 
-        $this->putJson(route('cms.tours.publish', ['tour' => $tour]))
+        $this->putJson(route('cms.tours.publish', ['tour' => $this->tour]))
             ->assertStatus(200);
 
-        $this->assertFalse($tour->fresh()->isAwaitingApproval);
-        $this->assertTrue($tour->fresh()->isPublished);
-        $this->assertCount(1, $tour->fresh()->publishSubmissions);
+        $this->assertFalse($this->tour->fresh()->isAwaitingApproval);
+        $this->assertTrue($this->tour->fresh()->isPublished);
+        $this->assertCount(1, $this->tour->fresh()->publishSubmissions);
     }
 
     /** @test */

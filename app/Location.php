@@ -22,4 +22,14 @@ class Location extends Model
         'longitude' => 'float',
         'latitude' => 'float',
     ];
+
+    /**
+     * Determine if the location has coordinates.
+     *
+     * @return boolean
+     */
+    public function hasCoordinates()
+    {
+        return (! empty($this->longitude) && ! empty($this->latitude));
+    }
 }
