@@ -52,7 +52,11 @@ class TourController extends Controller
     public function show(Tour $tour)
     {
         if (! $tour->isPublished) {
-            throw new ModelNotFoundException('Tour not available');
+            if (! empty($tour->last_published_at)) {
+                // tour was published at one time, but it no longer available
+                throw new ModelNotFoundException('Tour no longer available.');
+            }
+            throw new ModelNotFoundException('Tour not available.');
         }
 
         return response()->json([
