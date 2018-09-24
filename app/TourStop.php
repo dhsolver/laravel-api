@@ -167,7 +167,7 @@ class TourStop extends Model
      */
     public function updateChoices($newChoices)
     {
-        if (!is_array($newChoices)) {
+        if (! is_array($newChoices)) {
             return false;
         }
 
