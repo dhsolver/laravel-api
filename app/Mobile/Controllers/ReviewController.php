@@ -2,28 +2,30 @@
 
 namespace App\Mobile\Controllers;
 
-use App\Review;
-use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
-use App\Mobile\Requests\CreateReviewRequest;
-use App\Tour;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use App\Mobile\Requests\CreateReviewRequest;
 use App\Mobile\Resources\ReviewResource;
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use App\Review;
+use App\Tour;
 
 class ReviewController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Display a paginated list of the Tours reviews.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Tour $tour)
     {
-        //
+        return ReviewResource::collection(
+            $tour->reviews()->latest()->paginate()
+        );
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Upsert a review for the Tour.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
@@ -51,10 +53,12 @@ class ReviewController extends Controller
      * @param  \App\Review  $review
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Review $review)
+    public function destroy(Tour $tour)
     {
-        if ($review->user_id != auth()->user()->id) {
-            // not authorized
+        if ($review = $tour->reviews()->byUser(auth()->user()->id)->first()) {
+            $review->delete();
         }
+
+        return $this->success('Your review has been removed.');
     }
 }

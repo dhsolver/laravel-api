@@ -93,4 +93,29 @@ class TourReviewsTest extends TestCase
 
         $this->assertCount(0, $this->tour->fresh()->reviews);
     }
+
+    /** @test */
+    public function a_user_can_delete_their_review()
+    {
+        $review = factory(Review::class)->create(['user_id' => $this->user->id]);
+
+        $this->assertCount(1, $this->tour->fresh()->reviews);
+
+        $this->deleteJson(route('mobile.reviews.destroy', ['tour' => $this->tour]))
+            ->assertStatus(200);
+
+        $this->assertCount(0, $this->tour->fresh()->reviews);
+    }
+
+    /** @test */
+    public function a_user_can_get_a_paginated_list_of_reviews_for_a_tour()
+    {
+        factory(Review::class, 30)->create();
+        factory(Review::class, 5)->create(['tour_id' => factory(Tour::class)->create()->id]);
+
+        $this->getJson(route('mobile.reviews', ['tour' => $this->tour]))
+            ->assertStatus(200)
+            ->assertJsonCount(15, 'data')
+            ->assertJsonFragment(['last_page' => 2, 'total' => 30]);
+    }
 }

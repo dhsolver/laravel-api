@@ -34,7 +34,9 @@ Route::namespace('App\Mobile\Controllers')->middleware(['jwt.auth', 'role:user|c
     Route::post('profile', 'ProfileController@update')->name('mobile.profile.update');
     Route::get('profile/{user}', 'ProfileController@show')->name('mobile.profile.show');
 
-    Route::post('tours/{tour}/review', 'ReviewController@store')->name('mobile.reviews.store');
+    Route::post('reviews/{tour}', 'ReviewController@store')->name('mobile.reviews.store');
+    Route::get('reviews/{tour}', 'ReviewController@index')->name('mobile.reviews');
+    Route::delete('reviews/{tour}', 'ReviewController@destroy')->name('mobile.reviews.destroy');
 });
 
 Route::namespace('App\Http\Controllers')->middleware(['jwt.auth', 'role:user|client|admin|superadmin'])->group(function () {
