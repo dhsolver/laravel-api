@@ -18,12 +18,13 @@ class ProfileResource extends JsonResource
             'name' => $this->name,
             'first_name' => $this->firstName,
             'last_name' => $this->lastName,
-            'role' => $this->role,
+            // 'role' => $this->role,
             'created_at' => $this->created_at->toDateTimeString(),
         ];
 
         if ($this->id === auth()->user()->id) {
             $data['email'] = $this->email;
+            $data['fb_id'] = $this->fb_id;
         }
 
         return $data;

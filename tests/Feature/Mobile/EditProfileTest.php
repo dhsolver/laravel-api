@@ -15,7 +15,7 @@ class EditProfileTest extends TestCase
     {
         $this->signIn('user');
 
-        $this->getJson(route('mobile.profile.user'))
+        $this->getJson(route('mobile.profile.show', ['user' => $this->signInUser]))
             ->assertStatus(200)
             ->assertJsonFragment(['name' => $this->signInUser->name])
             ->assertSee($this->signInUser->email);
@@ -30,8 +30,7 @@ class EditProfileTest extends TestCase
 
         $this->getJson(route('mobile.profile.show', ['user' => $otherUser]))
             ->assertStatus(200)
-            ->assertJsonFragment(['name' => $otherUser->name])
-            ->assertDontSee($otherUser->email);
+            ->assertJsonFragment(['name' => $otherUser->name]);
     }
 
     /** @test */
@@ -58,5 +57,30 @@ class EditProfileTest extends TestCase
         $this->postJson(route('mobile.profile.update', $data))
             ->assertStatus(200)
             ->assertJsonFragment(['email' => 'foo@bar.com']);
+    }
+
+    /** @test */
+    public function a_user_should_not_see_another_users_sensitive_info()
+    {
+        $otherUser = createUser('user');
+
+        $this->signIn('user');
+
+        $this->getJson(route('mobile.profile.show', ['user' => $otherUser]))
+            ->assertStatus(200)
+            ->assertJsonMissing(['email' => $otherUser->email])
+            ->assertJsonMissing(['fb_id' => $otherUser->fb_id]);
+    }
+
+    /** @test */
+    public function a_users_profile_should_contian_facebook_id()
+    {
+        $this->signIn('user');
+
+        $this->signInUser->update(['fb_id' => 12345]);
+
+        $this->getJson(route('mobile.profile.show', ['user' => $this->signInUser]))
+            ->assertStatus(200)
+            ->assertJsonFragment(['fb_id' => '12345']);
     }
 }

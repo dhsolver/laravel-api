@@ -2,7 +2,7 @@ swagger: '2.0'
 info:
   title: Junket API
   description: Private API for the wejunket.com mobile apps. 
-  version: 1.0.0
+  version: 1.0.1
 host: api.wejunket.com
 basePath: /mobile
 schemes:
@@ -21,8 +21,8 @@ paths:
     get:
       tags:
         - auth
-      summary: Profile
-      description: Get the logged in user's profile information.
+      summary: User Session
+      description: Get information about the logged in user.
       operationId: session
       produces:
         - application/json
@@ -328,6 +328,77 @@ paths:
         500:
           $ref: '#/responses/UnexpectedError'
 
+  /profile/{user_id}:
+    get:
+      tags:
+        - profile
+      summary: Profile (view)
+      description: Get a user's profile information.
+      operationId: getProfile
+      produces:
+        - application/json
+      parameters:
+        - $ref: '#/parameters/AuthToken'
+      security:
+        - Bearer: []
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/Profile'
+        400:
+          $ref: '#/responses/NoToken'
+        401:
+          $ref: '#/responses/Unauthroized'
+        404:
+          $ref: '#/responses/NotFound'
+        500:
+          $ref: '#/responses/UnexpectedError'
+          
+  /profile:
+    post:
+      tags:
+        - profile
+      summary: Profile (update)
+      description: Update the current user's profile.
+      operationId: updateProfile
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: user
+          description: The user to create.
+          schema:
+            required:
+              - name
+              - email
+            properties:
+              name:
+                type: string
+                description: The user's first and/or last name.
+                example: John Doe
+                maximum: 255
+              email:
+                type: string
+                example: client@test.com
+                description: The user's email address.
+                maximum: 255
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/Profile'
+        422:
+          $ref: '#/responses/ValidationError'
+        400:
+          $ref: '#/responses/NoToken'
+        401:
+          $ref: '#/responses/Unauthroized'
+        500:
+          $ref: '#/responses/UnexpectedError'
+
 parameters:
   AuthToken:
     in: header
@@ -391,6 +462,35 @@ responses:
           description: The error message.
     
 definitions:
+  Profile:
+    type: object
+    properties:
+      name:
+        type: string
+        description: The user's first and last name.
+        example: John Doe
+      first_name:
+        type: string
+        description: The user's first name.
+        example: John
+      last_name:
+        type: string
+        description: The user's last name.
+        example: Doe
+      email:
+        type: string
+        description: The user's email address. (Only shown for profile of the authenticated user)
+        example: user@test.com
+      fb_id:
+        type: string
+        description: The user's Facebook ID (Only shown for profile of the authenticated user)
+        example: 100000000059
+      created_at:
+        type: string
+        format: date-time
+        description: Timestamp of when the User registered.
+        example: '2018-07-21 13:53:20'
+        
   User:
     type: object
     properties:
@@ -413,6 +513,10 @@ definitions:
         type: string
         description: The user's email address.
         example: client@test.com
+      fb_id:
+        type: string
+        description: The user's Facebook ID (if authorized)
+        example: 100000000059
       role:
         type: string
         enum: [user, client, admin]

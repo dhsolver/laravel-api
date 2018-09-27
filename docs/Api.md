@@ -24,3 +24,12 @@ php artisan docs:generate
 ```
 
 This should display a success message and overwrite the docs/api.html documentation file.
+
+### Change Log
+
+v 1.0.1
+
+- fb_id field added to auth user response
+- Previous auth endpoint named 'Profile' changed to 'User Session'
+- Added view / edit user profile endpoints
+- Added a new Profile resource
