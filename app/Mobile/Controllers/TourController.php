@@ -8,6 +8,7 @@ use App\Mobile\Resources\TourResource;
 use App\Mobile\Resources\StopResource;
 use App\Mobile\Resources\TourRouteResource;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use App\Mobile\Resources\ReviewResource;
 
 class TourController extends Controller
 {
@@ -59,10 +60,13 @@ class TourController extends Controller
             throw new ModelNotFoundException('Tour not available.');
         }
 
+        $reviews = $tour->reviews()->whereNotNull('review')->with('user')->latest()->limit(5)->get();
+
         return response()->json([
             'tour' => new TourResource($tour),
             'stops' => StopResource::collection($tour->stops),
             'route' => TourRouteResource::collection($tour->route),
+            'latest_reviews' => ReviewResource::collection($reviews),
         ]);
     }
 

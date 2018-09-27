@@ -8,6 +8,7 @@ use Tests\Concerns\AttachJwtToken;
 use App\Tour;
 use App\Mobile\Resources\TourResource;
 use App\TourStop;
+use App\Review;
 
 class ViewToursTest extends TestCase
 {
@@ -99,5 +100,48 @@ class ViewToursTest extends TestCase
         $this->getJson('/mobile/tours')
             ->assertJsonCount(3, 'data')
             ->assertStatus(200);
+    }
+
+    /** @test */
+    public function a_tour_listing_should_contain_ratings()
+    {
+        factory(Tour::class, 3)->states('published')->create();
+
+        $this->signIn('user');
+
+        $this->getJson('/mobile/tours')
+            ->assertJsonFragment(['rating' => 0])
+            ->assertStatus(200);
+    }
+
+    /** @test */
+    public function tour_info_endpoint_should_show_the_latest_reviews()
+    {
+        $this->withoutExceptionHandling();
+
+        $this->signIn('user');
+
+        $tour = factory(Tour::class)->states('published')->create();
+
+        factory(Review::class, 3)->create(['tour_id' => $tour->id]);
+        $this->getJson('/mobile/tours/' . $tour->id)
+            ->assertStatus(200)
+            ->assertJsonCount(3, 'latest_reviews');
+    }
+
+    /** @test */
+    public function latest_reviews_should_only_contain_actual_reviews()
+    {
+        $this->withoutExceptionHandling();
+
+        $this->signIn('user');
+
+        $tour = factory(Tour::class)->states('published')->create();
+
+        factory(Review::class, 3)->create(['tour_id' => $tour->id]);
+        factory(Review::class)->create(['tour_id' => $tour->id, 'review' => null]);
+        $this->getJson('/mobile/tours/' . $tour->id)
+            ->assertStatus(200)
+            ->assertJsonCount(3, 'latest_reviews');
     }
 }
