@@ -37,3 +37,4 @@ v 1.0.1
 - Adding 'rating' field to Tours model
 - Added 'latest_reviews' collection to single tour endpoint
 - Added endpoint to paginate Tour's reviews
+- Added endpoint for user to change their password

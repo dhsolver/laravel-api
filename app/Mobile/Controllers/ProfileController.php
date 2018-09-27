@@ -7,6 +7,7 @@ use App\Mobile\Resources\ProfileResource;
 use App\User;
 use App\Http\Requests\UpdateProfileRequest;
 use App\Http\Controllers\Controller;
+use App\Mobile\Requests\UpdatePasswordRequest;
 
 class ProfileController extends Controller
 {
@@ -35,12 +36,14 @@ class ProfileController extends Controller
     }
 
     /**
-     * Get the current logged in user's profile.
+     * Change the user's profile.
      *
-     * @return \Illuminate\Http\Response
+     * @return void
      */
-    public function user()
+    public function password(UpdatePasswordRequest $request)
     {
-        return new ProfileResource(auth()->user());
+        auth()->user()->update(['password' => bcrypt($request->password)]);
+
+        return $this->success('Your password has been change.');
     }
 }

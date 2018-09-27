@@ -410,6 +410,48 @@ paths:
         500:
           $ref: '#/responses/UnexpectedError'
 
+  /profile/password:
+    post:
+      tags:
+        - profile
+      summary: Change Password
+      description: Update the current user's password.
+      operationId: changePassword
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: data
+          description: New password.
+          schema:
+            required:
+              - password
+              - password_confirmation
+            properties:
+              password:
+                type: string
+                example: secret
+                description: The user's password.
+                minimum: 6
+              password_confirmation:
+                type: string
+                example: secret
+                description: Confirmation of the user's password.
+                minimum: 6
+      responses:
+        200:
+          description: OK
+        422:
+          $ref: '#/responses/ValidationError'
+        400:
+          $ref: '#/responses/NoToken'
+        401:
+          $ref: '#/responses/Unauthroized'
+        500:
+          $ref: '#/responses/UnexpectedError'
+
   /reviews/{tour_id}:
     get:
       tags:

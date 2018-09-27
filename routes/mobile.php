@@ -30,8 +30,8 @@ Route::namespace('App\Mobile\Controllers')->middleware(['jwt.auth', 'role:user|c
     Route::post('stops/{stop}/track', 'ActivityController@stop');
     Route::post('device', 'DeviceController@store')->name('mobile.device.store');
 
-    // Route::get('profile', 'ProfileController@user')->name('mobile.profile.user');
     Route::post('profile', 'ProfileController@update')->name('mobile.profile.update');
+    Route::patch('profile/password', 'ProfileController@password')->name('mobile.profile.password');
     Route::get('profile/{user}', 'ProfileController@show')->name('mobile.profile.show');
 
     Route::get('reviews/{tour}', 'ReviewController@index')->name('mobile.reviews');

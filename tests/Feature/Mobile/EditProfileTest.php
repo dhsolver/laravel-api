@@ -5,6 +5,7 @@ namespace Tests\Feature\Mobile;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\Concerns\AttachJwtToken;
+use Hash;
 
 class EditProfileTest extends TestCase
 {
@@ -94,5 +95,21 @@ class EditProfileTest extends TestCase
         $this->getJson(route('mobile.profile.show', ['user' => $this->signInUser]))
             ->assertStatus(200)
             ->assertJsonFragment(['avatar_url' => "https://www.gravatar.com/avatar/$hash?s=2048&d=identicon&rating=g"]);
+    }
+
+    /** @test */
+    public function a_user_can_update_their_password()
+    {
+        $this->signIn('user');
+
+        $password = 'new password';
+
+        $this->patchJson('/mobile/profile/password', [
+            'password' => $password,
+            'password_confirmation' => $password
+        ])->assertStatus(200);
+
+        $this->assertTrue(Hash::check($password, $this->signInUser->fresh()->password));
+        $this->assertFalse(Hash::check('invalid', $this->signInUser->fresh()->password));
     }
 }
