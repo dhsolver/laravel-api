@@ -35,7 +35,7 @@ class User extends Authenticatable implements JWTSubject
      *
      * @var array
      */
-    protected $appends = ['role'];
+    protected $appends = ['role', 'avatarUrl'];
 
     /**
      * Set the guard name for the JWTSubject.
@@ -92,7 +92,7 @@ class User extends Authenticatable implements JWTSubject
      */
     public function getRoleClassObj($type = null)
     {
-        if (!$type) {
+        if (! $type) {
             $type = $this->role;
         }
 
@@ -215,10 +215,22 @@ class User extends Authenticatable implements JWTSubject
     {
         $names = explode(' ', $this->name, 2);
 
-        if (isset($names[1]) && !empty($names[1])) {
+        if (isset($names[1]) && ! empty($names[1])) {
             return $names[1];
         }
 
         return '';
+    }
+
+    /**
+     * Get the URL for the user's avatar.
+     *
+     * @return string
+     */
+    public function getAvatarUrlAttribute()
+    {
+        $hash = md5($this->email);
+
+        return "https://www.gravatar.com/avatar/$hash?s=2048&d=identicon&rating=g";
     }
 }

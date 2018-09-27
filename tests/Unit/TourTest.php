@@ -83,4 +83,13 @@ class TourTest extends TestCase
 
         $this->assertTrue($tour->fresh()->isPublished);
     }
+
+    /** @test */
+    public function it_has_a_rating()
+    {
+        $client = createUser('client');
+        $tour = create('App\Tour', ['user_id' => $client->id, 'rating' => 35]);
+
+        $this->assertEquals(35, $tour->rating);
+    }
 }

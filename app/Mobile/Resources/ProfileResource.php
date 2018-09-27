@@ -15,15 +15,18 @@ class ProfileResource extends JsonResource
     public function toArray($request)
     {
         $data = [
+            'id' => $this->id,
             'name' => $this->name,
             'first_name' => $this->firstName,
             'last_name' => $this->lastName,
-            'role' => $this->role,
+            // 'role' => $this->role,
             'created_at' => $this->created_at->toDateTimeString(),
+            'avatar_url' => $this->avatarUrl,
         ];
 
         if ($this->id === auth()->user()->id) {
             $data['email'] = $this->email;
+            $data['fb_id'] = $this->fb_id;
         }
 
         return $data;

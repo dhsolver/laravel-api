@@ -20,6 +20,7 @@ class UserSessionResource extends JsonResource
             'first_name' => $this->firstName,
             'last_name' => $this->lastName,
             'email' => $this->email,
+            'fb_id' => $this->fb_id,
             'role' => $this->role,
         ];
     }

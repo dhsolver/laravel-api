@@ -53,6 +53,7 @@ class Tour extends Model
      */
     protected $casts = [
         'has_prize' => 'bool',
+        'rating' => 'int',
     ];
 
     /**
@@ -179,7 +180,7 @@ class Tour extends Model
     /**
      * Get all the tour's stop routes.
      *
-     * @return void
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function stopRoutes()
     {
@@ -190,7 +191,7 @@ class Tour extends Model
     /**
      * Get the tours route.
      *
-     * @return void
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function route()
     {
@@ -206,6 +207,16 @@ class Tour extends Model
     public function activity()
     {
         return $this->morphMany(Activity::class, 'actionable');
+    }
+
+    /**
+     * Get the tour's reviews.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function reviews()
+    {
+        return $this->hasMany(\App\Review::class);
     }
 
     // **********************************************************

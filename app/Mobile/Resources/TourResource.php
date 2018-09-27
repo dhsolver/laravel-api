@@ -15,13 +15,13 @@ class TourResource extends JsonResource
     public function toArray($request)
     {
         $images = [];
-        if (!empty($this->image1)) {
+        if (! empty($this->image1)) {
             array_push($images, $this->image1->path);
         }
-        if (!empty($this->image2)) {
+        if (! empty($this->image2)) {
             array_push($images, $this->image2->path);
         }
-        if (!empty($this->image3)) {
+        if (! empty($this->image3)) {
             array_push($images, $this->image3->path);
         }
 
@@ -66,6 +66,8 @@ class TourResource extends JsonResource
             'intro_audio' => $this->introAudio ? $this->introAudio->path : null,
             'background_audio' => $this->backgroundAudio ? $this->backgroundAudio->path : null,
 
+            'rating' => $this->rating,
+
             'created_at' => $this->created_at->toDateTimeString(),
             'updated_at' => $this->updated_at ? $this->updated_at->toDateTimeString() : null,
             'published_at' => $this->published_at ? $this->published_at->toDateTimeString() : null,
@@ -74,7 +76,7 @@ class TourResource extends JsonResource
         if (isset($this->distance)) {
             $data['distance'] = $this->distance;
         }
-        
+
         return $data;
     }
 }

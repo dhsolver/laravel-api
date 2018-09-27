@@ -30,9 +30,13 @@ Route::namespace('App\Mobile\Controllers')->middleware(['jwt.auth', 'role:user|c
     Route::post('stops/{stop}/track', 'ActivityController@stop');
     Route::post('device', 'DeviceController@store')->name('mobile.device.store');
 
-    Route::get('profile', 'ProfileController@user')->name('mobile.profile.user');
     Route::post('profile', 'ProfileController@update')->name('mobile.profile.update');
-    Route::get('{user}', 'ProfileController@show')->name('mobile.profile.show');
+    Route::patch('profile/password', 'ProfileController@password')->name('mobile.profile.password');
+    Route::get('profile/{user}', 'ProfileController@show')->name('mobile.profile.show');
+
+    Route::get('reviews/{tour}', 'ReviewController@index')->name('mobile.reviews');
+    Route::post('reviews/{tour}', 'ReviewController@store')->name('mobile.reviews.store');
+    Route::delete('reviews/{tour}', 'ReviewController@destroy')->name('mobile.reviews.destroy');
 });
 
 Route::namespace('App\Http\Controllers')->middleware(['jwt.auth', 'role:user|client|admin|superadmin'])->group(function () {
