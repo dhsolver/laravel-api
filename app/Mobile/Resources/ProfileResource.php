@@ -20,6 +20,7 @@ class ProfileResource extends JsonResource
             'last_name' => $this->lastName,
             // 'role' => $this->role,
             'created_at' => $this->created_at->toDateTimeString(),
+            'avatar_url' => $this->avatarUrl,
         ];
 
         if ($this->id === auth()->user()->id) {

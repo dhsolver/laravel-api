@@ -477,6 +477,11 @@ definitions:
         type: string
         description: The user's last name.
         example: Doe
+      avatar_url:
+        type: string
+        description: |
+        The URL for the user's avatar image.  This is just generating a Gravatar URL.  Read more here: https://en.gravatar.com/site/implement/
+        example: 'https://www.gravatar.com/avatar/387ec13e14f96854ed64aca99a477c70?s=2048&d=identicon&rating=g'
       email:
         type: string
         description: The user's email address. (Only shown for profile of the authenticated user)
