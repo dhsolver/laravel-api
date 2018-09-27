@@ -74,7 +74,7 @@ class TourController extends Controller
     public function all()
     {
         return TourResource::collection(
-            Tour::published()->get()
+            Tour::published()->paginate(999999)
         );
     }
 }
