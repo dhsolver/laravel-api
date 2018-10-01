@@ -664,6 +664,10 @@ definitions:
         type: string
         description: The user's Facebook ID (Only shown for profile of the authenticated user)
         example: 100000000059
+      subscribe_override:
+        type: boolean
+        description: A flag set only by the admin to enable site-wide subscription for the user.
+        example: false
       created_at:
         type: string
         format: date-time
@@ -705,6 +709,20 @@ definitions:
           client - Tour creator, has access to the CMS but can also be a mobile user.
           admin - System admin, has access to the Admin Panel but can also be a mobile user. 
         example: user
+      subscribe_override:
+        type: boolean
+        description: A flag set only by the admin to enable site-wide subscription for the user.
+        example: false
+      avatar_url:
+        type: string
+        description: |
+          The URL for the user's avatar image.  This is just generating a Gravatar URL.  Read more here: https://en.gravatar.com/site/implement/
+        example: 'https://www.gravatar.com/avatar/387ec13e14f96854ed64aca99a477c70?s=2048&d=identicon&rating=g'
+      created_at:
+        type: string
+        format: date-time
+        description: Timestamp of when the User registered.
+        example: '2018-07-21 13:53:20'
         
   Tour:
     type: object
@@ -726,10 +744,12 @@ definitions:
         type: string
         description: The name of the tour
         example: San Fransico Ghost Tour
+        maximum: 100
       description:
         type: string
         description: The full text description of the Tour.
         example: Explore the haunted history of Williamsburg with this guided audio tour app from www.colonialghosts.com ! Listen to the tour on your mobile device with a friend, or all alone...if you dare!
+        maximum: 65535
       pricing_type:
         type: string
         format: enum
@@ -737,6 +757,7 @@ definitions:
           - premium
         description: Pricing model for the Tour, either free or premium (paid).
         example: premium
+        maximum: 10
       type:
         type: string
         format: enum
@@ -782,10 +803,12 @@ definitions:
         type: string
         description: The details and description of the Tour prize.
         example: $10 Giftcard
+        maximum: 255
       prize_instructions:
         type: string
         description: The instructions for how to redeem the Tour prize.
         example: Goto the local store to redeem.
+        maximum: 255
       trophy_image:
         type: string
         description: Custom trophy image.
@@ -799,6 +822,7 @@ definitions:
         type: string
         description: The message to be displayed when a User starts the Tour.
         example: Welcome to Ghost Tour
+        maximum: 1000
       start_video_url:
         type: string
         description: The Youtube video URL of the video that is to be displayed when a User starts the Tour.
@@ -816,6 +840,7 @@ definitions:
         type: string
         description: The message to be displayed when a User completes the Tour.
         example: Well done!
+        maximum: 1000
       end_video_url:
         type: string
         description: The Youtube video URL of the video that is to be displayed when a User completes the Tour.
@@ -855,6 +880,11 @@ definitions:
         description: |
           The rating value of the review.  This is based on a 5 star rating system, but uses whole numbers instead of decimals.  For example 25 = 2.5 stars
         example: 25
+      in_app_id:
+        type: string
+        maximum: 255
+        description: The unique ID used for app store purchases for the Tour.
+        example: com.wejunket.tour01
       created_at:
         type: string
         format: date-time
@@ -901,6 +931,7 @@ definitions:
         type: string
         description: The title of the Stop.
         example: Tyler Garden
+        maximum: 255
       description:
         type: string
         description: The description of the Stop.
@@ -936,14 +967,17 @@ definitions:
         type: string
         description: The question to prompt the User to allow access to the next stop on the Tour.  Only for 'adventure' Tours.
         example: 'What did you see?'
+        maximum: 500
       question_answer:
         type: string
         description: The correct answer to the question (non multiple choice).  Only for 'adventure' Tours.
         example: A Ghost
+        maximum: 500
       question_success:
         type: string
         description: The message to prompt the User when the question is answered successfully.  Only for 'adventure' Tours.
         example: Correct!  Proceed to the next stop.
+        maximum: 500
       next_stop:
         type: integer
         format: int32
