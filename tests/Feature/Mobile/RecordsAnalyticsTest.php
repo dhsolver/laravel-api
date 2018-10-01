@@ -11,6 +11,7 @@ use App\DeviceType;
 use App\Os;
 use App\Device;
 use App\Activity;
+use Carbon\Carbon;
 
 class RecordsAnalyticsTest extends TestCase
 {
@@ -101,10 +102,14 @@ class RecordsAnalyticsTest extends TestCase
         $deviceId = $this->createDevice();
 
         $this->postJson("/mobile/tours/{$this->tour->id}/track", [
-            'action' => 'like',
-            'device_id' => $deviceId,
-        ])
-            ->assertStatus(200);
+            'activity' => [
+                [
+                    'action' => 'like',
+                    'device_id' => $deviceId,
+                    'timestamp' => strtotime('now'),
+                ],
+            ],
+        ])->assertStatus(200);
 
         $this->assertCount(1, Activity::all());
         $this->assertCount(1, $this->tour->fresh()->activity);
@@ -120,12 +125,67 @@ class RecordsAnalyticsTest extends TestCase
         $stop = $this->tour->stops()->first();
 
         $this->postJson("/mobile/stops/{$stop->id}/track", [
-            'action' => 'like',
-            'device_id' => $deviceId,
-        ])
-            ->assertStatus(200);
+            'activity' => [
+                [
+                    'action' => 'like',
+                    'device_id' => $deviceId,
+                    'timestamp' => strtotime('now'),
+                ],
+            ],
+        ])->assertStatus(200);
 
         $this->assertCount(1, Activity::all());
         $this->assertCount(1, $stop->fresh()->activity);
+    }
+
+    /** @test */
+    public function tracking_updates_must_have_a_timestamp()
+    {
+        $this->withoutExceptionHandling();
+
+        $deviceId = $this->createDevice();
+
+        $time = strtotime('yesterday');
+
+        $this->postJson("/mobile/tours/{$this->tour->id}/track", [
+            'activity' => [
+                [
+                    'action' => 'like',
+                    'device_id' => $deviceId,
+                    'timestamp' => $time
+                ],
+            ],
+        ])->assertStatus(200);
+
+        $item = Activity::first();
+        $this->assertEquals(Carbon::createFromTimestampUTC($time)->toDateTimeString(), $item->created_at);
+    }
+
+    /** @test */
+    public function tracking_endpoints_can_submit_multiple_entries_at_once()
+    {
+        $this->withoutExceptionHandling();
+
+        $deviceId = $this->createDevice();
+
+        $stop = $this->tour->stops()->first();
+
+        $this->postJson("/mobile/stops/{$stop->id}/track", [
+            'activity' => [
+                [
+                    'action' => 'start',
+                    'device_id' => $deviceId,
+                    'timestamp' => strtotime('yesterday'),
+                ],
+                [
+                    'action' => 'stop',
+                    'device_id' => $deviceId,
+                    'timestamp' => strtotime('now'),
+                ],
+            ],
+        ])->assertStatus(200);
+
+        $this->assertCount(2, Activity::all());
+        $this->assertCount(2, $stop->fresh()->activity);
     }
 }
