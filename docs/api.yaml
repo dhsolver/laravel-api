@@ -570,6 +570,138 @@ paths:
         500:
           $ref: '#/responses/UnexpectedError'
 
+  /device:
+    post:
+      tags:
+        - analytics
+      summary: Store device
+      description: Store user device information and get device tracking ID.
+      operationId: trackDevice
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - $ref: '#/parameters/AuthToken'
+        - in: body
+          type: object
+          required: true
+          description: The user's device data.
+          schema:
+            required:
+              - device_udid
+              - os
+              - type
+            properties:
+              device_udid:
+                type: string
+                description: The user device's unique identifier.
+                example: 2b6f0cc904d137be2e1730235f5664094b831186
+              os:
+                type: string
+                enum: [ios, android, windows, linux, mac, other]
+                description: The operating system of the device.
+                example: ios
+              type:
+                type: string
+                description: The type of device.
+                enum: [phone, tablet, web, mobile_web, unknown]
+                example: phone
+      responses:
+        200:
+          description: OK
+          type: object
+          schema:
+            properties:
+              device_uuid:
+                type: string
+                description: The device's unique ID in the backend.
+                example: a7388bf0-c596-11e8-aa6c-b56b5a718890
+        422:
+          $ref: '#/responses/ValidationError'
+        400:
+          $ref: '#/responses/NoToken'
+        401:
+          $ref: '#/responses/Unauthroized'
+        500:
+          $ref: '#/responses/UnexpectedError'
+  
+  /tours/{tour_id}/track:
+    post:
+      tags:
+        - analytics
+      summary: Track Tour Activity
+      description: Track users activity for a given tour. 
+      operationId: trackTour
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - $ref: '#/parameters/AuthToken'
+        - in: path
+          name: tour_id
+          description: ID of the desired Tour
+          required: true
+          type: integer
+          format: int64
+        - in: body
+          name: activity
+          required: true
+          schema:
+            type: array
+            items:
+                $ref: '#/definitions/Activity'
+      responses:
+        200:
+          description: OK
+        422:
+          $ref: '#/responses/ValidationError'
+        400:
+          $ref: '#/responses/NoToken'
+        401:
+          $ref: '#/responses/Unauthroized'
+        500:
+          $ref: '#/responses/UnexpectedError'
+  
+  /stops/{stop_id}/track:
+    post:
+      tags:
+        - analytics
+      summary: Track Stop Activity
+      description: Track users activity for a given stop. 
+      operationId: trackStop
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - $ref: '#/parameters/AuthToken'
+        - in: path
+          name: stop_id
+          description: ID of the desired Stop
+          required: true
+          type: integer
+          format: int64
+        - in: body
+          name: activity
+          required: true
+          schema:
+            type: array
+            items:
+                $ref: '#/definitions/Activity'
+      responses:
+        200:
+          description: OK
+        422:
+          $ref: '#/responses/ValidationError'
+        400:
+          $ref: '#/responses/NoToken'
+        401:
+          $ref: '#/responses/Unauthroized'
+        500:
+          $ref: '#/responses/UnexpectedError'
+  
 parameters:
   AuthToken:
     in: header
@@ -633,6 +765,28 @@ responses:
           description: The error message.
     
 definitions:
+  Activity: 
+    type: object
+    required:
+      - action
+      - device_id
+      - timestamp
+    properties:
+      action:
+        type: string
+        enum: [download, start, stop, share, like visit]
+        description: The action to record.
+        example: start
+      device_id:
+        type: string
+        description: Device identifier assigned from the backend.
+        example: a7388bf0-c596-11e8-aa6c-b56b5a718890
+      timestamp:
+        type: integer
+        format: int32
+        description: UTC UNIX timestamp of when the action occurred.
+        example: 1538411257
+        
   Profile:
     type: object
     properties:

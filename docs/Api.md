@@ -43,3 +43,5 @@ v 1.0.2
 - Added subscribe_override boolean field to user profile model
 - Added created_at, avatar_url, subscribe_override fields to the user session model (to match profile)
 - Added in_app_id to Tour model
+- Added analytics endpoints for tracking tour and stop activity
+
