@@ -663,7 +663,7 @@ paths:
           schema:
             type: array
             items:
-                $ref: '#/definitions/Activity'
+                $ref: '#/definitions/TourActivity'
       responses:
         200:
           description: OK
@@ -701,7 +701,7 @@ paths:
           schema:
             type: array
             items:
-                $ref: '#/definitions/Activity'
+                $ref: '#/definitions/StopActivity'
       responses:
         200:
           description: OK
@@ -777,7 +777,29 @@ responses:
           description: The error message.
     
 definitions:
-  Activity: 
+  StopActivity: 
+    type: object
+    required:
+      - action
+      - device_id
+      - timestamp
+    properties:
+      action:
+        type: string
+        enum: [start, stop, share, like, visit]
+        description: The action to record.
+        example: start
+      device_id:
+        type: string
+        description: Device identifier assigned from the backend.
+        example: a7388bf0-c596-11e8-aa6c-b56b5a718890
+      timestamp:
+        type: integer
+        format: int32
+        description: UTC UNIX timestamp of when the action occurred.
+        example: 1538411257
+        
+  TourActivity: 
     type: object
     required:
       - action
