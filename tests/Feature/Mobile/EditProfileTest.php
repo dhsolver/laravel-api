@@ -112,4 +112,16 @@ class EditProfileTest extends TestCase
         $this->assertTrue(Hash::check($password, $this->signInUser->fresh()->password));
         $this->assertFalse(Hash::check('invalid', $this->signInUser->fresh()->password));
     }
+
+    /** @test */
+    public function a_profile_should_contain_a_subscribe_override_flag()
+    {
+        $this->signIn('user');
+
+        $this->signInUser->update(['subscribe_override' => true]);
+
+        $this->getJson(route('mobile.profile.show', ['user' => $this->signInUser]))
+            ->assertStatus(200)
+            ->assertJsonFragment(['subscribe_override' => true]);
+    }
 }

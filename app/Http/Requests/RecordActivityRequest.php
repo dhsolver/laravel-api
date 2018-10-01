@@ -25,8 +25,10 @@ class RecordActivityRequest extends FormRequest
     public function rules()
     {
         return [
-            'device_id' => 'required|exists:devices,id',
-            'action' => 'required|in:' . implode(',', Action::all()),
+            'activity' => 'array',
+            'activity.*.device_id' => 'required|exists:devices,id',
+            'activity.*.action' => 'required|in:' . implode(',', Action::all()),
+            'activity.*.timestamp' => 'required|date_format:U',
         ];
     }
 }

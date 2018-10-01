@@ -2,7 +2,7 @@ swagger: '2.0'
 info:
   title: Junket API
   description: Private API for the wejunket.com mobile apps. 
-  version: 1.0.1
+  version: 1.0.2
 host: api.wejunket.com
 basePath: /mobile
 schemes:
@@ -255,6 +255,12 @@ paths:
           description: 'Coordinates to search for nearby tours.  Format: lat,lon (optional)'
           type: string
           example: '25.811481872869393,-80.13444900512695'
+        - in: query
+          name: debug
+          required: false
+          description: Debug mode flag. This will include the current logged in users unpublished tours in the listing.
+          type: boolean
+          example: 1
       security:
         - Bearer: []
       responses:
@@ -298,6 +304,12 @@ paths:
           required: true
           type: integer
           format: int64
+        - in: query
+          name: debug
+          required: false
+          description: Debug mode flag. This will allow viewing the current logged in users unpublished tours.
+          type: boolean
+          example: 1
       security:
         - Bearer: []
       responses:
@@ -570,6 +582,138 @@ paths:
         500:
           $ref: '#/responses/UnexpectedError'
 
+  /device:
+    post:
+      tags:
+        - analytics
+      summary: Store device
+      description: Store user device information and get device tracking ID.
+      operationId: trackDevice
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - $ref: '#/parameters/AuthToken'
+        - in: body
+          type: object
+          required: true
+          description: The user's device data.
+          schema:
+            required:
+              - device_udid
+              - os
+              - type
+            properties:
+              device_udid:
+                type: string
+                description: The user device's unique identifier.
+                example: 2b6f0cc904d137be2e1730235f5664094b831186
+              os:
+                type: string
+                enum: [ios, android, windows, linux, mac, other]
+                description: The operating system of the device.
+                example: ios
+              type:
+                type: string
+                description: The type of device.
+                enum: [phone, tablet, web, mobile_web, unknown]
+                example: phone
+      responses:
+        200:
+          description: OK
+          type: object
+          schema:
+            properties:
+              device_uuid:
+                type: string
+                description: The device's unique ID in the backend.
+                example: a7388bf0-c596-11e8-aa6c-b56b5a718890
+        422:
+          $ref: '#/responses/ValidationError'
+        400:
+          $ref: '#/responses/NoToken'
+        401:
+          $ref: '#/responses/Unauthroized'
+        500:
+          $ref: '#/responses/UnexpectedError'
+  
+  /tours/{tour_id}/track:
+    post:
+      tags:
+        - analytics
+      summary: Track Tour Activity
+      description: Track users activity for a given tour. 
+      operationId: trackTour
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - $ref: '#/parameters/AuthToken'
+        - in: path
+          name: tour_id
+          description: ID of the desired Tour
+          required: true
+          type: integer
+          format: int64
+        - in: body
+          name: activity
+          required: true
+          schema:
+            type: array
+            items:
+                $ref: '#/definitions/TourActivity'
+      responses:
+        200:
+          description: OK
+        422:
+          $ref: '#/responses/ValidationError'
+        400:
+          $ref: '#/responses/NoToken'
+        401:
+          $ref: '#/responses/Unauthroized'
+        500:
+          $ref: '#/responses/UnexpectedError'
+  
+  /stops/{stop_id}/track:
+    post:
+      tags:
+        - analytics
+      summary: Track Stop Activity
+      description: Track users activity for a given stop. 
+      operationId: trackStop
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - $ref: '#/parameters/AuthToken'
+        - in: path
+          name: stop_id
+          description: ID of the desired Stop
+          required: true
+          type: integer
+          format: int64
+        - in: body
+          name: activity
+          required: true
+          schema:
+            type: array
+            items:
+                $ref: '#/definitions/StopActivity'
+      responses:
+        200:
+          description: OK
+        422:
+          $ref: '#/responses/ValidationError'
+        400:
+          $ref: '#/responses/NoToken'
+        401:
+          $ref: '#/responses/Unauthroized'
+        500:
+          $ref: '#/responses/UnexpectedError'
+  
 parameters:
   AuthToken:
     in: header
@@ -633,6 +777,50 @@ responses:
           description: The error message.
     
 definitions:
+  StopActivity: 
+    type: object
+    required:
+      - action
+      - device_id
+      - timestamp
+    properties:
+      action:
+        type: string
+        enum: [start, stop, share, like, visit]
+        description: The action to record.
+        example: start
+      device_id:
+        type: string
+        description: Device identifier assigned from the backend.
+        example: a7388bf0-c596-11e8-aa6c-b56b5a718890
+      timestamp:
+        type: integer
+        format: int32
+        description: UTC UNIX timestamp of when the action occurred.
+        example: 1538411257
+        
+  TourActivity: 
+    type: object
+    required:
+      - action
+      - device_id
+      - timestamp
+    properties:
+      action:
+        type: string
+        enum: [download, start, stop, share, like, visit]
+        description: The action to record.
+        example: start
+      device_id:
+        type: string
+        description: Device identifier assigned from the backend.
+        example: a7388bf0-c596-11e8-aa6c-b56b5a718890
+      timestamp:
+        type: integer
+        format: int32
+        description: UTC UNIX timestamp of when the action occurred.
+        example: 1538411257
+        
   Profile:
     type: object
     properties:
@@ -664,6 +852,10 @@ definitions:
         type: string
         description: The user's Facebook ID (Only shown for profile of the authenticated user)
         example: 100000000059
+      subscribe_override:
+        type: boolean
+        description: A flag set only by the admin to enable site-wide subscription for the user.
+        example: false
       created_at:
         type: string
         format: date-time
@@ -705,6 +897,20 @@ definitions:
           client - Tour creator, has access to the CMS but can also be a mobile user.
           admin - System admin, has access to the Admin Panel but can also be a mobile user. 
         example: user
+      subscribe_override:
+        type: boolean
+        description: A flag set only by the admin to enable site-wide subscription for the user.
+        example: false
+      avatar_url:
+        type: string
+        description: |
+          The URL for the user's avatar image.  This is just generating a Gravatar URL.  Read more here: https://en.gravatar.com/site/implement/
+        example: 'https://www.gravatar.com/avatar/387ec13e14f96854ed64aca99a477c70?s=2048&d=identicon&rating=g'
+      created_at:
+        type: string
+        format: date-time
+        description: Timestamp of when the User registered.
+        example: '2018-07-21 13:53:20'
         
   Tour:
     type: object
@@ -726,10 +932,12 @@ definitions:
         type: string
         description: The name of the tour
         example: San Fransico Ghost Tour
+        maximum: 100
       description:
         type: string
         description: The full text description of the Tour.
         example: Explore the haunted history of Williamsburg with this guided audio tour app from www.colonialghosts.com ! Listen to the tour on your mobile device with a friend, or all alone...if you dare!
+        maximum: 65535
       pricing_type:
         type: string
         format: enum
@@ -737,6 +945,7 @@ definitions:
           - premium
         description: Pricing model for the Tour, either free or premium (paid).
         example: premium
+        maximum: 10
       type:
         type: string
         format: enum
@@ -782,10 +991,12 @@ definitions:
         type: string
         description: The details and description of the Tour prize.
         example: $10 Giftcard
+        maximum: 255
       prize_instructions:
         type: string
         description: The instructions for how to redeem the Tour prize.
         example: Goto the local store to redeem.
+        maximum: 255
       trophy_image:
         type: string
         description: Custom trophy image.
@@ -799,6 +1010,7 @@ definitions:
         type: string
         description: The message to be displayed when a User starts the Tour.
         example: Welcome to Ghost Tour
+        maximum: 1000
       start_video_url:
         type: string
         description: The Youtube video URL of the video that is to be displayed when a User starts the Tour.
@@ -816,6 +1028,7 @@ definitions:
         type: string
         description: The message to be displayed when a User completes the Tour.
         example: Well done!
+        maximum: 1000
       end_video_url:
         type: string
         description: The Youtube video URL of the video that is to be displayed when a User completes the Tour.
@@ -855,6 +1068,11 @@ definitions:
         description: |
           The rating value of the review.  This is based on a 5 star rating system, but uses whole numbers instead of decimals.  For example 25 = 2.5 stars
         example: 25
+      in_app_id:
+        type: string
+        maximum: 255
+        description: The unique ID used for app store purchases for the Tour.
+        example: com.wejunket.tour01
       created_at:
         type: string
         format: date-time
@@ -901,6 +1119,7 @@ definitions:
         type: string
         description: The title of the Stop.
         example: Tyler Garden
+        maximum: 255
       description:
         type: string
         description: The description of the Stop.
@@ -936,14 +1155,17 @@ definitions:
         type: string
         description: The question to prompt the User to allow access to the next stop on the Tour.  Only for 'adventure' Tours.
         example: 'What did you see?'
+        maximum: 500
       question_answer:
         type: string
         description: The correct answer to the question (non multiple choice).  Only for 'adventure' Tours.
         example: A Ghost
+        maximum: 500
       question_success:
         type: string
         description: The message to prompt the User when the question is answered successfully.  Only for 'adventure' Tours.
         example: Correct!  Proceed to the next stop.
+        maximum: 500
       next_stop:
         type: integer
         format: int32

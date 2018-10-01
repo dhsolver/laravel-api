@@ -50,7 +50,7 @@ trait IsUserRole
 
     protected function appendAttributesToRoleModel()
     {
-        $this->append(['name', 'email', 'role', 'fb_id']);
+        $this->append(['name', 'email', 'role', 'fb_id', 'subscribe_override']);
     }
 
     /**
@@ -112,7 +112,7 @@ trait IsUserRole
         $role_attributes = array_intersect_key($this->attributes, array_flip($this->fillable));
         $user_attributes = array_diff_key($this->attributes, array_flip($this->fillable));
 
-        if ($this->id && (!isset($options['create']) || !$options['create'])) {
+        if ($this->id && (! isset($options['create']) || ! $options['create'])) {
             $user = $this->user;
             $user->update($user_attributes);
         } else {
@@ -122,7 +122,7 @@ trait IsUserRole
             $user->assignRole($this->getRoleType());
         }
 
-        if (!$user) {
+        if (! $user) {
             throw new \Exception('Unable to create user from role model.');
         }
 
@@ -163,5 +163,10 @@ trait IsUserRole
     public function getFbIdAttribute()
     {
         return $this->user->fb_id;
+    }
+
+    public function getSubscribeOverrideAttribute()
+    {
+        return $this->user->subscribe_override;
     }
 }

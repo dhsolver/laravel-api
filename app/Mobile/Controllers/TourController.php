@@ -37,7 +37,7 @@ class TourController extends Controller
         }
 
         return TourResource::collection(
-            Tour::published()
+            Tour::published(request()->debug)
                 ->distanceFrom($lat, $lon)
                 ->search(request()->search)
                 ->paginate()
@@ -52,7 +52,7 @@ class TourController extends Controller
      */
     public function show(Tour $tour)
     {
-        if (! $tour->isPublished) {
+        if (! $tour->isPublished && ! (request()->debug && $tour->user_id == auth()->user()->id)) {
             if (! empty($tour->last_published_at)) {
                 // tour was published at one time, but it no longer available
                 throw new ModelNotFoundException('Tour no longer available.');
@@ -78,7 +78,7 @@ class TourController extends Controller
     public function all()
     {
         return TourResource::collection(
-            Tour::published()->paginate(999999)
+            Tour::published(request()->debug)->paginate(999999)
         );
     }
 }

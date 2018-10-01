@@ -18,7 +18,7 @@ class User extends Authenticatable implements JWTSubject
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password', 'fb_id', 'fb_token',
+        'name', 'email', 'password', 'fb_id', 'fb_token', 'subscribe_override'
     ];
 
     /**
@@ -43,6 +43,13 @@ class User extends Authenticatable implements JWTSubject
      * @var string
      */
     protected $guard_name = 'api';
+
+    /**
+     * The attributes that should be specifically cast.
+     *
+     * @var array
+     */
+    protected $casts = ['subscribe_override' => 'bool'];
 
     /**
      * Get the identifier that will be stored in the subject claim of the JWT.

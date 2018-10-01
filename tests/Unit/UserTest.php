@@ -35,4 +35,14 @@ class UserTest extends TestCase
 
         $this->assertInstanceOf('App\Client', $client->user->type);
     }
+
+    /** @test */
+    public function a_user_can_have_a_subscribe_override_setting()
+    {
+        $user = createUser('user');
+
+        $user->update(['subscribe_override' => true]);
+
+        $this->assertTrue($user->subscribe_override);
+    }
 }
