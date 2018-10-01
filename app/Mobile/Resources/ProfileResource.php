@@ -27,6 +27,7 @@ class ProfileResource extends JsonResource
         if ($this->id === auth()->user()->id) {
             $data['email'] = $this->email;
             $data['fb_id'] = $this->fb_id;
+            $data['subscribe_override'] = $this->subscribe_override;
         }
 
         return $data;

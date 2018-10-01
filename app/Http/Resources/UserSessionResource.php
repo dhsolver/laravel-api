@@ -22,6 +22,9 @@ class UserSessionResource extends JsonResource
             'email' => $this->email,
             'fb_id' => $this->fb_id,
             'role' => $this->role,
+            'created_at' => $this->created_at->toDateTimeString(),
+            'avatar_url' => $this->avatarUrl,
+            'subscribe_override' => $this->subscribe_override,
         ];
     }
 }
