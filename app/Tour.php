@@ -566,11 +566,19 @@ class Tour extends Model
     /**
      * Scope to only show published Tours.
      *
-     * @param [type] $query
-     * @return void
+     * @param Illuminate\Database\Query\Builder $query
+     * @param boolean $debug
+     * @return Illuminate\Database\Query\Builder
      */
-    public function scopePublished($query)
+    public function scopePublished($query, $debug = false)
     {
+        if ($debug) {
+            return $query->where(function ($q) {
+                return $q->whereNotNull('published_at')
+                    ->orWhere('user_id', auth()->user()->id);
+            });
+        }
+
         return $query->whereNotNull('published_at');
     }
 }

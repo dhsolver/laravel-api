@@ -255,6 +255,12 @@ paths:
           description: 'Coordinates to search for nearby tours.  Format: lat,lon (optional)'
           type: string
           example: '25.811481872869393,-80.13444900512695'
+        - in: query
+          name: debug
+          required: false
+          description: Debug mode flag. This will include the current logged in users unpublished tours in the listing.
+          type: boolean
+          example: 1
       security:
         - Bearer: []
       responses:
@@ -298,6 +304,12 @@ paths:
           required: true
           type: integer
           format: int64
+        - in: query
+          name: debug
+          required: false
+          description: Debug mode flag. This will allow viewing the current logged in users unpublished tours.
+          type: boolean
+          example: 1
       security:
         - Bearer: []
       responses:

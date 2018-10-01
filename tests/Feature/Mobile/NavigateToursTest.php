@@ -10,7 +10,7 @@ use App\Mobile\Resources\TourResource;
 use App\TourStop;
 use App\Review;
 
-class ViewToursTest extends TestCase
+class NavigateToursTest extends TestCase
 {
     use DatabaseMigrations, AttachJwtToken;
 
@@ -155,5 +155,47 @@ class ViewToursTest extends TestCase
         $this->getJson('/mobile/tours/' . $tour->id)
             ->assertStatus(200)
             ->assertJsonFragment(['in_app_id' => $tour->in_app_id]);
+    }
+
+    /** @test */
+    public function a_user_cannot_see_unpublished_tours()
+    {
+        $this->signIn('user');
+
+        $tour = factory(Tour::class)->create([
+            'title' => 'Test Tour',
+        ]);
+
+        $this->getJson("/mobile/tours/{$tour->id}")
+            ->assertStatus(404);
+    }
+
+    /** @test */
+    public function a_user_can_view_one_of_their_unpublished_tours_if_debug_is_set()
+    {
+        $this->signIn('user');
+
+        $tour = factory(Tour::class)->create([
+            'title' => 'Test Tour',
+            'user_id' => $this->signInUser->id,
+        ]);
+
+        $this->getJson("/mobile/tours/{$tour->id}?debug=1")
+            ->assertStatus(200);
+    }
+
+    /** @test */
+    public function a_user_can_see_thier_unpublished_tours_in_the_tour_listing_if_debug_is_set()
+    {
+        $this->signIn('user');
+
+        $tour = factory(Tour::class)->create([
+            'title' => 'Test Tour',
+            'user_id' => $this->signInUser->id,
+        ]);
+
+        $this->getJson('/mobile/tours?debug=1')
+            ->assertJsonFragment(['title' => 'Test Tour'])
+            ->assertStatus(200);
     }
 }

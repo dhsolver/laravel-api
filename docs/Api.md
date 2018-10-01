@@ -44,4 +44,4 @@ v 1.0.2
 - Added created_at, avatar_url, subscribe_override fields to the user session model (to match profile)
 - Added in_app_id to Tour model
 - Added analytics endpoints for tracking tour and stop activity
-
+- Added debug query parameter for tours (allows you to see the current logged in users unpublished tours)
