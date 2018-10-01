@@ -144,4 +144,16 @@ class ViewToursTest extends TestCase
             ->assertStatus(200)
             ->assertJsonCount(3, 'latest_reviews');
     }
+
+    /** @test */
+    public function tour_resource_should_have_in_app_ids()
+    {
+        $this->signIn('user');
+
+        $tour = factory(Tour::class)->states('published')->create();
+
+        $this->getJson('/mobile/tours/' . $tour->id)
+            ->assertStatus(200)
+            ->assertJsonFragment(['in_app_id' => $tour->in_app_id]);
+    }
 }

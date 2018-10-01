@@ -92,4 +92,13 @@ class TourTest extends TestCase
 
         $this->assertEquals(35, $tour->rating);
     }
+
+    /** @test */
+    public function a_tour_can_have_an_in_app_id()
+    {
+        $client = createUser('client');
+        $tour = create('App\Tour', ['user_id' => $client->id, 'in_app_id' => 'com.wejunket.tour01']);
+
+        $this->assertEquals('com.wejunket.tour01', $tour->in_app_id);
+    }
 }

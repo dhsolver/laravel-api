@@ -67,6 +67,7 @@ class TourResource extends JsonResource
             'background_audio' => $this->backgroundAudio ? $this->backgroundAudio->path : null,
 
             'rating' => $this->rating,
+            'in_app_id' => $this->in_app_id,
 
             'created_at' => $this->created_at->toDateTimeString(),
             'updated_at' => $this->updated_at ? $this->updated_at->toDateTimeString() : null,
