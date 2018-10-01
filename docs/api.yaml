@@ -774,7 +774,7 @@ definitions:
     properties:
       action:
         type: string
-        enum: [download, start, stop, share, like visit]
+        enum: [download, start, stop, share, like, visit]
         description: The action to record.
         example: start
       device_id:
