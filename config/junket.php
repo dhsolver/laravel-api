@@ -26,7 +26,7 @@ return [
         /**
          * The width and height of icons (custom map pins)
          */
-        'icon_size' => 48,
+        'icon_size' => 164,
 
         /**
          * Maximum icon size - applies to map pins and trophies.
