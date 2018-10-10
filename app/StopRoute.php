@@ -72,6 +72,17 @@ class StopRoute extends Model
     // QUERY SCOPES
     // **********************************************************
 
+    /**
+     * Get the stop routes in order.
+     *
+     * @param \Illuminate\Database\Query\Builder query
+     * @return \Illuminate\Database\Query\Builder
+     */
+    public function scopeInOrder($query)
+    {
+        return $query->orderBy('order');
+    }
+
     // **********************************************************
     // OTHER METHODS
     // **********************************************************
