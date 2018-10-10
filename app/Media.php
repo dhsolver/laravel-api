@@ -6,6 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Media extends Model
 {
+    public const TYPE_IMAGE = 'image';
+    public const TYPE_ICON = 'icon';
+    public const TYPE_AUDIO = 'audio';
+
     /**
      * The attributes that aren't mass assignable.
      *

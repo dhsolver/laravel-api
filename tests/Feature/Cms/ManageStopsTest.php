@@ -482,6 +482,7 @@ class ManageStopTest extends TestCase
         $media = Media::create([
             'file' => 'images/test.jpg',
             'user_id' => $this->client->id,
+            'type' => Media::TYPE_IMAGE,
         ]);
 
         $data = [

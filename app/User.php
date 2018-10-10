@@ -131,6 +131,16 @@ class User extends Authenticatable implements JWTSubject
     }
 
     /**
+     * Get the user's uploaded media relation.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+    */
+    public function media()
+    {
+        return $this->hasMany(Media::class);
+    }
+
+    /**
      * Lookup User by their Facebook ID
      *
      * @param string $fbId

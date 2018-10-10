@@ -49,3 +49,9 @@ AWS_URL=http://staging.wejunket.com/
 Facebook API keys are required to enable FB login as per [Authentication Docs](docs/Authentication.md)
 
 In order for password reset emails to dispatch properly the env variable CMS_URL needs to be set.
+
+ffmpeg must be installed and you should set the full path to the binaries in the .env file
+```
+FFMPEG_BINARY=/usr/bin/ffmpeg
+FFPROBE_BINARY=/usr/bin/ffprobe
+```
