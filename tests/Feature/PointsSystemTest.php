@@ -10,6 +10,7 @@ use App\Tour;
 use App\TourStop;
 use App\Device;
 use App\StopChoice;
+use App\Exceptions\UntraceableTourException;
 
 class PointsSystemTest extends TestCase
 {
@@ -98,11 +99,21 @@ class PointsSystemTest extends TestCase
         ]);
 
         $this->stop1->update(['next_stop_id' => $this->stop2->id]);
+
         factory(StopChoice::class)->create(['tour_stop_id' => $this->stop2->id, 'next_stop_id' => $this->stop3->id]);
         factory(StopChoice::class)->create(['tour_stop_id' => $this->stop2->id, 'next_stop_id' => $this->stop4->id]);
+        $this->stop2->update(['is_multiple_choice' => true]);
+
         factory(StopChoice::class)->create(['tour_stop_id' => $this->stop3->id, 'next_stop_id' => $this->stop4->id]);
         factory(StopChoice::class)->create(['tour_stop_id' => $this->stop3->id, 'next_stop_id' => $this->stop5->id]);
+        $this->stop3->update(['is_multiple_choice' => true]);
+
         $this->stop4->update(['next_stop_id' => $this->stop5->id]);
+
+        $this->tour->update([
+            'start_point_id' => $this->stop1->id,
+            'end_point_id' => $this->stop5->id,
+        ]);
     }
 
     /** @test */
@@ -115,8 +126,93 @@ class PointsSystemTest extends TestCase
     }
 
     /** @test */
+    public function it_can_determine_the_first_stop_of_a_tour()
+    {
+        $ac = new AdventureCalculator($this->tour);
+
+        $this->assertEquals($this->stop1->id, $ac->getFirstStop()->id);
+    }
+
+    /** @test */
+    public function it_can_determine_the_last_stop_of_a_tour()
+    {
+        $ac = new AdventureCalculator($this->tour);
+
+        $this->assertEquals($this->stop5->id, $ac->getLastStop()->id);
+    }
+
+    /** @test */
+    public function if_the_first_stop_of_the_tour_is_missing_it_will_throw_an_exception()
+    {
+        $this->tour->update(['start_point_id' => null]);
+        $ac = new AdventureCalculator($this->tour);
+
+        $this->expectException(UntraceableTourException::class);
+        $ac->getFirstStop();
+    }
+
+    /** @test */
+    public function if_the_last_stop_of_the_tour_is_missing_it_will_throw_an_exception()
+    {
+        $this->tour->update(['end_point_id' => null]);
+        $ac = new AdventureCalculator($this->tour);
+
+        $this->expectException(UntraceableTourException::class);
+        $ac->getLastStop();
+    }
+
+    /** @test */
+    public function it_can_get_the_next_stops_of_a_stop()
+    {
+        $ac = new AdventureCalculator($this->tour);
+
+        $next = $ac->getNextStops($this->stop1);
+        $this->assertCount(1, $next);
+        $this->assertEquals($next[0]->id, $this->stop2->id);
+
+        $next = $ac->getNextStops($this->stop2);
+        $this->assertCount(2, $next);
+        $this->assertEquals($next[0]->id, $this->stop3->id);
+        $this->assertEquals($next[1]->id, $this->stop4->id);
+    }
+
+    /** @test */
+    public function it_throws_an_error_getting_next_stops_if_the_next_stop_is_empty()
+    {
+        $ac = new AdventureCalculator($this->tour);
+
+        $this->stop1->update(['next_stop_id' => null]);
+
+        $this->expectException(UntraceableTourException::class);
+        $next = $ac->getNextStops($this->stop1);
+    }
+
+    /** @test */
+    public function it_throws_an_error_getting_next_stops_if_a_choice_next_stop_is_empty()
+    {
+        $ac = new AdventureCalculator($this->tour);
+
+        $this->stop2->choices()->first()->update(['next_stop_id' => null]);
+
+        $this->expectException(UntraceableTourException::class);
+        $next = $ac->getNextStops($this->stop2);
+    }
+
+    /** @test */
     public function it_can_get_all_stop_permutations()
     {
+        $ac = new AdventureCalculator($this->tour);
+
+        $paths = $ac->getPossiblePaths();
+
+        // stop1 -> stop2 -> stop3 -> stop5
+        // stop1 -> stop2 -> stop4 -> stop5
+        // stop1 -> stop2 -> stop3 -> stop4 -> stop 5
+        $this->assertEquals($paths->toArray(), [
+            [$this->stop1->id, $this->stop2->id, $this->stop3->id, $this->stop5->id],
+            [$this->stop1->id, $this->stop2->id, $this->stop4->id, $this->stop5->id],
+            [$this->stop1->id, $this->stop2->id, $this->stop3->id, $this->stop4->id, $this->stop5->id],
+        ]);
     }
 
     /** @test */
@@ -124,6 +220,9 @@ class PointsSystemTest extends TestCase
     {
         $ac = new AdventureCalculator($this->tour);
 
-        dd($ac->getShortestRoute());
+        list($route, $distance) = $ac->getShortestRoute();
+
+        $this->assertEquals($distance, 1.6110865039252085);
+        $this->assertEquals($route, [1, 2, 4, 5]);
     }
 }

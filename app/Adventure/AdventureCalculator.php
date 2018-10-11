@@ -2,6 +2,9 @@
 
 namespace App\Adventure;
 
+use App\Exceptions\UntraceableTourException;
+use drupol\phpermutations\Generators\Permutations;
+
 class AdventureCalculator
 {
     /**
@@ -31,11 +34,198 @@ class AdventureCalculator
 
     public function getShortestRoute()
     {
-        // $stops = $this->tour->stops()->ordered()->get();
+        $best = 0;
+        $shortestRoute = null;
+
+        foreach ($this->getPossiblePaths() as $path) {
+            $distance = 0;
+            $previous = null;
+            foreach ($path as $id) {
+                $stop = $this->getStop($id);
+
+                if (! empty($previous)) {
+                    $distance += $this->getDistanceBetweenStops($previous, $stop);
+                }
+                $previous = $stop;
+            }
+
+            if ($best == 0 || $distance < $best) {
+                $shortestRoute = $path;
+                $best = $distance;
+            }
+        }
+
+        return [$shortestRoute, $best];
     }
 
-    public function getRoutePermutations()
+    /**
+     * Get an array of all the possible paths for the tour.
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    public function getPossiblePaths()
     {
+        $firstStop = $this->getFirstStop();
+        $lastStop = $this->getLastStop();
+
+        $nextStopList = [];
+        foreach ($this->stops as $stop) {
+            $nextStops = $this->getNextStops($stop);
+
+            if (empty($nextStops)) {
+                // last stop
+                $nextStopList[$stop->id] = [];
+                break;
+            }
+
+            $nextStopList[$stop->id] = $nextStops->pluck('id')->toArray();
+        }
+
+        $validPermutations = [];
+        $permutations = $this->getPermutations($this->allStopIds());
+        foreach ($permutations as $permutation) {
+            $valid = false;
+            $previous = null;
+
+            $p = $permutation;
+
+            // if permutation doesn't start with the first stop, it is invalid
+            if ($p[0] != $firstStop->id) {
+                continue;
+            }
+
+            foreach ($p as $id) {
+                if (empty($previous)) {
+                    $previous = $id;
+                    continue;
+                }
+
+                if (in_array($id, $nextStopList[$previous])) {
+                    $valid = true;
+                    $previous = $id;
+                    continue;
+                }
+
+                $valid = false;
+                break; // not valid
+            }
+
+            if ($valid && $p[count($p) - 1] == $lastStop->id) {
+                array_push($validPermutations, $p);
+            }
+        }
+
+        return collect($validPermutations)->values();
+    }
+
+    /**
+     * Get an array of the stops ids.
+     *
+     * @return array
+     */
+    public function allStopIds()
+    {
+        return collect($this->stops)->pluck('id')->values()->toArray();
+    }
+
+    /**
+     * Get all possible permutations of an array.
+     *
+     * @param array $items
+     * @return array
+     */
+    public function getPermutations(array $items)
+    {
+        $all = [];
+
+        for ($i = 2; $i <= count($items); $i++) {
+            $p = new Permutations($items, $i);
+            $all = array_merge($all, $p->toArray());
+        }
+
+        return $all;
+    }
+
+    /**
+     * Get possible next stops for a given stop.  Returns collection of TourStop
+     * objects, unless the stop is the end point for the Tour, in which
+     * case it will return null.
+     *
+     * @param \App\TourStop $stop
+     * @return \Illuminate\Support\Collection
+     * @throws UntraceableTourException
+     */
+    public function getNextStops($stop)
+    {
+        if ($this->tour->end_point_id == $stop->id) {
+            return null;
+        }
+
+        if ($stop->is_multiple_choice) {
+            // get all stops from choices
+            $next = [];
+            foreach ($stop->choices as $choice) {
+                $obj = $this->getStop($choice->next_stop_id);
+
+                if (empty($obj)) {
+                    throw new UntraceableTourException($this->tour, $stop, UntraceableTourException::MISSING_NEXT_STOP);
+                }
+
+                array_push($next, $obj);
+            }
+
+            return collect($next);
+        } else {
+            // next one from the next_stop_id
+            $next = $this->getStop($stop->next_stop_id);
+
+            if (empty($next)) {
+                throw new UntraceableTourException($this->tour, $stop, UntraceableTourException::NO_NEXT_STOP);
+            }
+
+            return collect([$next]);
+        }
+    }
+
+    /**
+     * Get the stop with the given ID from the pre-loaded stops array.
+     *
+     * @param int $id
+     * @return App\TourStop
+     */
+    public function getStop($id)
+    {
+        return $this->stops->where('id', $id)->first();
+    }
+
+    /**
+     * Get the last stop of the Tour.
+     *
+     * @return App\TourStop
+     * @throws UntraceableTourException
+     */
+    public function getLastStop()
+    {
+        if (! $stop = $this->getStop($this->tour->end_point_id)) {
+            throw new UntraceableTourException($this->tour, null, UntraceableTourException::NO_END_POINT);
+        }
+
+        return $stop;
+    }
+
+    /**
+     * Get the first stop of the Tour.
+     *
+     * @return App\TourStop
+     * @throws UntraceableTourException
+     */
+    public function getFirstStop()
+    {
+        if (! $stop = $this->getStop($this->tour->start_point_id)) {
+            throw new UntraceableTourException($this->tour, null, UntraceableTourException::NO_START_POINT);
+        }
+
+        return $stop;
     }
 
     /**
@@ -47,6 +237,7 @@ class AdventureCalculator
      */
     public function getDistanceBetweenStops($stop1, $stop2)
     {
+        // TODO: check and calculate route between them first
         return $this->getDistance(
             $stop1->location->latitude,
             $stop1->location->longitude,
