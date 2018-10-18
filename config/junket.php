@@ -32,6 +32,11 @@ return [
          * Maximum icon size - applies to map pins and trophies.
          */
         'max_icon_size' => 3000,
+
+        /**
+         * Size to fit the avatar uploads.
+         */
+        'avatar_size' => 750,
     ],
 
     /**

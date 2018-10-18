@@ -20,7 +20,7 @@ class User extends Authenticatable implements JWTSubject
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password', 'fb_id', 'fb_token', 'subscribe_override',
+        'name', 'email', 'password', 'fb_id', 'fb_token', 'subscribe_override', 'avatar'
     ];
 
     /**
@@ -260,9 +260,11 @@ class User extends Authenticatable implements JWTSubject
      */
     public function getAvatarUrlAttribute()
     {
-        $hash = md5($this->email);
+        if (empty($this->avatar)) {
+            return config('filesystems.disks.s3.url') . 'default_user_icon.png';
+        }
 
-        return "https://www.gravatar.com/avatar/$hash?s=2048&d=identicon&rating=g";
+        return config('filesystems.disks.s3.url') . 'avatars/' . $this->avatar;
     }
 
     /**
