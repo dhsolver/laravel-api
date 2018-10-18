@@ -4,6 +4,7 @@ namespace App\Traits;
 
 use App\User;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Permission\Models\Role;
 
 trait IsUserRole
 {
@@ -50,7 +51,7 @@ trait IsUserRole
 
     protected function appendAttributesToRoleModel()
     {
-        $this->append(['name', 'email', 'role', 'fb_id', 'subscribe_override']);
+        $this->append(['name', 'email', 'role', 'fb_id', 'subscribe_override', 'avatar_url']);
     }
 
     /**
@@ -116,10 +117,14 @@ trait IsUserRole
             $user = $this->user;
             $user->update($user_attributes);
         } else {
+            \DB::beginTransaction();
+
             $user = User::forceCreate(
                 $user_attributes
             );
+
             $user->assignRole($this->getRoleType());
+            \DB::commit();
         }
 
         if (! $user) {
@@ -142,7 +147,7 @@ trait IsUserRole
     public function getRoleType()
     {
         $role = strtolower(class_basename(get_called_class()));
-        return $role === 'mobileuser' ? 'user' : $role;
+        return $role == 'mobileuser' ? 'user' : $role;
     }
 
     public function getNameAttribute()
