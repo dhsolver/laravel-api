@@ -212,6 +212,36 @@ trait UploadsMedia
     }
 
     /**
+     * Process the given avatar image and store.
+     *
+     * @param string $file
+     * @return string
+     */
+    public function storeAvatar($file, $ext = null)
+    {
+        $avatarSize = config('junket.imaging.avatar_size', 750);
+
+        $filename = $this->generateFilename($ext ? $ext : $file->extension());
+
+        try {
+            $image = \Image::make($file);
+        } catch (NotReadableException $ex) {
+            throw new InvalidImageException('File type not supported.');
+        }
+        $this->validateMime($image, $this->imageMimes);
+
+        // force into square
+        $image->fit($avatarSize, $avatarSize)->save();
+
+        if (! \Storage::putFileAs('avatars', new ImageFile($image), $filename)) {
+            // error saving image -> quit
+            return false;
+        }
+
+        return $filename;
+    }
+
+    /**
      * Throws an error if Image's mime type is not in the given array.
      * Accepts either an object of Image class or a string filename.
      *

@@ -9,6 +9,8 @@ use App\User;
 use Notification;
 use App\Notifications\ResetPasswordNotification;
 use Hash;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\WelcomeMail;
 
 class AuthTest extends TestCase
 {
@@ -172,5 +174,61 @@ class AuthTest extends TestCase
 
         $this->assertTrue(Hash::check($password, $user->fresh()->password));
         $this->assertFalse(Hash::check('invalid', $user->fresh()->password));
+    }
+
+    /** @test */
+    public function when_a_user_registers_they_are_sent_a_welcome_email()
+    {
+        Mail::fake();
+
+        $this->json('POST', '/auth/signup', [
+            'name' => 'Test User',
+            'email' => 'user@test.com',
+            'password' => 'sdgdhe2354',
+            'password_confirmation' => 'sdgdhe2354',
+            'role' => 'user',
+        ])->assertStatus(200);
+
+        Mail::assertSent(WelcomeMail::class, function ($mail) {
+            return $mail->hasTo('user@test.com');
+        });
+    }
+
+    /** @test */
+    public function when_a_user_registers_a_confirm_email_token_is_generated()
+    {
+        $this->json('POST', '/auth/signup', [
+            'name' => 'Test User',
+            'email' => 'user@test.com',
+            'password' => 'sdgdhe2354',
+            'password_confirmation' => 'sdgdhe2354',
+            'role' => 'user',
+        ])->assertStatus(200);
+
+        $user = User::first();
+        $this->assertNotNull($user->email_confirmation_token);
+    }
+
+    /** @test */
+    public function a_user_can_confirm_their_email_after_registration()
+    {
+        $this->withoutExceptionHandling();
+
+        $this->json('POST', '/auth/signup', [
+            'name' => 'Test User',
+            'email' => 'user@test.com',
+            'password' => 'sdgdhe2354',
+            'password_confirmation' => 'sdgdhe2354',
+            'role' => 'user',
+        ])->assertStatus(200);
+
+        $user = User::first();
+
+        $this->assertNull($user->email_confirmed_at);
+
+        $this->getJson(route('confirm-email', ['token' => $user->email_confirmation_token]))
+            ->assertStatus(200);
+
+        $this->assertNotNull($user->fresh()->email_confirmed_at);
     }
 }

@@ -26,12 +26,6 @@ class UpdateProfileRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
-            'email' => [
-                'required',
-                'email',
-                'max:255',
-                Rule::unique('users', 'email')->ignore(auth()->user()->id),
-            ],
         ];
     }
 
@@ -45,9 +39,6 @@ class UpdateProfileRequest extends FormRequest
         return [
             'name.max' => 'Name must be less than 255 characters.',
             'name.*' => 'Your name is required.',
-            'email.unique' => 'This email address is already in use by another user.',
-            'email.max' => 'Email address must be less than 255 characters.',
-            'email.*' => 'A valid email address is required.',
         ];
     }
 }
