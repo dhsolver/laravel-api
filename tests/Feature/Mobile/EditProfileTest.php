@@ -48,7 +48,7 @@ class EditProfileTest extends TestCase
     }
 
     /** @test */
-    public function a_user_can_update_their_email()
+    public function a_user_cannot_update_their_email()
     {
         $this->signIn('user');
 
@@ -57,7 +57,7 @@ class EditProfileTest extends TestCase
 
         $this->postJson(route('mobile.profile.update', $data))
             ->assertStatus(200)
-            ->assertJsonFragment(['email' => 'foo@bar.com']);
+            ->assertJsonFragment(['email' => $this->signInUser->email]);
     }
 
     /** @test */
