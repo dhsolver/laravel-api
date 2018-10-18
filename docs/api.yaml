@@ -422,6 +422,37 @@ paths:
         500:
           $ref: '#/responses/UnexpectedError'
 
+  /profile/avatar:
+    post:
+      tags:
+        - profile
+      summary: Set Avatar
+      description: Upload and set the user's avatar image.  Images are automatically resized into 750x750 squares.  It is expected that cropping is handled on the client side before submitting the image.
+      operationId: updateAvatar
+      consumes:
+        - multipart/form-data
+      produces:
+        - application/json
+      parameters:
+        - name: image
+          in: formData
+          type: file
+          required: true
+          description: The image to upload.
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/Profile'
+        422:
+          $ref: '#/responses/ValidationError'
+        400:
+          $ref: '#/responses/NoToken'
+        401:
+          $ref: '#/responses/Unauthroized'
+        500:
+          $ref: '#/responses/UnexpectedError'
+
   /profile/password:
     post:
       tags:
@@ -926,9 +957,8 @@ definitions:
         example: Doe
       avatar_url:
         type: string
-        description: |
-          The URL for the user's avatar image.  This is just generating a Gravatar URL.  Read more here: https://en.gravatar.com/site/implement/
-        example: 'https://www.gravatar.com/avatar/387ec13e14f96854ed64aca99a477c70?s=2048&d=identicon&rating=g'
+        description: The URL for the user's avatar image.
+        example: 'https://media.wejunket.com/avatars/387ec13e14f96854ed64aca99a477c70.jpg'
       email:
         type: string
         description: The user's email address. (Only shown for profile of the authenticated user)
@@ -988,9 +1018,8 @@ definitions:
         example: false
       avatar_url:
         type: string
-        description: |
-          The URL for the user's avatar image.  This is just generating a Gravatar URL.  Read more here: https://en.gravatar.com/site/implement/
-        example: 'https://www.gravatar.com/avatar/387ec13e14f96854ed64aca99a477c70?s=2048&d=identicon&rating=g'
+        description: The URL for the user's avatar image.
+        example: 'https://media.wejunket.com/avatars/387ec13e14f96854ed64aca99a477c70.jpg'
       created_at:
         type: string
         format: date-time
