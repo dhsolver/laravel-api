@@ -4,11 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-<<<<<<< Updated upstream
-    "content-hash": "e6b7b56eccff1db0bc2f203864099e6a",
-=======
     "content-hash": "1e3fce2681acdc1370d122ba5cd8a61f",
->>>>>>> Stashed changes
     "packages": [
         {
             "name": "aporat/store-receipt-validator",
