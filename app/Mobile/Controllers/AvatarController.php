@@ -36,7 +36,6 @@ class AvatarController extends Controller
         } catch (InvalidImageException $ex) {
             return $this->fail(422, $ex->getMessage());
         } catch (\Exception $ex) {
-            dd('wtf');
             return $this->fail();
         }
     }
