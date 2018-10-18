@@ -2,7 +2,7 @@ swagger: '2.0'
 info:
   title: Junket API
   description: Private API for the wejunket.com mobile apps. 
-  version: 1.0.2
+  version: 1.0.3
 host: api.wejunket.com
 basePath: /mobile
 schemes:
@@ -461,6 +461,91 @@ paths:
           $ref: '#/responses/NoToken'
         401:
           $ref: '#/responses/Unauthroized'
+        500:
+          $ref: '#/responses/UnexpectedError'
+
+  /profile/change-email:
+    post:
+      tags:
+        - profile
+      summary: Change Email (request)
+      description: Submit request to update the current user's email.  Upon successfull request, the user will be sent an email with an activation code.
+      operationId: changeEmail
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: data
+          description: New email.
+          schema:
+            required:
+              - email
+              - email_confirmation
+            properties:
+              email:
+                type: string
+                example: test@test.com
+                description: The user's new email.
+                maximum: 255
+              email_confirmation:
+                type: string
+                example: test@test.com
+                description: The user's new email (repeated).
+                maximum: 255
+      responses:
+        200:
+          description: OK
+        422:
+          $ref: '#/responses/ValidationError'
+        400:
+          $ref: '#/responses/NoToken'
+        401:
+          $ref: '#/responses/Unauthroized'
+        500:
+          $ref: '#/responses/UnexpectedError'
+
+  /profile/change-email/confirm:
+    post:
+      tags:
+        - profile
+      summary: Change Email (confirm)
+      description: "Submit a an activation code to reset the user's email.  Activation codes are case-insensitive and expire after 30 minutes."
+      operationId: changeEmailConfirm
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: data
+          description: Actication code.
+          schema:
+            required:
+              - code
+            properties:
+              code:
+                type: string
+                example: ABC123
+                description: Activation code (with or without dash, case-insensitive)
+                maximum: 7
+                minimum: 6
+      responses:
+        200:
+          description: OK
+        422:
+          $ref: '#/responses/ValidationError'
+        400:
+          $ref: '#/responses/NoToken'
+        401:
+          $ref: '#/responses/Unauthroized'
+        403:
+          description: User does not own the activation code.
+        404:
+          description: Invalid activation code.
+        419:
+          description: Activation code has expired or has already been used.
         500:
           $ref: '#/responses/UnexpectedError'
 
