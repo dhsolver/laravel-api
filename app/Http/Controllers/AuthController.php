@@ -9,6 +9,7 @@ use App\User;
 use App\Http\Requests\SignupRequest;
 use App\Http\Resources\UserSessionResource;
 use Laravel\Socialite\Facades\Socialite;
+use App\Events\UserWasRegistered;
 
 class AuthController extends Controller
 {
@@ -62,6 +63,8 @@ class AuthController extends Controller
                 $user = \App\MobileUser::create($attributes);
                 break;
         }
+
+        event(new UserWasRegistered($user));
 
         return $this->createTokenForUser($user);
     }

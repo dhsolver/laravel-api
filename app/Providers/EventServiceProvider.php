@@ -6,6 +6,8 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use App\Events\TourJoined;
 use App\Listeners\MarkTourDownloadedListener;
+use App\Events\UserWasRegistered;
+use App\Listeners\SendWelcomeEmail;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -20,7 +22,10 @@ class EventServiceProvider extends ServiceProvider
         ],
         TourJoined::class => [
             MarkTourDownloadedListener::class,
-        ]
+        ],
+        UserWasRegistered::class => [
+            SendWelcomeEmail::class,
+        ],
     ];
 
     /**
