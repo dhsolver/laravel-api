@@ -21,7 +21,8 @@
         "php-ffmpeg/php-ffmpeg": "^0.13.0",
         "spatie/laravel-permission": "2.12.1",
         "tymon/jwt-auth": "^1.0.0-rc.2",
-        "webpatser/laravel-uuid": "^3.0"
+        "webpatser/laravel-uuid": "^3.0",
+        "aws/aws-sdk-php": "~3.0"
     },
     "require-dev": {
         "filp/whoops": "^2.0",

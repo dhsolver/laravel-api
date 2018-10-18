@@ -2,7 +2,7 @@ swagger: '2.0'
 info:
   title: Junket API
   description: Private API for the wejunket.com mobile apps. 
-  version: 1.0.2
+  version: 1.0.3
 host: api.wejunket.com
 basePath: /mobile
 schemes:
@@ -422,6 +422,37 @@ paths:
         500:
           $ref: '#/responses/UnexpectedError'
 
+  /profile/avatar:
+    post:
+      tags:
+        - profile
+      summary: Set Avatar
+      description: Upload and set the user's avatar image.  Images are automatically resized into 750x750 squares.  It is expected that cropping is handled on the client side before submitting the image.
+      operationId: updateAvatar
+      consumes:
+        - multipart/form-data
+      produces:
+        - application/json
+      parameters:
+        - name: image
+          in: formData
+          type: file
+          required: true
+          description: The image to upload.
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/Profile'
+        422:
+          $ref: '#/responses/ValidationError'
+        400:
+          $ref: '#/responses/NoToken'
+        401:
+          $ref: '#/responses/Unauthroized'
+        500:
+          $ref: '#/responses/UnexpectedError'
+
   /profile/password:
     post:
       tags:
@@ -461,6 +492,91 @@ paths:
           $ref: '#/responses/NoToken'
         401:
           $ref: '#/responses/Unauthroized'
+        500:
+          $ref: '#/responses/UnexpectedError'
+
+  /profile/change-email:
+    post:
+      tags:
+        - profile
+      summary: Change Email (request)
+      description: Submit request to update the current user's email.  Upon successfull request, the user will be sent an email with an activation code.
+      operationId: changeEmail
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: data
+          description: New email.
+          schema:
+            required:
+              - email
+              - email_confirmation
+            properties:
+              email:
+                type: string
+                example: test@test.com
+                description: The user's new email.
+                maximum: 255
+              email_confirmation:
+                type: string
+                example: test@test.com
+                description: The user's new email (repeated).
+                maximum: 255
+      responses:
+        200:
+          description: OK
+        422:
+          $ref: '#/responses/ValidationError'
+        400:
+          $ref: '#/responses/NoToken'
+        401:
+          $ref: '#/responses/Unauthroized'
+        500:
+          $ref: '#/responses/UnexpectedError'
+
+  /profile/change-email/confirm:
+    post:
+      tags:
+        - profile
+      summary: Change Email (confirm)
+      description: "Submit a an activation code to reset the user's email.  Activation codes are case-insensitive and expire after 30 minutes."
+      operationId: changeEmailConfirm
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: data
+          description: Actication code.
+          schema:
+            required:
+              - code
+            properties:
+              code:
+                type: string
+                example: ABC123
+                description: Activation code (with or without dash, case-insensitive)
+                maximum: 7
+                minimum: 6
+      responses:
+        200:
+          description: OK
+        422:
+          $ref: '#/responses/ValidationError'
+        400:
+          $ref: '#/responses/NoToken'
+        401:
+          $ref: '#/responses/Unauthroized'
+        403:
+          description: User does not own the activation code.
+        404:
+          description: Invalid activation code.
+        419:
+          description: Activation code has expired or has already been used.
         500:
           $ref: '#/responses/UnexpectedError'
 
@@ -841,9 +957,8 @@ definitions:
         example: Doe
       avatar_url:
         type: string
-        description: |
-          The URL for the user's avatar image.  This is just generating a Gravatar URL.  Read more here: https://en.gravatar.com/site/implement/
-        example: 'https://www.gravatar.com/avatar/387ec13e14f96854ed64aca99a477c70?s=2048&d=identicon&rating=g'
+        description: The URL for the user's avatar image.
+        example: 'https://media.wejunket.com/avatars/387ec13e14f96854ed64aca99a477c70.jpg'
       email:
         type: string
         description: The user's email address. (Only shown for profile of the authenticated user)
@@ -903,9 +1018,8 @@ definitions:
         example: false
       avatar_url:
         type: string
-        description: |
-          The URL for the user's avatar image.  This is just generating a Gravatar URL.  Read more here: https://en.gravatar.com/site/implement/
-        example: 'https://www.gravatar.com/avatar/387ec13e14f96854ed64aca99a477c70?s=2048&d=identicon&rating=g'
+        description: The URL for the user's avatar image.
+        example: 'https://media.wejunket.com/avatars/387ec13e14f96854ed64aca99a477c70.jpg'
       created_at:
         type: string
         format: date-time

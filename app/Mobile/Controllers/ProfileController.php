@@ -5,7 +5,7 @@ namespace App\Mobile\Controllers;
 use Illuminate\Http\Request;
 use App\Mobile\Resources\ProfileResource;
 use App\User;
-use App\Http\Requests\UpdateProfileRequest;
+use App\Mobile\Requests\UpdateProfileRequest;
 use App\Http\Controllers\Controller;
 use App\Mobile\Requests\UpdatePasswordRequest;
 

@@ -5,6 +5,8 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use App\TourStop;
 use App\StopRoute;
+use App\User;
+use App\Mail\WelcomeMail;
 
 class TestStuff extends Command
 {
@@ -38,6 +40,15 @@ class TestStuff extends Command
      * @return mixed
      */
     public function handle()
+    {
+        $user = User::first();
+        $token = '-testtoken-';
+
+        \Mail::to('jonwillard11@Gmail.com')
+            ->send(new WelcomeMail($user));
+    }
+
+    public function getDistanceBetweenPoints()
     {
         $stop1 = TourStop::find(100022074);
         $stop2 = TourStop::find(100022075);

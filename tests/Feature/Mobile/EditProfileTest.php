@@ -48,7 +48,7 @@ class EditProfileTest extends TestCase
     }
 
     /** @test */
-    public function a_user_can_update_their_email()
+    public function a_user_cannot_update_their_email()
     {
         $this->signIn('user');
 
@@ -57,7 +57,7 @@ class EditProfileTest extends TestCase
 
         $this->postJson(route('mobile.profile.update', $data))
             ->assertStatus(200)
-            ->assertJsonFragment(['email' => 'foo@bar.com']);
+            ->assertJsonFragment(['email' => $this->signInUser->email]);
     }
 
     /** @test */
@@ -83,18 +83,6 @@ class EditProfileTest extends TestCase
         $this->getJson(route('mobile.profile.show', ['user' => $this->signInUser]))
             ->assertStatus(200)
             ->assertJsonFragment(['fb_id' => '12345']);
-    }
-
-    /** @test */
-    public function a_users_profile_should_always_contain_a_gravatar_url()
-    {
-        $this->signIn('user');
-
-        $hash = md5($this->signInUser->email);
-
-        $this->getJson(route('mobile.profile.show', ['user' => $this->signInUser]))
-            ->assertStatus(200)
-            ->assertJsonFragment(['avatar_url' => "https://www.gravatar.com/avatar/$hash?s=2048&d=identicon&rating=g"]);
     }
 
     /** @test */

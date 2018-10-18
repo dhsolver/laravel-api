@@ -7,6 +7,8 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Spatie\Permission\Traits\HasRoles;
 use App\Notifications\ResetPasswordNotification;
 use Tymon\JWTAuth\Contracts\JWTSubject;
+use Illuminate\Support\Str;
+use Carbon\Carbon;
 
 class User extends Authenticatable implements JWTSubject
 {
@@ -18,7 +20,7 @@ class User extends Authenticatable implements JWTSubject
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password', 'fb_id', 'fb_token', 'subscribe_override'
+        'name', 'email', 'password', 'fb_id', 'fb_token', 'subscribe_override', 'avatar'
     ];
 
     /**
@@ -50,6 +52,28 @@ class User extends Authenticatable implements JWTSubject
      * @var array
      */
     protected $casts = ['subscribe_override' => 'bool'];
+
+    /**
+     * The attributes that should be cast to dates.
+     *
+     * @var array
+     */
+    protected $dates = ['email_confirmed_at'];
+
+    /**
+     * Handles the model boot options.
+     *
+     * @return void
+     */
+    public static function boot()
+    {
+        // create email confirmation token on creation
+        self::creating(function ($model) {
+            $model->email_confirmation_token = Str::random(64);
+        });
+
+        parent::boot();
+    }
 
     /**
      * Get the identifier that will be stored in the subject claim of the JWT.
@@ -246,8 +270,32 @@ class User extends Authenticatable implements JWTSubject
      */
     public function getAvatarUrlAttribute()
     {
-        $hash = md5($this->email);
+        if (empty($this->avatar)) {
+            return config('filesystems.disks.s3.url') . 'default_user_icon.png';
+        }
 
-        return "https://www.gravatar.com/avatar/$hash?s=2048&d=identicon&rating=g";
+        return config('filesystems.disks.s3.url') . 'avatars/' . $this->avatar;
+    }
+
+    /**
+     * Look up the user by the confirmation token and set to confirmed
+     *
+     * @param string $token
+     * @return bool|\App\User
+     */
+    public static function confirmEmail($token)
+    {
+        $user = self::where('email_confirmation_token', $token)->first();
+
+        if (empty($user)) {
+            return false;
+        }
+
+        if (empty($user->email_confirmed_at)) {
+            $user->email_confirmed_at = Carbon::now();
+            $user->save();
+        }
+
+        return $user;
     }
 }
