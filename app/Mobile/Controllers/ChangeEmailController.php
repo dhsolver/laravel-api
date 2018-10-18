@@ -29,7 +29,7 @@ class ChangeEmailController extends Controller
             'user_id' => auth()->id(),
             'new_email' => strtolower($request->email),
             'activation_code' => strtoupper(Str::random(6)),
-            'expires_at' => Carbon::now()->addMinutes(10),
+            'expires_at' => Carbon::now()->addMinutes(30),
         ]);
 
         return $this->success('Activation code sent');
@@ -50,9 +50,8 @@ class ChangeEmailController extends Controller
         ]);
 
         $cer = ChangeEmailRequest::where('activation_code', str_replace('-', '', strtoupper($request->code)))->first();
-
         if (empty($cer)) {
-            return $this->fail(422, 'Invalid activation code.');
+            return $this->fail(404, 'Invalid activation code.');
         }
 
         if ($cer->user_id != auth()->id()) {

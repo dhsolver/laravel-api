@@ -128,7 +128,7 @@ class ChangeEmailTest extends TestCase
             ->assertStatus(200);
 
         $this->postJson(route('mobile.profile.change-email.confirm', ['code' => '123456']))
-            ->assertStatus(422);
+            ->assertStatus(404);
     }
 
     /** @test */
