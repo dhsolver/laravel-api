@@ -21,7 +21,7 @@ trait UploadsMedia
      *
      * @var array
      */
-    protected $iconMimes = ['image/png'];
+    protected $iconMimes = ['image/gif', 'image/jpg', 'image/jpeg', 'image/png'];
 
     /**
      * Video mime types that are allowed.
@@ -73,7 +73,7 @@ trait UploadsMedia
 
         $filename = $this->generateFilename($ext ? $ext : $file->extension());
 
-        if (!\Storage::putFileAs($dir, $file, $filename)) {
+        if (! \Storage::putFileAs($dir, $file, $filename)) {
             // error saving image -> quit
             return false;
         }
@@ -125,7 +125,7 @@ trait UploadsMedia
             }
         }
 
-        if (!\Storage::putFileAs($dir, new ImageFile($image), $filename)) {
+        if (! \Storage::putFileAs($dir, new ImageFile($image), $filename)) {
             // error saving image -> quit
             return false;
         }
@@ -143,7 +143,7 @@ trait UploadsMedia
             })->save();
         }
 
-        if (!\Storage::putFileAs($dir, new ImageFile($image), $this->modFilename($filename, '_sm'))) {
+        if (! \Storage::putFileAs($dir, new ImageFile($image), $this->modFilename($filename, '_sm'))) {
             // error saving image -> quit
             return false;
         }
@@ -160,7 +160,7 @@ trait UploadsMedia
      */
     public function storeIcon($file, $dir, $ext = null)
     {
-        $thumbSize = config('junket.imaging.icon_size', 48);
+        $thumbSize = config('junket.imaging.icon_size', 164);
         $maxSize = config('junket.imaging.max_icon_size', 3000);
 
         $filename = $this->generateFilename($ext ? $ext : $file->extension());
@@ -196,14 +196,14 @@ trait UploadsMedia
             $image->fit($image->height(), $image->height())->save();
         }
 
-        if (!\Storage::putFileAs($dir, new ImageFile($image), $filename)) {
+        if (! \Storage::putFileAs($dir, new ImageFile($image), $filename)) {
             // error saving image -> quit
             return false;
         }
 
         $image->fit($thumbSize, $thumbSize)->save();
 
-        if (!\Storage::putFileAs($dir, new ImageFile($image), $this->modFilename($filename, '_ico'))) {
+        if (! \Storage::putFileAs($dir, new ImageFile($image), $this->modFilename($filename, '_ico'))) {
             // error saving image -> quit
             return false;
         }
@@ -223,11 +223,11 @@ trait UploadsMedia
     public function validateMime($imageOrFilename, $mimes)
     {
         if (is_a($imageOrFilename, 'Intervention\Image\Image')) {
-            if (!in_array($imageOrFilename->mime(), $mimes)) {
+            if (! in_array($imageOrFilename->mime(), $mimes)) {
                 throw new InvalidImageException('File type not supported.');
             }
         } else {
-            if (!in_array(mime_content_type($imageOrFilename), $mimes)) {
+            if (! in_array(mime_content_type($imageOrFilename), $mimes)) {
                 throw new InvalidImageException('File type not supported.');
             }
         }
