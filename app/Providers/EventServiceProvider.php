@@ -8,6 +8,8 @@ use App\Events\TourJoined;
 use App\Listeners\MarkTourDownloadedListener;
 use App\Events\UserWasRegistered;
 use App\Listeners\SendWelcomeEmail;
+use App\Events\ChangeEmailRequestCreated;
+use App\Listeners\SendChangeEmailActivation;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -25,6 +27,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         UserWasRegistered::class => [
             SendWelcomeEmail::class,
+        ],
+        ChangeEmailRequestCreated::class => [
+            SendChangeEmailActivation::class,
         ],
     ];
 

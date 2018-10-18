@@ -35,6 +35,8 @@ Route::namespace('App\Mobile\Controllers')->middleware(['jwt.auth', 'role:user|c
     Route::post('profile', 'ProfileController@update')->name('mobile.profile.update');
     Route::patch('profile/password', 'ProfileController@password')->name('mobile.profile.password');
     Route::get('profile/{user}', 'ProfileController@show')->name('mobile.profile.show');
+    Route::post('profile/change-email', 'ChangeEmailController@request')->name('mobile.profile.change-email');
+    Route::post('profile/change-email/confirm', 'ChangeEmailController@confirm')->name('mobile.profile.change-email.confirm');
 
     Route::get('reviews/{tour}', 'ReviewController@index')->name('mobile.reviews');
     Route::post('reviews/{tour}', 'ReviewController@store')->name('mobile.reviews.store');
