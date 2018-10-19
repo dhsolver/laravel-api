@@ -174,4 +174,9 @@ trait IsUserRole
     {
         return $this->user->subscribe_override;
     }
+
+    public function getAvatarUrlAttribute()
+    {
+        return $this->user->avatar_url;
+    }
 }
