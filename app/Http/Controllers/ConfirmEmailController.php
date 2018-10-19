@@ -6,12 +6,18 @@ use App\User;
 
 class ConfirmEmailController extends Controller
 {
-    public function confirm($token)
+    /**
+     * Validate email confirmation token.
+     *
+     * @param string $token
+     * @return void
+     */
+    public function confirm()
     {
-        if ($user = User::confirmEmail($token)) {
-            return 'Thank you!  Your email has been confirmed.';
+        if ($user = User::confirmEmail(request()->token)) {
+            return $this->success('Your email has been confirmed.');
         }
 
-        return 'We could not find what you were looking for.';
+        return $this->fail(404);
     }
 }

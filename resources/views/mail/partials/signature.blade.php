@@ -1,5 +1,5 @@
 
 <br/>
-Sincerely,
+Regards,
 <br/>
 {{ config('mail.from.name') }}

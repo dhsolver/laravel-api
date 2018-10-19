@@ -13,10 +13,9 @@ return [
 
     'supportsCredentials' => false,
     'allowedOrigins' => [
-        'http://junket-cms.test',
-        'https://junket-cms.test',
-        'https://cms.wejunket.com',
-        'https://cms-dev.wejunket.com'
+        env('APP_URL'),
+        env('CMS_URL'),
+        env('SUPPORT_URL'),
     ],
     'allowedOriginsPatterns' => [],
     'allowedHeaders' => ['*'],
