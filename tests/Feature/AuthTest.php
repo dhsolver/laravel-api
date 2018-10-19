@@ -226,7 +226,7 @@ class AuthTest extends TestCase
 
         $this->assertNull($user->email_confirmed_at);
 
-        $this->getJson(route('confirm-email', ['token' => $user->email_confirmation_token]))
+        $this->postJson(route('confirm-email', ['token' => $user->email_confirmation_token]))
             ->assertStatus(200);
 
         $this->assertNotNull($user->fresh()->email_confirmed_at);
