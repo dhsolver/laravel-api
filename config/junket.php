@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'password_reset_url' => env('CMS_URL') . '/#/reset-password',
+    'password_reset_url' => env('SUPPORT_URL') . '/#/reset-password',
 
     /**
      * Config for image processing site wide.

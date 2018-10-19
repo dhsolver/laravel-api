@@ -1,14 +1,12 @@
 <?php
 /*
 |--------------------------------------------------------------------------
-| CMS Routes
+| Mobile API Routes
 |--------------------------------------------------------------------------
 |
 */
 
 Route::namespace('App\Http\Controllers')->group(function () {
-    Route::get('confirm-email/{token}', 'ConfirmEmailController@confirm')->name('confirm-email');
-
     Route::post('auth/login', 'AuthController@login');
     Route::post('auth/signup', 'AuthController@signup');
     Route::post('auth/login/facebook', 'AuthController@facebook');

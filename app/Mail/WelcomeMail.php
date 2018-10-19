@@ -32,7 +32,7 @@ class WelcomeMail extends Mailable
     public function __construct($user)
     {
         $this->user = $user;
-        $this->url = config('app.url') . "/mobile/confirm-email/{$user->email_confirmation_token}";
+        $this->url = config('app.support_url') . "/#/confirm-email?token={$user->email_confirmation_token}";
     }
 
     /**
