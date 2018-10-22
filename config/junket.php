@@ -50,6 +50,17 @@ return [
     ],
 
     /**
+     * Config for the points calculation system.
+     */
+    'points' => [
+        /**
+         * The average walking speed (miles per hour) of a human.  Used to
+         * calculate the time it should take to get from one place to another.
+         */
+        'average_walking_speed' => env('POINTS_WALK_SPEED', 4),
+    ],
+
+    /**
      * Holds the containing path the the backup of the iTourMobile tourfiles folder.
      */
     'itourfiles' => env('ITOUR_BACKUP_DIR'),

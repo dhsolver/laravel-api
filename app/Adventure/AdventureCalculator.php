@@ -4,6 +4,7 @@ namespace App\Adventure;
 
 use App\Exceptions\UntraceableTourException;
 use drupol\phpermutations\Generators\Permutations;
+use App\StopRoute;
 
 class AdventureCalculator
 {
@@ -42,7 +43,6 @@ class AdventureCalculator
             $previous = null;
             foreach ($path as $id) {
                 $stop = $this->getStop($id);
-
                 if (! empty($previous)) {
                     $distance += $this->getDistanceBetweenStops($previous, $stop);
                 }
@@ -237,13 +237,88 @@ class AdventureCalculator
      */
     public function getDistanceBetweenStops($stop1, $stop2)
     {
-        // TODO: check and calculate route between them first
-        return $this->getDistance(
-            $stop1->location->latitude,
-            $stop1->location->longitude,
+        $path = StopRoute::where('stop_id', $stop1->id)
+            ->where('next_stop_id', $stop2->id)
+            ->inOrder()
+            ->get();
+
+        if (empty($path)) {
+            // if there is no path, just get the striaght line distance
+            // between the two stops coordinates.
+            return $this->getDistance(
+                $stop1->location->latitude,
+                $stop1->location->longitude,
+                $stop2->location->latitude,
+                $stop2->location->longitude
+            );
+        }
+
+        // get every point along the route and get the sum of the distnace
+        // between stop1, all of those points and stop2.
+        $total = 0;
+        $previousPoint = $stop1->location;
+        foreach ($path as $point) {
+            $distance = $this->getDistance(
+                $previousPoint->latitude,
+                $previousPoint->longitude,
+                $point->latitude,
+                $point->longitude
+            );
+
+            $total += $distance;
+
+            $previousPoint = $point;
+        }
+
+        $total += $this->getDistance(
+            $previousPoint->latitude,
+            $previousPoint->longitude,
             $stop2->location->latitude,
             $stop2->location->longitude
         );
+
+        return $total;
+    }
+
+    /**
+     * Get the averate amount of time (minutes) that it should
+     * take to finish the tour.
+     *
+     * @return int
+     */
+    public function getTimePar()
+    {
+        list($route, $distance) = $this->getShortestRoute();
+
+        $walkingTime = $this->getTimeToWalkDistance($distance);
+        $audioTime = $this->getTotalAudioTime();
+        $decisionTime = 5;
+
+        $total = $walkingTime + $decisionTime;
+
+        return intval(round($total));
+    }
+
+    /**
+     * Get the total length of audio for the current Tour.
+     *
+     * @return float
+     */
+    public function getTotalAudioTime()
+    {
+    }
+
+    /**
+     * Estimate the amount of time (in minutes) that it should take
+     * to walk the given distance.
+     *
+     * @param float $distance
+     * @return float
+     */
+    public function getTimeToWalkDistance($distance)
+    {
+        $milesPerHour = config('junket.points.average_walking_speed');
+        return (floatval($distance) / floatval($milesPerHour)) * floatval(60);
     }
 
     /**
