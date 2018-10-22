@@ -284,19 +284,19 @@ class AdventureCalculator
      * Get the averate amount of time (minutes) that it should
      * take to finish the tour.
      *
-     * @return int
+     * @return float
      */
     public function getTimePar()
     {
         list($route, $distance) = $this->getShortestRoute();
 
         $walkingTime = $this->getTimeToWalkDistance($distance);
-        $audioTime = $this->getTotalAudioTime();
-        $decisionTime = 5;
+        $audioTime = $this->getAudioTime($route);
+        $decisionTime = floatval(config('junket.points.decision_time', 5));
 
-        $total = $walkingTime + $decisionTime;
+        $total = $walkingTime + $audioTime + $decisionTime;
 
-        return intval(round($total));
+        return floatval(ceil($total));
     }
 
     /**
@@ -304,8 +304,75 @@ class AdventureCalculator
      *
      * @return float
      */
-    public function getTotalAudioTime()
+    public function getAudioTime($stops)
     {
+        $total = floatval(0.0);
+
+        if (! empty($this->tour->backgroundAudio)) {
+            $total += floatval($this->tour->backgroundAudio->length);
+        }
+
+        foreach ($stops as $id) {
+            $stop = $this->getStop($id);
+            if (! empty($stop->introAudio)) {
+                $total += floatval($stop->introAudio->length);
+            }
+        }
+
+        return ($total / floatval(60));
+    }
+
+    /**
+     * Calculate the points that should be awarded to the user
+     * based on their time.
+     *
+     * @param float $timeInMinutes
+     * @return int
+     */
+    public function calculatePoints($timeInMinutes)
+    {
+        $time = floatval($timeInMinutes);
+        $min = config('junket.points.min_points', 50);
+        $max = config('junket.points.max_points', 200);
+
+        $par = $this->getTimePar();
+        $total = $max;
+
+        if ($time <= $par) {
+            // user beat the clock, award all points
+            return $total;
+        }
+
+        $difference = abs($par - $time);
+        $wholeMinutes = floor($difference);
+        $partialMinutes = $difference - $wholeMinutes;
+
+        // subtract two points for every minute
+        $total -= intval($wholeMinutes * 2);
+
+        // subtract one point for (rounded) half minutes
+        if ($partialMinutes > 0.5) {
+            $total -= 1;
+        }
+
+        if ($total < $min) {
+            return $min;
+        }
+
+        return $total;
+    }
+
+    /**
+     * Check if the given score qualifies for a trophy.
+     *
+     * @param float $score
+     * @return bool
+     */
+    public function scoreQualifiesForTrophy($score)
+    {
+        $max = config('junket.points.max_points', 200);
+        $trophyRate = config('junket.points.trophy_rate', 70);
+        return $score >= (floatval($max) * (floatval($trophyRate) / 100));
     }
 
     /**
@@ -317,7 +384,7 @@ class AdventureCalculator
      */
     public function getTimeToWalkDistance($distance)
     {
-        $milesPerHour = config('junket.points.average_walking_speed');
+        $milesPerHour = config('junket.points.average_walking_speed', 4);
         return (floatval($distance) / floatval($milesPerHour)) * floatval(60);
     }
 

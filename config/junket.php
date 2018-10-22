@@ -58,6 +58,27 @@ return [
          * calculate the time it should take to get from one place to another.
          */
         'average_walking_speed' => env('POINTS_WALK_SPEED', 4),
+
+        /**
+         * The total decision time added for a whole tour.
+         */
+        'decision_time' => env('POINTS_DECISION_TIME', 5),
+
+        /**
+         * The total number of points that can be awarded.
+         */
+        'max_points' => env('POINTS_MAX', 200),
+
+        /**
+         * The minimum number of points that can be awarded.
+         */
+        'min_points' => env('POINTS_MIN', 50),
+
+        /**
+         * The percent of points that must be reached in order to
+         * award a user a trophy.
+         */
+        'trophy_percent' => env('POINTS_TROPHY_PERCENT', 0.70),
     ],
 
     /**

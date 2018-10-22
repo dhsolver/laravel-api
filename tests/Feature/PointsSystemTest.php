@@ -11,6 +11,7 @@ use App\TourStop;
 use App\Device;
 use App\StopChoice;
 use App\Exceptions\UntraceableTourException;
+use App\Media;
 
 class PointsSystemTest extends TestCase
 {
@@ -33,9 +34,18 @@ class PointsSystemTest extends TestCase
         $this->user = $this->signInUser->user;
         $this->device = $this->user->devices()->create(factory(Device::class)->make()->toArray());
 
-        $this->tour = factory(Tour::class)->states('published')->create(['pricing_type' => 'free']);
+        $audio = Media::create([
+            'file' => str_random(10),
+            'length' => 155,
+            'user_id' => $this->signInUser->id,
+        ]);
 
-        $this->stop1 = factory(TourStop::class)->create(['tour_id' => $this->tour]);
+        $this->tour = factory(Tour::class)->states('published')->create([
+            'pricing_type' => 'free',
+            'background_audio_id' => $audio->id,
+        ]);
+
+        $this->stop1 = factory(TourStop::class)->create(['tour_id' => $this->tour, 'intro_audio_id' => $audio->id]);
         $this->stop1->location->update([
             'address1' => '77 River St',    // Hoboken Cigars
             'address2' => null,
@@ -47,7 +57,7 @@ class PointsSystemTest extends TestCase
             'longitude' => -74.0290305,
         ]);
 
-        $this->stop2 = factory(TourStop::class)->create(['tour_id' => $this->tour]);
+        $this->stop2 = factory(TourStop::class)->create(['tour_id' => $this->tour, 'intro_audio_id' => $audio->id]);
         $this->stop2->location->update([
             'id' => 2610,
             'address1' => '500 Grand St',       // Grand Vin
@@ -60,7 +70,7 @@ class PointsSystemTest extends TestCase
             'longitude' => -74.03518617,
         ]);
 
-        $this->stop3 = factory(TourStop::class)->create(['tour_id' => $this->tour]);
+        $this->stop3 = factory(TourStop::class)->create(['tour_id' => $this->tour, 'intro_audio_id' => $audio->id]);
         $this->stop3->location->update([
             'id' => 2611,
             'address1' => '163 14th St',        // Dino's
@@ -73,7 +83,7 @@ class PointsSystemTest extends TestCase
             'longitude' => -74.02768135,
         ]);
 
-        $this->stop4 = factory(TourStop::class)->create(['tour_id' => $this->tour]);
+        $this->stop4 = factory(TourStop::class)->create(['tour_id' => $this->tour, 'intro_audio_id' => $audio->id]);
         $this->stop4->location->update([
             'id' => 2612,
             'address1' => '11th St',        // Baseball Monument
@@ -86,7 +96,7 @@ class PointsSystemTest extends TestCase
             'longitude' => -74.02735949,
         ]);
 
-        $this->stop5 = factory(TourStop::class)->create(['tour_id' => $this->tour]);
+        $this->stop5 = factory(TourStop::class)->create(['tour_id' => $this->tour, 'intro_audio_id' => $audio->id]);
         $this->stop5->location->update([
             'address1' => '622 Washington St',      // Benny Tunido's
             'address2' => null,
@@ -345,7 +355,7 @@ qur;
     }
 
     /** @test */
-    public function it_can_calculate_the_points_clock_par_for_a_tour()
+    public function it_can_calculate_the_clock_par_for_a_tour()
     {
         $this->insertStopRouteData();
 
@@ -353,6 +363,46 @@ qur;
 
         $par = $ac->getTimePar();
 
-        $this->assertEquals(37, $par);
+        $this->assertEquals(51, $par);
+    }
+
+    /** @test */
+    public function it_can_calculate_the_points_for_a_users_time()
+    {
+        $this->insertStopRouteData();
+
+        $ac = new AdventureCalculator($this->tour);
+
+        $points = $ac->calculatePoints(55);
+
+        $this->assertEquals(192, $points);
+
+        $points = $ac->calculatePoints(55.3);
+
+        $this->assertEquals(192, $points);
+
+        $points = $ac->calculatePoints(55.6);
+
+        $this->assertEquals(191, $points);
+    }
+
+    /** @test */
+    public function it_can_calculate_if_a_users_score_qualifies_for_a_trophy()
+    {
+        $this->insertStopRouteData();
+
+        $ac = new AdventureCalculator($this->tour);
+
+        $score = $ac->calculatePoints(55);
+
+        $this->assertEquals(192, $score);
+
+        $this->assertTrue($ac->scoreQualifiesForTrophy($score));
+
+        $score = $ac->calculatePoints(90);
+
+        $this->assertEquals(122, $score);
+
+        $this->assertFalse($ac->scoreQualifiesForTrophy($score));
     }
 }

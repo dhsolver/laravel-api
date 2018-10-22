@@ -25,6 +25,15 @@ class Media extends Model
     protected $appends = ['path', 'small_path', 'icon_path'];
 
     /**
+     * The attributes that should be automatically cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'length' => 'float',
+    ];
+
+    /**
      * Defines the user relationship for who uploaded the media.
      *
      * @return void
