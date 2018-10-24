@@ -12,6 +12,7 @@ use App\Device;
 use App\StopChoice;
 use App\Exceptions\UntraceableTourException;
 use App\Media;
+use Illuminate\Support\Carbon;
 
 class PointsSystemTest extends TestCase
 {
@@ -220,6 +221,31 @@ qur;
         \DB::insert($query);
     }
 
+    public function sendAnalytics($model, $action = 'start', $time = null)
+    {
+        if ($model instanceof \App\Tour) {
+            $this->postJson("/mobile/tours/{$model->id}/track", [
+                'activity' => [
+                    [
+                        'action' => $action,
+                        'device_id' => $this->device->id,
+                        'timestamp' => $time ?: strtotime('now'),
+                    ],
+                ],
+            ])->assertStatus(200);
+        } elseif ($model instanceof \App\TourStop) {
+            $this->postJson("/mobile/stops/{$model->id}/track", [
+                'activity' => [
+                    [
+                        'action' => $action,
+                        'device_id' => $this->device->id,
+                        'timestamp' => $time ?: strtotime('now'),
+                    ],
+                ],
+            ])->assertStatus(200);
+        }
+    }
+
     /** @test */
     public function it_can_calculate_the_distance_between_two_stops_if_there_is_no_route_data()
     {
@@ -404,5 +430,85 @@ qur;
         $this->assertEquals(122, $score);
 
         $this->assertFalse($ac->scoreQualifiesForTrophy($score));
+    }
+
+    /** @test */
+    public function when_a_tour_is_started_it_should_create_a_user_score()
+    {
+        $this->withoutExceptionHandling();
+
+        $this->insertStopRouteData();
+
+        $this->sendAnalytics($this->tour, 'start');
+
+        $this->assertCount(1, $this->signInUser->user->scores()->get());
+
+        $score = $this->signInUser->user->scores()->forTour($this->tour)->first();
+
+        $ac = new AdventureCalculator($this->tour);
+
+        $this->assertEquals($ac->getTimePar(), $score->par);
+    }
+
+    /** @test */
+    public function when_a_tour_is_finished_it_should_calculate_and_return_the_user_score()
+    {
+        $this->withoutExceptionHandling();
+
+        $this->insertStopRouteData();
+
+        $startTime = strtotime('30 minutes ago');
+
+        $this->sendAnalytics($this->tour, 'start', $startTime);
+
+        $score = $this->signInUser->user->scores()->forTour($this->tour)->first();
+
+        $stopTime = strtotime('now');
+
+        $this->sendAnalytics($this->tour, 'stop', $stopTime);
+
+        $this->assertEquals(Carbon::createFromTimestampUTC($stopTime), $score->fresh()->finished_at);
+
+        $this->assertEquals(30, $score->fresh()->duration);
+
+        $ac = new AdventureCalculator($this->tour);
+
+        $this->assertEquals($ac->calculatePoints(30), $score->fresh()->points);
+    }
+
+    /** @test */
+    public function when_a_user_gets_a_high_enough_score_they_are_awarded_a_trophy()
+    {
+        $this->withoutExceptionHandling();
+
+        $this->insertStopRouteData();
+
+        $startTime = strtotime('30 minutes ago');
+        $stopTime = strtotime('now');
+
+        $this->sendAnalytics($this->tour, 'start', $startTime);
+        $this->sendAnalytics($this->tour, 'stop', $stopTime);
+
+        $score = $this->signInUser->user->scores()->forTour($this->tour)->first();
+
+        $this->assertTrue($score->won_trophy);
+    }
+
+    /** @test */
+    public function when_a_user_does_not_complete_the_tour_in_tine_they_do_not_get_a_trophy()
+    {
+        $this->withoutExceptionHandling();
+
+        $this->insertStopRouteData();
+
+        $startTime = strtotime('90 minutes ago');
+        $stopTime = strtotime('now');
+
+        $this->sendAnalytics($this->tour, 'start', $startTime);
+        $this->sendAnalytics($this->tour, 'stop', $stopTime);
+
+        $score = $this->signInUser->user->scores()->forTour($this->tour)->first();
+
+        $this->assertFalse($score->won_trophy);
     }
 }

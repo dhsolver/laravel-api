@@ -9,6 +9,7 @@ use App\Notifications\ResetPasswordNotification;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
+use App\Adventure\AdventureCalculator;
 
 class User extends Authenticatable implements JWTSubject
 {
@@ -75,6 +76,130 @@ class User extends Authenticatable implements JWTSubject
         parent::boot();
     }
 
+    // **********************************************************
+    // RELATIONSHIPS
+    // **********************************************************
+
+    /**
+     * Get the user's uploaded media relation.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+    */
+    public function media()
+    {
+        return $this->hasMany(Media::class);
+    }
+
+    /**
+     * A User has many Devices.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function devices()
+    {
+        return $this->belongsToMany(Device::class, 'user_devices');
+    }
+
+    /**
+     * Get the User's joined tours relation.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function joinedTours()
+    {
+        return $this->belongsToMany(Tour::class, 'user_joined_tours');
+    }
+
+    /**
+     * Get the user's scores relationship.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+    */
+    public function scores()
+    {
+        return $this->hasMany(UserScore::class);
+    }
+
+    // **********************************************************
+    // MUTATORS
+    // **********************************************************
+
+    /**
+     * Gets the users role
+     *
+     * @return String
+     */
+    public function getRoleAttribute()
+    {
+        return $this->roles()->pluck('name')->first();
+    }
+
+    public function getFirstNameAttribute()
+    {
+        $names = explode(' ', $this->name, 2);
+
+        return $names[0];
+    }
+
+    public function getLastNameAttribute()
+    {
+        $names = explode(' ', $this->name, 2);
+
+        if (isset($names[1]) && ! empty($names[1])) {
+            return $names[1];
+        }
+
+        return '';
+    }
+
+    /**
+     * Get the URL for the user's avatar.
+     *
+     * @return string
+     */
+    public function getAvatarUrlAttribute()
+    {
+        if (empty($this->avatar)) {
+            return config('filesystems.disks.s3.url') . 'default_user_icon.png';
+        }
+
+        return config('filesystems.disks.s3.url') . 'avatars/' . $this->avatar;
+    }
+
+    // **********************************************************
+    // QUERY SCOPES
+    // **********************************************************
+
+    // **********************************************************
+    // STATIC METHODS
+    // **********************************************************
+
+    /**
+     * Lookup User by their Facebook ID
+     *
+     * @param string $fbId
+     * @return mixed
+     */
+    public static function findByFacebookId($fbId)
+    {
+        return self::where('fb_id', $fbId)->first();
+    }
+
+    /**
+     * Lookup User by their Facebook ID
+     *
+     * @param string $email
+     * @return mixed
+     */
+    public static function findByEmail($email)
+    {
+        return self::where('email', strtolower($email))->first();
+    }
+
+    // **********************************************************
+    // OTHER METHODS
+    // **********************************************************
+
     /**
      * Get the identifier that will be stored in the subject claim of the JWT.
      *
@@ -93,16 +218,6 @@ class User extends Authenticatable implements JWTSubject
     public function getJWTCustomClaims()
     {
         return [];
-    }
-
-    /**
-     * Gets the users role
-     *
-     * @return String
-     */
-    public function getRoleAttribute()
-    {
-        return $this->roles()->pluck('name')->first();
     }
 
     /**
@@ -155,38 +270,6 @@ class User extends Authenticatable implements JWTSubject
     }
 
     /**
-     * Get the user's uploaded media relation.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-    */
-    public function media()
-    {
-        return $this->hasMany(Media::class);
-    }
-
-    /**
-     * Lookup User by their Facebook ID
-     *
-     * @param string $fbId
-     * @return mixed
-     */
-    public static function findByFacebookId($fbId)
-    {
-        return self::where('fb_id', $fbId)->first();
-    }
-
-    /**
-     * Lookup User by their Facebook ID
-     *
-     * @param string $email
-     * @return mixed
-     */
-    public static function findByEmail($email)
-    {
-        return self::where('email', strtolower($email))->first();
-    }
-
-    /**
      * Send the password reset notification.
      *
      * @param  string  $token
@@ -195,26 +278,6 @@ class User extends Authenticatable implements JWTSubject
     public function sendPasswordResetNotification($token)
     {
         $this->notify(new ResetPasswordNotification($token, $this->email));
-    }
-
-    /**
-     * A User has many Devices.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-     */
-    public function devices()
-    {
-        return $this->belongsToMany(Device::class, 'user_devices');
-    }
-
-    /**
-     * Get the User's joined tours relation.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-     */
-    public function joinedTours()
-    {
-        return $this->belongsToMany(Tour::class, 'user_joined_tours');
     }
 
     /**
@@ -245,38 +308,6 @@ class User extends Authenticatable implements JWTSubject
         $this->joinedTours()->attach($tour);
     }
 
-    public function getFirstNameAttribute()
-    {
-        $names = explode(' ', $this->name, 2);
-
-        return $names[0];
-    }
-
-    public function getLastNameAttribute()
-    {
-        $names = explode(' ', $this->name, 2);
-
-        if (isset($names[1]) && ! empty($names[1])) {
-            return $names[1];
-        }
-
-        return '';
-    }
-
-    /**
-     * Get the URL for the user's avatar.
-     *
-     * @return string
-     */
-    public function getAvatarUrlAttribute()
-    {
-        if (empty($this->avatar)) {
-            return config('filesystems.disks.s3.url') . 'default_user_icon.png';
-        }
-
-        return config('filesystems.disks.s3.url') . 'avatars/' . $this->avatar;
-    }
-
     /**
      * Look up the user by the confirmation token and set to confirmed
      *
@@ -297,5 +328,42 @@ class User extends Authenticatable implements JWTSubject
         }
 
         return $user;
+    }
+
+    /**
+     * Create starting record for the given Tour and the
+     * authenticated user.
+     *
+     * @param Tour $tour
+     * @param \Carbon\Carbon $startTime
+     * @return UserScore
+     */
+    public function startTour(Tour $tour, $startTime = null)
+    {
+        $startTime = $startTime ?: Carbon::now();
+
+        $ac = new AdventureCalculator($tour);
+        $par = $ac->getTimePar();
+
+        return $this->scores()->create([
+            'tour_id' => $tour->id,
+            'par' => $par,
+            'started_at' => $startTime,
+        ]);
+    }
+
+    /**
+     * Save the users progress and calculate the score.
+     *
+     * @param Tour $tour
+     * @return UserScore
+     */
+    public function finishTour(Tour $tour, $endTime = null)
+    {
+        $endTime = $endTime ?: Carbon::now();
+
+        return $this->scores()->forTour($tour)->first()->update([
+            'finished_at' => $endTime,
+        ]);
     }
 }

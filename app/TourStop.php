@@ -214,4 +214,26 @@ class TourStop extends Model
             }
         }
     }
+
+    /**
+     * Check if this stop is the starting poit for a Tour.
+     *
+     * @return boolean
+     */
+    public function isStartingPoint()
+    {
+        return Tour::where('start_point_id', $this->id)
+            ->exists();
+    }
+
+    /**
+     * Check if this stop is the end point for a Tour.
+     *
+     * @return boolean
+     */
+    public function isEndingPoint()
+    {
+        return Tour::where('end_point_id', $this->id)
+            ->exists();
+    }
 }

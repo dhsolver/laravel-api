@@ -7,6 +7,7 @@ use App\Tour;
 use App\Http\Requests\RecordActivityRequest;
 use App\TourStop;
 use Carbon\Carbon;
+use App\Action;
 
 class ActivityController extends Controller
 {
@@ -19,26 +20,29 @@ class ActivityController extends Controller
      */
     public function tour(Tour $tour, RecordActivityRequest $request)
     {
-        $fin = false;
+        $data = [];
 
         foreach ($request->activity as $item) {
+            $ts = Carbon::createFromTimestampUTC($item['timestamp']);
+
             $tour->activity()->create([
                 'user_id' => auth()->user()->id,
                 'action' => $item['action'],
                 'device_id' => $item['device_id'],
-                'created_at' => Carbon::createFromTimestampUTC($item['timestamp'])
+                'created_at' => $ts
             ]);
 
-            if ($item['action'] == 'stop') {
-                $fin = true;
+            switch ($item['action']) {
+                case Action::START:
+                    auth()->user()->startTour($tour, $ts);
+                    break;
+                case Action::STOP:
+                    $data = auth()->user()->finishTour($tour, $ts);
+                    break;
             }
         }
 
-        if ($fin && $tour->type == 'adventure') {
-            // TODO: return the users score for adventure stops
-        }
-
-        return response()->json(['result' => 1]);
+        return response()->json(['result' => 1, 'data' => $data]);
     }
 
     /**
