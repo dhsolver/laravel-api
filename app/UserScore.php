@@ -42,7 +42,7 @@ class UserScore extends Model
             // auto-calculate a new score when the Tour is finished.
             if ($model->isDirty('finished_at')) {
                 $ac = new AdventureCalculator($model->tour);
-                $model->points = $ac->calculatePoints($model->duration);
+                $model->points = $ac->calculatePoints($model->duration, $model->par);
                 $model->won_trophy = $ac->scoreQualifiesForTrophy($model->points);
             }
         });
@@ -94,6 +94,17 @@ class UserScore extends Model
     public function scopeForTour($query, $tour)
     {
         return $query->where('tour_id', modelId($tour));
+    }
+
+    /**
+     * Get only the scores that are finished.
+     *
+     * @param \Illuminate\Database\Query\Builder query
+     * @return \Illuminate\Database\Query\Builder
+     */
+    public function scopeFinished($query)
+    {
+        return $query->whereNotNull('finished_at');
     }
 
     // **********************************************************

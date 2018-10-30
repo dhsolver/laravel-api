@@ -329,13 +329,15 @@ class AdventureCalculator
      * @param float $timeInMinutes
      * @return int
      */
-    public function calculatePoints($timeInMinutes)
+    public function calculatePoints($timeInMinutes, $par = null)
     {
         $time = floatval($timeInMinutes);
         $min = config('junket.points.min_points', 50);
         $max = config('junket.points.max_points', 200);
 
-        $par = $this->getTimePar();
+        if ($par == null) {
+            $par = $this->getTimePar();
+        }
         $total = $max;
 
         if ($time <= $par) {

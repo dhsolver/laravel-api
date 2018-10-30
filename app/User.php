@@ -120,6 +120,16 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasMany(UserScore::class);
     }
 
+    /**
+     * A User has many activity.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+    */
+    public function activity()
+    {
+        return $this->hasMany(Activity::class);
+    }
+
     // **********************************************************
     // MUTATORS
     // **********************************************************
@@ -362,8 +372,10 @@ class User extends Authenticatable implements JWTSubject
     {
         $endTime = $endTime ?: Carbon::now();
 
-        return $this->scores()->forTour($tour)->first()->update([
+        $this->scores()->forTour($tour)->first()->update([
             'finished_at' => $endTime,
         ]);
+
+        return $this->scores()->forTour($tour)->first();
     }
 }

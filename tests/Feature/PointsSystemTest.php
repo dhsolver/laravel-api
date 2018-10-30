@@ -224,7 +224,7 @@ qur;
     public function sendAnalytics($model, $action = 'start', $time = null)
     {
         if ($model instanceof \App\Tour) {
-            $this->postJson("/mobile/tours/{$model->id}/track", [
+            return $this->postJson("/mobile/tours/{$model->id}/track", [
                 'activity' => [
                     [
                         'action' => $action,
@@ -234,7 +234,7 @@ qur;
                 ],
             ])->assertStatus(200);
         } elseif ($model instanceof \App\TourStop) {
-            $this->postJson("/mobile/stops/{$model->id}/track", [
+            return $this->postJson("/mobile/stops/{$model->id}/track", [
                 'activity' => [
                     [
                         'action' => $action,
@@ -465,7 +465,9 @@ qur;
 
         $stopTime = strtotime('now');
 
-        $this->sendAnalytics($this->tour, 'stop', $stopTime);
+        $response = $this->sendAnalytics($this->tour, 'stop', $stopTime)
+            ->assertJsonFragment(['won_trophy' => true])
+            ->assertJsonFragment(['points' => '200']);
 
         $this->assertEquals(Carbon::createFromTimestampUTC($stopTime), $score->fresh()->finished_at);
 
@@ -474,6 +476,34 @@ qur;
         $ac = new AdventureCalculator($this->tour);
 
         $this->assertEquals($ac->calculatePoints(30), $score->fresh()->points);
+    }
+
+    /** @test */
+    public function if_a_tour_par_changes_since_the_user_started_it_wouldnt_affect_their_score()
+    {
+        $this->withoutExceptionHandling();
+
+        $this->insertStopRouteData();
+
+        $startTime = strtotime('30 minutes ago');
+
+        $this->sendAnalytics($this->tour, 'start', $startTime);
+
+        $score = $this->signInUser->user->scores()->forTour($this->tour)->first();
+        $score->update(['par' => 15]);
+        $score = $score->fresh();
+
+        $stopTime = strtotime('now');
+
+        $this->sendAnalytics($this->tour, 'stop', $stopTime);
+
+        $this->assertEquals(Carbon::createFromTimestampUTC($stopTime), $score->fresh()->finished_at);
+
+        $this->assertEquals(30, $score->fresh()->duration);
+
+        $ac = new AdventureCalculator($this->tour);
+        $this->assertEquals($ac->calculatePoints(30, $score->par), $score->fresh()->points);
+        $this->assertEquals(170, $score->fresh()->points);
     }
 
     /** @test */
