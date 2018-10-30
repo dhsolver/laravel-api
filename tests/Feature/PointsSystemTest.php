@@ -495,7 +495,7 @@ qur;
     }
 
     /** @test */
-    public function when_a_user_does_not_complete_the_tour_in_tine_they_do_not_get_a_trophy()
+    public function when_a_user_does_not_complete_the_tour_in_time_they_do_not_get_a_trophy()
     {
         $this->withoutExceptionHandling();
 
