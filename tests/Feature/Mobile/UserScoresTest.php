@@ -24,6 +24,9 @@ class UserScoresTest extends TestCase
         factory(\App\Tour::class, 10)->create();
 
         foreach (Tour::all() as $tour) {
+            if (empty($this->tour)) {
+                $this->tour = $tour;
+            }
             factory(\App\TourStop::class, 3)->create(['tour_id' => $tour->id]);
             factory(\App\UserScore::class)->create([
                 'user_id' => $this->user->id,
@@ -33,13 +36,12 @@ class UserScoresTest extends TestCase
     }
 
     /** @test */
-    public function a_user_can_should_see_all_thier_scores_in_their_profile()
+    public function a_user_should_see_all_their_stats_in_their_profile()
     {
         $this->assertCount(10, $this->user->scores()->get());
 
         $this->getJson(route('mobile.profile.show', ['user' => $this->user]))
             ->assertStatus(200)
-            ->assertJsonCount(10, 'scores')
             ->assertJsonFragment([
                 'stats' => [
                     'completed_tours' => 10,
@@ -51,20 +53,30 @@ class UserScoresTest extends TestCase
     }
 
     /** @test */
-    public function a_user_should_see_all_their_stats_in_their_profile()
+    public function a_user_can_get_a_list_of_all_their_complete_tours_scores()
     {
+        $this->withoutExceptionHandling();
+
         $this->assertCount(10, $this->user->scores()->get());
 
-        $this->getJson(route('mobile.profile.show', ['user' => $this->user]))
+        $this->getJson(route('mobile.scores.index'))
             ->assertStatus(200)
-            ->assertJsonCount(10, 'scores')
+            ->assertJsonCount(10);
+    }
+
+    /** @test */
+    public function a_user_can_get_their_score_for_a_specific_tour()
+    {
+        $score = $this->user->scores()->forTour($this->tour)->first();
+
+        $this->assertNotNull($score);
+
+        $this->getJson(route('mobile.scores.show', ['tour' => $this->tour->id]))
+            ->assertStatus(200)
             ->assertJsonFragment([
-                'stats' => [
-                    'completed_tours' => 10,
-                    'points' => '2000',
-                    'stops_visited' => 0,
-                    'trophies' => 10,
-                ]
+                'tour_id' => $score->tour_id,
+                'points' => $score->points,
+                'won_trophy' => $score->won_trophy,
             ]);
     }
 }

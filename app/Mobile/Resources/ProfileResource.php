@@ -3,7 +3,6 @@
 namespace App\Mobile\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
-use App\Http\Resources\UserScoreResource;
 use App\Action;
 
 class ProfileResource extends JsonResource
@@ -32,7 +31,6 @@ class ProfileResource extends JsonResource
             $data['subscribe_override'] = $this->subscribe_override;
 
             // UNDOCUMENTED::::::::
-            $data['scores'] = UserScoreResource::collection($this->scores()->finished()->get());
             $data['stats'] = [
                 'points' => $this->scores()->finished()->sum('points'),
                 'completed_tours' => $this->scores()->finished()->count(),
