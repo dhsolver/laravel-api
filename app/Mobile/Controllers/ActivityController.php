@@ -8,6 +8,7 @@ use App\Http\Requests\RecordActivityRequest;
 use App\TourStop;
 use Carbon\Carbon;
 use App\Action;
+use App\Mobile\Resources\UserScoreResource;
 
 class ActivityController extends Controller
 {
@@ -37,7 +38,8 @@ class ActivityController extends Controller
                     auth()->user()->startTour($tour, $ts);
                     break;
                 case Action::STOP:
-                    $data = auth()->user()->finishTour($tour, $ts);
+                    $score = auth()->user()->finishTour($tour, $ts);
+                    $data = new UserScoreResource($score);
                     break;
             }
         }
