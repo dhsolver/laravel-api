@@ -2,7 +2,7 @@
 
 namespace App\Points;
 
-use App\UserScore;
+use App\ScoreCard;
 
 interface PointsCalculator
 {
@@ -10,7 +10,7 @@ interface PointsCalculator
 
     public function scoreQualifiesForTrophy($scoreCard);
 
-    public function getPoints(UserScore $scoreCard);
+    public function getPoints(ScoreCard $scoreCard);
 
     public function getTotalStops();
 }

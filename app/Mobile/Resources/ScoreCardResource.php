@@ -4,7 +4,7 @@ namespace App\Mobile\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class UserScoreResource extends JsonResource
+class ScoreCardResource extends JsonResource
 {
     /**
      * Transform the resource into an array.

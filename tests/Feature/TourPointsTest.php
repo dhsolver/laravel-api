@@ -3,7 +3,7 @@
 namespace Tests\Feature\Mobile;
 
 use App\TourType;
-use App\UserScore;
+use App\ScoreCard;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\Concerns\AttachJwtToken;
 use Tests\TestCase;
@@ -69,9 +69,9 @@ class TourPointsTest extends TestCase
 
         $this->sendAnalytics($this->tour, 'start');
 
-        $this->assertCount(1, $this->signInUser->user->scores()->get());
+        $this->assertCount(1, $this->signInUser->user->scoreCards()->get());
 
-        $score = UserScore::current($this->tour, $this->user);
+        $score = ScoreCard::current($this->tour, $this->user);
 
         $this->assertEquals($this->tour->stops()->count(), $score->total_stops);
     }

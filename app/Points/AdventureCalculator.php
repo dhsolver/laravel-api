@@ -4,7 +4,7 @@ namespace App\Points;
 
 use App\StopRoute;
 use App\Exceptions\UntraceableTourException;
-use App\UserScore;
+use App\ScoreCard;
 use drupol\phpermutations\Generators\Permutations;
 
 class AdventureCalculator implements PointsCalculator
@@ -48,11 +48,11 @@ class AdventureCalculator implements PointsCalculator
      * Calculate the points that should be awarded to the user
      * based on their time.
      *
-     * @param UserScore $scoreCard
+     * @param ScoreCard $scoreCard
      * @return int
      * @throws UntraceableTourException
      */
-    public function getPoints(UserScore $scoreCard)
+    public function getPoints(ScoreCard $scoreCard)
     {
         return $this->calculatePoints($scoreCard->duration, $scoreCard->par);
     }
@@ -112,12 +112,12 @@ class AdventureCalculator implements PointsCalculator
     /**
      * Check if the given score qualifies for a trophy.
      *
-     * @param UserScore|int $score
+     * @param ScoreCard|int $score
      * @return bool
      */
     public function scoreQualifiesForTrophy($score)
     {
-        if ($score instanceof UserScore) {
+        if ($score instanceof ScoreCard) {
             $score = $score->points;
         }
 

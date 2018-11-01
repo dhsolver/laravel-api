@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateUserScoresTable extends Migration
+class CreateUserScoreCardsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateUserScoresTable extends Migration
      */
     public function up()
     {
-        Schema::create('user_scores', function (Blueprint $table) {
+        Schema::create('user_score_cards', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('user_id');
             $table->unsignedInteger('tour_id');
@@ -41,6 +41,6 @@ class CreateUserScoresTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('user_scores');
+        Schema::dropIfExists('user_score_cards');
     }
 }

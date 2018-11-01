@@ -4,7 +4,7 @@ namespace App\Points;
 
 use App\Exceptions\UntraceableTourException;
 use App\User;
-use App\UserScore;
+use App\ScoreCard;
 use Illuminate\Support\Carbon;
 
 class TourTracker
@@ -26,7 +26,7 @@ class TourTracker
     /**
      * The user's current score card for the Tour.
      *
-     * @var \App\UserScore
+     * @var \App\ScoreCard
      */
     public $scoreCard;
 
@@ -46,7 +46,7 @@ class TourTracker
             $this->user = User::find($user);
         }
 
-        $this->scoreCard = UserScore::current($tour, $user);
+        $this->scoreCard = ScoreCard::current($tour, $user);
     }
 
     /**
@@ -70,7 +70,7 @@ class TourTracker
                 'started_at' => $startTime,
             ];
 
-            if ($this->scoreCard = $this->user->scores()->create($data)) {
+            if ($this->scoreCard = $this->user->scoreCards()->create($data)) {
                 return true;
             }
 

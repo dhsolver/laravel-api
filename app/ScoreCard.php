@@ -4,10 +4,16 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
-use App\Points\AdventureCalculator;
 
-class UserScore extends Model
+class ScoreCard extends Model
 {
+    /**
+     * The table name for the model.
+     *
+     * @var string
+     */
+    protected $table = 'user_score_cards';
+
     /**
      * The attributes that aren't mass assignable.
      *
@@ -119,7 +125,7 @@ class UserScore extends Model
      *
      * @param \App\Tour|array|int $tour
      * @param \App\User|array|int $user
-     * @return UserScore|null
+     * @return ScoreCard|null
      */
     public static function current($tour, $user)
     {

@@ -32,10 +32,10 @@ class ProfileResource extends JsonResource
 
             // UNDOCUMENTED::::::::
             $data['stats'] = [
-                'points' => $this->scores()->finished()->sum('points'),
-                'completed_tours' => $this->scores()->finished()->count(),
+                'points' => $this->scoreCards()->finished()->sum('points'),
+                'completed_tours' => $this->scoreCards()->finished()->count(),
                 'stops_visited' => $this->activity()->where('actionable_type', 'App\TourStop')->where('action', Action::START)->count(),
-                'trophies' => $this->scores()->finished()->where('won_trophy', true)->count(),
+                'trophies' => $this->scoreCards()->finished()->where('won_trophy', true)->count(),
             ];
         }
 

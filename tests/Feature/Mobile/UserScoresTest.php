@@ -28,7 +28,7 @@ class UserScoresTest extends TestCase
                 $this->tour = $tour;
             }
             factory(\App\TourStop::class, 3)->create(['tour_id' => $tour->id]);
-            factory(\App\UserScore::class)->create([
+            factory(\App\ScoreCard::class)->create([
                 'user_id' => $this->user->id,
                 'tour_id' => $tour->id,
             ]);
@@ -38,7 +38,7 @@ class UserScoresTest extends TestCase
     /** @test */
     public function a_user_should_see_all_their_stats_in_their_profile()
     {
-        $this->assertCount(10, $this->user->scores()->get());
+        $this->assertCount(10, $this->user->scoreCards()->get());
 
         $this->getJson(route('mobile.profile.show', ['user' => $this->user]))
             ->assertStatus(200)
@@ -57,7 +57,7 @@ class UserScoresTest extends TestCase
     {
         $this->withoutExceptionHandling();
 
-        $this->assertCount(10, $this->user->scores()->get());
+        $this->assertCount(10, $this->user->scoreCards()->get());
 
         $this->getJson(route('mobile.scores.index'))
             ->assertStatus(200)
@@ -67,7 +67,7 @@ class UserScoresTest extends TestCase
     /** @test */
     public function a_user_can_get_their_score_for_a_specific_tour()
     {
-        $score = $this->user->scores()->forTour($this->tour)->first();
+        $score = $this->user->scoreCards()->forTour($this->tour)->first();
 
         $this->assertNotNull($score);
 

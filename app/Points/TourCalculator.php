@@ -2,7 +2,7 @@
 
 namespace App\Points;
 
-use App\UserScore;
+use App\ScoreCard;
 
 class TourCalculator implements PointsCalculator
 {
@@ -44,7 +44,7 @@ class TourCalculator implements PointsCalculator
     /**
      * Check if the given score qualifies for a trophy.
      *
-     * @param UserScore $score
+     * @param ScoreCard $score
      * @return bool
      */
     public function scoreQualifiesForTrophy($score)
@@ -68,10 +68,10 @@ class TourCalculator implements PointsCalculator
     /**
      * Get the number of points awarded to the user.
      *
-     * @param UserScore $scoreCard
+     * @param ScoreCard $scoreCard
      * @return int
      */
-    public function getPoints(UserScore $scoreCard)
+    public function getPoints(ScoreCard $scoreCard)
     {
         $pointsPer = config('junket.points.per_stop', 1);
 

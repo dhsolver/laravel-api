@@ -9,7 +9,7 @@ use Tests\Concerns\AttachJwtToken;
 use Illuminate\Support\Carbon;
 use Tests\TestCase;
 use App\StopChoice;
-use App\UserScore;
+use App\ScoreCard;
 use App\TourStop;
 use App\TourType;
 use App\Device;
@@ -436,7 +436,7 @@ qur;
     }
 
     /** @test */
-    public function when_a_tour_is_started_it_should_create_a_user_score()
+    public function when_a_tour_is_started_it_should_create_a_score_card()
     {
         $this->withoutExceptionHandling();
 
@@ -444,9 +444,9 @@ qur;
 
         $this->sendAnalytics($this->tour, 'start');
 
-        $this->assertCount(1, $this->signInUser->user->scores()->get());
+        $this->assertCount(1, $this->signInUser->user->scoreCards()->get());
 
-        $score = $this->signInUser->user->scores()->forTour($this->tour)->first();
+        $score = $this->signInUser->user->scoreCards()->forTour($this->tour)->first();
 
         $ac = new AdventureCalculator($this->tour);
 
@@ -454,7 +454,7 @@ qur;
     }
 
     /** @test */
-    public function when_a_tour_is_finished_it_should_calculate_and_return_the_user_score()
+    public function when_a_tour_is_finished_it_should_calculate_and_return_the_score_card()
     {
         $this->withoutExceptionHandling();
 
@@ -464,7 +464,7 @@ qur;
 
         $this->sendAnalytics($this->tour, 'start', $startTime);
 
-        $score = $this->signInUser->user->scores()->forTour($this->tour)->first();
+        $score = $this->signInUser->user->scoreCards()->forTour($this->tour)->first();
 
         $stopTime = strtotime('now');
 
@@ -492,7 +492,7 @@ qur;
 
         $this->sendAnalytics($this->tour, 'start', $startTime);
 
-        $score = $this->signInUser->user->scores()->forTour($this->tour)->first();
+        $score = $this->signInUser->user->scoreCards()->forTour($this->tour)->first();
         $score->update(['par' => 15]);
         $score = $score->fresh();
 
@@ -522,7 +522,7 @@ qur;
         $this->sendAnalytics($this->tour, 'start', $startTime);
         $this->sendAnalytics($this->tour, 'stop', $stopTime);
 
-        $score = $this->signInUser->user->scores()->forTour($this->tour)->first();
+        $score = $this->signInUser->user->scoreCards()->forTour($this->tour)->first();
 
         $this->assertTrue($score->won_trophy);
     }
@@ -540,7 +540,7 @@ qur;
         $this->sendAnalytics($this->tour, 'start', $startTime);
         $this->sendAnalytics($this->tour, 'stop', $stopTime);
 
-        $score = $this->signInUser->user->scores()->forTour($this->tour)->first();
+        $score = $this->signInUser->user->scoreCards()->forTour($this->tour)->first();
 
         $this->assertFalse($score->won_trophy);
     }
@@ -554,9 +554,9 @@ qur;
 
         $this->sendAnalytics($this->tour, 'start');
 
-        $this->assertCount(1, $this->signInUser->user->scores()->get());
+        $this->assertCount(1, $this->signInUser->user->scoreCards()->get());
 
-        $score = $this->signInUser->user->scores()
+        $score = $this->signInUser->user->scoreCards()
             ->forTour($this->tour)
             ->first();
 
@@ -568,7 +568,7 @@ qur;
     {
         $this->withoutExceptionHandling();
 
-        $score = UserScore::create([
+        $score = ScoreCard::create([
             'is_adventure' => true,
             'par' => 60,
             'total_stops' => 5,
@@ -579,15 +579,15 @@ qur;
             'user_id' => $this->user->id,
         ]);
 
-        $this->assertCount(1, $this->user->scores()->get());
+        $this->assertCount(1, $this->user->scoreCards()->get());
 
         $startTime = strtotime('30 minutes ago');
         $this->sendAnalytics($this->tour, 'start', $startTime)
             ->assertJsonFragment(['points' => 0]);
 
-        $this->assertCount(2, $this->user->scores()->get());
+        $this->assertCount(2, $this->user->scoreCards()->get());
 
-        $score2 = UserScore::current($this->tour, $this->user);
+        $score2 = ScoreCard::current($this->tour, $this->user);
 
         $this->assertNotNull($score->finished_at);
         $this->assertNull($score2->finished_at);
@@ -599,7 +599,7 @@ qur;
     {
         $this->withoutExceptionHandling();
 
-        $score = UserScore::create([
+        $score = ScoreCard::create([
             'is_adventure' => true,
             'par' => 60,
             'total_stops' => 5,
@@ -610,15 +610,15 @@ qur;
             'user_id' => $this->user->id,
         ]);
 
-        $this->assertCount(1, $this->user->scores()->get());
+        $this->assertCount(1, $this->user->scoreCards()->get());
 
         $startTime = strtotime('30 minutes ago');
         $this->sendAnalytics($this->tour, 'start', $startTime)
             ->assertJsonFragment(['points' => 0]);
 
-        $this->assertCount(2, $this->user->scores()->get());
+        $this->assertCount(2, $this->user->scoreCards()->get());
 
-        $score2 = UserScore::current($this->tour, $this->user);
+        $score2 = ScoreCard::current($this->tour, $this->user);
 
         $this->assertNull($score->finished_at);
         $this->assertNull($score2->finished_at);
@@ -630,7 +630,7 @@ qur;
     {
         $this->withoutExceptionHandling();
 
-        $score = UserScore::create([
+        $score = ScoreCard::create([
             'is_adventure' => true,
             'par' => 60,
             'total_stops' => 5,
@@ -645,7 +645,7 @@ qur;
         $this->sendAnalytics($this->tour, 'start', $startTime)
             ->assertJsonFragment(['points' => 0]);
 
-        $score2 = UserScore::current($this->tour, $this->user);
+        $score2 = ScoreCard::current($this->tour, $this->user);
 
         $score2->update(['points' => 50]);
 
@@ -657,7 +657,7 @@ qur;
     {
         $this->withoutExceptionHandling();
 
-        $score = UserScore::create([
+        $score = ScoreCard::create([
             'is_adventure' => true,
             'par' => 60,
             'total_stops' => 5,
@@ -668,7 +668,7 @@ qur;
             'user_id' => $this->user->id,
         ]);
 
-        $score2 = UserScore::create([
+        $score2 = ScoreCard::create([
             'is_adventure' => true,
             'par' => 60,
             'total_stops' => 5,

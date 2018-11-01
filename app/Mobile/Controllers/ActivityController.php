@@ -9,7 +9,7 @@ use App\Http\Requests\RecordActivityRequest;
 use App\TourStop;
 use Carbon\Carbon;
 use App\Action;
-use App\Mobile\Resources\UserScoreResource;
+use App\Mobile\Resources\ScoreCardResource;
 
 class ActivityController extends Controller
 {
@@ -38,13 +38,13 @@ class ActivityController extends Controller
                 case Action::START:
                     $tracker = new TourTracker($tour, auth()->user());
                     $tracker->startTour($ts);
-                    $data = new UserScoreResource($tracker->scoreCard);
+                    $data = new ScoreCardResource($tracker->scoreCard);
                     break;
 
                 case Action::STOP:
                     $tracker = new TourTracker($tour, auth()->user());
                     $tracker->completeTour($ts);
-                    $data = new UserScoreResource($tracker->scoreCard);
+                    $data = new ScoreCardResource($tracker->scoreCard);
                     break;
             }
         }
@@ -74,7 +74,7 @@ class ActivityController extends Controller
 //                case Action::STOP:
 //                    $tracker = new TourTracker($stop->tour, auth()->user());
 //                    $tracker->completeStop($ts);
-//                    $data = new UserScoreResource($tracker->scoreCard);
+//                    $data = new ScoreCardResource($tracker->scoreCard);
 //                    break;
 //            }
         }

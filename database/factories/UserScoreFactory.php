@@ -3,7 +3,7 @@
 use Faker\Generator as Faker;
 use Illuminate\Support\Carbon;
 
-$factory->define(App\UserScore::class, function (Faker $faker) {
+$factory->define(App\ScoreCard::class, function (Faker $faker) {
     $finished_at = new Carbon($faker->dateTimeThisYear()->format('c'));
 
     return [

@@ -9,7 +9,6 @@ use App\Notifications\ResetPasswordNotification;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
-use App\Points\AdventureCalculator;
 
 class User extends Authenticatable implements JWTSubject
 {
@@ -111,13 +110,13 @@ class User extends Authenticatable implements JWTSubject
     }
 
     /**
-     * Get the user's scores relationship.
+     * Get the user's score cards relationship.
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
     */
-    public function scores()
+    public function scoreCards()
     {
-        return $this->hasMany(UserScore::class);
+        return $this->hasMany(ScoreCard::class);
     }
 
     /**
@@ -347,7 +346,7 @@ class User extends Authenticatable implements JWTSubject
      */
     public function getScore()
     {
-        $points = $this->scores()->finished()->sum('points');
+        $points = $this->scoreCards()->finished()->sum('points');
 
         if (empty($points)) {
             return 0;

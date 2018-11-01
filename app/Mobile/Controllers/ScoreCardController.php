@@ -3,10 +3,9 @@
 namespace App\Mobile\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Tour;
-use App\Mobile\Resources\UserScoreResource;
+use App\Mobile\Resources\ScoreCardResource;
 
-class UserScoreController extends Controller
+class ScoreCardController extends Controller
 {
     /**
      * Get the user's score for all of their completed Tours.
@@ -15,11 +14,11 @@ class UserScoreController extends Controller
      */
     public function index()
     {
-        $scores = auth()->user()->scores()
+        $scores = auth()->user()->scoreCards()
             ->finished()
             ->get();
 
-        return UserScoreResource::collection($scores);
+        return ScoreCardResource::collection($scores);
     }
 
     /**
@@ -30,7 +29,7 @@ class UserScoreController extends Controller
      */
     public function show($tour)
     {
-        $score = auth()->user()->scores()
+        $score = auth()->user()->scoreCards()
             ->finished()
             ->forTour($tour)
             ->first();
@@ -39,6 +38,6 @@ class UserScoreController extends Controller
             throw new ModelNotFoundException('User has no score for this Tour.');
         }
 
-        return new UserScoreResource($score);
+        return new ScoreCardResource($score);
     }
 }
