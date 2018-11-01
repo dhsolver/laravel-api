@@ -21,7 +21,7 @@ class UserScoresTest extends TestCase
         $this->signIn('user');
         $this->user = $this->signInUser->user;
 
-        factory(\App\Tour::class, 10)->create();
+        factory(Tour::class, 10)->create();
 
         foreach (Tour::all() as $tour) {
             if (empty($this->tour)) {
@@ -42,12 +42,12 @@ class UserScoresTest extends TestCase
 
         $this->getJson(route('mobile.profile.show', ['user' => $this->user]))
             ->assertStatus(200)
-            ->assertJsonFragment([
+            ->assertJsonStructure([
                 'stats' => [
-                    'completed_tours' => 10,
-                    'points' => '2000',
-                    'stops_visited' => 0,
-                    'trophies' => 10,
+                    'completed_tours',
+                    'points',
+                    'stops_visited',
+                    'trophies',
                 ]
             ]);
     }

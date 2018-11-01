@@ -9,7 +9,7 @@ use App\Notifications\ResetPasswordNotification;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
-use App\Adventure\AdventureCalculator;
+use App\Points\AdventureCalculator;
 
 class User extends Authenticatable implements JWTSubject
 {
@@ -340,42 +340,4 @@ class User extends Authenticatable implements JWTSubject
         return $user;
     }
 
-    /**
-     * Create starting record for the given Tour and the
-     * authenticated user.
-     *
-     * @param Tour $tour
-     * @param \Carbon\Carbon $startTime
-     * @return UserScore
-     */
-    public function startTour(Tour $tour, $startTime = null)
-    {
-        $startTime = $startTime ?: Carbon::now();
-
-        $ac = new AdventureCalculator($tour);
-        $par = $ac->getTimePar();
-
-        return $this->scores()->create([
-            'tour_id' => $tour->id,
-            'par' => $par,
-            'started_at' => $startTime,
-        ]);
-    }
-
-    /**
-     * Save the users progress and calculate the score.
-     *
-     * @param Tour $tour
-     * @return UserScore
-     */
-    public function finishTour(Tour $tour, $endTime = null)
-    {
-        $endTime = $endTime ?: Carbon::now();
-
-        $this->scores()->forTour($tour)->first()->update([
-            'finished_at' => $endTime,
-        ]);
-
-        return $this->scores()->forTour($tour)->first();
-    }
 }

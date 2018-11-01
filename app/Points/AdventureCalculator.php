@@ -1,31 +1,31 @@
 <?php
 
-namespace App\Adventure;
+namespace App\Points;
 
+use App\StopRoute;
 use App\Exceptions\UntraceableTourException;
 use drupol\phpermutations\Generators\Permutations;
-use App\StopRoute;
 
 class AdventureCalculator
 {
     /**
      * The adventure Tour.
      *
-     * @var App\Tour
+     * @var \App\Tour
      */
     public $tour;
 
     /**
      * The Tour's stops, in order, with all loaded data.
      *
-     * @var App\TourStop
+     * @var \App\TourStop
      */
     public $stops;
 
     /**
      * Create a new instance.
      *
-     * @param App\Tour tour
+     * @param \App\Tour tour
      */
     public function __construct($tour)
     {
@@ -33,6 +33,12 @@ class AdventureCalculator
         $this->stops = $tour->stops()->ordered()->get();
     }
 
+    /**
+     * Get the shortest route path and distance.
+     *
+     * @return array
+     * @throws UntraceableTourException
+     */
     public function getShortestRoute()
     {
         $best = 0;
@@ -62,6 +68,7 @@ class AdventureCalculator
      * Get an array of all the possible paths for the tour.
      *
      * @return \Illuminate\Support\Collection
+     * @throws UntraceableTourException
      */
     public function getPossiblePaths()
     {
@@ -191,7 +198,7 @@ class AdventureCalculator
      * Get the stop with the given ID from the pre-loaded stops array.
      *
      * @param int $id
-     * @return App\TourStop
+     * @return \App\TourStop
      */
     public function getStop($id)
     {
@@ -201,7 +208,7 @@ class AdventureCalculator
     /**
      * Get the last stop of the Tour.
      *
-     * @return App\TourStop
+     * @return \App\TourStop
      * @throws UntraceableTourException
      */
     public function getLastStop()
@@ -216,7 +223,7 @@ class AdventureCalculator
     /**
      * Get the first stop of the Tour.
      *
-     * @return App\TourStop
+     * @return \App\TourStop
      * @throws UntraceableTourException
      */
     public function getFirstStop()
@@ -231,9 +238,9 @@ class AdventureCalculator
     /**
      * Get the distance between two stops.
      *
-     * @param App\TourStop $stop1
-     * @param App\TourStop $stop2
-     * @return void
+     * @param \App\TourStop $stop1
+     * @param \App\TourStop $stop2
+     * @return float
      */
     public function getDistanceBetweenStops($stop1, $stop2)
     {
@@ -243,7 +250,7 @@ class AdventureCalculator
             ->get();
 
         if (empty($path)) {
-            // if there is no path, just get the striaght line distance
+            // if there is no path, just get the straight line distance
             // between the two stops coordinates.
             return $this->getDistance(
                 $stop1->location->latitude,
@@ -253,7 +260,7 @@ class AdventureCalculator
             );
         }
 
-        // get every point along the route and get the sum of the distnace
+        // get every point along the route and get the sum of the distance
         // between stop1, all of those points and stop2.
         $total = 0;
         $previousPoint = $stop1->location;
@@ -281,10 +288,28 @@ class AdventureCalculator
     }
 
     /**
-     * Get the averate amount of time (minutes) that it should
+     * Get the current par value for the Tour.
+     *
+     * @return float
+     * @throws UntraceableTourException
+     */
+    public function getPar()
+    {
+        if ($this->tour->isAdventure()) {
+            // get average time to complete the Tour
+            return $this->getTimePar();
+        }
+
+        // return the total number of stops on the Tour
+        return floatval($this->stops->count());
+    }
+
+    /**
+     * Get the average amount of time (minutes) that it should
      * take to finish the tour.
      *
      * @return float
+     * @throws UntraceableTourException
      */
     public function getTimePar()
     {
@@ -328,15 +353,24 @@ class AdventureCalculator
      *
      * @param float $timeInMinutes
      * @return int
+     * @throws UntraceableTourException
      */
-    public function calculatePoints($timeInMinutes, $par = null)
+    public function calculatePoints($timeInMinutes, $par = null, $userId = null)
     {
+        if (! $this->tour->isAdventure()) {
+            // award x points for every stop visited
+            $pointsPer = config('junket.points.per_stop', 1);
+            // TODO: get count of stops visited from the analytics
+            $stopsVisited = 0;
+            return $pointsPer * $stopsVisited;
+        }
+
         $time = floatval($timeInMinutes);
         $min = config('junket.points.min_points', 50);
         $max = config('junket.points.max_points', 200);
 
         if ($par == null) {
-            $par = $this->getTimePar();
+            $par = $this->getPar();
         }
         $total = $max;
 
@@ -369,12 +403,22 @@ class AdventureCalculator
      *
      * @param float $score
      * @return bool
+     * @throws UntraceableTourException
      */
-    public function scoreQualifiesForTrophy($score)
+    public function scoreQualifiesForTrophy($score, $par = null)
     {
-        $max = config('junket.points.max_points', 200);
         $trophyRate = config('junket.points.trophy_rate', 70);
-        return $score >= (floatval($max) * (floatval($trophyRate) / 100));
+
+        if ($this->tour->isAdventure()) {
+            $max = config('junket.points.max_points', 200);
+            return $score >= (floatval($max) * (floatval($trophyRate) / 100));
+        }
+
+        if (empty($par)) {
+            $par = $this->getPar();
+        }
+
+        return $score >= (floatval($par) * (floatval($trophyRate) / 100));
     }
 
     /**

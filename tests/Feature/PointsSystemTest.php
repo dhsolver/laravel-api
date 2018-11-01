@@ -2,10 +2,11 @@
 
 namespace Tests\Feature\Mobile;
 
+use App\TourType;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\Concerns\AttachJwtToken;
 use Tests\TestCase;
-use App\Adventure\AdventureCalculator;
+use App\Points\AdventureCalculator;
 use App\Tour;
 use App\TourStop;
 use App\Device;
@@ -44,6 +45,7 @@ class PointsSystemTest extends TestCase
         $this->tour = factory(Tour::class)->states('published')->create([
             'pricing_type' => 'free',
             'background_audio_id' => $audio->id,
+            'type' => TourType::ADVENTURE
         ]);
 
         $this->stop1 = factory(TourStop::class)->create(['tour_id' => $this->tour, 'intro_audio_id' => $audio->id]);
@@ -387,7 +389,7 @@ qur;
 
         $ac = new AdventureCalculator($this->tour);
 
-        $par = $ac->getTimePar();
+        $par = $ac->getPar();
 
         $this->assertEquals(51, $par);
     }
@@ -447,7 +449,7 @@ qur;
 
         $ac = new AdventureCalculator($this->tour);
 
-        $this->assertEquals($ac->getTimePar(), $score->par);
+        $this->assertEquals($ac->getPar(), $score->par);
     }
 
     /** @test */
@@ -540,5 +542,23 @@ qur;
         $score = $this->signInUser->user->scores()->forTour($this->tour)->first();
 
         $this->assertFalse($score->won_trophy);
+    }
+
+    /** @test */
+    public function when_a_non_adventure_tour_is_started_the_par_should_be_set_to_its_number_of_stops()
+    {
+        $this->withoutExceptionHandling();
+
+        $this->tour->update(['type' => TourType::OUTDOOR]);
+
+        $this->sendAnalytics($this->tour, 'start');
+
+        $this->assertCount(1, $this->signInUser->user->scores()->get());
+
+        $score = $this->signInUser->user->scores()
+            ->forTour($this->tour)
+            ->first();
+
+        $this->assertEquals($this->tour->stops()->count(), $score->par);
     }
 }

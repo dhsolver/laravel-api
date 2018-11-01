@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
-use App\Adventure\AdventureCalculator;
+use App\Points\AdventureCalculator;
 
 class UserScore extends Model
 {
@@ -41,9 +41,13 @@ class UserScore extends Model
         static::saving(function ($model) {
             // auto-calculate a new score when the Tour is finished.
             if ($model->isDirty('finished_at')) {
-                $ac = new AdventureCalculator($model->tour);
-                $model->points = $ac->calculatePoints($model->duration, $model->par);
-                $model->won_trophy = $ac->scoreQualifiesForTrophy($model->points);
+//                $tracker = new TourTracker($model->tour, $model->user);
+//                $model->points = $tracker->calculatePoints($model);
+//                $model->won_trophy = $tracker->scoreQualifiesForTrophy($model);
+
+                 $ac = new AdventureCalculator($model->tour);
+                 $model->points = $ac->calculatePoints($model->duration, $model->par, $model->user_id);
+                 $model->won_trophy = $ac->scoreQualifiesForTrophy($model->points, $model->par);
             }
         });
 
@@ -62,6 +66,16 @@ class UserScore extends Model
     public function tour()
     {
         return $this->belongsTo(\App\Tour::class);
+    }
+
+    /**
+     * Get the owning User relationship.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+    */
+    public function user()
+    {
+        return $this->belongsTo(\App\User::class);
     }
 
     // **********************************************************
@@ -94,6 +108,18 @@ class UserScore extends Model
     public function scopeForTour($query, $tour)
     {
         return $query->where('tour_id', modelId($tour));
+    }
+
+    /**
+     * Get the scores that pertain to the given User.
+     *
+     * @param \Illuminate\Database\Query\Builder query
+     * @param array|int|\App\User
+     * @return \Illuminate\Database\Query\Builder
+     */
+    public function scopeForUser($query, $user)
+    {
+        return $query->where('user_id', modelId($user));
     }
 
     /**
