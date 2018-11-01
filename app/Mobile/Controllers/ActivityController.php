@@ -38,12 +38,13 @@ class ActivityController extends Controller
                 case Action::START:
                     $tracker = new TourTracker($tour, auth()->user());
                     $tracker->startTour($ts);
+                    $data = new UserScoreResource($tracker->scoreCard);
                     break;
 
                 case Action::STOP:
                     $tracker = new TourTracker($tour, auth()->user());
-                    $score = $tracker->finishTour($ts);
-                    $data = new UserScoreResource($score);
+                    $tracker->completeTour($ts);
+                    $data = new UserScoreResource($tracker->scoreCard);
                     break;
             }
         }
@@ -58,15 +59,26 @@ class ActivityController extends Controller
      */
     public function stop(TourStop $stop, RecordActivityRequest $request)
     {
+        $data = [];
         foreach ($request->activity as $item) {
+            $ts = Carbon::createFromTimestampUTC($item['timestamp']);
+
             $stop->activity()->create([
                 'user_id' => auth()->user()->id,
                 'action' => $item['action'],
                 'device_id' => $item['device_id'],
-                'created_at' => Carbon::createFromTimestampUTC($item['timestamp'])
+                'created_at' => $ts,
             ]);
+
+//            switch ($item['action']) {
+//                case Action::STOP:
+//                    $tracker = new TourTracker($stop->tour, auth()->user());
+//                    $tracker->completeStop($ts);
+//                    $data = new UserScoreResource($tracker->scoreCard);
+//                    break;
+//            }
         }
 
-        return response()->json(['result' => 1]);
+        return response()->json(['result' => 1, 'data' => $data]);
     }
 }

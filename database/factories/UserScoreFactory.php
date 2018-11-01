@@ -8,9 +8,12 @@ $factory->define(App\UserScore::class, function (Faker $faker) {
 
     return [
         'par' => random_int(60, 120),
-        'points' => random_int(0, 200),
+//        'points' => random_int(0, 200),
+        'total_stops' => random_int(5, 50),
+        'stops_visited' => random_int(1, 5),
         'won_trophy' => $faker->optional($weight = 0.5, $default = false)->randomDigit,
         'started_at' => $finished_at->subMinutes(random_int(60, 120)),
         'finished_at' => $finished_at,
+        'is_adventure' => true,
     ];
 });

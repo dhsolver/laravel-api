@@ -17,7 +17,7 @@ class UserScoreResource extends JsonResource
         return [
             'tour_id' => $this->tour_id,
             'tour_name' => $this->tour->title,
-            'points' => $this->points,
+            'points' => (int) $this->points,
             'won_trophy' => $this->won_trophy,
             'trophy_url' => $this->won_trophy ? optional($this->tour->trophyImage)->path : null,
         ];

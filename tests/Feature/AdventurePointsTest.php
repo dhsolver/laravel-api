@@ -2,20 +2,21 @@
 
 namespace Tests\Feature\Mobile;
 
-use App\TourType;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
-use Tests\Concerns\AttachJwtToken;
-use Tests\TestCase;
-use App\Points\AdventureCalculator;
-use App\Tour;
-use App\TourStop;
-use App\Device;
-use App\StopChoice;
 use App\Exceptions\UntraceableTourException;
-use App\Media;
+use App\Points\AdventureCalculator;
+use Tests\Concerns\AttachJwtToken;
 use Illuminate\Support\Carbon;
+use Tests\TestCase;
+use App\StopChoice;
+use App\UserScore;
+use App\TourStop;
+use App\TourType;
+use App\Device;
+use App\Media;
+use App\Tour;
 
-class PointsSystemTest extends TestCase
+class AdventurePointsTest extends TestCase
 {
     use DatabaseMigrations, AttachJwtToken;
 
@@ -469,7 +470,7 @@ qur;
 
         $response = $this->sendAnalytics($this->tour, 'stop', $stopTime)
             ->assertJsonFragment(['won_trophy' => true])
-            ->assertJsonFragment(['points' => '200']);
+            ->assertJsonFragment(['points' => 200]);
 
         $this->assertEquals(Carbon::createFromTimestampUTC($stopTime), $score->fresh()->finished_at);
 
@@ -533,7 +534,7 @@ qur;
 
         $this->insertStopRouteData();
 
-        $startTime = strtotime('90 minutes ago');
+        $startTime = strtotime('200 minutes ago');
         $stopTime = strtotime('now');
 
         $this->sendAnalytics($this->tour, 'start', $startTime);
@@ -545,7 +546,7 @@ qur;
     }
 
     /** @test */
-    public function when_a_non_adventure_tour_is_started_the_par_should_be_set_to_its_number_of_stops()
+    public function when_a_regular_tour_is_started_it_should_set_the_total_number_of_stops()
     {
         $this->withoutExceptionHandling();
 
@@ -559,6 +560,128 @@ qur;
             ->forTour($this->tour)
             ->first();
 
-        $this->assertEquals($this->tour->stops()->count(), $score->par);
+        $this->assertEquals($this->tour->stops()->count(), $score->total_stops);
+    }
+
+    /** @test */
+    public function an_adventure_can_be_started_again_after_finishing()
+    {
+        $this->withoutExceptionHandling();
+
+        $score = UserScore::create([
+            'is_adventure' => true,
+            'par' => 60,
+            'total_stops' => 5,
+            'stops_visited' => 5,
+            'started_at' => \Carbon\Carbon::now()->subMinutes(120),
+            'finished_at' => \Carbon\Carbon::now(),
+            'tour_id' => $this->tour->id,
+            'user_id' => $this->user->id,
+        ]);
+
+        $this->assertCount(1, $this->user->scores()->get());
+
+        $startTime = strtotime('30 minutes ago');
+        $this->sendAnalytics($this->tour, 'start', $startTime)
+            ->assertJsonFragment(['points' => 0]);
+
+        $this->assertCount(2, $this->user->scores()->get());
+
+        $score2 = UserScore::current($this->tour, $this->user);
+
+        $this->assertNotNull($score->finished_at);
+        $this->assertNull($score2->finished_at);
+        $this->assertNotEquals($score->id, $score2->id);
+    }
+
+    /** @test */
+    public function an_adventure_can_be_started_again_even_when_not_finished()
+    {
+        $this->withoutExceptionHandling();
+
+        $score = UserScore::create([
+            'is_adventure' => true,
+            'par' => 60,
+            'total_stops' => 5,
+            'stops_visited' => 5,
+            'started_at' => \Carbon\Carbon::now()->subMinutes(120),
+            'finished_at' => null,
+            'tour_id' => $this->tour->id,
+            'user_id' => $this->user->id,
+        ]);
+
+        $this->assertCount(1, $this->user->scores()->get());
+
+        $startTime = strtotime('30 minutes ago');
+        $this->sendAnalytics($this->tour, 'start', $startTime)
+            ->assertJsonFragment(['points' => 0]);
+
+        $this->assertCount(2, $this->user->scores()->get());
+
+        $score2 = UserScore::current($this->tour, $this->user);
+
+        $this->assertNull($score->finished_at);
+        $this->assertNull($score2->finished_at);
+        $this->assertNotEquals($score->id, $score2->id);
+    }
+
+    /** @test */
+    public function only_completed_adventuress_count_towards_a_users_score()
+    {
+        $this->withoutExceptionHandling();
+
+        $score = UserScore::create([
+            'is_adventure' => true,
+            'par' => 60,
+            'total_stops' => 5,
+            'stops_visited' => 5,
+            'started_at' => \Carbon\Carbon::now()->subMinutes(120),
+            'finished_at' => \Carbon\Carbon::now(),
+            'tour_id' => $this->tour->id,
+            'user_id' => $this->user->id,
+        ]);
+
+        $startTime = strtotime('30 minutes ago');
+        $this->sendAnalytics($this->tour, 'start', $startTime)
+            ->assertJsonFragment(['points' => 0]);
+
+        $score2 = UserScore::current($this->tour, $this->user);
+
+        $score2->update(['points' => 50]);
+
+        $this->assertEquals($this->user->getScore(), $score->points);
+    }
+
+    /** @test */
+    public function a_users_score_only_contains_their_best_score_for_an_adventure()
+    {
+        $this->withoutExceptionHandling();
+
+        $score = UserScore::create([
+            'is_adventure' => true,
+            'par' => 60,
+            'total_stops' => 5,
+            'stops_visited' => 5,
+            'started_at' => \Carbon\Carbon::now()->subMinutes(120),
+            'finished_at' => \Carbon\Carbon::now(),
+            'tour_id' => $this->tour->id,
+            'user_id' => $this->user->id,
+        ]);
+
+        $score2 = UserScore::create([
+            'is_adventure' => true,
+            'par' => 60,
+            'total_stops' => 5,
+            'stops_visited' => 5,
+            'started_at' => \Carbon\Carbon::now()->subMinutes(120),
+            'finished_at' => \Carbon\Carbon::now(),
+            'tour_id' => $this->tour->id,
+            'user_id' => $this->user->id,
+        ]);
+
+        $score->update(['points' => 50]);
+        $score2->update(['points' => 100]);
+
+        $this->assertEquals(100, $this->user->getScore());
     }
 }

@@ -75,7 +75,7 @@ class UserScoresTest extends TestCase
             ->assertStatus(200)
             ->assertJsonFragment([
                 'tour_id' => $score->tour_id,
-                'points' => $score->points,
+                'points' => (int) $score->points,
                 'won_trophy' => $score->won_trophy,
             ]);
     }

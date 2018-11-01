@@ -18,7 +18,7 @@ class Controller extends BaseController
      *
      * @param string $message
      * @param array $data
-     * @return void
+     * @return \Illuminate\Http\Response
      */
     public function success($message, $data = [])
     {
@@ -31,7 +31,7 @@ class Controller extends BaseController
      * @param int $statusCode
      * @param string $messages
      * @param array $data
-     * @return void
+     * @return \Illuminate\Http\Response
      */
     public function fail($statusCode = 500, $messages = '', $data = [])
     {

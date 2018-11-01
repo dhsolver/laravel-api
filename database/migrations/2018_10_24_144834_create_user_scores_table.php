@@ -17,9 +17,14 @@ class CreateUserScoresTable extends Migration
             $table->increments('id');
             $table->unsignedInteger('user_id');
             $table->unsignedInteger('tour_id');
-            $table->unsignedInteger('par');
+            $table->unsignedInteger('par')->default(0);
+            $table->unsignedInteger('total_stops')->default(0);
+            $table->unsignedInteger('stops_visited')->default(0);
             $table->unsignedInteger('points')->default(0);
+
+            $table->boolean('is_adventure')->default(false);
             $table->boolean('won_trophy')->default(false);
+
             $table->timestamp('started_at');
             $table->timestamp('finished_at')->nullable();
             $table->timestamps();

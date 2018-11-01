@@ -2,6 +2,10 @@
 
 namespace App;
 
+use App\Exceptions\UntraceableTourException;
+use App\Points\AdventureCalculator;
+use App\Points\PointsCalculator;
+use App\Points\TourCalculator;
 use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
 use App\Rules\YoutubeVideo;
@@ -55,6 +59,14 @@ class Tour extends Model
      * @var array
      */
     protected $dates = ['published_at'];
+
+    /**
+     * Keep the points calculator on the model so it never
+     * has to load twice.
+     *
+     * @var \App\Points\PointsCalculator
+     */
+    protected $_calculator;
 
     /**
      * Handles the model boot options.
@@ -445,6 +457,26 @@ class Tour extends Model
     // **********************************************************
     // OTHER METHODS
     // **********************************************************
+
+    /**
+     * Get the proper points calculator for the Tour.
+     *
+     * @return \App\Points\PointsCalculator
+     */
+    public function calculator()
+    {
+        if (! empty($this->_calculator)) {
+            return $this->_calculator;
+        }
+
+        if ($this->isAdventure()) {
+            $this->_calculator = new AdventureCalculator($this);
+        } else {
+            $this->_calculator = new TourCalculator($this);
+        }
+
+        return $this->_calculator;
+    }
 
     public function audit()
     {

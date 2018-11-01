@@ -340,4 +340,19 @@ class User extends Authenticatable implements JWTSubject
         return $user;
     }
 
+    /**
+     * Get the user's total score.
+     *
+     * @return int
+     */
+    public function getScore()
+    {
+        $points = $this->scores()->finished()->sum('points');
+
+        if (empty($points)) {
+            return 0;
+        }
+
+        return (int) $points;
+    }
 }

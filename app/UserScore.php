@@ -31,29 +31,6 @@ class UserScore extends Model
         'won_trophy' => 'bool',
     ];
 
-    /**
-     * Handles the model boot options.
-     *
-     * @return void
-     */
-    protected static function boot()
-    {
-        static::saving(function ($model) {
-            // auto-calculate a new score when the Tour is finished.
-            if ($model->isDirty('finished_at')) {
-//                $tracker = new TourTracker($model->tour, $model->user);
-//                $model->points = $tracker->calculatePoints($model);
-//                $model->won_trophy = $tracker->scoreQualifiesForTrophy($model);
-
-                 $ac = new AdventureCalculator($model->tour);
-                 $model->points = $ac->calculatePoints($model->duration, $model->par, $model->user_id);
-                 $model->won_trophy = $ac->scoreQualifiesForTrophy($model->points, $model->par);
-            }
-        });
-
-        parent::boot();
-    }
-
     // **********************************************************
     // RELATIONSHIPS
     // **********************************************************
@@ -136,4 +113,19 @@ class UserScore extends Model
     // **********************************************************
     // OTHER FUNCTIONS
     // **********************************************************
+
+    /**
+     * Get the current scorecard for the given tour & user.
+     *
+     * @param \App\Tour|array|int $tour
+     * @param \App\User|array|int $user
+     * @return UserScore|null
+     */
+    public static function current($tour, $user)
+    {
+        return self::forTour(modelId($tour))
+            ->forUser(modelId($user))
+            ->orderByDesc('started_at')
+            ->first();
+    }
 }

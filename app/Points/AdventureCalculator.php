@@ -4,9 +4,10 @@ namespace App\Points;
 
 use App\StopRoute;
 use App\Exceptions\UntraceableTourException;
+use App\UserScore;
 use drupol\phpermutations\Generators\Permutations;
 
-class AdventureCalculator
+class AdventureCalculator implements PointsCalculator
 {
     /**
      * The adventure Tour.
@@ -31,6 +32,119 @@ class AdventureCalculator
     {
         $this->tour = $tour;
         $this->stops = $tour->stops()->ordered()->get();
+    }
+
+    /**
+     * Get the total number of stops on the Tour.
+     *
+     * @return int
+     */
+    public function getTotalStops()
+    {
+        return $this->tour->stops()->count();
+    }
+
+    /**
+     * Calculate the points that should be awarded to the user
+     * based on their time.
+     *
+     * @param UserScore $scoreCard
+     * @return int
+     * @throws UntraceableTourException
+     */
+    public function getPoints(UserScore $scoreCard)
+    {
+        return $this->calculatePoints($scoreCard->duration, $scoreCard->par);
+    }
+
+    /**
+     * Calculate the points that should be awarded to the user
+     * based on their time.
+     *
+     * @param float $timeInMinutes
+     * @param float $par
+     * @return int
+     * @throws UntraceableTourException
+     */
+    public function calculatePoints($timeInMinutes, $par = null)
+    {
+        if (! $this->tour->isAdventure()) {
+            // award x points for every stop visited
+            $pointsPer = config('junket.points.per_stop', 1);
+            // TODO: get count of stops visited from the analytics
+            $stopsVisited = 0;
+            return $pointsPer * $stopsVisited;
+        }
+
+        $time = floatval($timeInMinutes);
+        $min = config('junket.points.min_points', 50);
+        $max = config('junket.points.max_points', 200);
+
+        if ($par == null) {
+            $par = $this->getPar();
+        }
+        $total = $max;
+
+        if ($time <= $par) {
+            // user beat the clock, award all points
+            return $total;
+        }
+
+        $difference = abs($par - $time);
+        $wholeMinutes = floor($difference);
+        $partialMinutes = $difference - $wholeMinutes;
+
+        // subtract two points for every minute
+        $total -= intval($wholeMinutes * 2);
+
+        // subtract one point for (rounded) half minutes
+        if ($partialMinutes > 0.5) {
+            $total -= 1;
+        }
+
+        if ($total < $min) {
+            return $min;
+        }
+
+        return $total;
+    }
+
+    /**
+     * Check if the given score qualifies for a trophy.
+     *
+     * @param UserScore|int $score
+     * @return bool
+     */
+    public function scoreQualifiesForTrophy($score)
+    {
+        if ($score instanceof UserScore) {
+            $score = $score->points;
+        }
+
+        $trophyRate = config('junket.points.trophy_rate', 70);
+        $max = config('junket.points.max_points', 200);
+
+        return $score >= (floatval($max) * (floatval($trophyRate) / 100));
+    }
+
+    /**
+     * Get the average amount of time (minutes) that it should
+     * take to finish the tour.
+     *
+     * @return float
+     * @throws UntraceableTourException
+     */
+    public function getPar()
+    {
+        list($route, $distance) = $this->getShortestRoute();
+
+        $walkingTime = $this->getTimeToWalkDistance($distance);
+        $audioTime = $this->getAudioTime($route);
+        $decisionTime = floatval(config('junket.points.decision_time', 5));
+
+        $total = $walkingTime + $audioTime + $decisionTime;
+
+        return floatval(ceil($total));
     }
 
     /**
@@ -126,34 +240,6 @@ class AdventureCalculator
     }
 
     /**
-     * Get an array of the stops ids.
-     *
-     * @return array
-     */
-    public function allStopIds()
-    {
-        return collect($this->stops)->pluck('id')->values()->toArray();
-    }
-
-    /**
-     * Get all possible permutations of an array.
-     *
-     * @param array $items
-     * @return array
-     */
-    public function getPermutations(array $items)
-    {
-        $all = [];
-
-        for ($i = 2; $i <= count($items); $i++) {
-            $p = new Permutations($items, $i);
-            $all = array_merge($all, $p->toArray());
-        }
-
-        return $all;
-    }
-
-    /**
      * Get possible next stops for a given stop.  Returns collection of TourStop
      * objects, unless the stop is the end point for the Tour, in which
      * case it will return null.
@@ -192,17 +278,6 @@ class AdventureCalculator
 
             return collect([$next]);
         }
-    }
-
-    /**
-     * Get the stop with the given ID from the pre-loaded stops array.
-     *
-     * @param int $id
-     * @return \App\TourStop
-     */
-    public function getStop($id)
-    {
-        return $this->stops->where('id', $id)->first();
     }
 
     /**
@@ -288,153 +363,6 @@ class AdventureCalculator
     }
 
     /**
-     * Get the current par value for the Tour.
-     *
-     * @return float
-     * @throws UntraceableTourException
-     */
-    public function getPar()
-    {
-        if ($this->tour->isAdventure()) {
-            // get average time to complete the Tour
-            return $this->getTimePar();
-        }
-
-        // return the total number of stops on the Tour
-        return floatval($this->stops->count());
-    }
-
-    /**
-     * Get the average amount of time (minutes) that it should
-     * take to finish the tour.
-     *
-     * @return float
-     * @throws UntraceableTourException
-     */
-    public function getTimePar()
-    {
-        list($route, $distance) = $this->getShortestRoute();
-
-        $walkingTime = $this->getTimeToWalkDistance($distance);
-        $audioTime = $this->getAudioTime($route);
-        $decisionTime = floatval(config('junket.points.decision_time', 5));
-
-        $total = $walkingTime + $audioTime + $decisionTime;
-
-        return floatval(ceil($total));
-    }
-
-    /**
-     * Get the total length of audio for the current Tour.
-     *
-     * @return float
-     */
-    public function getAudioTime($stops)
-    {
-        $total = floatval(0.0);
-
-        if (! empty($this->tour->backgroundAudio)) {
-            $total += floatval($this->tour->backgroundAudio->length);
-        }
-
-        foreach ($stops as $id) {
-            $stop = $this->getStop($id);
-            if (! empty($stop->introAudio)) {
-                $total += floatval($stop->introAudio->length);
-            }
-        }
-
-        return ($total / floatval(60));
-    }
-
-    /**
-     * Calculate the points that should be awarded to the user
-     * based on their time.
-     *
-     * @param float $timeInMinutes
-     * @return int
-     * @throws UntraceableTourException
-     */
-    public function calculatePoints($timeInMinutes, $par = null, $userId = null)
-    {
-        if (! $this->tour->isAdventure()) {
-            // award x points for every stop visited
-            $pointsPer = config('junket.points.per_stop', 1);
-            // TODO: get count of stops visited from the analytics
-            $stopsVisited = 0;
-            return $pointsPer * $stopsVisited;
-        }
-
-        $time = floatval($timeInMinutes);
-        $min = config('junket.points.min_points', 50);
-        $max = config('junket.points.max_points', 200);
-
-        if ($par == null) {
-            $par = $this->getPar();
-        }
-        $total = $max;
-
-        if ($time <= $par) {
-            // user beat the clock, award all points
-            return $total;
-        }
-
-        $difference = abs($par - $time);
-        $wholeMinutes = floor($difference);
-        $partialMinutes = $difference - $wholeMinutes;
-
-        // subtract two points for every minute
-        $total -= intval($wholeMinutes * 2);
-
-        // subtract one point for (rounded) half minutes
-        if ($partialMinutes > 0.5) {
-            $total -= 1;
-        }
-
-        if ($total < $min) {
-            return $min;
-        }
-
-        return $total;
-    }
-
-    /**
-     * Check if the given score qualifies for a trophy.
-     *
-     * @param float $score
-     * @return bool
-     * @throws UntraceableTourException
-     */
-    public function scoreQualifiesForTrophy($score, $par = null)
-    {
-        $trophyRate = config('junket.points.trophy_rate', 70);
-
-        if ($this->tour->isAdventure()) {
-            $max = config('junket.points.max_points', 200);
-            return $score >= (floatval($max) * (floatval($trophyRate) / 100));
-        }
-
-        if (empty($par)) {
-            $par = $this->getPar();
-        }
-
-        return $score >= (floatval($par) * (floatval($trophyRate) / 100));
-    }
-
-    /**
-     * Estimate the amount of time (in minutes) that it should take
-     * to walk the given distance.
-     *
-     * @param float $distance
-     * @return float
-     */
-    public function getTimeToWalkDistance($distance)
-    {
-        $milesPerHour = config('junket.points.average_walking_speed', 4);
-        return (floatval($distance) / floatval($milesPerHour)) * floatval(60);
-    }
-
-    /**
      * Get the distance between two points.
      * Supported units: K = kilometers
      *                  N = nautical miles
@@ -463,5 +391,80 @@ class AdventureCalculator
         } else {
             return $miles;
         }
+    }
+
+    /**
+     * Estimate the amount of time (in minutes) that it should take
+     * to walk the given distance.
+     *
+     * @param float $distance
+     * @return float
+     */
+    protected function getTimeToWalkDistance($distance)
+    {
+        $milesPerHour = config('junket.points.average_walking_speed', 4);
+        return (floatval($distance) / floatval($milesPerHour)) * floatval(60);
+    }
+
+    /**
+     * Get the stop with the given ID from the pre-loaded stops array.
+     *
+     * @param int $id
+     * @return \App\TourStop
+     */
+    protected function getStop($id)
+    {
+        return $this->stops->where('id', $id)->first();
+    }
+
+    /**
+     * Get an array of the stops ids.
+     *
+     * @return array
+     */
+    protected function allStopIds()
+    {
+        return collect($this->stops)->pluck('id')->values()->toArray();
+    }
+
+    /**
+     * Get the total length of audio for the current Tour.
+     *
+     * @return float
+     */
+    protected function getAudioTime($stops)
+    {
+        $total = floatval(0.0);
+
+        if (! empty($this->tour->backgroundAudio)) {
+            $total += floatval($this->tour->backgroundAudio->length);
+        }
+
+        foreach ($stops as $id) {
+            $stop = $this->getStop($id);
+            if (! empty($stop->introAudio)) {
+                $total += floatval($stop->introAudio->length);
+            }
+        }
+
+        return ($total / floatval(60));
+    }
+
+    /**
+     * Get all possible permutations of an array.
+     *
+     * @param array $items
+     * @return array
+     */
+    protected function getPermutations(array $items)
+    {
+        $all = [];
+
+        for ($i = 2; $i <= count($items); $i++) {
+            $p = new Permutations($items, $i);
+            $all = array_merge($all, $p->toArray());
+        }
+
+        return $all;
     }
 }

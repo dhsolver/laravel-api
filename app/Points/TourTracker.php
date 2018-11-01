@@ -24,6 +24,13 @@ class TourTracker
     public $user;
 
     /**
+     * The user's current score card for the Tour.
+     *
+     * @var \App\UserScore
+     */
+    public $scoreCard;
+
+    /**
      * Create a new instance.
      *
      * @param \App\Tour tour
@@ -38,6 +45,8 @@ class TourTracker
         } else {
             $this->user = User::find($user);
         }
+
+        $this->scoreCard = UserScore::current($tour, $user);
     }
 
     /**
@@ -45,43 +54,71 @@ class TourTracker
      * authenticated user.
      *
      * @param \Carbon\Carbon $startTime
-     * @return UserScore
+     * @return bool
      */
     public function startTour($startTime = null)
     {
         $startTime = $startTime ?: Carbon::now();
 
         try {
-            $ac = new AdventureCalculator($this->tour);
-            $par = $ac->getPar();
+            $data = [
+                'tour_id' => $this->tour->id,
+                'is_adventure' => $this->tour->isAdventure(),
+                'par' => $this->tour->calculator()->getPar(),
+                'total_stops' => $this->tour->calculator()->getTotalStops(),
+                'stops_visited' => 0,
+                'started_at' => $startTime,
+            ];
+
+            if ($this->scoreCard = $this->user->scores()->create($data)) {
+                return true;
+            }
+
+            return false;
+
         } catch (UntraceableTourException $ex) {
             return false;
         }
-
-        return $this->user->scores()->create([
-            'tour_id' => $this->tour->id,
-            'par' => $par,
-            'started_at' => $startTime,
-        ]);
     }
 
     /**
      * Save the users progress and calculate the score.
      *
      * @param \Carbon\Carbon $endTime
-     * @return UserScore
+     * @return bool
      */
-    public function finishTour($endTime = null)
+    public function completeTour($endTime = null)
     {
-        $endTime = $endTime ?: Carbon::now();
+        if (empty($this->scoreCard)) {
+            // TODO: throw and catch error - this shouldn't happen, can't finish tour never started
+            return false;
+        }
 
-        $this->user->scores()
-            ->forTour($this->tour)
-            ->first()
-            ->update([
-                'finished_at' => $endTime,
-            ]);
+        $this->scoreCard->finished_at = $endTime ?: Carbon::now();
+        $this->scoreCard->points = $this->tour->calculator()->getPoints($this->scoreCard);
+        $this->scoreCard->won_trophy = $this->tour->calculator()->scoreQualifiesForTrophy($this->scoreCard);
+        if ($this->scoreCard->save()) {
+            return true;
+        }
 
-        return $this->user->scores()->forTour($this->tour)->first();
+        return false;
+
+//        // auto-calculate a new score when the Tour is finished.
+//        if ($model->isDirty('finished_at')) {
+////                $tracker = new TourTracker($model->tour, $model->user);
+////                $model->points = $tracker->calculatePoints($model);
+////                $model->won_trophy = $tracker->scoreQualifiesForTrophy($model);
+//
+//            $ac = new AdventureCalculator($model->tour);
+//            $model->points = $ac->calculatePoints($model->duration, $model->par, $model->user_id);
+//            $model->won_trophy = $ac->scoreQualifiesForTrophy($model->points, $model->par);
+//        }
+//
+    }
+
+    public function completeStop($endTime)
+    {
+        return false;
+
     }
 }
