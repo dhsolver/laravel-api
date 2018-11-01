@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\TourType;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use App\Tour;
@@ -41,7 +42,7 @@ class UpdateTourRequest extends FormRequest
             ],
             'type' => [
                 'required',
-                Rule::in(Tour::$TOUR_TYPES),
+                Rule::in(TourType::all()),
             ],
 
             'location.address1' => 'nullable|string|max:255',

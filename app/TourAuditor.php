@@ -37,10 +37,10 @@ class TourAuditor
         $this->common();
 
         switch ($this->tour->type) {
-            case 'indoor':
+            case TourType::INDOOR:
                 $this->indoor();
                 break;
-            case 'adventure':
+            case TourType::ADVENTURE:
                 $this->adventure();
                 break;
             default:

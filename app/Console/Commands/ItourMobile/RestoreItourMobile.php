@@ -6,6 +6,7 @@ use App\Console\Commands\ItourMobile\Models\TourStop as OldStop;
 use App\Console\Commands\ItourMobile\Models\Tour as OldTour;
 use App\Console\Commands\ItourMobile\Models\UserAccount;
 use App\Console\Commands\ItourMobile\Models\RoutePoint;
+use App\TourType;
 use Illuminate\Database\QueryException;
 use Illuminate\Console\Command;
 use App\MobileUser;
@@ -219,7 +220,7 @@ class RestoreItourMobile extends Command
                 'user_id' => $this->idPrefix . $old->tour_owner,
                 'title' => $old->tour_title,
                 'description' => $old->tour_description,
-                'type' => $old->tour_type == 5 ? 'indoor' : 'outdoor',
+                'type' => $old->tour_type == 5 ? TourType::INDOOR : TourType::OUTDOOR,
                 'published_at' => $old->tour_ready_for_sale == 1 ? Carbon::now() : null,
             ]);
 

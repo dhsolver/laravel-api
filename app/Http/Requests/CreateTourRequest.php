@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\TourType;
 use Illuminate\Foundation\Http\FormRequest;
 use App\Tour;
 use Illuminate\Validation\Rule;
@@ -40,7 +41,7 @@ class CreateTourRequest extends FormRequest
             ],
             'type' => [
                 'required',
-                Rule::in(Tour::$TOUR_TYPES),
+                Rule::in(TourType::all()),
             ],
         ];
 

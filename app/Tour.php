@@ -19,13 +19,6 @@ class Tour extends Model
     public static $PRICING_TYPES = ['free', 'premium'];
 
     /**
-     * Defines the valid options for tour types
-     *
-     * @var array
-     */
-    public static $TOUR_TYPES = ['indoor', 'outdoor', 'adventure'];
-
-    /**
      * The attributes that aren't mass assignable.
      *
      * @var array
@@ -580,5 +573,15 @@ class Tour extends Model
         }
 
         return $query->whereNotNull('published_at');
+    }
+
+    /**
+     * Helper method to check if tour type is 'adventure'.
+     *
+     * @return bool
+     */
+    public function isAdventure()
+    {
+        return $this->type == TourType::ADVENTURE;
     }
 }
