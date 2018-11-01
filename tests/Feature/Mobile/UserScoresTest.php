@@ -6,6 +6,7 @@ use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\Concerns\AttachJwtToken;
 use Tests\TestCase;
 use App\Tour;
+use App\ScoreCard;
 
 class UserScoresTest extends TestCase
 {
@@ -44,7 +45,7 @@ class UserScoresTest extends TestCase
             ->assertStatus(200)
             ->assertJsonStructure([
                 'stats' => [
-                    'completed_tours',
+                    'tours_completed',
                     'points',
                     'stops_visited',
                     'trophies',
@@ -67,7 +68,7 @@ class UserScoresTest extends TestCase
     /** @test */
     public function a_user_can_get_their_score_for_a_specific_tour()
     {
-        $score = $this->user->scoreCards()->forTour($this->tour)->first();
+        $score = ScoreCard::for($this->tour, $this->user);
 
         $this->assertNotNull($score);
 

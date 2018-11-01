@@ -116,6 +116,28 @@ class ScoreCard extends Model
         return $query->whereNotNull('finished_at');
     }
 
+    /**
+     * Get only the scores that are for Adventure Tours.
+     *
+     * @param \Illuminate\Database\Query\Builder query
+     * @return \Illuminate\Database\Query\Builder
+     */
+    public function scopeForAdventures($query)
+    {
+        return $query->where('is_adventure', true);
+    }
+
+    /**
+     * Get only the scores that are for non-adventure Tours.
+     *
+     * @param \Illuminate\Database\Query\Builder query
+     * @return \Illuminate\Database\Query\Builder
+     */
+    public function scopeForRegularTours($query)
+    {
+        return $query->where('is_adventure', false);
+    }
+
     // **********************************************************
     // OTHER FUNCTIONS
     // **********************************************************
@@ -127,7 +149,7 @@ class ScoreCard extends Model
      * @param \App\User|array|int $user
      * @return ScoreCard|null
      */
-    public static function current($tour, $user)
+    public static function for($tour, $user)
     {
         return self::forTour(modelId($tour))
             ->forUser(modelId($user))

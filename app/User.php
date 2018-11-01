@@ -72,12 +72,27 @@ class User extends Authenticatable implements JWTSubject
             $model->email_confirmation_token = Str::random(64);
         });
 
+        // always create a user stats table
+        self::created(function ($model) {
+            $model->stats()->create();
+        });
+
         parent::boot();
     }
 
     // **********************************************************
     // RELATIONSHIPS
     // **********************************************************
+
+    /**
+     * Get the user stats relationship.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+    */
+    public function stats()
+    {
+        return $this->hasOne(UserStats::class);
+    }
 
     /**
      * Get the user's uploaded media relation.

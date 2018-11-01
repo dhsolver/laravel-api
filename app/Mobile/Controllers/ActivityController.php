@@ -61,22 +61,20 @@ class ActivityController extends Controller
     {
         $data = [];
         foreach ($request->activity as $item) {
-            $ts = Carbon::createFromTimestampUTC($item['timestamp']);
-
             $stop->activity()->create([
                 'user_id' => auth()->user()->id,
                 'action' => $item['action'],
                 'device_id' => $item['device_id'],
-                'created_at' => $ts,
+                'created_at' => Carbon::createFromTimestampUTC($item['timestamp']),
             ]);
 
-//            switch ($item['action']) {
-//                case Action::STOP:
-//                    $tracker = new TourTracker($stop->tour, auth()->user());
-//                    $tracker->completeStop($ts);
-//                    $data = new ScoreCardResource($tracker->scoreCard);
-//                    break;
-//            }
+            switch ($item['action']) {
+                case Action::STOP:
+                    $tracker = new TourTracker($stop->tour, auth()->user());
+                    $tracker->completeStop();
+                    $data = new ScoreCardResource($tracker->scoreCard);
+                    break;
+            }
         }
 
         return response()->json(['result' => 1, 'data' => $data]);

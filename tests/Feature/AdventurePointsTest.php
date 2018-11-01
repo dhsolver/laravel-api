@@ -444,9 +444,9 @@ qur;
 
         $this->sendAnalytics($this->tour, 'start');
 
-        $this->assertCount(1, $this->signInUser->user->scoreCards()->get());
+        $this->assertCount(1, $this->user->scoreCards()->get());
 
-        $score = $this->signInUser->user->scoreCards()->forTour($this->tour)->first();
+        $score = ScoreCard::for($this->tour, $this->user);
 
         $ac = new AdventureCalculator($this->tour);
 
@@ -464,7 +464,7 @@ qur;
 
         $this->sendAnalytics($this->tour, 'start', $startTime);
 
-        $score = $this->signInUser->user->scoreCards()->forTour($this->tour)->first();
+        $score = ScoreCard::for($this->tour, $this->user);
 
         $stopTime = strtotime('now');
 
@@ -492,7 +492,7 @@ qur;
 
         $this->sendAnalytics($this->tour, 'start', $startTime);
 
-        $score = $this->signInUser->user->scoreCards()->forTour($this->tour)->first();
+        $score = ScoreCard::for($this->tour, $this->user);
         $score->update(['par' => 15]);
         $score = $score->fresh();
 
@@ -556,9 +556,7 @@ qur;
 
         $this->assertCount(1, $this->signInUser->user->scoreCards()->get());
 
-        $score = $this->signInUser->user->scoreCards()
-            ->forTour($this->tour)
-            ->first();
+        $score = ScoreCard::for($this->tour, $this->user);
 
         $this->assertEquals($this->tour->stops()->count(), $score->total_stops);
     }
@@ -587,7 +585,7 @@ qur;
 
         $this->assertCount(2, $this->user->scoreCards()->get());
 
-        $score2 = ScoreCard::current($this->tour, $this->user);
+        $score2 = ScoreCard::for($this->tour, $this->user);
 
         $this->assertNotNull($score->finished_at);
         $this->assertNull($score2->finished_at);
@@ -618,7 +616,7 @@ qur;
 
         $this->assertCount(2, $this->user->scoreCards()->get());
 
-        $score2 = ScoreCard::current($this->tour, $this->user);
+        $score2 = ScoreCard::for($this->tour, $this->user);
 
         $this->assertNull($score->finished_at);
         $this->assertNull($score2->finished_at);
@@ -645,7 +643,7 @@ qur;
         $this->sendAnalytics($this->tour, 'start', $startTime)
             ->assertJsonFragment(['points' => 0]);
 
-        $score2 = ScoreCard::current($this->tour, $this->user);
+        $score2 = ScoreCard::for($this->tour, $this->user);
 
         $score2->update(['points' => 50]);
 
