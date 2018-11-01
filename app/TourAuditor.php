@@ -90,7 +90,7 @@ class TourAuditor
         }
 
         if ($this->tour->stops()->count() < 1) {
-            $this->error("The tour must have at least one stop.");
+            $this->error('The tour must have at least one stop.');
         }
 
         foreach ($this->tour->stops as $stop) {

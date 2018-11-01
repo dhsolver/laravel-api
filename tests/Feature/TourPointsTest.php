@@ -114,7 +114,7 @@ class TourPointsTest extends TestCase
     }
 
     /** @test */
-    function tours_started_twice_should_always_update_the_total_number_of_stops()
+    public function tours_started_twice_should_always_update_the_total_number_of_stops()
     {
         $this->withoutExceptionHandling();
 
@@ -132,7 +132,7 @@ class TourPointsTest extends TestCase
     }
 
     /** @test */
-    function when_a_regular_tour_stop_is_visited_it_increases_and_returns_the_users_score()
+    public function when_a_regular_tour_stop_is_visited_it_increases_and_returns_the_users_score()
     {
         $this->withoutExceptionHandling();
 
@@ -150,7 +150,7 @@ class TourPointsTest extends TestCase
     }
 
     /** @test */
-    function when_a_user_visits_the_same_stop_twice_it_doesnt_increase_their_score()
+    public function when_a_user_visits_the_same_stop_twice_it_doesnt_increase_their_score()
     {
         $this->sendAnalytics($this->tour, 'start');
         $score = ScoreCard::for($this->tour, $this->user);
@@ -165,7 +165,7 @@ class TourPointsTest extends TestCase
     }
 
     /** @test */
-    function when_a_user_visits_a_stop_it_calculates_if_they_get_a_trophy()
+    public function when_a_user_visits_a_stop_it_calculates_if_they_get_a_trophy()
     {
         $this->sendAnalytics($this->tour, 'start');
 
@@ -186,7 +186,7 @@ class TourPointsTest extends TestCase
     }
 
     /** @test */
-    function when_a_user_visits_a_stop_it_immediately_counts_towards_their_total_score()
+    public function when_a_user_visits_a_stop_it_immediately_counts_towards_their_total_score()
     {
         $this->withoutExceptionHandling();
 
@@ -207,7 +207,7 @@ class TourPointsTest extends TestCase
     }
 
     /** @test */
-    function users_stats_should_be_updated_with_every_completed_stop()
+    public function users_stats_should_be_updated_with_every_completed_stop()
     {
         $this->withoutExceptionHandling();
 
@@ -228,7 +228,7 @@ class TourPointsTest extends TestCase
     }
 
     /** @test */
-    function users_stats_should_be_updated_with_every_completed_tour()
+    public function users_stats_should_be_updated_with_every_completed_tour()
     {
         $this->withoutExceptionHandling();
 
@@ -240,7 +240,7 @@ class TourPointsTest extends TestCase
     }
 
     /** @test */
-    function users_completed_tour_stat_should_only_increase_on_unique_tours()
+    public function users_completed_tour_stat_should_only_increase_on_unique_tours()
     {
         $this->withoutExceptionHandling();
 
@@ -258,7 +258,6 @@ class TourPointsTest extends TestCase
             'pricing_type' => 'free',
             'type' => TourType::OUTDOOR
         ]);
-
 
         $this->sendAnalytics($otherTour, 'start');
         $this->sendAnalytics($otherTour, 'stop');

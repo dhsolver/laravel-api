@@ -89,7 +89,7 @@ trait HandlesGeocoding
             || empty($location['country'])
             || empty($location['zipcode'])
         ) {
-            if (!empty($location['latitude']) && !empty($location['longitude'])) {
+            if (! empty($location['latitude']) && ! empty($location['longitude'])) {
                 // $this->info('Looking up address from coordinates..');
 
                 return array_merge(

@@ -34,7 +34,7 @@ class YoutubeVideo implements Rule
     {
         $url = parse_url($value);
 
-        if (empty($url) || !isset($url['scheme'])) {
+        if (empty($url) || ! isset($url['scheme'])) {
             return false;
         }
 
@@ -81,7 +81,7 @@ class YoutubeVideo implements Rule
     {
         $url = parse_url($url);
 
-        if (empty($url) || !isset($url['scheme'])) {
+        if (empty($url) || ! isset($url['scheme'])) {
             return '';
         }
 

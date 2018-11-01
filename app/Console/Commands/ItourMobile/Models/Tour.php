@@ -40,7 +40,7 @@ class Tour extends Model
     {
         $zip = empty($this->tour_weather_zip) ? null : $this->tour_weather_zip;
 
-        if (!empty($zip)) {
+        if (! empty($zip)) {
             if (strpos($zip, ', ') > 0) {
                 $zips = explode(', ', $zip);
                 $zip = $zips[0];

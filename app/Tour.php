@@ -2,9 +2,7 @@
 
 namespace App;
 
-use App\Exceptions\UntraceableTourException;
 use App\Points\AdventureCalculator;
-use App\Points\PointsCalculator;
 use App\Points\TourCalculator;
 use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
