@@ -3,6 +3,7 @@
 namespace App\Mobile\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Points\TourTracker;
 use App\Tour;
 use App\Http\Requests\RecordActivityRequest;
 use App\TourStop;
@@ -16,8 +17,8 @@ class ActivityController extends Controller
      * Track Tour related activity.
      *
      * @param Tour $tour
-     * @param RecordTourActivityRequest $request
-     * @return Response
+     * @param RecordActivityRequest $request
+     * @return \Illuminate\Http\Response
      */
     public function tour(Tour $tour, RecordActivityRequest $request)
     {
@@ -35,10 +36,13 @@ class ActivityController extends Controller
 
             switch ($item['action']) {
                 case Action::START:
-                    auth()->user()->startTour($tour, $ts);
+                    $tracker = new TourTracker($tour, auth()->user());
+                    $tracker->startTour($ts);
                     break;
+
                 case Action::STOP:
-                    $score = auth()->user()->finishTour($tour, $ts);
+                    $tracker = new TourTracker($tour, auth()->user());
+                    $score = $tracker->finishTour($ts);
                     $data = new UserScoreResource($score);
                     break;
             }
@@ -50,7 +54,7 @@ class ActivityController extends Controller
     /**
      * Track Stop related activity.
      *
-     * @return void
+     * @return \Illuminate\Http\Response
      */
     public function stop(TourStop $stop, RecordActivityRequest $request)
     {

@@ -14,7 +14,7 @@ class TourStop extends Model
     protected $guarded = ['id'];
 
     /**
-     * Relatioships to always load with the model.
+     * Relationships to always load with the model.
      *
      * @var array
      */

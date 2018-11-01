@@ -24,7 +24,7 @@ class CreateUserScoresTable extends Migration
             $table->timestamp('finished_at')->nullable();
             $table->timestamps();
 
-            $table->foreign('user_id')->references('id')->on('users');  
+            $table->foreign('user_id')->references('id')->on('users');
             $table->foreign('tour_id')->references('id')->on('tours');
         });
     }

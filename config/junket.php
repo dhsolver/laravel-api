@@ -65,12 +65,12 @@ return [
         'decision_time' => env('POINTS_DECISION_TIME', 5),
 
         /**
-         * The total number of points that can be awarded.
+         * The total number of points that can be awarded for adventure tours.
          */
         'max_points' => env('POINTS_MAX', 200),
 
         /**
-         * The minimum number of points that can be awarded.
+         * The minimum number of points that can be awarded for adventure tours.
          */
         'min_points' => env('POINTS_MIN', 50),
 
@@ -79,6 +79,11 @@ return [
          * award a user a trophy.
          */
         'trophy_percent' => env('POINTS_TROPHY_PERCENT', 0.70),
+
+        /**
+         * The amount of points awarded for each stop visited for non-adventure tours.
+         */
+        'per_stop' => env('POINTS_PER_STOP', 1),
     ],
 
     /**
