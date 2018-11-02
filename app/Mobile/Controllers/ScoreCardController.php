@@ -5,6 +5,7 @@ namespace App\Mobile\Controllers;
 use App\Http\Controllers\Controller;
 use App\Mobile\Resources\ScoreCardResource;
 use App\ScoreCard;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class ScoreCardController extends Controller
 {
@@ -30,7 +31,7 @@ class ScoreCardController extends Controller
     {
         $scores = ScoreCard::getBest(auth()->id(), $tour);
 
-        if (empty($scores)) {
+        if ($scores->count() == 0) {
             throw new ModelNotFoundException('User has no score for this Tour.');
         }
 

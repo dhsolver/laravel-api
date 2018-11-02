@@ -307,4 +307,22 @@ class TourPointsTest extends TestCase
 
         $this->assertEquals(1, $this->user->fresh()->stats->trophies);
     }
+
+    /** @test */
+    public function a_users_stop_visited_count_only_increases_when_a_stop_is_completed()
+    {
+        $this->withoutExceptionHandling();
+
+        $this->assertEquals(0, $this->user->fresh()->stats->stops_visited);
+
+        $this->sendAnalytics($this->tour, 'start', strtotime('30 minutes ago'));
+
+        $this->sendAnalytics($this->stops[0], 'start');
+
+        $this->assertEquals(0, $this->user->fresh()->stats->stops_visited);
+
+        $this->sendAnalytics($this->stops[1], 'stop');
+
+        $this->assertEquals(1, $this->user->fresh()->stats->stops_visited);
+    }
 }

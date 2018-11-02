@@ -10,7 +10,6 @@ use App\TourStop;
 use App\User;
 use App\ScoreCard;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class TourTracker
@@ -210,19 +209,12 @@ class TourTracker
             ->unique('tour_id')
             ->count();
 
-        $stopsVisited = $this->user->activity()
-            ->where('actionable_type', 'App\TourStop')
-            ->where('action', Action::STOP)
-            ->get()
-            ->unique('actionable_id')
-            ->count();
-
         $trophies = $this->user->scoreCards()->where('won_trophy', true)->get()->unique('tour_id')->count();
 
         $this->user->stats()->update([
             'points' => $points,
             'tours_completed' => $completedTours,
-            'stops_visited' => $stopsVisited,
+            'stops_visited' => $this->getStopsVisited(),
             'trophies' => $trophies,
         ]);
 
@@ -239,6 +231,7 @@ class TourTracker
     {
         return (int) Activity::where('user_id', modelId($this->user))
             ->where('actionable_type', TourStop::class)
+            ->where('action', Action::STOP)
             ->whereIn('actionable_id', $this->tour->stops->pluck('id'))
             ->get()
             ->unique('actionable_id')
