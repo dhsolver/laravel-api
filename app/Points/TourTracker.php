@@ -101,19 +101,13 @@ class TourTracker
         $this->scoreCard->points = $this->tour->calculator()->getPoints($this->scoreCard);
         $this->scoreCard->won_trophy = $this->tour->calculator()->scoreQualifiesForTrophy($this->scoreCard);
 
-        DB::beginTransaction();
-
         if (! $this->scoreCard->save()) {
-            DB::rollBack();
             return false;
         }
 
         if (! $this->persistUserStats()) {
-            DB::rollBack();
             return false;
         }
-
-        DB::commit();
 
         return true;
     }
@@ -136,19 +130,13 @@ class TourTracker
         $this->scoreCard->points = $this->tour->calculator()->getPoints($this->scoreCard);
         $this->scoreCard->won_trophy = $this->tour->calculator()->scoreQualifiesForTrophy($this->scoreCard);
 
-        DB::beginTransaction();
-
         if (! $this->scoreCard->save()) {
-            DB::rollBack();
             return false;
         }
 
         if (! $this->persistUserStats()) {
-            DB::rollBack();
             return false;
         }
-
-        DB::commit();
 
         return true;
     }
@@ -171,6 +159,7 @@ class TourTracker
             'total_stops' => $this->tour->calculator()->getTotalStops(),
             'stops_visited' => 0,
             'started_at' => $startTime,
+            'won_trophy' => false,
         ])) {
             return true;
         }
@@ -212,19 +201,8 @@ class TourTracker
      */
     public function persistUserStats()
     {
-        $points = $this->user->scoreCards()
-            ->forRegularTours()
+        $points = ScoreCard::getBest($this->user)
             ->sum('points');
-
-        $adventurePoints = $this->user->scoreCards()
-                ->forAdventures()
-                ->finished()
-                ->orderBy('points', 'desc')
-                ->get()
-                ->unique('tour_id')
-                ->sum('points');
-
-        $points += $adventurePoints;
 
         $completedTours = $this->user->scoreCards()
             ->finished()
@@ -241,16 +219,14 @@ class TourTracker
 
         $trophies = $this->user->scoreCards()->where('won_trophy', true)->get()->unique('tour_id')->count();
 
-        if ($this->user->stats()->update([
+        $this->user->stats()->update([
             'points' => $points,
             'tours_completed' => $completedTours,
             'stops_visited' => $stopsVisited,
             'trophies' => $trophies,
-        ])) {
-            return true;
-        }
+        ]);
 
-        return false;
+        return true;
     }
 
     /**

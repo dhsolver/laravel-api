@@ -35,7 +35,7 @@ class ScoreCard extends Model
      * @var array
      */
     protected $casts = [
-        'won_trophy' => 'bool',
+        'won_trophy' => 'boolean',
     ];
 
     // **********************************************************

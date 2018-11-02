@@ -49,10 +49,9 @@ class ActivityController extends Controller
 
                 case Action::STOP:
                     $tracker = new TourTracker($tour, auth()->user());
-                    $tracker->completeTour($ts);
-                    if (! $tracker->ensureScoreCard()) {
-                        // this should never happen
-                        throw new MissingScoreCardException('Unable to locate user scorecard.');
+                    if (! $tracker->completeTour($ts)) {
+                        // TODO: log this
+                        throw new \Exception('Error saving user score!');
                     }
                     $data = new ScoreCardResource($tracker->scoreCard);
                     break;
@@ -83,10 +82,6 @@ class ActivityController extends Controller
                 case Action::STOP:
                     $tracker = new TourTracker($stop->tour, auth()->user());
                     $tracker->completeStop();
-                    if (! $tracker->ensureScoreCard()) {
-                        // this should never happen
-                        throw new MissingScoreCardException('Unable to locate user scorecard.');
-                    }
                     $data = new ScoreCardResource($tracker->scoreCard);
                     break;
             }
