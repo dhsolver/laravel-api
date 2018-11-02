@@ -12,7 +12,7 @@ $factory->define(App\Review::class, function (Faker $faker) {
     }
 
     return [
-        'review' => $faker->sentence(25),
+        'review' => substr($faker->sentence(25), 0, 255),
         'rating' => array_random([0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50]),
         'user_id' => $user->id,
         'tour_id' => $tour->id,
