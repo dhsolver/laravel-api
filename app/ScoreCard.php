@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 
 class ScoreCard extends Model
 {
@@ -155,5 +156,35 @@ class ScoreCard extends Model
             ->forUser(modelId($user))
             ->orderByDesc('started_at')
             ->first();
+    }
+
+    /**
+     * Get only the best scores for the given user and or tour.
+     *
+     * @param \App\User|int|array $user
+     * #param \App\Tour|int|array $tour
+     * @return Collection<ScoreCard>
+     */
+    public static function getBest($user, $tour = null)
+    {
+        return self::orderBy('points', 'desc')
+            ->where(function ($query) {
+                return $query->where(function ($q) {
+                    return $q->forAdventures()
+                          ->finished();
+                })
+                ->orWhere(function ($q) {
+                    return $q->forRegularTours();
+                });
+            })
+            ->where(function ($query) use ($tour) {
+                if (empty($tour)) {
+                    return $query;
+                }
+                return $query->where('tour_id', modelid($tour));
+            })
+            ->where('user_id', modelId($user))
+            ->get()
+            ->unique('tour_id');
     }
 }

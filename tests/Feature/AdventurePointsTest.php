@@ -12,7 +12,6 @@ use App\StopChoice;
 use App\ScoreCard;
 use App\TourStop;
 use App\TourType;
-use App\Device;
 use App\Media;
 use App\Tour;
 
@@ -22,7 +21,6 @@ class AdventurePointsTest extends TestCase
 
     protected $tour;
     protected $user;
-    protected $device;
     protected $stop1;
     protected $stop2;
     protected $stop3;
@@ -35,7 +33,6 @@ class AdventurePointsTest extends TestCase
 
         $this->signIn('user');
         $this->user = $this->signInUser->user;
-        $this->device = $this->user->devices()->create(factory(Device::class)->make()->toArray());
 
         $audio = Media::create([
             'file' => str_random(10),
@@ -222,31 +219,6 @@ qur;
         $query = str_replace('100022077', $this->stop4->id, $query);
         $query = str_replace('100022078', $this->stop5->id, $query);
         \DB::insert($query);
-    }
-
-    public function sendAnalytics($model, $action = 'start', $time = null)
-    {
-        if ($model instanceof \App\Tour) {
-            return $this->postJson("/mobile/tours/{$model->id}/track", [
-                'activity' => [
-                    [
-                        'action' => $action,
-                        'device_id' => $this->device->id,
-                        'timestamp' => $time ?: strtotime('now'),
-                    ],
-                ],
-            ])->assertStatus(200);
-        } elseif ($model instanceof \App\TourStop) {
-            return $this->postJson("/mobile/stops/{$model->id}/track", [
-                'activity' => [
-                    [
-                        'action' => $action,
-                        'device_id' => $this->device->id,
-                        'timestamp' => $time ?: strtotime('now'),
-                    ],
-                ],
-            ])->assertStatus(200);
-        }
     }
 
     /** @test */
@@ -685,5 +657,31 @@ qur;
             ->assertJsonFragment(['won_trophy' => true]);
 
         $this->assertEquals(1, $this->user->fresh()->stats->trophies);
+    }
+
+    /** @test */
+    public function a_users_score_for_a_tour_only_includes_their_best_for_an_adventure()
+    {
+        $this->withoutExceptionHandling();
+
+        $this->sendAnalytics($this->tour, 'start', strtotime('50 minutes ago'))
+            ->assertJsonFragment(['points' => 0]);
+
+        $this->sendAnalytics($this->tour, 'stop', strtotime('now'))
+            ->assertJsonFragment(['points' => 186]);
+
+        $this->sendAnalytics($this->tour, 'start', strtotime('30 minutes ago'))
+            ->assertJsonFragment(['points' => 0]);
+
+        $this->sendAnalytics($this->tour, 'stop', strtotime('now'))
+            ->assertJsonFragment(['points' => 200]);
+
+        $this->getJson(route('mobile.scores.show', ['tour' => $this->tour->id]))
+            ->assertStatus(200)
+            ->assertJsonFragment([
+                'tour_id' => (string) $this->tour->id,
+                'points' => 200,
+                'won_trophy' => true,
+            ]);
     }
 }

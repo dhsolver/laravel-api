@@ -2,6 +2,8 @@
 
 namespace Tests\Feature\Mobile;
 
+use App\TourStop;
+use App\TourType;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\Concerns\AttachJwtToken;
 use Tests\TestCase;
@@ -22,14 +24,14 @@ class UserScoresTest extends TestCase
         $this->signIn('user');
         $this->user = $this->signInUser->user;
 
-        factory(Tour::class, 10)->create();
+        factory(Tour::class, 10)->create(['type' => TourType::ADVENTURE]);
 
         foreach (Tour::all() as $tour) {
             if (empty($this->tour)) {
                 $this->tour = $tour;
             }
-            factory(\App\TourStop::class, 3)->create(['tour_id' => $tour->id]);
-            factory(\App\ScoreCard::class)->create([
+            factory(TourStop::class, 3)->create(['tour_id' => $tour->id]);
+            factory(ScoreCard::class)->create([
                 'user_id' => $this->user->id,
                 'tour_id' => $tour->id,
             ]);
@@ -78,6 +80,27 @@ class UserScoresTest extends TestCase
                 'tour_id' => $score->tour_id,
                 'points' => (int) $score->points,
                 'won_trophy' => $score->won_trophy,
+            ]);
+    }
+
+    /** @test */
+    function a_users_score_list_should_include_unfinished_regular_tours()
+    {
+        $tour = factory(Tour::class)->create(['type' => TourType::OUTDOOR]);
+        factory(TourStop::class, 3)->create(['tour_id' => $tour->id]);
+        factory(ScoreCard::class)->create([
+            'user_id' => $this->user->id,
+            'tour_id' => $tour->id,
+            'stops_visited' => 2,
+            'points' => 2,
+        ]);
+
+        $this->getJson(route('mobile.scores.index'))
+            ->assertStatus(200)
+            ->assertJsonCount(11)
+            ->assertJsonFragment([
+                'tour_id' => (string) $tour->id,
+                'points' => 2,
             ]);
     }
 }
