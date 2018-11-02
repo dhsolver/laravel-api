@@ -29,7 +29,7 @@ class ProfileResource extends JsonResource
             $data['fb_id'] = $this->fb_id;
             $data['subscribe_override'] = $this->subscribe_override;
 
-            // UNDOCUMENTED::::::::
+            // TODO: document this:
             $data['stats'] = $this->stats->toArray();
         }
 

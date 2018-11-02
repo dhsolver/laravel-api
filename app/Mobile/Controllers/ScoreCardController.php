@@ -16,6 +16,7 @@ class ScoreCardController extends Controller
      */
     public function index()
     {
+        // TODO: document this
         $scores = ScoreCard::getBest(auth()->id());
 
         return ScoreCardResource::collection($scores);
@@ -29,6 +30,7 @@ class ScoreCardController extends Controller
      */
     public function show($tour)
     {
+        // TODO: document this
         $scores = ScoreCard::getBest(auth()->id(), $tour);
 
         if ($scores->count() == 0) {
