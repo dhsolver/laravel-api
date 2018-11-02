@@ -671,4 +671,19 @@ qur;
 
         $this->assertEquals(200, $this->user->fresh()->stats->points);
     }
+
+    /** @test */
+    public function when_a_user_unlocks_an_adventure_trophy_their_stats_automatically_update()
+    {
+        $this->withoutExceptionHandling();
+
+        $this->assertEquals(0, $this->user->fresh()->stats->trophies);
+
+        $this->sendAnalytics($this->tour, 'start', strtotime('30 minutes ago'));
+
+        $this->sendAnalytics($this->tour, 'stop')
+            ->assertJsonFragment(['won_trophy' => true]);
+
+        $this->assertEquals(1, $this->user->fresh()->stats->trophies);
+    }
 }

@@ -266,7 +266,7 @@ class TourPointsTest extends TestCase
     }
 
     /** @test */
-    function if_a_user_completes_a_stop_and_does_not_have_a_scorecard_yet_it_will_create_one()
+    public function if_a_user_completes_a_stop_and_does_not_have_a_scorecard_yet_it_will_create_one()
     {
         $this->withoutExceptionHandling();
 
@@ -279,5 +279,32 @@ class TourPointsTest extends TestCase
 
         $this->assertNotEmpty($score);
         $this->assertEquals(1, $score->stops_visited);
+    }
+
+    /** @test */
+    public function when_a_user_unlocks_a_trophy_their_stats_automatically_update()
+    {
+        $this->withoutExceptionHandling();
+
+        $this->assertEquals(0, $this->user->fresh()->stats->trophies);
+
+        $this->sendAnalytics($this->tour, 'start', strtotime('30 minutes ago'));
+
+        $this->sendAnalytics($this->stops[0], 'stop')
+            ->assertJsonFragment(['won_trophy' => false]);
+
+        $this->sendAnalytics($this->stops[1], 'stop')
+            ->assertJsonFragment(['won_trophy' => false]);
+
+        $this->sendAnalytics($this->stops[2], 'stop')
+            ->assertJsonFragment(['won_trophy' => false]);
+
+        $this->sendAnalytics($this->stops[3], 'stop')
+            ->assertJsonFragment(['won_trophy' => true]);
+
+        $this->sendAnalytics($this->stops[4], 'stop')
+            ->assertJsonFragment(['won_trophy' => true]);
+
+        $this->assertEquals(1, $this->user->fresh()->stats->trophies);
     }
 }

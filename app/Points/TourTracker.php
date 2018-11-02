@@ -241,7 +241,6 @@ class TourTracker
 
         $trophies = $this->user->scoreCards()->where('won_trophy', true)->get()->unique('tour_id')->count();
 
-        // TODO: create tests for all of these stats
         if ($this->user->stats()->update([
             'points' => $points,
             'tours_completed' => $completedTours,
