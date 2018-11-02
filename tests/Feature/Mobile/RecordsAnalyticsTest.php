@@ -37,15 +37,6 @@ class RecordsAnalyticsTest extends TestCase
         ]);
 
         $this->stops = $this->tour->stops()->ordered()->get();
-//        factory(Tour::class, 3)->create();
-//        $this->tour = factory(Tour::class)->create();
-//
-//        factory(TourStop::class, 10)->create([
-//            'tour_id' => $this->tour->id,
-//        ]);
-//        $this->tour->update([
-//            'start_point_id' => $this->tour->stops[0],
-//        ]);
     }
 
     public function createDevice()
@@ -64,7 +55,7 @@ class RecordsAnalyticsTest extends TestCase
     /** @test */
     public function a_mobile_user_can_have_multiple_devices()
     {
-        $this->assertCount(0, \App\Device::all());
+        $this->assertCount(1, Device::all());
 
         $this->postJson('/mobile/device', [
             'device_udid' => '12345',
@@ -74,7 +65,7 @@ class RecordsAnalyticsTest extends TestCase
             ->assertJsonStructure(['device_id'])
             ->assertStatus(200);
 
-        $this->assertCount(1, \App\Device::all());
+        $this->assertCount(2, Device::all());
 
         $this->postJson('/mobile/device', [
             'device_udid' => '67890',
@@ -83,7 +74,7 @@ class RecordsAnalyticsTest extends TestCase
         ])
             ->assertStatus(200);
 
-        $this->assertCount(2, $this->signInUser->devices);
+        $this->assertCount(3, $this->signInUser->devices);
     }
 
     /** @test */
@@ -91,7 +82,7 @@ class RecordsAnalyticsTest extends TestCase
     {
         $otherUser = create(\App\User::class);
 
-        $device = \App\Device::create([
+        $device = Device::create([
             'device_udid' => '12345',
             'os' => Os::ANDROID,
             'type' => DeviceType::PHONE,
@@ -103,9 +94,9 @@ class RecordsAnalyticsTest extends TestCase
         $this->postJson('/mobile/device', $device->toArray())
             ->assertStatus(200);
 
-        $this->assertCount(1, $this->signInUser->user->fresh()->devices);
+        $this->assertCount(2, $this->signInUser->user->fresh()->devices);
 
-        $this->assertCount(1, Device::all());
+        $this->assertCount(2, Device::all());
     }
 
     /** @test */
@@ -113,13 +104,13 @@ class RecordsAnalyticsTest extends TestCase
     {
         $this->withoutExceptionHandling();
 
-        $deviceId = $this->createDevice();
+//        $deviceId = $this->createDevice();
 
         $this->postJson("/mobile/tours/{$this->tour->id}/track", [
             'activity' => [
                 [
                     'action' => 'like',
-                    'device_id' => $deviceId,
+                    'device_id' => $this->device->id,
                     'timestamp' => strtotime('now'),
                 ],
             ],
