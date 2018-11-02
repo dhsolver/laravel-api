@@ -16,7 +16,7 @@ class CreateUserStatsTable extends Migration
         Schema::create('user_stats', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('user_id')->unique();
-            $table->unsignedInteger('points')->default(0);
+            $table->unsignedInteger('points')->default(0)->index();
             $table->unsignedInteger('tours_completed')->default(0);
             $table->unsignedInteger('stops_visited')->default(0);
             $table->unsignedInteger('trophies')->default(0);

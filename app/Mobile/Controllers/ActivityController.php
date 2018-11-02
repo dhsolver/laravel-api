@@ -2,6 +2,7 @@
 
 namespace App\Mobile\Controllers;
 
+use App\Exceptions\MissingScoreCardException;
 use App\Http\Controllers\Controller;
 use App\Points\TourTracker;
 use App\Tour;
@@ -19,6 +20,7 @@ class ActivityController extends Controller
      * @param Tour $tour
      * @param RecordActivityRequest $request
      * @return \Illuminate\Http\Response
+     * @throws MissingScoreCardException
      */
     public function tour(Tour $tour, RecordActivityRequest $request)
     {
@@ -38,12 +40,20 @@ class ActivityController extends Controller
                 case Action::START:
                     $tracker = new TourTracker($tour, auth()->user());
                     $tracker->startTour($ts);
+                    if (! $tracker->ensureScoreCard()) {
+                        // this should never happen
+                        throw new MissingScoreCardException('Unable to locate user scorecard.');
+                    }
                     $data = new ScoreCardResource($tracker->scoreCard);
                     break;
 
                 case Action::STOP:
                     $tracker = new TourTracker($tour, auth()->user());
                     $tracker->completeTour($ts);
+                    if (! $tracker->ensureScoreCard()) {
+                        // this should never happen
+                        throw new MissingScoreCardException('Unable to locate user scorecard.');
+                    }
                     $data = new ScoreCardResource($tracker->scoreCard);
                     break;
             }
@@ -56,6 +66,7 @@ class ActivityController extends Controller
      * Track Stop related activity.
      *
      * @return \Illuminate\Http\Response
+     * @throws MissingScoreCardException
      */
     public function stop(TourStop $stop, RecordActivityRequest $request)
     {
@@ -72,6 +83,10 @@ class ActivityController extends Controller
                 case Action::STOP:
                     $tracker = new TourTracker($stop->tour, auth()->user());
                     $tracker->completeStop();
+                    if (! $tracker->ensureScoreCard()) {
+                        // this should never happen
+                        throw new MissingScoreCardException('Unable to locate user scorecard.');
+                    }
                     $data = new ScoreCardResource($tracker->scoreCard);
                     break;
             }

@@ -4,17 +4,19 @@ namespace App\Points;
 
 use App\Action;
 use App\Activity;
+use App\Exceptions\MissingScoreCardException;
 use App\Exceptions\UntraceableTourException;
 use App\TourStop;
 use App\User;
 use App\ScoreCard;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class TourTracker
 {
     /**
-     * The adventure Tour.
+     * The Tour.
      *
      * @var \App\Tour
      */
@@ -75,18 +77,7 @@ class TourTracker
                 }
             }
 
-            if ($this->scoreCard = $this->user->scoreCards()->create([
-                'tour_id' => $this->tour->id,
-                'is_adventure' => $this->tour->isAdventure(),
-                'par' => $this->tour->calculator()->getPar(),
-                'total_stops' => $this->tour->calculator()->getTotalStops(),
-                'stops_visited' => 0,
-                'started_at' => $startTime,
-            ])) {
-                return true;
-            }
-
-            return false;
+            return $this->createScoreCard($startTime);
         } catch (UntraceableTourException $ex) {
             return false;
         }
@@ -97,12 +88,13 @@ class TourTracker
      *
      * @param \Carbon\Carbon $endTime
      * @return bool
+     * @throws MissingScoreCardException
      */
     public function completeTour($endTime = null)
     {
-        if (empty($this->scoreCard)) {
-            // TODO: throw and catch error - this shouldn't happen, can't finish tour never started
-            return false;
+        if (! $this->ensureScoreCard()) {
+            // this should never happen
+            throw new MissingScoreCardException('Unable to locate user scorecard.');
         }
 
         $this->scoreCard->finished_at = $endTime ?: Carbon::now();
@@ -126,14 +118,19 @@ class TourTracker
         return true;
     }
 
+    /**
+     * Increase user's progress by increasing the
+     * number of stops they visited.
+     *
+     * @return bool
+     * @throws MissingScoreCardException
+     */
     public function completeStop()
     {
-        if (empty($this->scoreCard)) {
-            // TODO: throw and catch error - this shouldn't happen, can't finish tour never started
-            return false;
+        if (! $this->ensureScoreCard()) {
+            // this should never happen
+            throw new MissingScoreCardException('Unable to locate user scorecard.');
         }
-
-//        echo "\r\n stops visited: " . $this->getStopsVisited() . "\r\n";
 
         $this->scoreCard->stops_visited = $this->getStopsVisited();
         $this->scoreCard->points = $this->tour->calculator()->getPoints($this->scoreCard);
@@ -157,6 +154,58 @@ class TourTracker
     }
 
     /**
+     * Create user score card using the current user and
+     * tour on the instance.
+     *
+     * @param \Carbon\Carbon $startTime
+     * @return bool
+     */
+    public function createScoreCard($startTime = null)
+    {
+        $startTime = $startTime ?: Carbon::now();
+
+        if ($this->scoreCard = $this->user->scoreCards()->create([
+            'tour_id' => $this->tour->id,
+            'is_adventure' => $this->tour->isAdventure(),
+            'par' => $this->tour->calculator()->getPar(),
+            'total_stops' => $this->tour->calculator()->getTotalStops(),
+            'stops_visited' => 0,
+            'started_at' => $startTime,
+        ])) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Make sure the current score card is set, otherwise
+     * create a new one.  This is called when a scorecard
+     * should exist already, as protected to make sure there
+     * is always one in the database.
+     *
+     * @return bool
+     */
+    public function ensureScoreCard()
+    {
+        if (empty($this->scoreCard)) {
+            Log::warning('User completed stop without starting the Tour.', [
+                'user' => $this->user->toArray(),
+                'tour' => $this->tour->toArray(),
+                'stops_visited' => $this->user->activity()
+                    ->where('actionable_type', 'App\TourStop')
+                    ->where('action', Action::STOP)
+                    ->get()
+                    ->toArray()
+            ]);
+
+            return $this->createScoreCard();
+        } else {
+            return true;
+        }
+    }
+
+    /**
      * Calculate and save users scoring stats.
      *
      * @return bool
@@ -167,7 +216,15 @@ class TourTracker
             ->forRegularTours()
             ->sum('points');
 
-        // TODO: calculate total points for adventure tours
+        $adventurePoints = $this->user->scoreCards()
+                ->forAdventures()
+                ->finished()
+                ->orderBy('points', 'desc')
+                ->get()
+                ->unique('tour_id')
+                ->sum('points');
+
+        $points += $adventurePoints;
 
         $completedTours = $this->user->scoreCards()
             ->finished()

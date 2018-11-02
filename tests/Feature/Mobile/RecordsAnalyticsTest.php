@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\TourType;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\Concerns\AttachJwtToken;
@@ -26,12 +27,25 @@ class RecordsAnalyticsTest extends TestCase
 
         $this->signIn('user');
 
-        factory(Tour::class, 3)->create();
-        $this->tour = factory(Tour::class)->create();
+        $this->tour = factory(Tour::class)->states('published')->create([
+            'pricing_type' => 'free',
+            'type' => TourType::OUTDOOR
+        ]);
 
-        factory(TourStop::class, 10)->create([
+        factory(TourStop::class, 5)->create([
             'tour_id' => $this->tour->id,
         ]);
+
+        $this->stops = $this->tour->stops()->ordered()->get();
+//        factory(Tour::class, 3)->create();
+//        $this->tour = factory(Tour::class)->create();
+//
+//        factory(TourStop::class, 10)->create([
+//            'tour_id' => $this->tour->id,
+//        ]);
+//        $this->tour->update([
+//            'start_point_id' => $this->tour->stops[0],
+//        ]);
     }
 
     public function createDevice()
@@ -169,6 +183,7 @@ class RecordsAnalyticsTest extends TestCase
         $deviceId = $this->createDevice();
 
         $stop = $this->tour->stops()->first();
+        $this->assertCount(0, $stop->activity);
 
         $this->postJson("/mobile/stops/{$stop->id}/track", [
             'activity' => [

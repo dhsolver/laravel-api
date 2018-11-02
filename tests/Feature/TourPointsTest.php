@@ -264,4 +264,20 @@ class TourPointsTest extends TestCase
 
         $this->assertEquals(2, $this->user->fresh()->stats->tours_completed);
     }
+
+    /** @test */
+    function if_a_user_completes_a_stop_and_does_not_have_a_scorecard_yet_it_will_create_one()
+    {
+        $this->withoutExceptionHandling();
+
+        $this->assertEmpty(ScoreCard::for($this->tour, $this->user));
+
+        $this->sendAnalytics($this->stops[0], 'stop')
+            ->assertJsonFragment(['stops_visited' => 1]);
+
+        $score = ScoreCard::for($this->tour, $this->user);
+
+        $this->assertNotEmpty($score);
+        $this->assertEquals(1, $score->stops_visited);
+    }
 }

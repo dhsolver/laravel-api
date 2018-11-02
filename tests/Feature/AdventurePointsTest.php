@@ -628,58 +628,47 @@ qur;
     {
         $this->withoutExceptionHandling();
 
-        $score = ScoreCard::create([
-            'is_adventure' => true,
-            'par' => 60,
-            'total_stops' => 5,
-            'stops_visited' => 5,
-            'started_at' => \Carbon\Carbon::now()->subMinutes(120),
-            'finished_at' => \Carbon\Carbon::now(),
-            'tour_id' => $this->tour->id,
-            'user_id' => $this->user->id,
-        ]);
-
-        $startTime = strtotime('30 minutes ago');
-        $this->sendAnalytics($this->tour, 'start', $startTime)
+        $this->sendAnalytics($this->tour, 'start', strtotime('50 minutes ago'))
             ->assertJsonFragment(['points' => 0]);
 
-        $score2 = ScoreCard::for($this->tour, $this->user);
+        $this->sendAnalytics($this->tour, 'stop', strtotime('now'))
+            ->assertJsonFragment(['points' => 186]);
 
-        $score2->update(['points' => 50]);
+        $this->sendAnalytics($this->tour, 'start', strtotime('25 minutes ago'))
+            ->assertJsonFragment(['points' => 0]);
 
-        $this->assertEquals($this->user->getScore(), $score->points);
+        $score = ScoreCard::for($this->tour, $this->user);
+
+        $this->assertEquals(0, $score->points);
+
+        $this->assertEquals(186, $this->user->fresh()->stats->points);
     }
 
     /** @test */
-    public function a_users_score_only_contains_their_best_score_for_an_adventure()
+    public function a_users_total_score_only_includes_their_best_for_an_adventure()
     {
         $this->withoutExceptionHandling();
 
-        $score = ScoreCard::create([
-            'is_adventure' => true,
-            'par' => 60,
-            'total_stops' => 5,
-            'stops_visited' => 5,
-            'started_at' => \Carbon\Carbon::now()->subMinutes(120),
-            'finished_at' => \Carbon\Carbon::now(),
-            'tour_id' => $this->tour->id,
-            'user_id' => $this->user->id,
-        ]);
+        $this->sendAnalytics($this->tour, 'start', strtotime('50 minutes ago'))
+            ->assertJsonFragment(['points' => 0]);
 
-        $score2 = ScoreCard::create([
-            'is_adventure' => true,
-            'par' => 60,
-            'total_stops' => 5,
-            'stops_visited' => 5,
-            'started_at' => \Carbon\Carbon::now()->subMinutes(120),
-            'finished_at' => \Carbon\Carbon::now(),
-            'tour_id' => $this->tour->id,
-            'user_id' => $this->user->id,
-        ]);
+        $this->sendAnalytics($this->tour, 'stop', strtotime('now'))
+            ->assertJsonFragment(['points' => 186]);
 
-        $score->update(['points' => 50]);
-        $score2->update(['points' => 100]);
+        $score = ScoreCard::for($this->tour, $this->user);
 
-        $this->assertEquals(100, $this->user->getScore());
+        $this->assertEquals(186, $score->points);
+
+        $this->sendAnalytics($this->tour, 'start', strtotime('30 minutes ago'))
+            ->assertJsonFragment(['points' => 0]);
+
+        $this->sendAnalytics($this->tour, 'stop', strtotime('now'))
+            ->assertJsonFragment(['points' => 200]);
+
+        $score = ScoreCard::for($this->tour, $this->user);
+
+        $this->assertEquals(200, $score->points);
+
+        $this->assertEquals(200, $this->user->fresh()->stats->points);
     }
 }

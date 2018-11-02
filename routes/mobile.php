@@ -37,8 +37,10 @@ Route::namespace('App\Mobile\Controllers')->middleware(['jwt.auth', 'role:user|c
     Route::post('profile/change-email/confirm', 'ChangeEmailController@confirm')->name('mobile.profile.change-email.confirm');
     Route::post('profile/avatar', 'AvatarController@store')->name('mobile.profile.avatar');
 
-    Route::get('scores', 'UserScoreController@index')->name('mobile.scores.index');
-    Route::get('scores/{tour}', 'UserScoreController@show')->name('mobile.scores.show');
+    Route::get('scores', 'ScoreCardController@index')->name('mobile.scores.index');
+    Route::get('scores/{tour}', 'ScoreCardController@show')->name('mobile.scores.show');
+
+    Route::get('leaderboard', 'LeaderboardController@index')->name('mobile.leaderboard');
 
     Route::get('reviews/{tour}', 'ReviewController@index')->name('mobile.reviews');
     Route::post('reviews/{tour}', 'ReviewController@store')->name('mobile.reviews.store');
