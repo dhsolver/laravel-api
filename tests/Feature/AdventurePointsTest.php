@@ -238,7 +238,7 @@ qur;
         $ac = new AdventureCalculator($this->tour);
         $distance = $ac->getDistanceBetweenStops($this->stop1, $this->stop2);
 
-        $this->assertEquals(0.8447459269516513, $distance);
+        $this->assertEquals(0.84, round($distance, 2));
     }
 
     /** @test */
@@ -340,7 +340,7 @@ qur;
 
         list($route, $distance) = $ac->getShortestRoute();
 
-        $this->assertEquals(2.1500689713536545, $distance);
+        $this->assertEquals(2.15, round($distance, 2));
         $this->assertEquals([1, 2, 4, 5], $route);
     }
 
