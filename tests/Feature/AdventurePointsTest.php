@@ -454,7 +454,7 @@ qur;
     }
 
     /** @test */
-    public function if_a_tour_par_changes_since_the_user_started_it_wouldnt_affect_their_score()
+    public function if_a_tour_par_changes_since_the_user_started_it_would_not_affect_their_score()
     {
         $this->withoutExceptionHandling();
 
