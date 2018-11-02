@@ -321,7 +321,7 @@ class TourPointsTest extends TestCase
 
         $this->assertEquals(0, $this->user->fresh()->stats->stops_visited);
 
-        $this->sendAnalytics($this->stops[1], 'stop');
+        $this->sendAnalytics($this->stops[0], 'stop');
 
         $this->assertEquals(1, $this->user->fresh()->stats->stops_visited);
     }
