@@ -410,6 +410,8 @@ class ManageStopTest extends TestCase
     /** @test */
     public function a_choice_can_have_a_next_stop()
     {
+        $this->withoutExceptionHandling();
+
         $this->loginAs($this->client);
 
         $nextStop = create('App\TourStop', ['tour_id' => $this->tour->id, 'order' => 2]);
@@ -418,15 +420,19 @@ class ManageStopTest extends TestCase
 
         $choice->next_stop_id = $nextStop->id;
 
+        $choiceData = $choice->toArray();
+        unset($choiceData['updated_at']);
+
         $data = [
             'choices' => [
-                $choice->toArray(),
+                $choiceData,
             ],
         ];
 
-        $resp = $this->updateStop($data)
+        $this->updateStop($data)
             ->assertStatus(200)
-            ->assertJsonFragment($data);
+            ->assertJsonCount(1, 'data.choices')
+            ->assertJsonFragment($choiceData);
 
         $this->assertEquals($nextStop->id, $choice->fresh()->next_stop_id);
     }
