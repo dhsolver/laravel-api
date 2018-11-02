@@ -25,7 +25,7 @@ class CreateUserScoreCardsTable extends Migration
             $table->boolean('is_adventure')->default(false)->index();
             $table->boolean('won_trophy')->default(false)->index();
 
-            $table->timestamp('started_at');
+            $table->timestamp('started_at')->nullable();
             $table->timestamp('finished_at')->nullable();
             $table->timestamps();
 
