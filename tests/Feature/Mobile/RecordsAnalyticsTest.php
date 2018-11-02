@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Action;
 use App\TourType;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
@@ -193,5 +194,30 @@ class RecordsAnalyticsTest extends TestCase
 
         $this->assertCount(2, Activity::all());
         $this->assertCount(2, $stop->fresh()->activity);
+    }
+
+    /** @test */
+    function tracking_timestamps_cannot_be_set_to_the_future()
+    {
+        $this->withoutExceptionHandling();
+
+        $time = strtotime('tomorrow');
+
+        $this->postJson("/mobile/tours/{$this->tour->id}/track", [
+            'activity' => [
+                [
+                    'action' => Action::START,
+                    'device_id' => $this->device->id,
+                    'timestamp' => $time
+                ],
+            ],
+        ])->assertStatus(200);
+
+        $item = Activity::first();
+        $this->assertLessThan(
+            Carbon::createFromTimestampUTC($time)->toDateTimeString(),
+            $item->created_at
+        );
+        $this->assertEquals(Carbon::now()->toDateTimeString(), $item->created_at->toDateTimeString());
     }
 }

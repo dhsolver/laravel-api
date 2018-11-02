@@ -29,6 +29,10 @@ class ActivityController extends Controller
         foreach ($request->activity as $item) {
             $ts = Carbon::createFromTimestampUTC($item['timestamp']);
 
+            if ($ts > Carbon::now()) {
+                $ts = Carbon::now();
+            }
+
             $tour->activity()->create([
                 'user_id' => auth()->user()->id,
                 'action' => $item['action'],
@@ -70,12 +74,19 @@ class ActivityController extends Controller
     public function stop(TourStop $stop, RecordActivityRequest $request)
     {
         $data = [];
+
         foreach ($request->activity as $item) {
+            $ts = Carbon::createFromTimestampUTC($item['timestamp']);
+
+            if ($ts > Carbon::now()) {
+                $ts = Carbon::now();
+            }
+
             $stop->activity()->create([
                 'user_id' => auth()->user()->id,
                 'action' => $item['action'],
                 'device_id' => $item['device_id'],
-                'created_at' => Carbon::createFromTimestampUTC($item['timestamp']),
+                'created_at' => $ts,
             ]);
 
             switch ($item['action']) {
