@@ -68,14 +68,6 @@ class AdventureCalculator implements PointsCalculator
      */
     public function calculatePoints($timeInMinutes, $par = null)
     {
-        if (! $this->tour->isAdventure()) {
-            // award x points for every stop visited
-            $pointsPer = config('junket.points.per_stop', 1);
-            // TODO: get count of stops visited from the analytics
-            $stopsVisited = 0;
-            return $pointsPer * $stopsVisited;
-        }
-
         $time = floatval($timeInMinutes);
         $min = config('junket.points.min_points', 50);
         $max = config('junket.points.max_points', 200);
