@@ -2,7 +2,7 @@ swagger: '2.0'
 info:
   title: Junket API
   description: Private API for the wejunket.com mobile apps. 
-  version: 1.0.4
+  version: 1.0.5
 host: api.wejunket.com
 basePath: /mobile
 schemes:
@@ -454,7 +454,7 @@ paths:
           $ref: '#/responses/UnexpectedError'
 
   /profile/password:
-    post:
+    patch:
       tags:
         - profile
       summary: Change Password

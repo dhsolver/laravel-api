@@ -27,6 +27,9 @@ This should display a success message and overwrite the docs/api.html documentat
 
 ### Change Log
 
+v.1.0.5
+- Updated change password route to PATCH instead of POST
+
 v 1.0.1
 - fb_id field added to auth user response
 - Previous auth endpoint named 'Profile' changed to 'User Session'
