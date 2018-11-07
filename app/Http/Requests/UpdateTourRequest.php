@@ -68,6 +68,7 @@ class UpdateTourRequest extends FormRequest
             'has_prize' => 'nullable|boolean',
             'prize_details' => 'nullable|string|max:1000',
             'prize_instructions' => 'nullable|string|max:1000',
+            'prize_time_limit' => 'nullable|numeric',
 
             'start_point_id' => [
                 'nullable',
