@@ -43,7 +43,11 @@ class AdventurePointsTest extends TestCase
         $this->tour = factory(Tour::class)->states('published')->create([
             'pricing_type' => 'free',
             'background_audio_id' => $audio->id,
-            'type' => TourType::ADVENTURE
+            'type' => TourType::ADVENTURE,
+            'prize_details' => 'free stuff',
+            'prize_instructions' => 'redeem at x location',
+            'prize_time_limit' => 36,
+            'has_prize' => true,
         ]);
 
         $this->stop1 = factory(TourStop::class)->create(['tour_id' => $this->tour, 'intro_audio_id' => $audio->id]);
@@ -500,6 +504,30 @@ qur;
     }
 
     /** @test */
+    public function when_a_user_wins_a_trophy_it_can_include_a_prize()
+    {
+        $this->withoutExceptionHandling();
+
+        $this->insertStopRouteData();
+
+        $startTime = strtotime('30 minutes ago');
+        $stopTime = strtotime('now');
+
+        $this->sendAnalytics($this->tour, 'start', $startTime);
+        $response = $this->sendAnalytics($this->tour, 'stop', $stopTime);
+        $score = $this->signInUser->user->scoreCards()->forTour($this->tour)->first();
+
+        $this->assertNotNull($score->prize_expires_at);
+
+        $response->assertJsonFragment(['prize' => [
+            'details' => $this->tour->prize_details,
+            'instructions' => $this->tour->prize_instructions,
+            'expires_at' => $score->prize_expires_at->toDateTimeString(),
+            'time_limit' => $this->tour->prize_time_limit,
+        ]]);
+    }
+
+    /** @test */
     public function when_a_user_does_not_complete_the_tour_in_time_they_do_not_get_a_trophy()
     {
         $this->withoutExceptionHandling();
@@ -683,5 +711,97 @@ qur;
                 'points' => 200,
                 'won_trophy' => true,
             ]);
+    }
+
+    /** @test */
+    public function when_an_adventure_tour_stop_is_visited_the_users_stops_visited_should_increase()
+    {
+        $this->withoutExceptionHandling();
+
+        $this->assertEquals(0, $this->user->fresh()->stats->stops_visited);
+
+        $this->sendAnalytics($this->tour, 'start', strtotime('30 minutes ago'))
+            ->assertJsonFragment(['stops_visited' => 0]);
+
+        $this->sendAnalytics($this->stop1, 'start');
+
+        $this->assertEquals(0, $this->user->fresh()->stats->stops_visited);
+
+        $this->sendAnalytics($this->stop1, 'stop')
+            ->assertJsonFragment(['stops_visited' => 1]);
+
+        $this->assertEquals(1, $this->user->fresh()->stats->stops_visited);
+    }
+
+    /** @test */
+    public function when_an_adventure_stop_is_visited_twice_it_only_counts_as_one_stop_visited()
+    {
+        $this->withoutExceptionHandling();
+
+        $this->assertEquals(0, $this->user->fresh()->stats->stops_visited);
+
+        $this->sendAnalytics($this->tour, 'start', strtotime('30 minutes ago'))
+            ->assertJsonFragment(['stops_visited' => 0]);
+
+        $this->sendAnalytics($this->stop1, 'start');
+
+        $this->assertEquals(0, $this->user->fresh()->stats->stops_visited);
+
+        $this->sendAnalytics($this->stop1, 'stop')
+            ->assertJsonFragment(['stops_visited' => 1]);
+
+        $this->assertEquals(1, $this->user->fresh()->stats->stops_visited);
+
+        $this->sendAnalytics($this->stop1, 'stop')
+            ->assertJsonFragment(['stops_visited' => 1]);
+
+        $this->assertEquals(1, $this->user->fresh()->stats->stops_visited);
+    }
+
+    /** @test */
+    public function when_an_adventure_is_taken_twice_it_should_only_count_their_stops_once()
+    {
+        $this->withoutExceptionHandling();
+
+        $this->assertEquals(0, $this->user->fresh()->stats->stops_visited);
+
+        $this->sendAnalytics($this->tour, 'start', strtotime('30 minutes ago'))
+            ->assertJsonFragment(['stops_visited' => 0]);
+
+        $this->sendAnalytics($this->stop1, 'stop')
+            ->assertJsonFragment(['stops_visited' => 1]);
+
+//        $this->sendAnalytics($this->stop2, 'stop')
+//            ->assertJsonFragment(['stops_visited' => 2]);
+
+        $this->sendAnalytics($this->tour, 'stop', strtotime('now'))
+            ->assertJsonFragment(['stops_visited' => (string) 1]);
+
+        $this->sendAnalytics($this->tour, 'start', strtotime('now'))
+            ->assertJsonFragment(['stops_visited' => 0]);
+
+//        dd(ScoreCard::for($this->tour, $this->user));
+//        dd($this->user->scoreCards->toArray());
+
+        echo '-------------------------------';
+        echo '-------------------------------';
+        $this->assertCount(2, $this->user->scoreCards);
+
+        $this->assertEquals(1, $this->user->fresh()->stats->stops_visited);
+
+        $this->sendAnalytics($this->stop1, 'stop')
+            ->assertJsonFragment(['stops_visited' => 2]);
+
+//        $this->sendAnalytics($this->stop1, 'stop', strtotime('now'))
+//            ->dump()
+//            ->assertJsonFragment(['stops_visited' => 0]);
+//        dd(ScoreCard::for($this->tour, $this->user));
+//
+        $this->assertEquals(2, $this->user->fresh()->stats->stops_visited);
+    }
+
+    /** @test */
+    public function a_users_score_list_should_show_only_the_finished_scores()
+    {
     }
 }

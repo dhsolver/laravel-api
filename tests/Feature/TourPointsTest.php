@@ -46,7 +46,11 @@ class TourPointsTest extends TestCase
 
         $this->tour = factory(Tour::class)->states('published')->create([
             'pricing_type' => 'free',
-            'type' => TourType::OUTDOOR
+            'type' => TourType::OUTDOOR,
+            'prize_details' => 'free stuff',
+            'prize_instructions' => 'redeem at x location',
+            'prize_time_limit' => 36,
+            'has_prize' => true,
         ]);
 
         factory(TourStop::class, 5)->create([
@@ -183,6 +187,36 @@ class TourPointsTest extends TestCase
 
         $this->sendAnalytics($this->stops[4], 'stop')
             ->assertJsonFragment(['won_trophy' => true]);
+    }
+
+    /** @test */
+    public function when_a_user_wins_a_trophy_on_a_regular_tour_it_can_include_a_prize()
+    {
+        $this->sendAnalytics($this->tour, 'start');
+
+        $this->sendAnalytics($this->stops[0], 'stop')
+            ->assertJsonFragment(['won_trophy' => false]);
+
+        $this->sendAnalytics($this->stops[1], 'stop')
+            ->assertJsonFragment(['won_trophy' => false]);
+
+        $this->sendAnalytics($this->stops[2], 'stop')
+            ->assertJsonFragment(['won_trophy' => false]);
+
+        $response = $this->sendAnalytics($this->stops[3], 'stop')
+            ->assertJsonFragment(['won_trophy' => true]);
+
+        $score = $this->signInUser->user->scoreCards()->forTour($this->tour)->first();
+
+        $this->assertNotNull($score->prize_expires_at);
+
+        $response->assertJsonFragment(['won_trophy' => true]);
+        $response->assertJsonFragment(['prize' => [
+            'details' => $this->tour->prize_details,
+            'instructions' => $this->tour->prize_instructions,
+            'expires_at' => $score->prize_expires_at->toDateTimeString(),
+            'time_limit' => $this->tour->prize_time_limit,
+        ]]);
     }
 
     /** @test */

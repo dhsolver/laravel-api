@@ -52,6 +52,8 @@ class TourTracker
         }
 
         $this->scoreCard = ScoreCard::for($tour, $user);
+
+//        print_r(optional($this->scoreCard)->toArray());
     }
 
     /**
@@ -98,7 +100,9 @@ class TourTracker
 
         $this->scoreCard->finished_at = $endTime ?: Carbon::now();
         $this->scoreCard->points = $this->tour->calculator()->getPoints($this->scoreCard);
-        $this->scoreCard->won_trophy = $this->tour->calculator()->scoreQualifiesForTrophy($this->scoreCard);
+        if ($this->tour->calculator()->scoreQualifiesForTrophy($this->scoreCard)) {
+            $this->scoreCard->won_trophy_at = Carbon::now();
+        }
 
         if (! $this->scoreCard->save()) {
             return false;
@@ -127,7 +131,9 @@ class TourTracker
 
         $this->scoreCard->stops_visited = $this->getStopsVisited();
         $this->scoreCard->points = $this->tour->calculator()->getPoints($this->scoreCard);
-        $this->scoreCard->won_trophy = $this->tour->calculator()->scoreQualifiesForTrophy($this->scoreCard);
+        if ($this->tour->calculator()->scoreQualifiesForTrophy($this->scoreCard)) {
+            $this->scoreCard->won_trophy_at = Carbon::now();
+        }
 
         if (! $this->scoreCard->save()) {
             return false;
@@ -158,7 +164,7 @@ class TourTracker
             'total_stops' => $this->tour->calculator()->getTotalStops(),
             'stops_visited' => 0,
             'started_at' => $startTime,
-            'won_trophy' => false,
+            'won_trophy_at' => null,
         ])) {
             return true;
         }
@@ -209,7 +215,7 @@ class TourTracker
             ->unique('tour_id')
             ->count();
 
-        $trophies = $this->user->scoreCards()->where('won_trophy', true)->get()->unique('tour_id')->count();
+        $trophies = $this->user->scoreCards()->whereNotNull('won_trophy_at')->get()->unique('tour_id')->count();
 
         $this->user->stats()->update([
             'points' => $points,

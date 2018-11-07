@@ -27,16 +27,21 @@ class ScoreCard extends Model
      *
      * @var array
      */
-    protected $dates = ['started_at', 'finished_at'];
+    protected $dates = ['started_at', 'finished_at', 'won_trophy_at'];
 
     /**
      * The attributes that should be cast to native types.
      *
      * @var array
      */
-    protected $casts = [
-        'won_trophy' => 'boolean',
-    ];
+    protected $casts = [];
+
+    /**
+     * The custom attributes that are automatically appended to the model.
+     *
+     * @var array
+     */
+    protected $appends = ['won_trophy'];
 
     // **********************************************************
     // RELATIONSHIPS
@@ -76,6 +81,30 @@ class ScoreCard extends Model
         $end = $this->finished_at ?: Carbon::now();
 
         return intval(ceil($this->started_at->diffInMinutes($end)));
+    }
+
+    /**
+     * Check if user has won a trophy or not
+     *
+     * @return bool
+     */
+    public function getWonTrophyAttribute()
+    {
+        return ! empty($this->won_trophy_at);
+    }
+
+    /**
+     * Get the expiration date for the prize (if any)
+     *
+     * @return \Carbon\Carbon
+     */
+    public function getPrizeExpiresAtAttribute()
+    {
+        if (empty($this->won_trophy_at)) {
+            return null;
+        }
+
+        return $this->won_trophy_at->addHours($this->tour->prize_time_limit);
     }
 
     // **********************************************************
