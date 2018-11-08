@@ -52,8 +52,6 @@ class TourTracker
         }
 
         $this->scoreCard = ScoreCard::for($tour, $user);
-
-//        print_r(optional($this->scoreCard)->toArray());
     }
 
     /**
@@ -129,7 +127,7 @@ class TourTracker
             throw new MissingScoreCardException('Unable to locate user scorecard.');
         }
 
-        $this->scoreCard->stops_visited = $this->getStopsVisited();
+        $this->scoreCard->stops_visited = $this->getStopsVisited($this->scoreCard->started_at);
         $this->scoreCard->points = $this->tour->calculator()->getPoints($this->scoreCard);
         if ($this->tour->calculator()->scoreQualifiesForTrophy($this->scoreCard)) {
             $this->scoreCard->won_trophy_at = Carbon::now();
@@ -231,11 +229,13 @@ class TourTracker
      * Get the number of stops visited by the current
      * users for the current Tour.
      *
+     * @param \Carbon\Carbon $since
      * @return int
      */
-    private function getStopsVisited()
+    private function getStopsVisited($since = null)
     {
         return (int) Activity::where('user_id', modelId($this->user))
+            ->since($since)
             ->where('actionable_type', TourStop::class)
             ->where('action', Action::STOP)
             ->whereIn('actionable_id', $this->tour->stops->pluck('id'))

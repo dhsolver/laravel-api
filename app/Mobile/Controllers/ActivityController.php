@@ -11,6 +11,7 @@ use App\TourStop;
 use Carbon\Carbon;
 use App\Action;
 use App\Mobile\Resources\ScoreCardResource;
+use App\Activity;
 
 class ActivityController extends Controller
 {
@@ -33,6 +34,8 @@ class ActivityController extends Controller
                 $ts = Carbon::now();
             }
 
+            $tracker = new TourTracker($tour, auth()->user());
+
             $tour->activity()->create([
                 'user_id' => auth()->user()->id,
                 'action' => $item['action'],
@@ -42,7 +45,6 @@ class ActivityController extends Controller
 
             switch ($item['action']) {
                 case Action::START:
-                    $tracker = new TourTracker($tour, auth()->user());
                     $tracker->startTour($ts);
                     if (! $tracker->ensureScoreCard()) {
                         // this should never happen
@@ -52,7 +54,6 @@ class ActivityController extends Controller
                     break;
 
                 case Action::STOP:
-                    $tracker = new TourTracker($tour, auth()->user());
                     if (! $tracker->completeTour($ts)) {
                         // TODO: log this
                         throw new \Exception('Error saving user score!');

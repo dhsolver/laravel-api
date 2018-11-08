@@ -768,40 +768,63 @@ qur;
         $this->sendAnalytics($this->tour, 'start', strtotime('30 minutes ago'))
             ->assertJsonFragment(['stops_visited' => 0]);
 
-        $this->sendAnalytics($this->stop1, 'stop')
+        $this->sendAnalytics($this->stop1, 'stop', strtotime('10 minutes ago'))
             ->assertJsonFragment(['stops_visited' => 1]);
 
-//        $this->sendAnalytics($this->stop2, 'stop')
-//            ->assertJsonFragment(['stops_visited' => 2]);
+        $this->sendAnalytics($this->stop2, 'stop', strtotime('9 minutes ago'))
+           ->assertJsonFragment(['stops_visited' => 2]);
 
-        $this->sendAnalytics($this->tour, 'stop', strtotime('now'))
-            ->assertJsonFragment(['stops_visited' => (string) 1]);
+        $this->sendAnalytics($this->tour, 'stop', strtotime('8 minutes ago'))
+            ->assertJsonFragment(['stops_visited' => (string) 2]);
 
-        $this->sendAnalytics($this->tour, 'start', strtotime('now'))
+        $this->assertEquals(2, $this->user->fresh()->stats->stops_visited);
+
+        $this->sendAnalytics($this->tour, 'start', strtotime('7 minutes ago'))
             ->assertJsonFragment(['stops_visited' => 0]);
 
-//        dd(ScoreCard::for($this->tour, $this->user));
-//        dd($this->user->scoreCards->toArray());
+        $score = ScoreCard::for($this->tour, $this->user);
+        $this->assertEquals(0, $score->stops_visited);
 
-        echo '-------------------------------';
-        echo '-------------------------------';
-        $this->assertCount(2, $this->user->scoreCards);
+        $this->assertEquals(2, $this->user->fresh()->stats->stops_visited);
 
-        $this->assertEquals(1, $this->user->fresh()->stats->stops_visited);
+        $this->sendAnalytics($this->stop1, 'stop', strtotime('6 minutes ago'))
+            ->assertJsonFragment(['stops_visited' => 1]);
 
-        $this->sendAnalytics($this->stop1, 'stop')
+        $this->sendAnalytics($this->stop2, 'stop', strtotime('5 minutes ago'))
             ->assertJsonFragment(['stops_visited' => 2]);
 
-//        $this->sendAnalytics($this->stop1, 'stop', strtotime('now'))
-//            ->dump()
-//            ->assertJsonFragment(['stops_visited' => 0]);
-//        dd(ScoreCard::for($this->tour, $this->user));
-//
-        $this->assertEquals(2, $this->user->fresh()->stats->stops_visited);
+        $this->sendAnalytics($this->stop3, 'stop', strtotime('4 minutes ago'))
+            ->assertJsonFragment(['stops_visited' => 3]);
+
+        $this->assertEquals(3, $this->user->fresh()->stats->stops_visited);
     }
 
     /** @test */
     public function a_users_score_list_should_show_only_the_finished_scores()
     {
+    }
+
+    /** @test */
+    public function if_a_user_finishes_a_tour_without_starting_it_an_error_should_be_thrown()
+    {
+    }
+
+    /** @test */
+    public function if_a_user_starts_or_stops_a_stop_without_starting_the_tour_an_error_will_be_thrown()
+    {
+        $this->withoutExceptionHandling();
+
+        $this->assertEquals(0, $this->user->fresh()->stats->stops_visited);
+
+        // $this->sendAnalytics($this->tour, 'start', strtotime('30 minutes ago'))
+        //     ->assertJsonFragment(['stops_visited' => 0]);
+
+        // $this->sendAnalytics($this->stop1, 'stop', strtotime('10 minutes ago'))
+        //     ->assertJsonFragment(['stops_visited' => 1]);
+
+        // $this->sendAnalytics($this->stop2, 'stop', strtotime('9 minutes ago'))
+        //    ->assertJsonFragment(['stops_visited' => 2]);
+
+        // dd($this->user->scoreCards()->get()->toArray());
     }
 }

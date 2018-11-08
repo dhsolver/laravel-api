@@ -197,7 +197,7 @@ class RecordsAnalyticsTest extends TestCase
     }
 
     /** @test */
-    function tracking_timestamps_cannot_be_set_to_the_future()
+    public function tracking_timestamps_cannot_be_set_to_the_future()
     {
         $this->withoutExceptionHandling();
 
