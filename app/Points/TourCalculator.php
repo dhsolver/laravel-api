@@ -4,7 +4,7 @@ namespace App\Points;
 
 use App\ScoreCard;
 
-class TourCalculator implements PointsCalculator
+class TourCalculator implements IPointsCalculator
 {
     /**
      * The adventure Tour.

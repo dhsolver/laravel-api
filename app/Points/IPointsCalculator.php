@@ -4,7 +4,7 @@ namespace App\Points;
 
 use App\ScoreCard;
 
-interface PointsCalculator
+interface IPointsCalculator
 {
     public function getPar();
 

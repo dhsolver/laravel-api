@@ -7,7 +7,7 @@ use App\Exceptions\UntraceableTourException;
 use App\ScoreCard;
 use drupol\phpermutations\Generators\Permutations;
 
-class AdventureCalculator implements PointsCalculator
+class AdventureCalculator implements IPointsCalculator
 {
     /**
      * The adventure Tour.

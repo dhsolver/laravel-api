@@ -63,7 +63,7 @@ class Tour extends Model
      * Keep the points calculator on the model so it never
      * has to load twice.
      *
-     * @var \App\Points\PointsCalculator
+     * @var \App\Points\IPointsCalculator
      */
     protected $_calculator;
 
@@ -460,7 +460,7 @@ class Tour extends Model
     /**
      * Get the proper points calculator for the Tour.
      *
-     * @return \App\Points\PointsCalculator
+     * @return \App\Points\IPointsCalculator
      */
     public function calculator()
     {
