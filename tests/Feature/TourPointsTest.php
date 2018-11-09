@@ -220,27 +220,6 @@ class TourPointsTest extends TestCase
     }
 
     /** @test */
-    public function when_a_user_visits_a_stop_it_immediately_counts_towards_their_total_score()
-    {
-        $this->withoutExceptionHandling();
-
-        $this->sendAnalytics($this->tour, 'start');
-
-        $this->sendAnalytics($this->stops[0], 'stop')
-            ->assertJsonFragment(['points' => 1]);
-
-        $this->sendAnalytics($this->stops[0], 'stop')
-            ->assertJsonFragment(['points' => 1]);
-
-        $this->assertEquals(1, $this->user->fresh()->stats->points);
-
-        $this->sendAnalytics($this->stops[1], 'stop')
-            ->assertJsonFragment(['points' => 2]);
-
-        $this->assertEquals(2, $this->user->fresh()->stats->points);
-    }
-
-    /** @test */
     public function users_stats_should_be_updated_with_every_completed_stop()
     {
         $this->withoutExceptionHandling();

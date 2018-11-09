@@ -2,12 +2,12 @@
 
 namespace Tests;
 
+use App\ScoreCard;
 use App\StopChoice;
 use App\TourStop;
 use App\TourType;
 use App\Media;
 use App\Tour;
-use App\Device;
 
 trait HasTestTour
 {
@@ -22,60 +22,75 @@ trait HasTestTour
     protected $user;
 
     /**
-     * @var \App\Device
-     */
-    protected $device;
-
-    /**
      * @var Collection
      */
     protected $stops;
 
     /**
-     * Stop # 1
+     * User score for the last tour started from the startTour method
      *
      * @var \App\TourStop
      */
-    protected $stop1;
-    /**
-     * Stop # 2
-     *
-     * @var \App\TourStop
-     */
-    protected $stop2;
-    /**
-     * Stop # 3
-     *
-     * @var \App\TourStop
-     */
-    protected $stop3;
-    /**
-     * Stop # 4
-     *
-     * @var \App\TourStop
-     */
-    protected $stop4;
+    protected $score;
 
     /**
-     * Stop # 5
+     * Helper to start the current tour.
      *
-     * @var \App\TourStop
+     * @param $timestamp
+     * @param Tour $tour
+     * @return \Illuminate\Foundation\Testing\TestResponse
      */
-    protected $stop5;
+    public function startTour($timestamp = null, $tour = null)
+    {
+        if (empty($timestamp)) {
+            $timestamp = strtotime('now');
+        }
+
+        if (empty($tour)) {
+            $tour = $this->tour;
+        }
+
+        $response = $this->postJson(route('mobile.scores.start'), ['tour_id' => $tour->id, 'timestamp' => $timestamp]);
+        $this->score = ScoreCard::find($response->decodeResponseJson()['id']);
+
+        return $response;
+    }
+
+    /**
+     * Visit a stop along the current tour.
+     *
+     * @param $stop
+     * @param int $timestamp
+     * @param ScoreCard $scoreCard
+     * @return mixed
+     */
+    public function visitStop($stop, $timestamp = null, $scoreCard = null)
+    {
+        if (empty($timestamp)) {
+            $timestamp = strtotime('now');
+        }
+
+        if (empty($scoreCard)) {
+            $scoreCard = $this->score;
+        }
+
+        return $this->postJson(
+            route('mobile.scores.progress', ['score' => $scoreCard]),
+            [
+                'stop_id' => modelid($stop),
+                'timestamp' => $timestamp
+            ]
+        );
+    }
 
     /**
      * Insert test tour data with or without route data.
      *
-     * @param bool $withRoutes
-     * @return void
+     * @return array
      */
     public function createTestTour()
     {
-        $this->signIn('user');
-        $this->user = $this->signInUser->user;
-        $this->device = $this->user->devices()->create(factory(Device::class)->make()->toArray());
-
-        $this->tour = factory(Tour::class)->states('published')->create([
+        $tour = factory(Tour::class)->states('published')->create([
             'pricing_type' => 'free',
             'type' => TourType::OUTDOOR,
             'prize_details' => 'free stuff',
@@ -85,30 +100,29 @@ trait HasTestTour
         ]);
 
         factory(TourStop::class, 5)->create([
-            'tour_id' => $this->tour->id,
+            'tour_id' => $tour->id,
         ]);
 
-        $this->stops = $this->tour->stops()->ordered()->get();
+        $stops = $tour->stops()->ordered()->get();
+
+        return [$tour, $stops];
     }
 
     /**
      * Insert test tour data with or without route data.
      *
      * @param bool $withRoutes
-     * @return void
+     * @return array
      */
     public function createTestAdventure($withRoutes = false)
     {
-        $this->signIn('user');
-        $this->user = $this->signInUser->user;
-
         $audio = Media::create([
             'file' => str_random(10),
             'length' => 155,
             'user_id' => $this->signInUser->id,
         ]);
 
-        $this->tour = factory(Tour::class)->states('published')->create([
+        $tour = factory(Tour::class)->states('published')->create([
             'pricing_type' => 'free',
             'background_audio_id' => $audio->id,
             'type' => TourType::ADVENTURE,
@@ -118,8 +132,8 @@ trait HasTestTour
             'has_prize' => true,
         ]);
 
-        $this->stop1 = factory(TourStop::class)->create(['tour_id' => $this->tour, 'intro_audio_id' => $audio->id]);
-        $this->stop1->location->update([
+        $stop1 = factory(TourStop::class)->create(['tour_id' => $tour, 'intro_audio_id' => $audio->id]);
+        $stop1->location->update([
             'address1' => '77 River St',    // Hoboken Cigars
             'address2' => null,
             'city' => 'Hoboken',
@@ -130,8 +144,8 @@ trait HasTestTour
             'longitude' => -74.0290305,
         ]);
 
-        $this->stop2 = factory(TourStop::class)->create(['tour_id' => $this->tour, 'intro_audio_id' => $audio->id]);
-        $this->stop2->location->update([
+        $stop2 = factory(TourStop::class)->create(['tour_id' => $tour, 'intro_audio_id' => $audio->id]);
+        $stop2->location->update([
             'id' => 2610,
             'address1' => '500 Grand St',       // Grand Vin
             'address2' => null,
@@ -143,8 +157,8 @@ trait HasTestTour
             'longitude' => -74.03518617,
         ]);
 
-        $this->stop3 = factory(TourStop::class)->create(['tour_id' => $this->tour, 'intro_audio_id' => $audio->id]);
-        $this->stop3->location->update([
+        $stop3 = factory(TourStop::class)->create(['tour_id' => $tour, 'intro_audio_id' => $audio->id]);
+        $stop3->location->update([
             'id' => 2611,
             'address1' => '163 14th St',        // Dino's
             'address2' => null,
@@ -156,8 +170,8 @@ trait HasTestTour
             'longitude' => -74.02768135,
         ]);
 
-        $this->stop4 = factory(TourStop::class)->create(['tour_id' => $this->tour, 'intro_audio_id' => $audio->id]);
-        $this->stop4->location->update([
+        $stop4 = factory(TourStop::class)->create(['tour_id' => $tour, 'intro_audio_id' => $audio->id]);
+        $stop4->location->update([
             'id' => 2612,
             'address1' => '11th St',        // Baseball Monument
             'address2' => null,
@@ -169,8 +183,8 @@ trait HasTestTour
             'longitude' => -74.02735949,
         ]);
 
-        $this->stop5 = factory(TourStop::class)->create(['tour_id' => $this->tour, 'intro_audio_id' => $audio->id]);
-        $this->stop5->location->update([
+        $stop5 = factory(TourStop::class)->create(['tour_id' => $tour, 'intro_audio_id' => $audio->id]);
+        $stop5->location->update([
             'address1' => '622 Washington St',      // Benny Tunido's
             'address2' => null,
             'city' => 'Hoboken',
@@ -181,34 +195,37 @@ trait HasTestTour
             'longitude' => -74.02915657,
         ]);
 
-        $this->stop1->update(['next_stop_id' => $this->stop2->id]);
+        $stop1->update(['next_stop_id' => $stop2->id]);
 
-        factory(StopChoice::class)->create(['tour_stop_id' => $this->stop2->id, 'next_stop_id' => $this->stop3->id]);
-        factory(StopChoice::class)->create(['tour_stop_id' => $this->stop2->id, 'next_stop_id' => $this->stop4->id]);
-        $this->stop2->update(['is_multiple_choice' => true]);
+        factory(StopChoice::class)->create(['tour_stop_id' => $stop2->id, 'next_stop_id' => $stop3->id]);
+        factory(StopChoice::class)->create(['tour_stop_id' => $stop2->id, 'next_stop_id' => $stop4->id]);
+        $stop2->update(['is_multiple_choice' => true]);
 
-        factory(StopChoice::class)->create(['tour_stop_id' => $this->stop3->id, 'next_stop_id' => $this->stop4->id]);
-        factory(StopChoice::class)->create(['tour_stop_id' => $this->stop3->id, 'next_stop_id' => $this->stop5->id]);
-        $this->stop3->update(['is_multiple_choice' => true]);
+        factory(StopChoice::class)->create(['tour_stop_id' => $stop3->id, 'next_stop_id' => $stop4->id]);
+        factory(StopChoice::class)->create(['tour_stop_id' => $stop3->id, 'next_stop_id' => $stop5->id]);
+        $stop3->update(['is_multiple_choice' => true]);
 
-        $this->stop4->update(['next_stop_id' => $this->stop5->id]);
+        $stop4->update(['next_stop_id' => $stop5->id]);
 
-        $this->tour->update([
-            'start_point_id' => $this->stop1->id,
-            'end_point_id' => $this->stop5->id,
+        $tour->update([
+            'start_point_id' => $stop1->id,
+            'end_point_id' => $stop5->id,
         ]);
 
         if ($withRoutes) {
-            $this->insertStopRouteData();
+            $this->insertStopRouteData($tour);
         }
+
+        return [$tour, $tour->stops];
     }
 
     /**
      * Insert stop route data.
      *
+     * @param Tour $tour
      * @return void
      */
-    public function insertStopRouteData()
+    public function insertStopRouteData($tour)
     {
         $query = <<<qur
 INSERT INTO `stop_routes` (`id`, `tour_id`, `stop_id`, `next_stop_id`, `order`, `latitude`, `longitude`, `created_at`, `updated_at`)
@@ -293,12 +310,12 @@ VALUES
 (282, 1000533, 100022074, 100022075, 18, 40.74322732, -74.03532564, '2018-10-10 17:44:28', '2018-10-10 17:44:28');
 qur;
 
-        $query = str_replace('1000533', $this->tour->id, $query);
-        $query = str_replace('100022074', $this->stop1->id, $query);
-        $query = str_replace('100022075', $this->stop2->id, $query);
-        $query = str_replace('100022076', $this->stop3->id, $query);
-        $query = str_replace('100022077', $this->stop4->id, $query);
-        $query = str_replace('100022078', $this->stop5->id, $query);
+        $query = str_replace('1000533', $tour->id, $query);
+        $query = str_replace('100022074', $tour->stops[0]->id, $query);
+        $query = str_replace('100022075', $tour->stops[1]->id, $query);
+        $query = str_replace('100022076', $tour->stops[2]->id, $query);
+        $query = str_replace('100022077', $tour->stops[3]->id, $query);
+        $query = str_replace('100022078', $tour->stops[4]->id, $query);
         \DB::insert($query);
     }
 }

@@ -5,6 +5,7 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+use App\Points\ScoreManager;
 
 class ScoreCard extends Model
 {
@@ -43,6 +44,13 @@ class ScoreCard extends Model
      */
     protected $appends = ['won_trophy'];
 
+    /**
+     * Score manager objet.
+     *
+     * @var ScoreManager
+     */
+    protected $_manager;
+
     // **********************************************************
     // RELATIONSHIPS
     // **********************************************************
@@ -65,6 +73,18 @@ class ScoreCard extends Model
     public function user()
     {
         return $this->belongsTo(\App\User::class);
+    }
+
+    /**
+     * Get the stops visited.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    */
+    public function stops()
+    {
+        return $this->belongsToMany(TourStop::class, 'user_score_card_stops', 'score_card_id', 'stop_id')
+            ->withPivot(['visited_at'])
+            ->using(ScoreCardStopsPivot::class);
     }
 
     // **********************************************************
@@ -215,5 +235,19 @@ class ScoreCard extends Model
             ->where('user_id', modelId($user))
             ->get()
             ->unique('tour_id');
+    }
+
+    /**
+     * Get single instance score manager object.
+     *
+     * @return ScoreManager
+     */
+    public function manager()
+    {
+        if (empty($this->_manager)) {
+            $this->_manager = new ScoreManager($this);
+        }
+
+        return $this->_manager;
     }
 }

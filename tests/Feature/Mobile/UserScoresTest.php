@@ -103,4 +103,38 @@ class UserScoresTest extends TestCase
                 'points' => 2,
             ]);
     }
+
+    /** @test */
+    public function a_user_can_fetch_all_their_scorecards_for_a_tour()
+    {
+    // TODO: inprogress
+        $this->startTour();
+        $this->visitStop($this->tour->end_point_id);
+
+        $score = $this->user->scoreCards()->first();
+        $this->assertCount(1, $this->signInUser->user->scoreCards);
+
+        $this->startTour();
+
+        $this->getJson(route('mobile.scores.show'));
+
+        // expect a json format like:
+        // scores => [ all score cards for tour ]
+        // best => [ best one if available ]
+        // current => [ current unfinished score if available ]
+        $this->assertCount(2, $this->signInUser->user->fresh()->scoreCards);
+    }
+
+    /** @test */
+    function a_users_score_list_should_show_their_best_score()
+    {
+
+    }
+
+    /** @test */
+    function a_users_score_list_can_show_their_current_unfinished_score()
+    {
+
+    }
+
 }

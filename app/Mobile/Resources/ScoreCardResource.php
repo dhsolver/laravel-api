@@ -18,16 +18,19 @@ class ScoreCardResource extends JsonResource
             $prize = [
                 'details' => $this->tour->prize_details,
                 'instructions' => $this->tour->prize_instructions,
-                'time_limit' => $this->tour->prize_time_limit,
+                'time_limit' => (int) $this->tour->prize_time_limit,
                 'expires_at' => $this->prize_expires_at->toDateTimeString(),
             ];
         }
 
         return [
+            'id' => $this->id,
             'tour_id' => $this->tour_id,
             'tour_name' => $this->tour->title,
-            'stops_visited' => $this->stops_visited,
-            'total_stops' => $this->total_stops,
+            'par' => $this->par,
+            'is_adventure' => $this->is_adventure,
+            'stops_visited' => (int) $this->stops_visited,
+            'total_stops' => (int) $this->total_stops,
             'points' => (int) $this->points,
             'won_trophy' => $this->won_trophy,
             'trophy_url' => $this->won_trophy ? optional($this->tour->trophyImage)->path : null,

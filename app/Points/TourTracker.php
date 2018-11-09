@@ -213,7 +213,11 @@ class TourTracker
             ->unique('tour_id')
             ->count();
 
-        $trophies = $this->user->scoreCards()->whereNotNull('won_trophy_at')->get()->unique('tour_id')->count();
+        $trophies = $this->user->scoreCards()
+            ->whereNotNull('won_trophy_at')
+            ->get()
+            ->unique('tour_id')
+            ->count();
 
         $this->user->stats()->update([
             'points' => $points,
