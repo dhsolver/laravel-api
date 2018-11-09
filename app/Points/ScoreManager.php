@@ -3,11 +3,9 @@
 namespace App\Points;
 
 use App\ScoreCard;
-use App\TourStop;
 use App\User;
 use App\Tour;
 use Carbon\Carbon;
-use App\Activity;
 
 class ScoreManager
 {
@@ -29,7 +27,7 @@ class ScoreManager
      * Get the tour object.
      *
      * @var \App\Tour
-     *
+     */
     public $tour;
 
     /**
@@ -153,7 +151,6 @@ class ScoreManager
 
         return true;
     }
-
 
     /**
      * Get the number of stops visited in total by the user.
