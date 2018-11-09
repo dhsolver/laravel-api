@@ -37,10 +37,10 @@ class TourAuditor
         $this->common();
 
         switch ($this->tour->type) {
-            case 'indoor':
+            case TourType::INDOOR:
                 $this->indoor();
                 break;
-            case 'adventure':
+            case TourType::ADVENTURE:
                 $this->adventure();
                 break;
             default:
@@ -90,7 +90,7 @@ class TourAuditor
         }
 
         if ($this->tour->stops()->count() < 1) {
-            $this->error("The tour must have at least one stop.");
+            $this->error('The tour must have at least one stop.');
         }
 
         foreach ($this->tour->stops as $stop) {

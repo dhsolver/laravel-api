@@ -1,9 +1,10 @@
 ## Junket CMS and Mobile API
 
-## Requirements
+## Server Requirements
 - PHP >= 7.2
 - Fileinfo Extension
-- Imagick PHP extension (>=6.5.7)
+- [Imagick PHP extension](http://php.net/manual/en/book.imagick.php) (>=6.5.7)
+- [ffmpeg](https://www.ffmpeg.org)
 
 ### Code Documentation
 - [AccessPoints](docs/AccessPoints.md)
@@ -18,3 +19,4 @@
 - Roles and permissions provided by [spatie/laravel-permission](https://github.com/spatie/laravel-permission)
 - All auth is based on JWT tokens using [tymondesigns/jwt-auth](https://github.com/tymondesigns/jwt-auth)
 - Image processing [intervention/image](http://image.intervention.io)
+- Audio processing [PHP-FFMpeg/PHP-FFMpeg](https://github.com/PHP-FFMpeg/PHP-FFMpeg)

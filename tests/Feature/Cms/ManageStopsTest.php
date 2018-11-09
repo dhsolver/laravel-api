@@ -9,7 +9,7 @@ use App\TourStop;
 use App\StopChoice;
 use App\Media;
 
-class ManageStopTest extends TestCase
+class ManageStopsTest extends TestCase
 {
     use DatabaseMigrations;
     use AttachJwtToken;
@@ -233,6 +233,24 @@ class ManageStopTest extends TestCase
             ->assertJsonFragment($data);
     }
 
+    /**
+     * Helper function to get the choice array without adding the
+     * timestamps (sometimes they fail the tests)
+     *
+     * @param StopChoice $choice
+     * @return array
+     */
+    public function choiceData(StopChoice $choice)
+    {
+        return [
+            'id' => $choice->id,
+            'tour_stop_id' => $choice->tour_stop_id,
+            'order' => $choice->order,
+            'answer' => $choice->answer,
+            'next_stop_id' => $choice->next_stop_id,
+        ];
+    }
+
     /** @test */
     public function a_choice_can_be_added_to_a_stop()
     {
@@ -312,7 +330,8 @@ class ManageStopTest extends TestCase
 
         $this->updateStop($data)
             ->assertStatus(200)
-            ->assertJson(['data' => $data]);
+            ->assertJsonCount(1, 'data.choices')
+            ->assertJsonFragment($this->choiceData($choice));
     }
 
     /** @test */
@@ -410,6 +429,8 @@ class ManageStopTest extends TestCase
     /** @test */
     public function a_choice_can_have_a_next_stop()
     {
+        $this->withoutExceptionHandling();
+
         $this->loginAs($this->client);
 
         $nextStop = create('App\TourStop', ['tour_id' => $this->tour->id, 'order' => 2]);
@@ -424,9 +445,10 @@ class ManageStopTest extends TestCase
             ],
         ];
 
-        $resp = $this->updateStop($data)
+        $this->updateStop($data)
             ->assertStatus(200)
-            ->assertJsonFragment($data);
+            ->assertJsonCount(1, 'data.choices')
+            ->assertJsonFragment($this->choiceData($choice));
 
         $this->assertEquals($nextStop->id, $choice->fresh()->next_stop_id);
     }
@@ -449,7 +471,7 @@ class ManageStopTest extends TestCase
             ],
         ];
 
-        $resp = $this->updateStop($data)
+        $this->updateStop($data)
             ->assertStatus(422)
             ->assertJsonValidationErrors(['choices.0.next_stop_id']);
     }
@@ -469,7 +491,7 @@ class ManageStopTest extends TestCase
             ],
         ];
 
-        $resp = $this->updateStop($data)
+        $this->updateStop($data)
             ->assertStatus(422)
             ->assertJsonValidationErrors(['choices.0.next_stop_id']);
     }
@@ -482,6 +504,7 @@ class ManageStopTest extends TestCase
         $media = Media::create([
             'file' => 'images/test.jpg',
             'user_id' => $this->client->id,
+            'type' => Media::TYPE_IMAGE,
         ]);
 
         $data = [
@@ -509,7 +532,7 @@ class ManageStopTest extends TestCase
             'play_radius' => 5.32,
         ];
 
-        $data = $this->updateStop($data)
+        $this->updateStop($data)
             ->assertStatus(200)
             ->assertJsonFragment($data);
 
@@ -517,7 +540,7 @@ class ManageStopTest extends TestCase
             'play_radius' => 'test',
         ];
 
-        $data = $this->updateStop($data)
+        $this->updateStop($data)
             ->assertStatus(422)
             ->assertJsonValidationErrors(['play_radius']);
     }
@@ -603,7 +626,7 @@ class ManageStopTest extends TestCase
             'next_stop_id' => '' . $otherStop->id,
         ];
 
-        $resp = $this->updateStop($data)
+        $this->updateStop($data)
             ->assertStatus(422)
             ->assertJsonValidationErrors(['next_stop_id']);
     }
@@ -617,7 +640,7 @@ class ManageStopTest extends TestCase
             'next_stop_id' => $this->stop->id,
         ];
 
-        $resp = $this->updateStop($data)
+        $this->updateStop($data)
             ->assertStatus(422)
             ->assertJsonValidationErrors(['next_stop_id']);
     }
@@ -653,7 +676,7 @@ class ManageStopTest extends TestCase
             ],
         ];
 
-        $data = $this->updateStop($data)
+        $this->updateStop($data)
             ->assertStatus(200)
             ->assertJsonFragment($data);
     }

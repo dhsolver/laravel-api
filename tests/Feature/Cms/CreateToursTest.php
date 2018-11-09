@@ -109,12 +109,12 @@ class CreateToursTest extends TestCase
             ->assertStatus(422)
             ->assertJsonValidationErrors('type');
 
-        foreach (Tour::$TOUR_TYPES as $type) {
+        foreach (\App\TourType::all() as $type) {
             $this->publishTour(['type' => $type])
             ->assertStatus(200);
         }
 
-        $this->assertCount(count(Tour::$TOUR_TYPES), Tour::all());
+        $this->assertCount(count(\App\TourType::all()), Tour::all());
     }
 
     /** @test */

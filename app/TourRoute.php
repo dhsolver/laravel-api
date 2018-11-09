@@ -48,7 +48,7 @@ class TourRoute extends Model
     // **********************************************************
     // RELATIONSHIPS
     // **********************************************************
-    
+
     public function tour()
     {
         return $this->belongsTo(Tour::class);

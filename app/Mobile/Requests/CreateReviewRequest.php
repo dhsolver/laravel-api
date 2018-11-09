@@ -24,7 +24,7 @@ class CreateReviewRequest extends FormRequest
     public function rules()
     {
         return [
-            'rating' => 'in:0,05,10,15,20,25,30,35,40,45,50',
+            'rating' => 'in:0,5,10,15,20,25,30,35,40,45,50',
             'review' => 'nullable|max:255',
         ];
     }

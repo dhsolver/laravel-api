@@ -2,11 +2,13 @@
 
 namespace App\Mobile\Controllers;
 
+use App\Exceptions\MissingScoreCardException;
 use App\Http\Controllers\Controller;
 use App\Tour;
 use App\Http\Requests\RecordActivityRequest;
 use App\TourStop;
 use Carbon\Carbon;
+use App\Activity;
 
 class ActivityController extends Controller
 {
@@ -14,49 +16,57 @@ class ActivityController extends Controller
      * Track Tour related activity.
      *
      * @param Tour $tour
-     * @param RecordTourActivityRequest $request
-     * @return Response
+     * @param RecordActivityRequest $request
+     * @return \Illuminate\Http\Response
+     * @throws MissingScoreCardException
      */
     public function tour(Tour $tour, RecordActivityRequest $request)
     {
-        $fin = false;
+        $data = [];
 
         foreach ($request->activity as $item) {
+            $ts = Carbon::createFromTimestampUTC($item['timestamp']);
+
+            if ($ts > Carbon::now()) {
+                $ts = Carbon::now();
+            }
+
             $tour->activity()->create([
                 'user_id' => auth()->user()->id,
                 'action' => $item['action'],
                 'device_id' => $item['device_id'],
-                'created_at' => Carbon::createFromTimestampUTC($item['timestamp'])
+                'created_at' => $ts
             ]);
-
-            if ($item['action'] == 'stop') {
-                $fin = true;
-            }
         }
 
-        if ($fin && $tour->type == 'adventure') {
-            // TODO: return the users score for adventure stops
-        }
-
-        return response()->json(['result' => 1]);
+        return response()->json(['result' => 1, 'data' => $data]);
     }
 
     /**
      * Track Stop related activity.
      *
-     * @return void
+     * @return \Illuminate\Http\Response
+     * @throws MissingScoreCardException
      */
     public function stop(TourStop $stop, RecordActivityRequest $request)
     {
+        $data = [];
+
         foreach ($request->activity as $item) {
+            $ts = Carbon::createFromTimestampUTC($item['timestamp']);
+
+            if ($ts > Carbon::now()) {
+                $ts = Carbon::now();
+            }
+
             $stop->activity()->create([
                 'user_id' => auth()->user()->id,
                 'action' => $item['action'],
                 'device_id' => $item['device_id'],
-                'created_at' => Carbon::createFromTimestampUTC($item['timestamp'])
+                'created_at' => $ts,
             ]);
         }
 
-        return response()->json(['result' => 1]);
+        return response()->json(['result' => 1, 'data' => $data]);
     }
 }

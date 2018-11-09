@@ -2,6 +2,8 @@
 
 namespace App;
 
+use App\Points\AdventureCalculator;
+use App\Points\TourCalculator;
 use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
 use App\Rules\YoutubeVideo;
@@ -17,13 +19,6 @@ class Tour extends Model
      * @var array
      */
     public static $PRICING_TYPES = ['free', 'premium'];
-
-    /**
-     * Defines the valid options for tour types
-     *
-     * @var array
-     */
-    public static $TOUR_TYPES = ['indoor', 'outdoor', 'adventure'];
 
     /**
      * The attributes that aren't mass assignable.
@@ -54,6 +49,7 @@ class Tour extends Model
     protected $casts = [
         'has_prize' => 'bool',
         'rating' => 'int',
+        'prize_time_limit' => 'int',
     ];
 
     /**
@@ -62,6 +58,14 @@ class Tour extends Model
      * @var array
      */
     protected $dates = ['published_at'];
+
+    /**
+     * Keep the points calculator on the model so it never
+     * has to load twice.
+     *
+     * @var \App\Points\IPointsCalculator
+     */
+    protected $_calculator;
 
     /**
      * Handles the model boot options.
@@ -453,6 +457,26 @@ class Tour extends Model
     // OTHER METHODS
     // **********************************************************
 
+    /**
+     * Get the proper points calculator for the Tour.
+     *
+     * @return \App\Points\IPointsCalculator
+     */
+    public function calculator()
+    {
+        if (! empty($this->_calculator)) {
+            return $this->_calculator;
+        }
+
+        if ($this->isAdventure()) {
+            $this->_calculator = new AdventureCalculator($this);
+        } else {
+            $this->_calculator = new TourCalculator($this);
+        }
+
+        return $this->_calculator;
+    }
+
     public function audit()
     {
         $auditor = new TourAuditor($this);
@@ -580,5 +604,15 @@ class Tour extends Model
         }
 
         return $query->whereNotNull('published_at');
+    }
+
+    /**
+     * Helper method to check if tour type is 'adventure'.
+     *
+     * @return bool
+     */
+    public function isAdventure()
+    {
+        return $this->type == TourType::ADVENTURE;
     }
 }

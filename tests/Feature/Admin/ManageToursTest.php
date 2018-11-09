@@ -48,7 +48,7 @@ class ManageToursTest extends TestCase
             'title' => 'test title',
             'description' => 'test desc',
             'pricing_type' => Tour::$PRICING_TYPES[0],
-            'type' => Tour::$TOUR_TYPES[0],
+            'type' => \App\TourType::all()[0],
         ];
 
         $this->updateTour($data)

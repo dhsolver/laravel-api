@@ -55,7 +55,7 @@ class ManageToursTest extends TestCase
             'title' => 'test title',
             'description' => 'test desc',
             'pricing_type' => Tour::$PRICING_TYPES[0],
-            'type' => Tour::$TOUR_TYPES[0],
+            'type' => \App\TourType::all()[0],
         ];
 
         $this->updateTour($data)
@@ -266,6 +266,23 @@ class ManageToursTest extends TestCase
     }
 
     /** @test */
+    public function a_tour_prize_can_have_a_time_limit()
+    {
+        $this->loginAs($this->client);
+
+        $updates = [
+            'prize_details' => 'details',
+            'prize_instructions' => 'instructions',
+            'prize_time_limit' => 24,
+            'has_prize' => true,
+        ];
+
+        $this->updateTour($updates)
+            ->assertStatus(200)
+            ->assertJsonFragment($updates);
+    }
+
+    /** @test */
     public function a_tour_can_have_a_start_point()
     {
         $this->withoutExceptionHandling();
@@ -337,6 +354,7 @@ class ManageToursTest extends TestCase
         $media = Media::create([
             'file' => 'images/test.jpg',
             'user_id' => $this->client->id,
+            'type' => Media::TYPE_IMAGE,
         ]);
 
         $data = [

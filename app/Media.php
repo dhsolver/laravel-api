@@ -6,6 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Media extends Model
 {
+    public const TYPE_IMAGE = 'image';
+    public const TYPE_ICON = 'icon';
+    public const TYPE_AUDIO = 'audio';
+
     /**
      * The attributes that aren't mass assignable.
      *
@@ -19,6 +23,15 @@ class Media extends Model
      * @var array
      */
     protected $appends = ['path', 'small_path', 'icon_path'];
+
+    /**
+     * The attributes that should be automatically cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'length' => 'float',
+    ];
 
     /**
      * Defines the user relationship for who uploaded the media.

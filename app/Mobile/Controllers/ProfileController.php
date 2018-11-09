@@ -44,6 +44,6 @@ class ProfileController extends Controller
     {
         auth()->user()->update(['password' => bcrypt($request->password)]);
 
-        return $this->success('Your password has been change.');
+        return $this->success('Your password has been updated.');
     }
 }

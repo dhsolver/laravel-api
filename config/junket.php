@@ -50,6 +50,43 @@ return [
     ],
 
     /**
+     * Config for the points calculation system.
+     */
+    'points' => [
+        /**
+         * The average walking speed (miles per hour) of a human.  Used to
+         * calculate the time it should take to get from one place to another.
+         */
+        'average_walking_speed' => env('POINTS_WALK_SPEED', 4),
+
+        /**
+         * The total decision time added for a whole tour.
+         */
+        'decision_time' => env('POINTS_DECISION_TIME', 5),
+
+        /**
+         * The total number of points that can be awarded for adventure tours.
+         */
+        'max_points' => env('POINTS_MAX', 200),
+
+        /**
+         * The minimum number of points that can be awarded for adventure tours.
+         */
+        'min_points' => env('POINTS_MIN', 50),
+
+        /**
+         * The percent of points that must be reached in order to
+         * award a user a trophy.
+         */
+        'trophy_percent' => env('POINTS_TROPHY_PERCENT', 0.70),
+
+        /**
+         * The amount of points awarded for each stop visited for non-adventure tours.
+         */
+        'per_stop' => env('POINTS_PER_STOP', 1),
+    ],
+
+    /**
      * Holds the containing path the the backup of the iTourMobile tourfiles folder.
      */
     'itourfiles' => env('ITOUR_BACKUP_DIR'),

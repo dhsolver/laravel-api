@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\TourType;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use App\Tour;
@@ -41,7 +42,7 @@ class UpdateTourRequest extends FormRequest
             ],
             'type' => [
                 'required',
-                Rule::in(Tour::$TOUR_TYPES),
+                Rule::in(TourType::all()),
             ],
 
             'location.address1' => 'nullable|string|max:255',
@@ -67,6 +68,7 @@ class UpdateTourRequest extends FormRequest
             'has_prize' => 'nullable|boolean',
             'prize_details' => 'nullable|string|max:1000',
             'prize_instructions' => 'nullable|string|max:1000',
+            'prize_time_limit' => 'nullable|numeric',
 
             'start_point_id' => [
                 'nullable',

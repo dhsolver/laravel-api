@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+use App\Action;
+use App\TourType;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\Concerns\AttachJwtToken;
@@ -26,12 +28,16 @@ class RecordsAnalyticsTest extends TestCase
 
         $this->signIn('user');
 
-        factory(Tour::class, 3)->create();
-        $this->tour = factory(Tour::class)->create();
+        $this->tour = factory(Tour::class)->states('published')->create([
+            'pricing_type' => 'free',
+            'type' => TourType::OUTDOOR
+        ]);
 
-        factory(TourStop::class, 10)->create([
+        factory(TourStop::class, 5)->create([
             'tour_id' => $this->tour->id,
         ]);
+
+        $this->stops = $this->tour->stops()->ordered()->get();
     }
 
     public function createDevice()
@@ -50,7 +56,7 @@ class RecordsAnalyticsTest extends TestCase
     /** @test */
     public function a_mobile_user_can_have_multiple_devices()
     {
-        $this->assertCount(0, \App\Device::all());
+        $this->assertCount(1, Device::all());
 
         $this->postJson('/mobile/device', [
             'device_udid' => '12345',
@@ -60,7 +66,7 @@ class RecordsAnalyticsTest extends TestCase
             ->assertJsonStructure(['device_id'])
             ->assertStatus(200);
 
-        $this->assertCount(1, \App\Device::all());
+        $this->assertCount(2, Device::all());
 
         $this->postJson('/mobile/device', [
             'device_udid' => '67890',
@@ -69,7 +75,7 @@ class RecordsAnalyticsTest extends TestCase
         ])
             ->assertStatus(200);
 
-        $this->assertCount(2, $this->signInUser->devices);
+        $this->assertCount(3, $this->signInUser->devices);
     }
 
     /** @test */
@@ -77,7 +83,7 @@ class RecordsAnalyticsTest extends TestCase
     {
         $otherUser = create(\App\User::class);
 
-        $device = \App\Device::create([
+        $device = Device::create([
             'device_udid' => '12345',
             'os' => Os::ANDROID,
             'type' => DeviceType::PHONE,
@@ -89,9 +95,9 @@ class RecordsAnalyticsTest extends TestCase
         $this->postJson('/mobile/device', $device->toArray())
             ->assertStatus(200);
 
-        $this->assertCount(1, $this->signInUser->user->fresh()->devices);
+        $this->assertCount(2, $this->signInUser->user->fresh()->devices);
 
-        $this->assertCount(1, Device::all());
+        $this->assertCount(2, Device::all());
     }
 
     /** @test */
@@ -99,13 +105,13 @@ class RecordsAnalyticsTest extends TestCase
     {
         $this->withoutExceptionHandling();
 
-        $deviceId = $this->createDevice();
+//        $deviceId = $this->createDevice();
 
         $this->postJson("/mobile/tours/{$this->tour->id}/track", [
             'activity' => [
                 [
                     'action' => 'like',
-                    'device_id' => $deviceId,
+                    'device_id' => $this->device->id,
                     'timestamp' => strtotime('now'),
                 ],
             ],
@@ -169,6 +175,7 @@ class RecordsAnalyticsTest extends TestCase
         $deviceId = $this->createDevice();
 
         $stop = $this->tour->stops()->first();
+        $this->assertCount(0, $stop->activity);
 
         $this->postJson("/mobile/stops/{$stop->id}/track", [
             'activity' => [
@@ -187,5 +194,30 @@ class RecordsAnalyticsTest extends TestCase
 
         $this->assertCount(2, Activity::all());
         $this->assertCount(2, $stop->fresh()->activity);
+    }
+
+    /** @test */
+    public function tracking_timestamps_cannot_be_set_to_the_future()
+    {
+        $this->withoutExceptionHandling();
+
+        $time = strtotime('tomorrow');
+
+        $this->postJson("/mobile/tours/{$this->tour->id}/track", [
+            'activity' => [
+                [
+                    'action' => Action::START,
+                    'device_id' => $this->device->id,
+                    'timestamp' => $time
+                ],
+            ],
+        ])->assertStatus(200);
+
+        $item = Activity::first();
+        $this->assertLessThan(
+            Carbon::createFromTimestampUTC($time)->toDateTimeString(),
+            $item->created_at
+        );
+        $this->assertEquals(Carbon::now()->toDateTimeString(), $item->created_at->toDateTimeString());
     }
 }

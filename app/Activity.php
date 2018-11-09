@@ -29,4 +29,20 @@ class Activity extends Model
     {
         return $this->morphTo();
     }
+
+    /**
+     * Get all activity since timestamp.
+     *
+     * @param \Illuminate\Database\Query\Builder query
+     * @param \Carbon\Carbon $timestamp
+     * @return \Illuminate\Database\Query\Builder
+     */
+    public function scopeSince($query, $timestamp)
+    {
+        if (! empty($timestamp)) {
+            return $query->where('created_at', '>=', $timestamp);
+        }
+
+        return $query;
+    }
 }

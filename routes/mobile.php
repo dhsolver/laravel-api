@@ -37,6 +37,13 @@ Route::namespace('App\Mobile\Controllers')->middleware(['jwt.auth', 'role:user|c
     Route::post('profile/change-email/confirm', 'ChangeEmailController@confirm')->name('mobile.profile.change-email.confirm');
     Route::post('profile/avatar', 'AvatarController@store')->name('mobile.profile.avatar');
 
+    Route::post('scores/start', 'ScoreCardController@start')->name('mobile.scores.start');
+    Route::post('scores/{scoreCard}/progress', 'ScoreCardController@progress')->name('mobile.scores.progress');
+    Route::get('scores', 'ScoreCardController@index')->name('mobile.scores.index');
+    Route::get('scores/find/{tour}', 'ScoreCardController@find')->name('mobile.scores.find');
+
+    Route::get('leaderboard/{tour}', 'LeaderboardController@show')->name('mobile.leaderboard');
+
     Route::get('reviews/{tour}', 'ReviewController@index')->name('mobile.reviews');
     Route::post('reviews/{tour}', 'ReviewController@store')->name('mobile.reviews.store');
     Route::delete('reviews/{tour}', 'ReviewController@destroy')->name('mobile.reviews.destroy');

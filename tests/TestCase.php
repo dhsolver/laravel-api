@@ -2,6 +2,7 @@
 
 namespace Tests;
 
+use App\Device;
 use App\Exceptions\Handler;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Contracts\Debug\ExceptionHandler;
@@ -12,6 +13,7 @@ abstract class TestCase extends BaseTestCase
     use CreatesApplication;
 
     protected $signInUser;
+    protected $device;
 
     protected function setUp()
     {
@@ -28,6 +30,8 @@ abstract class TestCase extends BaseTestCase
         $this->signInUser = createUser($role);
 
         $this->loginAs($this->signInUser->user);
+
+        $this->device = $this->signInUser->user->devices()->create(factory(Device::class)->make()->toArray());
 
         return $this;
     }
@@ -61,5 +65,30 @@ abstract class TestCase extends BaseTestCase
 
     protected function assertHasErrorsFor($fields)
     {
+    }
+
+    public function sendAnalytics($model, $action = 'start', $time = null)
+    {
+        if ($model instanceof \App\Tour) {
+            return $this->postJson("/mobile/tours/{$model->id}/track", [
+                'activity' => [
+                    [
+                        'action' => $action,
+                        'device_id' => $this->device->id,
+                        'timestamp' => $time ?: strtotime('now'),
+                    ],
+                ],
+            ])->assertStatus(200);
+        } elseif ($model instanceof \App\TourStop) {
+            return $this->postJson("/mobile/stops/{$model->id}/track", [
+                'activity' => [
+                    [
+                        'action' => $action,
+                        'device_id' => $this->device->id,
+                        'timestamp' => $time ?: strtotime('now'),
+                    ],
+                ],
+            ])->assertStatus(200);
+        }
     }
 }
