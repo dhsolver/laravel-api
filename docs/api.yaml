@@ -950,7 +950,7 @@ paths:
       tags:
         - analytics
       summary: Track Tour Activity
-      description: Track users activity for a given tour. 
+      description: Track users activity for a given tour.  This is used solely for analytics purposes. You can track the length of time the user has been at a tour by logging START and STOP activity.  Downloads and any sharing activity should also be logged.
       operationId: trackTour
       consumes:
         - application/json
@@ -988,7 +988,7 @@ paths:
       tags:
         - analytics
       summary: Track Stop Activity
-      description: Track users activity for a given stop. 
+      description: Track users activity for a given stop.  This is used solely for analytics purposes. You can track the length of time the user has been at a stop by logging START and STOP activity.  DOWNLOAD action does not apply to stops, but sharing actions should be tracked.
       operationId: trackStop
       consumes:
         - application/json
