@@ -4,13 +4,10 @@ namespace App\Mobile\Controllers;
 
 use App\Exceptions\MissingScoreCardException;
 use App\Http\Controllers\Controller;
-use App\Points\TourTracker;
 use App\Tour;
 use App\Http\Requests\RecordActivityRequest;
 use App\TourStop;
 use Carbon\Carbon;
-use App\Action;
-use App\Mobile\Resources\ScoreCardResource;
 use App\Activity;
 
 class ActivityController extends Controller
@@ -34,33 +31,12 @@ class ActivityController extends Controller
                 $ts = Carbon::now();
             }
 
-            $tracker = new TourTracker($tour, auth()->user());
-
             $tour->activity()->create([
                 'user_id' => auth()->user()->id,
                 'action' => $item['action'],
                 'device_id' => $item['device_id'],
                 'created_at' => $ts
             ]);
-
-            switch ($item['action']) {
-                case Action::START:
-                    $tracker->startTour($ts);
-                    if (! $tracker->ensureScoreCard()) {
-                        // this should never happen
-                        throw new MissingScoreCardException('Unable to locate user scorecard.');
-                    }
-                    $data = new ScoreCardResource($tracker->scoreCard);
-                    break;
-
-                case Action::STOP:
-                    if (! $tracker->completeTour($ts)) {
-                        // TODO: log this
-                        throw new \Exception('Error saving user score!');
-                    }
-                    $data = new ScoreCardResource($tracker->scoreCard);
-                    break;
-            }
         }
 
         return response()->json(['result' => 1, 'data' => $data]);
@@ -89,14 +65,6 @@ class ActivityController extends Controller
                 'device_id' => $item['device_id'],
                 'created_at' => $ts,
             ]);
-
-            switch ($item['action']) {
-                case Action::STOP:
-                    $tracker = new TourTracker($stop->tour, auth()->user());
-                    $tracker->completeStop();
-                    $data = new ScoreCardResource($tracker->scoreCard);
-                    break;
-            }
         }
 
         return response()->json(['result' => 1, 'data' => $data]);

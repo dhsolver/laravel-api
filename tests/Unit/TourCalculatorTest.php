@@ -23,7 +23,11 @@ class TourCalculatorTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->createTestTour();
+
+        $this->signIn('user');
+        $this->user = $this->signInUser->user;
+
+        list($this->tour, $this->stops) = $this->createTestTour();
 
         $this->score = factory(ScoreCard::class)->create([
             'user_id' => $this->user->id,

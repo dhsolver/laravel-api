@@ -84,7 +84,7 @@ class UserScoresTest extends TestCase
     }
 
     /** @test */
-    function a_users_score_list_should_include_unfinished_regular_tours()
+    public function a_users_score_list_should_include_unfinished_regular_tours()
     {
         $tour = factory(Tour::class)->create(['type' => TourType::OUTDOOR]);
         factory(TourStop::class, 3)->create(['tour_id' => $tour->id]);
@@ -107,7 +107,7 @@ class UserScoresTest extends TestCase
     /** @test */
     public function a_user_can_fetch_all_their_scorecards_for_a_tour()
     {
-    // TODO: inprogress
+        // TODO: inprogress
         $this->startTour();
         $this->visitStop($this->tour->end_point_id);
 
@@ -126,15 +126,12 @@ class UserScoresTest extends TestCase
     }
 
     /** @test */
-    function a_users_score_list_should_show_their_best_score()
+    public function a_users_score_list_should_show_their_best_score()
     {
-
     }
 
     /** @test */
-    function a_users_score_list_can_show_their_current_unfinished_score()
+    public function a_users_score_list_can_show_their_current_unfinished_score()
     {
-
     }
-
 }
