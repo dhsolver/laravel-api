@@ -45,7 +45,7 @@ class ScoreCard extends Model
     protected $appends = ['won_trophy'];
 
     /**
-     * Score manager objet.
+     * Score manager object.
      *
      * @var ScoreManager
      */
@@ -191,21 +191,6 @@ class ScoreCard extends Model
     // **********************************************************
     // OTHER FUNCTIONS
     // **********************************************************
-
-    /**
-     * Get the current scorecard for the given tour & user.
-     *
-     * @param \App\Tour|array|int $tour
-     * @param \App\User|array|int $user
-     * @return ScoreCard|null
-     */
-    public static function for($tour, $user)
-    {
-        return self::forTour(modelId($tour))
-            ->forUser(modelId($user))
-            ->orderByDesc('started_at')
-            ->first();
-    }
 
     /**
      * Get only the best scores for the given user and or tour.

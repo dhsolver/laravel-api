@@ -40,7 +40,7 @@ Route::namespace('App\Mobile\Controllers')->middleware(['jwt.auth', 'role:user|c
     Route::post('scores/start', 'ScoreCardController@start')->name('mobile.scores.start');
     Route::post('scores/{scoreCard}/progress', 'ScoreCardController@progress')->name('mobile.scores.progress');
     Route::get('scores', 'ScoreCardController@index')->name('mobile.scores.index');
-    Route::get('scores/find/{tour}', 'ScoreCardController@show')->name('mobile.scores.show');
+    Route::get('scores/find/{tour}', 'ScoreCardController@find')->name('mobile.scores.find');
 
     Route::get('leaderboard', 'LeaderboardController@index')->name('mobile.leaderboard');
 

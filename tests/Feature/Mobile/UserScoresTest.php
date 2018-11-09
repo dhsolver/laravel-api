@@ -9,10 +9,11 @@ use Tests\Concerns\AttachJwtToken;
 use Tests\TestCase;
 use App\Tour;
 use App\ScoreCard;
+use Tests\HasTestTour;
 
 class UserScoresTest extends TestCase
 {
-    use DatabaseMigrations, AttachJwtToken;
+    use DatabaseMigrations, AttachJwtToken, HasTestTour;
 
     protected $tour;
     protected $user;
@@ -25,17 +26,15 @@ class UserScoresTest extends TestCase
         $this->user = $this->signInUser->user;
 
         factory(Tour::class, 10)->create(['type' => TourType::ADVENTURE]);
-
         foreach (Tour::all() as $tour) {
-            if (empty($this->tour)) {
-                $this->tour = $tour;
-            }
             factory(TourStop::class, 3)->create(['tour_id' => $tour->id]);
             factory(ScoreCard::class)->create([
                 'user_id' => $this->user->id,
                 'tour_id' => $tour->id,
             ]);
         }
+
+        list($this->tour, $this->stops) = $this->createTestAdventure(false);
     }
 
     /** @test */
@@ -68,22 +67,6 @@ class UserScoresTest extends TestCase
     }
 
     /** @test */
-    public function a_user_can_get_their_score_for_a_specific_tour()
-    {
-        $score = ScoreCard::for($this->tour, $this->user);
-
-        $this->assertNotNull($score);
-
-        $this->getJson(route('mobile.scores.show', ['tour' => $this->tour->id]))
-            ->assertStatus(200)
-            ->assertJsonFragment([
-                'tour_id' => $score->tour_id,
-                'points' => (int) $score->points,
-                'won_trophy' => $score->won_trophy,
-            ]);
-    }
-
-    /** @test */
     public function a_users_score_list_should_include_unfinished_regular_tours()
     {
         $tour = factory(Tour::class)->create(['type' => TourType::OUTDOOR]);
@@ -107,31 +90,25 @@ class UserScoresTest extends TestCase
     /** @test */
     public function a_user_can_fetch_all_their_scorecards_for_a_tour()
     {
-        // TODO: inprogress
-        $this->startTour();
+        $this->assertCount(10, $this->user->fresh()->scoreCards);
+
+        $this->startTour(strtotime('100 minutes ago'));
+
         $this->visitStop($this->tour->end_point_id);
 
-        $score = $this->user->scoreCards()->first();
-        $this->assertCount(1, $this->signInUser->user->scoreCards);
+        $this->startTour(strtotime('30 minutes ago'));
+        $bestScore = $this->score;
+        $this->visitStop($this->tour->end_point_id);
 
         $this->startTour();
+        $this->assertCount(13, $this->user->fresh()->scoreCards);
 
-        $this->getJson(route('mobile.scores.show'));
+        $response = $this->getJson(route('mobile.scores.find', ['tour' => $this->tour]))
+            ->assertStatus(200)
+            ->assertJsonStructure(['best', 'finished', 'in_progress'])
+            ->assertJsonCount(2, 'finished')
+            ->assertJsonCount(1, 'in_progress');
 
-        // expect a json format like:
-        // scores => [ all score cards for tour ]
-        // best => [ best one if available ]
-        // current => [ current unfinished score if available ]
-        $this->assertCount(2, $this->signInUser->user->fresh()->scoreCards);
-    }
-
-    /** @test */
-    public function a_users_score_list_should_show_their_best_score()
-    {
-    }
-
-    /** @test */
-    public function a_users_score_list_can_show_their_current_unfinished_score()
-    {
+        $this->assertEquals($bestScore->fresh()->id, $response->decodeResponseJson()['best']['id']);
     }
 }

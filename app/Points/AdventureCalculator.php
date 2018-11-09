@@ -416,12 +416,16 @@ class AdventureCalculator implements IPointsCalculator
      */
     protected function allStopIds()
     {
-        return collect($this->stops)->pluck('id')->values()->toArray();
+        return collect($this->stops)
+            ->pluck('id')
+            ->values()
+            ->toArray();
     }
 
     /**
      * Get the total length of audio for the current Tour.
      *
+     * @param array $stops
      * @return float
      */
     protected function getAudioTime($stops)
