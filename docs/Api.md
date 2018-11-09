@@ -27,6 +27,11 @@ This should display a success message and overwrite the docs/api.html documentat
 
 ### Change Log
 
+v.1.0.6
+- Added prize_time_limit field to the Tour model
+- Added UserStats model
+- Added stats field to the Profile model
+
 v.1.0.5
 - Updated change password route to PATCH instead of POST
 

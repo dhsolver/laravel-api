@@ -2,7 +2,7 @@ swagger: '2.0'
 info:
   title: Junket API
   description: Private API for the wejunket.com mobile apps. 
-  version: 1.0.5
+  version: 1.0.6
 host: api.wejunket.com
 basePath: /mobile
 schemes:
@@ -976,7 +976,34 @@ definitions:
         format: date-time
         description: Timestamp of when the User registered.
         example: '2018-07-21 13:53:20'
-        
+      stats:
+        $ref: '#/definitions/UserStats'
+        description: The users stats totals.
+
+  UserStats:
+    type: object
+    properties:
+      points:
+        type: integer
+        format: int32
+        description: The total points accumulated on all tours.
+        example: 6024
+      tours_completed:
+        type: integer
+        format: int32
+        description: The total number of Tours completed.
+        example: 15
+      stops_visited:
+        type: integer
+        format: int32
+        description: The total number of stops visited.
+        example: 88
+      trophies:
+        type: integer
+        format: int32
+        description: The total number of trophies the user has won.
+        example: 8
+
   User:
     type: object
     properties:
@@ -1111,6 +1138,11 @@ definitions:
         description: The instructions for how to redeem the Tour prize.
         example: Goto the local store to redeem.
         maximum: 255
+      prize_time_limit:
+        type: integer
+        format: int32
+        description: The time (in hours) that the tour's prize is available after the the user wins the trophy.
+        example: 48
       trophy_image:
         type: string
         description: Custom trophy image.
