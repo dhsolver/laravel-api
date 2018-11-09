@@ -19,7 +19,6 @@ class ProfileResource extends JsonResource
             'name' => $this->name,
             'first_name' => $this->firstName,
             'last_name' => $this->lastName,
-            // 'role' => $this->role,
             'created_at' => $this->created_at->toDateTimeString(),
             'avatar_url' => $this->avatarUrl,
         ];
@@ -29,8 +28,12 @@ class ProfileResource extends JsonResource
             $data['fb_id'] = $this->fb_id;
             $data['subscribe_override'] = $this->subscribe_override;
 
-            // TODO: document this:
-            $data['stats'] = $this->stats->toArray();
+            $data['stats'] = [
+                'points' => $this->stats->points,
+                'tours_completed' => $this->stats->points,
+                'stops_visited' => $this->stats->stops_visited,
+                'trophies' => $this->stats->trophies,
+            ];
         }
 
         return $data;
