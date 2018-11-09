@@ -39,7 +39,9 @@ class ScoreCardController extends Controller
      */
     public function find(Tour $tour)
     {
-        $scores = auth()->user()->scoreCards()->forTour($tour)->get();
+        $scores = auth()->user()->scoreCards()
+            ->forTour($tour)
+            ->get();
 
         if ($scores->count() == 0) {
             throw new ModelNotFoundException('User has no score for this Tour.');

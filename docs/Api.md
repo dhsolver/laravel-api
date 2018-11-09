@@ -31,6 +31,11 @@ v.1.0.6
 - Added prize_time_limit field to the Tour model
 - Added UserStats model
 - Added stats field to the Profile model
+- Modified the text length of prize_instructions on tours from 255 to a text field (60k+)
+- Added ScoreCard model
+- Added Prize model
+- Added LeadboardEntry model
+- Added scoring and leaderboard endpoints
 
 v.1.0.5
 - Updated change password route to PATCH instead of POST
