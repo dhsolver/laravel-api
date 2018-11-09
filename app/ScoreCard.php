@@ -4,7 +4,6 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Collection;
 use App\Points\ScoreManager;
 
 class ScoreCard extends Model
@@ -195,13 +194,13 @@ class ScoreCard extends Model
     /**
      * Get only the best scores for the given user and or tour.
      *
-     * @param \App\User|int|array $user
-     * #param \App\Tour|int|array $tour
-     * @return Collection<ScoreCard>
+     * @param \Illuminate\Database\Query\Builder query
+     * #param mixed $tour
+     * @return \Illuminate\Database\Query\Builder
      */
-    public static function getBest($user, $tour = null)
+    public static function scopeOnlyBest($query, $tour = null)
     {
-        return self::orderBy('points', 'desc')
+        return $query->orderBy('points', 'desc')
             ->where(function ($query) {
                 return $query->where(function ($q) {
                     return $q->forAdventures()
@@ -217,7 +216,6 @@ class ScoreCard extends Model
                 }
                 return $query->where('tour_id', modelid($tour));
             })
-            ->where('user_id', modelId($user))
             ->get()
             ->unique('tour_id');
     }

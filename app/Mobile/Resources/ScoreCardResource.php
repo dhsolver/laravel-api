@@ -25,8 +25,6 @@ class ScoreCardResource extends JsonResource
 
         return [
             'id' => $this->id,
-            'tour_id' => $this->tour_id,
-            'tour_name' => $this->tour->title,
             'par' => $this->par,
             'is_adventure' => $this->is_adventure,
             'stops_visited' => (int) $this->stops_visited,
@@ -37,6 +35,8 @@ class ScoreCardResource extends JsonResource
             'prize' => $prize ?? null,
             'started_at' => $this->started_at->toDateTimeString(),
             'finished_at' => optional($this->finished_at)->toDateTimeString(),
+            'tour_id' => $this->tour_id,
+            'tour' => new TourResource($this->tour),
         ];
     }
 }

@@ -23,7 +23,9 @@ class ScoreCardController extends Controller
      */
     public function index()
     {
-        $scores = ScoreCard::getBest(auth()->id());
+        $scores = auth()->user()->scoreCards()
+            ->with('tour')
+            ->onlyBest();
 
         return ScoreCardResource::collection($scores);
     }

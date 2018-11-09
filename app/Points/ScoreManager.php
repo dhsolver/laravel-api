@@ -125,7 +125,8 @@ class ScoreManager
      */
     public function persistUserStats()
     {
-        $points = ScoreCard::getBest($this->user)
+        $points = $this->user->scoreCards()
+            ->onlyBest()
             ->sum('points');
 
         $completedTours = $this->user->scoreCards()
