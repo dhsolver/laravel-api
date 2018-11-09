@@ -18,7 +18,6 @@ class LeaderboardCollection extends ResourceCollection
             'leaders' => $this->collection->map(function ($item) {
                 return [
                     'points' => $item->points,
-                    'user_id' => $item->user_id,
                     'user' => new ProfileResource($item->user),
                 ];
             })
