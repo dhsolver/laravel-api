@@ -42,7 +42,7 @@ Route::namespace('App\Mobile\Controllers')->middleware(['jwt.auth', 'role:user|c
     Route::get('scores', 'ScoreCardController@index')->name('mobile.scores.index');
     Route::get('scores/find/{tour}', 'ScoreCardController@find')->name('mobile.scores.find');
 
-    Route::get('leaderboard', 'LeaderboardController@index')->name('mobile.leaderboard');
+    Route::get('leaderboard/{tour}', 'LeaderboardController@show')->name('mobile.leaderboard');
 
     Route::get('reviews/{tour}', 'ReviewController@index')->name('mobile.reviews');
     Route::post('reviews/{tour}', 'ReviewController@store')->name('mobile.reviews.store');

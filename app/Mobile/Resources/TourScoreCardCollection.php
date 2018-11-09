@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Mobile\Resources;
 
-use App\Mobile\Resources\ScoreCardResource;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class TourScoreCardCollection extends ResourceCollection

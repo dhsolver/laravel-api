@@ -4,6 +4,7 @@ namespace App\Mobile\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Mobile\Resources\ScoreCardResource;
+use App\Mobile\Resources\TourScoreCardCollection;
 use App\ScoreCard;
 use App\Tour;
 use Carbon\Carbon;
@@ -12,7 +13,6 @@ use App\Http\Requests\StartTourRequest;
 use App\Http\Requests\TourProgressRequest;
 use App\Points\ScoreManager;
 use App\TourStop;
-use App\Http\Resources\TourScoreCardCollection;
 
 class ScoreCardController extends Controller
 {

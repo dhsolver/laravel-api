@@ -187,15 +187,11 @@ class ScoreCard extends Model
         return $query->where('is_adventure', false);
     }
 
-    // **********************************************************
-    // OTHER FUNCTIONS
-    // **********************************************************
-
     /**
      * Get only the best scores for the given user and or tour.
      *
      * @param \Illuminate\Database\Query\Builder query
-     * #param mixed $tour
+     * @param mixed $tour
      * @return \Illuminate\Database\Query\Builder
      */
     public static function scopeOnlyBest($query, $tour = null)
@@ -219,6 +215,10 @@ class ScoreCard extends Model
             ->get()
             ->unique('tour_id');
     }
+
+    // **********************************************************
+    // OTHER FUNCTIONS
+    // **********************************************************
 
     /**
      * Get single instance score manager object.
