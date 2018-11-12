@@ -66,6 +66,7 @@ class TourResource extends JsonResource
             'intro_audio' => $this->introAudio ? $this->introAudio->path : null,
             'background_audio' => $this->backgroundAudio ? $this->backgroundAudio->path : null,
 
+            'length' => $this->length,
             'rating' => $this->rating,
             'in_app_id' => $this->in_app_id,
 

@@ -2,7 +2,7 @@ swagger: '2.0'
 info:
   title: Junket API
   description: Private API for the wejunket.com mobile apps. 
-  version: 1.0.6
+  version: 1.0.7
 host: api.wejunket.com
 basePath: /mobile
 schemes:
@@ -1403,6 +1403,11 @@ definitions:
         type: string
         description: Background audio MP3 path.
         example: http://media.wejunket.com/images/4fd1b212d98168645c0dce52bdb05189.mp3
+      length:
+        type: integer
+        format: float
+        description: The total length of the Tour.  For adventures, this is the shortest route's length.
+        example: 3.23
       rating:
         type: integer
         format: int32

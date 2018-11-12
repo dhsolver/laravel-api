@@ -27,6 +27,9 @@ This should display a success message and overwrite the docs/api.html documentat
 
 ### Change Log
 
+v.1.0.7
+- Added 'length' property to the Tour model
+
 v.1.0.6
 - Added prize_time_limit field to the Tour model
 - Added UserStats model
