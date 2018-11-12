@@ -7,7 +7,6 @@
 */
 
 Route::middleware(['jwt.auth', 'role:client|admin|superadmin'])->group(function () {
-    Route::post('facebook/attach', 'AuthController@facebookAttach')->name('facebook.attach');
     Route::get('session', 'AuthController@userSession');
     Route::get('profile', 'AccountController@show');
     Route::patch('profile', 'AccountController@update');

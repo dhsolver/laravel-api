@@ -102,6 +102,16 @@ class AuthController extends Controller
         return response()->json(new UserSessionResource(auth()->user()));
     }
 
+    public function facebookDetach()
+    {
+        auth()->user()->update([
+            'fb_id' => null,
+            'fb_token' => null,
+        ]);
+
+        return response()->json(['success' => 1]);
+    }
+
     /**
      * Handles user authentication using Facebook access token.
      *
@@ -123,12 +133,12 @@ class AuthController extends Controller
         // first check if user is already linked to Facebook
         $user = User::findByFacebookId($facebook->id);
 
-        if ($user->id != auth()->id()) {
+        if ($user && $user->id != auth()->id()) {
             // facebook already attached to another account
             return response()->json(['error' => 'fb_exists'], 401);
         }
 
-        $user->update([
+        auth()->user()->update([
             'fb_id' => $facebook->id,
             'fb_token' => $facebook->token,
         ]);

@@ -16,6 +16,8 @@ Route::post('confirm-email', 'ConfirmEmailController@confirm')->name('confirm-em
 
 Route::middleware(['jwt.auth'])->group(function () {
     Route::get('auth/session', 'AuthController@userSession');
+    Route::delete('auth/facebook', 'AuthController@facebookDetach')->name('facebook.detach');
+    Route::post('auth/facebook/attach', 'AuthController@facebookAttach')->name('facebook.attach');
 });
 
 Route::middleware(['jwt.refresh'])->group(function () {
