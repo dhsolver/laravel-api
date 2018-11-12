@@ -615,4 +615,20 @@ class Tour extends Model
     {
         return $this->type == TourType::ADVENTURE;
     }
+
+    /**
+     * Get the total length of the tour and set the length attribute.
+     * Returns bool whether it was able to be updated or not.
+     *
+     * @return bool
+     */
+    public function updateLength()
+    {
+        if ($this->length = $this->calculator()->getTourLength()) {
+            $this->save();
+            return true;
+        }
+
+        return false;
+    }
 }
