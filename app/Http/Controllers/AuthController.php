@@ -105,7 +105,40 @@ class AuthController extends Controller
     /**
      * Handles user authentication using Facebook access token.
      *
-     * @param FacebookLoginRequestequest $request
+     * @return \Illuminate\Http\Response
+     */
+    public function facebookAttach()
+    {
+        try {
+            $facebook = Socialite::driver('facebook')->userFromToken(request()->token);
+        } catch (\Exception $ex) {
+            return response()->json(['error' => 'invalid_credentials'], 401);
+        }
+
+        // make sure fb object has the required data
+        if (empty($facebook->email) || empty($facebook->id) || empty($facebook->token)) {
+            return response()->json(['error' => 'invalid_credentials'], 401);
+        }
+
+        // first check if user is already linked to Facebook
+        $user = User::findByFacebookId($facebook->id);
+
+        if ($user->id != auth()->id()) {
+            // facebook already attached to another account
+            return response()->json(['error' => 'fb_exists'], 401);
+        }
+
+        $user->update([
+            'fb_id' => $facebook->id,
+            'fb_token' => $facebook->token,
+        ]);
+
+        return response()->json(['success' => 1]);
+    }
+
+    /**
+     * Handles user authentication using Facebook access token.
+     *
      * @return \Illuminate\Http\Response
      */
     public function facebook()
