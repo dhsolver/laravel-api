@@ -90,6 +90,16 @@ class Tour extends Model
     // **********************************************************
 
     /**
+     * Get the creating user relationship.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+    */
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    /**
      * Gets the publish submissions relation.
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
@@ -221,6 +231,16 @@ class Tour extends Model
     public function reviews()
     {
         return $this->hasMany(\App\Review::class);
+    }
+
+    /**
+     * Get the stats summary relationship.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+    */
+    public function stats()
+    {
+        return $this->hasMany(TourStat::class);
     }
 
     // **********************************************************

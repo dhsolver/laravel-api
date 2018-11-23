@@ -8,6 +8,8 @@ use App\TourStop;
 use App\TourType;
 use App\Media;
 use App\Tour;
+use App\Device;
+use App\Action;
 
 trait HasTestTour
 {
@@ -317,5 +319,81 @@ qur;
         $query = str_replace('100022077', $tour->stops[3]->id, $query);
         $query = str_replace('100022078', $tour->stops[4]->id, $query);
         \DB::insert($query);
+    }
+
+    public function fakeActivityForStop($stop)
+    {
+        $device = factory(Device::class)->create();
+
+        for ($i = 0; $i < 5; $i++) {
+            $start = strtotime("$i days ago 13:00");
+            $end = strtotime("$i days ago 13:05");
+
+            $stop->activity()->create([
+                'user_id' => $this->user->id,
+                'action' => Action::START,
+                'created_at' => $start,
+                'device_id' => $device->id,
+            ]);
+
+            $stop->activity()->create([
+                'user_id' => $this->user->id,
+                'action' => Action::STOP,
+                'created_at' => $end,
+                'device_id' => $device->id,
+            ]);
+
+            $stop->activity()->create([
+                'user_id' => $this->user->id,
+                'action' => Action::VISIT,
+                'created_at' => $end,
+                'device_id' => $device->id,
+            ]);
+
+            $stop->activity()->create([
+                'user_id' => $this->user->id,
+                'action' => Action::LIKE,
+                'created_at' => $end,
+                'device_id' => $device->id,
+            ]);
+        }
+    }
+
+    public function fakeActivityForTour($tour)
+    {
+        $device = factory(Device::class)->create();
+
+        for ($i = 0; $i < 25; $i++) {
+            $start = strtotime("$i days ago 13:00");
+            $end = strtotime("$i days ago 14:00");
+
+            $tour->activity()->create([
+                'user_id' => $this->user->id,
+                'action' => Action::START,
+                'created_at' => $start,
+                'device_id' => $device->id,
+            ]);
+
+            $tour->activity()->create([
+                'user_id' => $this->user->id,
+                'action' => Action::STOP,
+                'created_at' => $end,
+                'device_id' => $device->id,
+            ]);
+
+            $tour->activity()->create([
+                'user_id' => $this->user->id,
+                'action' => Action::DOWNLOAD,
+                'created_at' => $end,
+                'device_id' => $device->id,
+            ]);
+
+            $tour->activity()->create([
+                'user_id' => $this->user->id,
+                'action' => Action::LIKE,
+                'created_at' => $end,
+                'device_id' => $device->id,
+            ]);
+        }
     }
 }

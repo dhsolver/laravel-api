@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
 
 class Activity extends Model
 {
@@ -44,5 +45,30 @@ class Activity extends Model
         }
 
         return $query;
+    }
+
+    /**
+     * Add query to get activity between the given dates.
+     * Defaults to all results if one of the dates is empty or invalid.
+     *
+     * @param QueryBuilder $query
+     * @param string $start
+     * @param string $end
+     * @return QueryBuilder
+     */
+    public function scopeBetweenDates($query, $start, $end)
+    {
+        if (empty($start) || empty($end)) {
+            return $query;
+        }
+
+        try {
+            // TODO: handle client timezones?
+            $startDate = Carbon::parse($start . ' 00:00:00')->setTimezone('UTC')->toDateTimeString();
+            $endDate = Carbon::parse($end . ' 23:59:59')->setTimezone('UTC')->toDateTimeString();
+            return $query->whereBetween('created_at', [$startDate, $endDate]);
+        } catch (\Exception $ex) {
+            return $query;
+        }
     }
 }
