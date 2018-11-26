@@ -82,7 +82,7 @@ class ScoreCard extends Model
     public function stops()
     {
         return $this->belongsToMany(TourStop::class, 'user_score_card_stops', 'score_card_id', 'stop_id')
-            ->withPivot(['visited_at'])
+            ->withPivot(['visited_at', 'skipped_question'])
             ->using(ScoreCardStopsPivot::class);
     }
 
@@ -124,6 +124,16 @@ class ScoreCard extends Model
         }
 
         return $this->won_trophy_at->addHours($this->tour->prize_time_limit);
+    }
+
+    /**
+     * Get the number of skipped questions.
+     *
+     * @return int
+     */
+    public function getSkippedStopCountAttribute()
+    {
+        return $this->stops()->where('skipped_question', true)->count();
     }
 
     // **********************************************************

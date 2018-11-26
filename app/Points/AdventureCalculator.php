@@ -27,7 +27,7 @@ class AdventureCalculator extends DistanceCalculator implements IPointsCalculato
      */
     public function getPoints(ScoreCard $scoreCard)
     {
-        return $this->calculatePoints($scoreCard->duration, $scoreCard->par);
+        return $this->calculatePoints($scoreCard->duration, $scoreCard->par, $scoreCard->skippedStopCount);
     }
 
     /**
@@ -39,16 +39,20 @@ class AdventureCalculator extends DistanceCalculator implements IPointsCalculato
      * @return int
      * @throws UntraceableTourException
      */
-    public function calculatePoints($timeInMinutes, $par = null)
+    public function calculatePoints($timeInMinutes, $par = null, $skippedStops = 0)
     {
         $time = floatval($timeInMinutes);
         $min = config('junket.points.min_points', 50);
         $max = config('junket.points.max_points', 200);
+        $skipPenalty = config('junket.points.skip_penalty', 10);
 
         if ($par == null) {
             $par = $this->getPar();
         }
-        $total = $max;
+
+        $penalty = $skippedStops * $skipPenalty;
+
+        $total = $max - $penalty;
 
         if ($time <= $par) {
             // user beat the clock, award all points

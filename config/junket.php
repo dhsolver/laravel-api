@@ -84,6 +84,11 @@ return [
          * The amount of points awarded for each stop visited for non-adventure tours.
          */
         'per_stop' => env('POINTS_PER_STOP', 1),
+
+        /**
+         * The number of points to take from a score for each question a user skips.
+         */
+        'skip_penalty' => 10,
     ],
 
     /**

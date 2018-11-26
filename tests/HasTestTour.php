@@ -66,7 +66,7 @@ trait HasTestTour
      * @param ScoreCard $scoreCard
      * @return mixed
      */
-    public function visitStop($stop, $timestamp = null, $scoreCard = null)
+    public function visitStop($stop, $timestamp = null, $scoreCard = null, $skippedQuestion = false)
     {
         if (empty($timestamp)) {
             $timestamp = strtotime('now');
@@ -80,7 +80,8 @@ trait HasTestTour
             route('mobile.scores.progress', ['score' => $scoreCard]),
             [
                 'stop_id' => modelid($stop),
-                'timestamp' => $timestamp
+                'timestamp' => $timestamp,
+                'skipped_question' => $skippedQuestion,
             ]
         );
     }

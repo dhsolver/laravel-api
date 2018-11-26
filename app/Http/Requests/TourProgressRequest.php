@@ -27,6 +27,7 @@ class TourProgressRequest extends FormRequest
             'stop_id' => 'required|exists:tour_stops,id',
             // 'device_id' => 'required|exists:devices,id',
             'timestamp' => 'required|date_format:U',
+            'skipped_question' => 'nullable|boolean',
         ];
     }
 }

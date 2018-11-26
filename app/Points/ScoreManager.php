@@ -2,7 +2,6 @@
 
 namespace App\Points;
 
-use App\ScoreCard;
 use App\User;
 use App\Tour;
 use Carbon\Carbon;
@@ -88,12 +87,15 @@ class ScoreManager
      * @param Carbon $timestamp
      * @return bool
      */
-    public function recordStopVisit($stop, Carbon $timestamp = null)
+    public function recordStopVisit($stop, Carbon $timestamp = null, $skippedQuestion = false)
     {
         $timestamp = $timestamp ?: Carbon::now();
 
         if (! $this->scoreCard->stops()->where('stop_id', modelId($stop))->exists()) {
-            $this->scoreCard->stops()->attach($stop->id, ['visited_at' => $timestamp]);
+            $this->scoreCard->stops()->attach($stop->id, [
+                'visited_at' => $timestamp,
+                'skipped_question' => $skippedQuestion
+            ]);
         }
 
         $this->scoreCard->stops_visited = $this->scoreCard->stops()->count();
