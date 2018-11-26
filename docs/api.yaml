@@ -584,6 +584,91 @@ paths:
         500:
           $ref: '#/responses/UnexpectedError'
 
+  /favorites:
+    get:
+      tags:
+        - favorites
+      summary: Favorites (list)
+      description: A list of all the user's favorite tours
+      operationId: listFavorites
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            type: object
+            properties:
+              favorites:
+                description: Array of Tours.
+                type: array
+                items:
+                  $ref: '#/definitions/Tour'
+        400:
+          $ref: '#/responses/NoToken'
+        401:
+          $ref: '#/responses/Unauthroized'
+        500:
+          $ref: '#/responses/UnexpectedError'
+          
+  /favorites/{tour_id}:
+    post:
+      tags:
+        - favorites
+      summary: Favorites (add)
+      description: Add tour to user's favorites.
+      operationId: addFavorite
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: tour_id
+          description: ID of the Tour to favorite
+          required: true
+          type: integer
+          format: int64
+      responses:
+        200:
+          description: OK
+        400:
+          $ref: '#/responses/NoToken'
+        401:
+          $ref: '#/responses/Unauthroized'
+        404:
+          $ref: '#/responses/NotFound'
+        500:
+          $ref: '#/responses/UnexpectedError'
+    delete:
+      tags:
+        - favorites
+      summary: Favorites (delete)
+      description: Remove the given Tour from the user's favorites.
+      operationId: deleteFavorite
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: tour_id
+          description: ID of the Tour to remove
+          required: true
+          type: integer
+          format: int64
+      responses:
+        200:
+          description: OK
+        400:
+          $ref: '#/responses/NoToken'
+        401:
+          $ref: '#/responses/Unauthroized'
+        404:
+          $ref: '#/responses/NotFound'
+        500:
+          $ref: '#/responses/UnexpectedError'
+
   /scores/start:
     post:
       tags:
@@ -1169,7 +1254,7 @@ definitions:
         type: string
         description: The user's zipcode. (Only shown for profile of the authenticated user)
         example: 12345
-        max: 16
+        maximum: 16
       fb_id:
         type: string
         description: The user's Facebook ID (Only shown for profile of the authenticated user)
@@ -1237,7 +1322,7 @@ definitions:
         type: string
         description: The user's zipcode.
         example: 12345
-        max: 16
+        maxium: 16
       fb_id:
         type: string
         description: The user's Facebook ID (if authorized)
