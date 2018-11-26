@@ -716,7 +716,7 @@ paths:
       tags:
         - scores
       summary: Progress Tour
-      description: Save a Tours progress and get the updated score.  This is used to save a new stop visit.  Returns a the ScoreCard object with updated points and progress.  If the stop was the last stop on the Tour, the score card is "finished" and the finished_at timestamp will reflect this.
+      description: Save a Tours progress and get the updated score.  This is used to save a new stop visit.  Returns a the ScoreCard object with updated points and progress.  If the stop was the last stop on the Tour, the score card is "finished" and the finished_at timestamp will reflect this.  If the user has not answered the question correctly, and has chosen to skip the question, you can track this by setting the skipped_question flag to true.  This has an effect on the user's final score.
       operationId: scoresProgress
       consumes:
         - application/json
@@ -745,8 +745,12 @@ paths:
               timestamp:
                 type: integer
                 format: int32
-                description: UTC UNIX timestamp of when the action occurred.
+                description: UTC UNIX timestamp of when the action occurred.  Defaults to the current time.
                 example: 1538411257
+              skipped_question:
+                type: boolean
+                description: Flag to determine if the user has not answered the question correctly.
+                example: false
       responses:
         200:
           description: OK
