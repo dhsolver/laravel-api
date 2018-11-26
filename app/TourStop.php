@@ -136,6 +136,16 @@ class TourStop extends Model
         return $this->morphMany(Activity::class, 'actionable');
     }
 
+    /**
+     * Get the stats summary relationship.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+    */
+    public function stats()
+    {
+        return $this->hasMany(StopStat::class, 'stop_id');
+    }
+
     // **********************************************************
     // MUTATORS
     // **********************************************************

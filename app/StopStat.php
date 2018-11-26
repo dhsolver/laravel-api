@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class TourStat extends Model
+class StopStat extends Model
 {
     /**
      * The attributes that aren't mass assignable.
@@ -47,9 +47,9 @@ class TourStat extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
     */
-    public function tour()
+    public function stop()
     {
-        return $this->belongsTo(Tour::class);
+        return $this->belongsTo(TourStop::class);
     }
 
     // **********************************************************
