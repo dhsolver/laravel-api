@@ -27,6 +27,9 @@ class ViewAnalyticsTest extends TestCase
         foreach ($this->stops as $stop) {
             $this->fakeActivityForStop($stop);
         }
+
+        $this->artisan('analytics:summary')
+            ->assertExitCode(0);
     }
 
     /** @test */

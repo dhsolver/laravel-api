@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
 
 class AlterStopChoicesTableAddForeignKeys extends Migration
 {
@@ -26,9 +27,11 @@ class AlterStopChoicesTableAddForeignKeys extends Migration
      */
     public function down()
     {
-        Schema::table('stop_choices', function (Blueprint $table) {
-            $table->dropForeign(['tour_stop_id']);
-            $table->dropForeign(['next_stop_id']);
-        });
+        if (DB::getDriverName() != 'sqlite') {
+            Schema::table('stop_choices', function (Blueprint $table) {
+                $table->dropForeign(['tour_stop_id']);
+                $table->dropForeign(['next_stop_id']);
+            });
+        }
     }
 }

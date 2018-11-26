@@ -32,15 +32,17 @@ class AlterTourStopsTableAddForeignKeys extends Migration
      */
     public function down()
     {
-        Schema::table('tour_stops', function (Blueprint $table) {
-            $table->dropForeign(['tour_id']);
-            $table->dropForeign(['intro_audio_id']);
-            $table->dropForeign(['background_audio_id']);
-            $table->dropForeign(['main_image_id']);
-            $table->dropForeign(['image1_id']);
-            $table->dropForeign(['image2_id']);
-            $table->dropForeign(['image3_id']);
-            $table->dropForeign(['next_stop_id']);
-        });
+        if (DB::getDriverName() != 'sqlite') {
+            Schema::table('tour_stops', function (Blueprint $table) {
+                $table->dropForeign(['tour_id']);
+                $table->dropForeign(['intro_audio_id']);
+                $table->dropForeign(['background_audio_id']);
+                $table->dropForeign(['main_image_id']);
+                $table->dropForeign(['image1_id']);
+                $table->dropForeign(['image2_id']);
+                $table->dropForeign(['image3_id']);
+                $table->dropForeign(['next_stop_id']);
+            });
+        }
     }
 }

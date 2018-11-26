@@ -14,6 +14,20 @@ class StopChoice extends Model
     protected $guarded = ['id'];
 
     /**
+     * The relations to eager load on every query.
+     *
+     * @var array
+     */
+    public $with = [];
+
+    /**
+     * The accessors to append to the model's array form.
+     *
+     * @var array
+     */
+    protected $appends = [];
+
+    /**
      * The attributes that should be cast to native types.
      *
      * @var array
@@ -25,12 +39,14 @@ class StopChoice extends Model
     ];
 
     /**
-     * Handles the model boot options.
+     * The "booting" method of the model.
      *
      * @return void
      */
-    public static function boot()
+    protected static function boot()
     {
+        parent::boot();
+
         // auto-update choice order on creation
         self::creating(function ($choice) {
             if (empty($choice->order)) {
@@ -38,6 +54,10 @@ class StopChoice extends Model
             }
         });
     }
+
+    // **********************************************************
+    // RELATIONSHIPS
+    // **********************************************************
 
     /**
      * A stop choice belongs to a tour stop.
@@ -59,11 +79,23 @@ class StopChoice extends Model
         return $this->hasOne(TourStop::class, 'id', 'next_stop_id');
     }
 
+    // **********************************************************
+    // MUTATORS
+    // **********************************************************
+
+    // **********************************************************
+    // QUERY SCOPES
+    // **********************************************************
+
+    // **********************************************************
+    // OTHER FUNCTIONS
+    // **********************************************************
+
     /**
      * Returns the next free number in the order sequence
      * for the given TourStop's Choices.
      *
-     * @return void
+     * @return int
      */
     public static function getNextOrder($stopId)
     {

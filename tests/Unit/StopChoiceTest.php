@@ -10,6 +10,11 @@ class StopChoiceTest extends TestCase
 {
     use DatabaseMigrations;
 
+    public function setUp()
+    {
+        parent::setUp();
+    }
+
     /** @test */
     public function it_can_determine_the_next_order_for_a_choice()
     {

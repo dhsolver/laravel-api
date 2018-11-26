@@ -37,6 +37,8 @@ class StopRoute extends Model
      */
     public static function boot()
     {
+        parent::boot();
+        
         // auto-update route order on creation
         self::creating(function ($route) {
             if (empty($route->order)) {

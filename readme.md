@@ -1,4 +1,5 @@
 ## Junket CMS and Mobile API
+Using Laravel 5.7
 
 ## Server Requirements
 - PHP >= 7.2
