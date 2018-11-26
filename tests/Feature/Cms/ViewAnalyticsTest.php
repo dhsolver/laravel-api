@@ -7,7 +7,7 @@ use Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\Concerns\AttachJwtToken;
 
-class TrackTourTest extends TestCase
+class ViewAnalyticsTest extends TestCase
 {
     use DatabaseMigrations;
     use AttachJwtToken;

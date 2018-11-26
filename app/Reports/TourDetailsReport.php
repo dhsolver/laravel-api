@@ -46,6 +46,10 @@ class TourDetailsReport extends BaseReport
             ->betweenDates($this->start_date, $this->end_date)
             ->count();
 
+        $actions = $this->tour->activity()->whereIn('action', [Action::LIKE, Action::SHARE])
+            ->betweenDates($this->start_date, $this->end_date)
+            ->count();
+
         $starts = $this->tour->activity()->where('action', Action::START)
             ->betweenDates($this->start_date, $this->end_date)
             ->get();
