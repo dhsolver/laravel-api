@@ -6,6 +6,7 @@ use Tests\HasTestTour;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\Concerns\AttachJwtToken;
+use App\Analytics\AnalyticsSummarizer;
 
 class ViewAnalyticsTest extends TestCase
 {
@@ -28,30 +29,14 @@ class ViewAnalyticsTest extends TestCase
             $this->fakeActivityForStop($stop);
         }
 
+        $summarizer = new AnalyticsSummarizer();
+        $summarizer->summarizeTour($this->tour, strtotime('2 days ago'));
+        $summarizer->summarizeTour($this->tour, strtotime('3 days ago'));
+        $summarizer->summarizeTour($this->tour, strtotime('4 days ago'));
+        $summarizer->summarizeTour($this->tour, strtotime('yesterday'));
+
         $this->artisan('analytics:summary')
             ->assertExitCode(0);
-    }
-
-    /** @test */
-    public function only_the_tour_creator_can_see_analytics_reports()
-    {
-        $this->withExceptionHandling();
-
-        $this->json('GET', route('cms.analytics.overview', ['tour' => $this->tour]))
-            ->assertStatus(200);
-        $this->json('GET', route('cms.analytics.details', ['tour' => $this->tour]))
-            ->assertStatus(200);
-        $this->json('GET', route('cms.analytics.devices', ['tour' => $this->tour]))
-            ->assertStatus(200);
-
-        $this->signIn('client');
-
-        $this->json('GET', route('cms.analytics.overview', ['tour' => $this->tour]))
-            ->assertStatus(403);
-        $this->json('GET', route('cms.analytics.details', ['tour' => $this->tour]))
-            ->assertStatus(403);
-        $this->json('GET', route('cms.analytics.devices', ['tour' => $this->tour]))
-            ->assertStatus(403);
     }
 
     /** @test */
@@ -78,7 +63,7 @@ class ViewAnalyticsTest extends TestCase
     /** @test */
     public function a_client_can_specify_a_date_range_for_the_stop_overview_report()
     {
-        $start = date('m/d/Y', strtotime('today'));
+        $start = date('m/d/Y', strtotime('yesterday'));
         $end = date('m/d/Y', strtotime('today'));
 
         $this->json('GET', route('cms.analytics.overview', ['tour' => $this->tour]) . "?start=$start&end=$end")
@@ -86,15 +71,15 @@ class ViewAnalyticsTest extends TestCase
             ->assertJsonFragment([
                 $this->stops->first()->id => [
                     'title' => $this->stops->first()->title,
-                    'time' => 5,
-                    'visits' => 1,
-                    'actions' => 1,
+                    'time' => 10,
+                    'visits' => 2,
+                    'actions' => 2,
                 ],
                 $this->stops->last()->id => [
                     'title' => $this->stops->last()->title,
-                    'time' => 5,
-                    'visits' => 1,
-                    'actions' => 1,
+                    'time' => 10,
+                    'visits' => 2,
+                    'actions' => 2,
                 ],
             ]);
     }
@@ -124,5 +109,27 @@ class ViewAnalyticsTest extends TestCase
                 'time' => 60,
                 'actions' => 1,
             ]);
+    }
+
+    /** @test */
+    public function only_the_tour_creator_can_see_analytics_reports()
+    {
+        $this->withExceptionHandling();
+
+        $this->json('GET', route('cms.analytics.overview', ['tour' => $this->tour]))
+            ->assertStatus(200);
+        $this->json('GET', route('cms.analytics.details', ['tour' => $this->tour]))
+            ->assertStatus(200);
+        $this->json('GET', route('cms.analytics.devices', ['tour' => $this->tour]))
+            ->assertStatus(200);
+
+        $this->signIn('client');
+
+        $this->json('GET', route('cms.analytics.overview', ['tour' => $this->tour]))
+            ->assertStatus(403);
+        $this->json('GET', route('cms.analytics.details', ['tour' => $this->tour]))
+            ->assertStatus(403);
+        $this->json('GET', route('cms.analytics.devices', ['tour' => $this->tour]))
+            ->assertStatus(403);
     }
 }
