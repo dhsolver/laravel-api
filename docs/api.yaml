@@ -111,6 +111,11 @@ paths:
                 example: secret
                 description: Confirmation of the user's password.
                 minimum: 6
+              zipcode:
+                type: string
+                example: 12345
+                description: The user's zipcode.
+                maximum: 16
       responses:
         200:
           description: Successful registration
@@ -396,18 +401,17 @@ paths:
           schema:
             required:
               - name
-              - email
             properties:
               name:
                 type: string
                 description: The user's first and/or last name.
                 example: John Doe
                 maximum: 255
-              email:
+              zipcode:
                 type: string
-                example: client@test.com
-                description: The user's email address.
-                maximum: 255
+                example: 12345
+                description: The user's zipcode.
+                maximum: 16
       responses:
         200:
           description: OK
@@ -1161,6 +1165,11 @@ definitions:
         type: string
         description: The user's email address. (Only shown for profile of the authenticated user)
         example: user@test.com
+      zipcode:
+        type: string
+        description: The user's zipcode. (Only shown for profile of the authenticated user)
+        example: 12345
+        max: 16
       fb_id:
         type: string
         description: The user's Facebook ID (Only shown for profile of the authenticated user)
@@ -1224,6 +1233,11 @@ definitions:
         type: string
         description: The user's email address.
         example: client@test.com
+      zipcode:
+        type: string
+        description: The user's zipcode.
+        example: 12345
+        max: 16
       fb_id:
         type: string
         description: The user's Facebook ID (if authorized)
