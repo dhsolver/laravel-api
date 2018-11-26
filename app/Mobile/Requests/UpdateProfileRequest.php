@@ -3,7 +3,6 @@
 namespace App\Mobile\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
 class UpdateProfileRequest extends FormRequest
 {
@@ -26,6 +25,7 @@ class UpdateProfileRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
+            'zipcode' => 'nullable|string|max:16',
         ];
     }
 

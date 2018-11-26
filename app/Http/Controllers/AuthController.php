@@ -52,6 +52,7 @@ class AuthController extends Controller
             'name' => $data['name'],
             'email' => strtolower($data['email']),
             'password' => bcrypt($data['password']),
+            'zipcode' => isset($data['zipcode']) ? $data['zipcode'] : null,
         ];
 
         switch ($req->role) {

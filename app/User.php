@@ -20,7 +20,7 @@ class User extends Authenticatable implements JWTSubject
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password', 'fb_id', 'fb_token', 'subscribe_override', 'avatar'
+        'name', 'email', 'password', 'fb_id', 'fb_token', 'subscribe_override', 'avatar', 'zipcode'
     ];
 
     /**

@@ -70,7 +70,8 @@ class EditProfileTest extends TestCase
         $this->getJson(route('mobile.profile.show', ['user' => $otherUser]))
             ->assertStatus(200)
             ->assertJsonMissing(['email' => $otherUser->email])
-            ->assertJsonMissing(['fb_id' => $otherUser->fb_id]);
+            ->assertJsonMissing(['fb_id' => $otherUser->fb_id])
+            ->assertJsonMissing(['zipcode' => $otherUser->zipcode]);
     }
 
     /** @test */
@@ -111,5 +112,32 @@ class EditProfileTest extends TestCase
         $this->getJson(route('mobile.profile.show', ['user' => $this->signInUser]))
             ->assertStatus(200)
             ->assertJsonFragment(['subscribe_override' => true]);
+    }
+
+    /** @test */
+    public function a_profile_should_contain_a_zipcode()
+    {
+        $this->signIn('user');
+
+        $this->signInUser->update(['zipcode' => '12345']);
+
+        $this->getJson(route('mobile.profile.show', ['user' => $this->signInUser]))
+            ->assertStatus(200)
+            ->assertJsonFragment(['zipcode' => '12345']);
+    }
+
+    /** @test */
+    public function a_user_can_update_their_zipcode()
+    {
+        $this->signIn('user');
+
+        $data = $this->signInUser->toArray();
+        $data['zipcode'] = '12345';
+
+        $this->postJson(route('mobile.profile.update', $data))
+            ->assertStatus(200)
+            ->assertJsonFragment(['zipcode' => '12345']);
+
+        $this->assertEquals('12345', $this->signInUser->fresh()->zipcode);
     }
 }

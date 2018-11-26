@@ -19,12 +19,13 @@ class ProfileResource extends JsonResource
             'name' => $this->name,
             'first_name' => $this->firstName,
             'last_name' => $this->lastName,
-            'created_at' => $this->created_at->toDateTimeString(),
             'avatar_url' => $this->avatarUrl,
+            'created_at' => $this->created_at->toDateTimeString(),
         ];
 
         if ($this->id === auth()->user()->id) {
             $data['email'] = $this->email;
+            $data['zipcode'] = $this->zipcode;
             $data['fb_id'] = $this->fb_id;
             $data['subscribe_override'] = $this->subscribe_override;
 
