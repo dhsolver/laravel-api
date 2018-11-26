@@ -2,6 +2,10 @@
 
 namespace App\Analytics;
 
+use App\Activity;
+use App\DeviceStat;
+use App\DeviceType;
+use App\Os;
 use App\Tour;
 use App\TourStat;
 use App\Action;
@@ -9,6 +13,19 @@ use App\StopStat;
 
 class AnalyticsSummarizer
 {
+    /**
+     * The device type and operating systems that should have their
+     * own stat summaries.
+     *
+     * @var array
+     */
+    protected static $deviceTypes = [
+        ['os' => Os::IOS, 'type' => DeviceType::PHONE],
+        ['os' => Os::IOS, 'type' => DeviceType::TABLET],
+        ['os' => Os::ANDROID, 'type' => DeviceType::PHONE],
+        ['os' => Os::ANDROID, 'type' => DeviceType::TABLET],
+    ];
+
     /**
      * Generates stat summary for the given Tour and date.
      *
@@ -19,6 +36,12 @@ class AnalyticsSummarizer
     public function summarizeTour(Tour $tour, $timestamp)
     {
         $yyyymmdd = date('Ymd', $timestamp);
+
+        // calculate devices stats
+        foreach (self::$deviceTypes as $device) {
+            $stats = $this->getTourStatsForDevice($tour, $timestamp, $device['os'], $device['type']);
+            DeviceStat::create(array_merge($stats, ['tour_id' => $tour->id, 'yyyymmdd' => $yyyymmdd]));
+        }
 
         // calculate tour stats
         if ($tour->stats()->forDate($yyyymmdd)->exists()) {
@@ -35,6 +58,52 @@ class AnalyticsSummarizer
                 $stop->stats()->create(array_merge($this->getStopStatsForDate($stop, $timestamp), ['yyyymmdd' => $yyyymmdd]));
             }
         }
+    }
+
+    /**
+     * Create breakdown by device type summary for tours.
+     *
+     * @param \App\Tour $tour
+     * @param int $timestamp
+     * @param string $os
+     * @param string $type
+     * @return array
+     */
+    protected function getTourStatsForDevice($tour, $timestamp, $os, $type)
+    {
+        $date = date('m/d/Y', $timestamp);
+
+        $downloads = $tour->activity()->where('action', Action::DOWNLOAD)
+            ->betweenDates($date, $date)
+            ->join('devices', 'device_id', 'devices.id')
+            ->where('devices.os', $os)
+            ->where('devices.type', $type)
+            ->count();
+
+        $actions = $tour->activity()->whereIn('action', [Action::SHARE, Action::LIKE])
+            ->betweenDates($date, $date)
+            ->join('devices', 'device_id', 'devices.id')
+            ->where('devices.os', $os)
+            ->where('devices.type', $type)
+            ->count();
+
+        $visitors = Activity::where('action', Action::VISIT)
+            ->where('actionable_type', 'App\TourStop')
+            ->whereIn('actionable_id', $tour->stops->pluck('id'))
+            ->betweenDates($date, $date)
+            ->join('devices', 'device_id', 'devices.id')
+            ->where('devices.os', $os)
+            ->where('devices.type', $type)
+            ->groupBy('devices.id')
+            ->count();
+
+        return [
+            'os' => $os,
+            'device_type' => $type,
+            'downloads' => $downloads,
+            'actions' => $actions,
+            'visitors' => $visitors,
+        ];
     }
 
     /**

@@ -66,7 +66,7 @@ class Activity extends Model
             // TODO: handle client timezones?
             $startDate = Carbon::parse($start . ' 00:00:00')->setTimezone('UTC')->toDateTimeString();
             $endDate = Carbon::parse($end . ' 23:59:59')->setTimezone('UTC')->toDateTimeString();
-            return $query->whereBetween('created_at', [$startDate, $endDate]);
+            return $query->whereBetween('activity.created_at', [$startDate, $endDate]);
         } catch (\Exception $ex) {
             return $query;
         }

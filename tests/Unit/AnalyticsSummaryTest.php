@@ -2,6 +2,9 @@
 
 namespace Tests\Unit;
 
+use App\DeviceStat;
+use App\DeviceType;
+use App\Os;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\HasTestTour;
@@ -97,5 +100,32 @@ class AnalyticsSummaryTest extends TestCase
 
         $this->assertTrue($stopStat->fresh()->final);
         $this->assertEquals(2, $stopStat->fresh()->visits);
+    }
+
+    /** @test */
+    public function it_can_create_a_summary_for_stats_grouped_by_device_types()
+    {
+        $this->assertCount(0, DeviceStat::all());
+
+        $summarizer = new AnalyticsSummarizer();
+        $summarizer->summarizeTour($this->tour, strtotime('today'));
+
+        $stat = DeviceStat::where('tour_id', $this->tour->id)
+            ->where('os', Os::IOS)
+            ->where('device_type', DeviceType::PHONE)
+            ->first();
+
+        $this->assertEquals(1, $stat->downloads);
+        $this->assertEquals(1, $stat->visitors);
+        $this->assertEquals(1, $stat->actions);
+
+        $stat = DeviceStat::where('tour_id', $this->tour->id)
+            ->where('os', Os::ANDROID)
+            ->where('device_type', DeviceType::PHONE)
+            ->first();
+
+        $this->assertEquals(0, $stat->downloads);
+        $this->assertEquals(0, $stat->visitors);
+        $this->assertEquals(0, $stat->actions);
     }
 }

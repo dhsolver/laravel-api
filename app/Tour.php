@@ -243,6 +243,16 @@ class Tour extends Model
         return $this->hasMany(TourStat::class);
     }
 
+    /**
+     * Get the device stats summary relationship.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+    */
+    public function deviceStats()
+    {
+        return $this->hasMany(DeviceStat::class);
+    }
+
     // **********************************************************
     // MUTATORS
     // **********************************************************

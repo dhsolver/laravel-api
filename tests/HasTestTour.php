@@ -2,6 +2,8 @@
 
 namespace Tests;
 
+use App\DeviceType;
+use App\Os;
 use App\ScoreCard;
 use App\StopChoice;
 use App\TourStop;
@@ -324,7 +326,13 @@ qur;
 
     public function fakeActivityForStop($stop)
     {
-        $device = factory(Device::class)->create();
+        $devices = [
+            factory(Device::class)->create(['os' => Os::IOS, 'type' => DeviceType::PHONE]),
+            factory(Device::class)->create(['os' => Os::IOS, 'type' => DeviceType::PHONE]),
+            factory(Device::class)->create(['os' => Os::IOS, 'type' => DeviceType::TABLET]),
+            factory(Device::class)->create(['os' => Os::ANDROID, 'type' => DeviceType::PHONE]),
+            factory(Device::class)->create(['os' => Os::ANDROID, 'type' => DeviceType::TABLET]),
+        ];
 
         for ($i = 0; $i < 5; $i++) {
             $start = strtotime("$i days ago 13:00");
@@ -334,37 +342,47 @@ qur;
                 'user_id' => $this->user->id,
                 'action' => Action::START,
                 'created_at' => $start,
-                'device_id' => $device->id,
+                'device_id' => $devices[$i]->id,
             ]);
 
             $stop->activity()->create([
                 'user_id' => $this->user->id,
                 'action' => Action::STOP,
                 'created_at' => $end,
-                'device_id' => $device->id,
+                'device_id' => $devices[$i]->id,
             ]);
 
             $stop->activity()->create([
                 'user_id' => $this->user->id,
                 'action' => Action::VISIT,
                 'created_at' => $end,
-                'device_id' => $device->id,
+                'device_id' => $devices[$i]->id,
             ]);
 
             $stop->activity()->create([
                 'user_id' => $this->user->id,
                 'action' => Action::LIKE,
                 'created_at' => $end,
-                'device_id' => $device->id,
+                'device_id' => $devices[$i]->id,
             ]);
         }
     }
 
     public function fakeActivityForTour($tour)
     {
-        $device = factory(Device::class)->create();
+        $devices = [
+            factory(Device::class)->create(['os' => Os::IOS, 'type' => DeviceType::PHONE]),
+            factory(Device::class)->create(['os' => Os::IOS, 'type' => DeviceType::PHONE]),
+            factory(Device::class)->create(['os' => Os::IOS, 'type' => DeviceType::TABLET]),
+            factory(Device::class)->create(['os' => Os::ANDROID, 'type' => DeviceType::PHONE]),
+            factory(Device::class)->create(['os' => Os::ANDROID, 'type' => DeviceType::TABLET]),
+        ];
+
+        $deviceIndex = 0;
 
         for ($i = 0; $i < 25; $i++) {
+            $device = $devices[$deviceIndex];
+
             $start = strtotime("$i days ago 13:00");
             $end = strtotime("$i days ago 14:00");
 
@@ -395,6 +413,10 @@ qur;
                 'created_at' => $end,
                 'device_id' => $device->id,
             ]);
+
+            if ($i % 5 == 0 && $i > 0) {
+                $deviceIndex++;
+            }
         }
     }
 }
