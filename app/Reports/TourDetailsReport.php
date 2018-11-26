@@ -2,8 +2,6 @@
 
 namespace App\Reports;
 
-use App\Action;
-
 class TourDetailsReport extends BaseReport
 {
     /**
@@ -42,41 +40,29 @@ class TourDetailsReport extends BaseReport
      */
     public function run()
     {
-        $downloads = $this->tour->activity()->where('action', Action::DOWNLOAD)
-            ->betweenDates($this->start_date, $this->end_date)
-            ->count();
-
-        $actions = $this->tour->activity()->whereIn('action', [Action::LIKE, Action::SHARE])
-            ->betweenDates($this->start_date, $this->end_date)
-            ->count();
-
-        $starts = $this->tour->activity()->where('action', Action::START)
-            ->betweenDates($this->start_date, $this->end_date)
-            ->get();
-
-        $finishes = $this->tour->activity()->where('action', Action::STOP)
-            ->betweenDates($this->start_date, $this->end_date)
-            ->get();
-
-        $timeSpent = 0;
-        foreach ($starts as $s) {
-            $f = $finishes->where('user_id', $s->user_id)
-                ->where('created_at', '>', $s->created_at)
-                ->sortBy('created_at')
-                ->first();
-
-            // skip starts that have no finish
-            if (empty($f)) {
-                continue;
+        // if no date range set, get the first date of stats
+        if (empty($this->start_date)) {
+            $firstRecord = $this->tour->stats()->orderBy('yyyymmdd')->first();
+            if (empty($firstRecord)) {
+                return [];
             }
-
-            $timeSpent += $s->created_at->diffInMinutes($f->created_at);
+            $date = date('m/d/Y', strtotime($firstRecord->yyyymmdd));
+            $this->forDates($date, date('m/d/Y', strtotime('now')));
         }
 
-        return [
-            'time' => $timeSpent,
-            'downloads' => $downloads,
-            'actions' => $actions,
-        ];
+        $results = $this->tour->stats()
+            ->betweenDates($this->start_date, $this->end_date)
+            ->orderBy('yyyymmdd')
+            ->get();
+
+        return ['data' => $results->map(function ($item) {
+            return [
+                'yyyymmdd' => $item->yyyymmdd,
+                'actions' => (int) $item->actions,
+                'downloads' => (int) $item->downloads,
+                'time' => (int) $item->time_spent,
+                'tour_id' => (int) $item->tour_id,
+            ];
+        })];
     }
 }

@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
 
 class TourStat extends Model
 {
@@ -32,7 +33,12 @@ class TourStat extends Model
      *
      * @var array
      */
-    protected $casts = ['final' => 'boolean'];
+    protected $casts = [
+        'final' => 'boolean',
+        'actions' => 'integer',
+        'downloads' => 'integer',
+        'time_spent' => 'integer',
+    ];
 
     /**
      * The "booting" method of the model.
@@ -77,6 +83,31 @@ class TourStat extends Model
     public function scopeForDate($query, $yyyymmdd)
     {
         return $query->where('yyyymmdd', $yyyymmdd);
+    }
+
+    /**
+     * Add query to get activity between the given dates.
+     * Defaults to all results if one of the dates is empty or invalid.
+     *
+     * @param QueryBuilder $query
+     * @param string $start
+     * @param string $end
+     * @return QueryBuilder
+     */
+    public function scopeBetweenDates($query, $start, $end)
+    {
+        if (empty($start) || empty($end)) {
+            return $query;
+        }
+
+        try {
+            // TODO: handle client timezones?
+            $startDate = Carbon::parse($start . ' 00:00:00')->setTimezone('UTC')->format('Ymd');
+            $endDate = Carbon::parse($end . ' 23:59:59')->setTimezone('UTC')->format('Ymd');
+            return $query->whereBetween('yyyymmdd', [$startDate, $endDate]);
+        } catch (\Exception $ex) {
+            return $query;
+        }
     }
 
     // **********************************************************

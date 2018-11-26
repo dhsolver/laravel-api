@@ -29,12 +29,14 @@ class ViewAnalyticsTest extends TestCase
             $this->fakeActivityForStop($stop);
         }
 
+        // fake summaries for previous days
         $summarizer = new AnalyticsSummarizer();
         $summarizer->summarizeTour($this->tour, strtotime('2 days ago'));
         $summarizer->summarizeTour($this->tour, strtotime('3 days ago'));
         $summarizer->summarizeTour($this->tour, strtotime('4 days ago'));
         $summarizer->summarizeTour($this->tour, strtotime('yesterday'));
 
+        // run todays summary and finalize previous days
         $this->artisan('analytics:summary')
             ->assertExitCode(0);
     }
@@ -89,10 +91,12 @@ class ViewAnalyticsTest extends TestCase
     {
         $this->json('GET', route('cms.analytics.details', ['tour' => $this->tour]))
             ->assertStatus(200)
+            ->assertJsonCount(5, 'data')
             ->assertJsonFragment([
-                'downloads' => 25,
-                'time' => 25 * 60,
-                'actions' => 25,
+                'yyyymmdd' => date('Ymd', strtotime('today')),
+                'downloads' => 1,
+                'time' => 60,
+                'actions' => 1,
             ]);
     }
 
@@ -104,7 +108,9 @@ class ViewAnalyticsTest extends TestCase
 
         $this->json('GET', route('cms.analytics.details', ['tour' => $this->tour]) . "?start=$start&end=$end")
             ->assertStatus(200)
+            ->assertJsonCount(1, 'data')
             ->assertJsonFragment([
+                'yyyymmdd' => date('Ymd', strtotime('today')),
                 'downloads' => 1,
                 'time' => 60,
                 'actions' => 1,
