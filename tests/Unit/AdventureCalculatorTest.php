@@ -208,4 +208,16 @@ class AdventureCalculatorTest extends TestCase
 
         $this->assertFalse($ac->scoreQualifiesForTrophy($score));
     }
+
+    /** @test */
+    public function it_should_reduce_points_based_on_the_amount_of_skipped_stops()
+    {
+        $this->insertStopRouteData($this->tour);
+
+        $ac = new AdventureCalculator($this->tour);
+
+        $points = $ac->calculatePoints(55, null, 2);
+
+        $this->assertEquals(172, $points);
+    }
 }

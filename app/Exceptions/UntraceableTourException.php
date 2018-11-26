@@ -10,6 +10,7 @@ class UntraceableTourException extends Exception
     public const NO_END_POINT = 2;
     public const NO_NEXT_STOP = 3;
     public const MISSING_NEXT_STOP = 4;
+    public const STOP_MISSING_LOCATION = 5;
 
     protected $message;
     protected $code;
@@ -33,6 +34,9 @@ class UntraceableTourException extends Exception
                 break;
             case self::NO_START_POINT:
                 $message = 'Stop is missing a next stop.';
+                break;
+            case self::STOP_MISSING_LOCATION:
+                $message = "Stop ID {$stop->id} has no location.";
                 break;
             default:
                 $message = 'Untraceable Tour.';

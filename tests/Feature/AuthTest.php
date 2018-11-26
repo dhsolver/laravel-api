@@ -108,6 +108,8 @@ class AuthTest extends TestCase
     /** @test */
     public function a_mobile_user_can_register()
     {
+        $this->withoutExceptionHandling();
+
         $this->json('POST', '/auth/signup', [
             'name' => 'Test User',
             'email' => 'user@test.com',
@@ -230,5 +232,21 @@ class AuthTest extends TestCase
             ->assertStatus(200);
 
         $this->assertNotNull($user->fresh()->email_confirmed_at);
+    }
+
+    /** @test */
+    public function a_mobile_user_can_specify_a_zipcode_upon_registration()
+    {
+        $this->json('POST', '/auth/signup', [
+            'name' => 'Test User',
+            'email' => 'user@test.com',
+            'password' => 'sdgdhe2354',
+            'password_confirmation' => 'sdgdhe2354',
+            'zipcode' => '12345',
+            'role' => 'user',
+        ])->assertStatus(200);
+
+        $user = User::first();
+        $this->assertEquals('12345', $user->zipcode);
     }
 }

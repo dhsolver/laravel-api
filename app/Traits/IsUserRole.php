@@ -51,7 +51,7 @@ trait IsUserRole
 
     protected function appendAttributesToRoleModel()
     {
-        $this->append(['name', 'email', 'role', 'fb_id', 'subscribe_override', 'avatar_url']);
+        $this->append(['name', 'email', 'role', 'fb_id', 'subscribe_override', 'avatar_url', 'zipcode']);
     }
 
     /**
@@ -178,5 +178,10 @@ trait IsUserRole
     public function getAvatarUrlAttribute()
     {
         return $this->user->avatar_url;
+    }
+
+    public function getZipcodeAttribute()
+    {
+        return $this->user->zipcode;
     }
 }

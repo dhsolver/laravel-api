@@ -420,4 +420,34 @@ class TrackAdventuresTest extends TestCase
 
         $this->assertEquals(3, $this->user->fresh()->stats->stops_visited);
     }
+
+    /** @test */
+    public function a_users_progress_should_keep_track_if_they_skip_a_question()
+    {
+        $this->startTour()->assertStatus(200);
+
+        $this->assertEquals(0, $this->score->stops_visited);
+        $this->assertEquals(0, $this->score->points);
+
+        $this->visitStop($this->tour->stops[0]->id, null, null, true)
+            ->assertStatus(200);
+
+        $this->assertCount(1, $this->score->fresh()->stops()->where('skipped_question', true)->get());
+    }
+
+    /** @test */
+    public function a_user_should_be_penalized_for_skipping_questions()
+    {
+        $this->startTour(strtotime('30 minutes ago'));
+
+        $this->assertEquals(0, $this->user->fresh()->stats->trophies);
+
+        // skip a question
+        $this->visitStop($this->tour->start_point_id, null, null, true);
+
+        // set finished
+        $this->visitStop($this->tour->end_point_id);
+
+        $this->assertEquals(190, $this->score->fresh()->points);
+    }
 }

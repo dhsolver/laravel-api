@@ -27,6 +27,12 @@ This should display a success message and overwrite the docs/api.html documentat
 
 ### Change Log
 
+v.1.0.7
+- Added 'length' property to the Tour model
+- Added zipcode field to signup and edit profile 
+- Added endpoints for user favorites
+- Added skipped_question flag to the progress tour endpoint
+
 v.1.0.6
 - Added prize_time_limit field to the Tour model
 - Added UserStats model

@@ -20,6 +20,9 @@ Route::middleware(['jwt.auth', 'role:client|admin|superadmin'])->group(function 
     Route::put('tours/{tour}/unpublish', 'TourController@unpublish')->name('cms.tours.unpublish')->middleware(['can:update,tour']);
     Route::patch('tours/{tour}', 'TourController@update')->name('cms.tours.update')->middleware(['can:update,tour']);
     Route::delete('tours/{tour}', 'TourController@destroy')->name('cms.tours.destroy')->middleware(['can:delete,tour']);
+    Route::get('analytics/{tour}/overview', 'AnalyticsController@overview')->name('cms.analytics.overview')->middleware(['can:view,tour']);
+    Route::get('analytics/{tour}/details', 'AnalyticsController@details')->name('cms.analytics.details')->middleware(['can:view,tour']);
+    Route::get('analytics/{tour}/devices', 'AnalyticsController@devices')->name('cms.analytics.devices')->middleware(['can:view,tour']);
 
     Route::resource('tours/{tour}/stops', 'StopController', ['as' => 'cms'])->middleware(['can:update,tour']);
     Route::put('tours/{tour}/stops/{stop}/order', 'StopController@changeOrder')->name('cms.stops.order')->middleware(['can:update,tour']);

@@ -99,7 +99,9 @@ class ScoreCardController extends Controller
             $ts = Carbon::now();
         }
 
-        if ($scoreCard->manager()->recordStopVisit($stop, $ts)) {
+        $skipped = $request->skipped_question == true ? true : false;
+
+        if ($scoreCard->manager()->recordStopVisit($stop, $ts, $skipped)) {
             return response()->json(new ScoreCardResource($scoreCard->fresh()));
         }
 

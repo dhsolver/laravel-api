@@ -90,6 +90,16 @@ class Tour extends Model
     // **********************************************************
 
     /**
+     * Get the creating user relationship.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+    */
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    /**
      * Gets the publish submissions relation.
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
@@ -221,6 +231,16 @@ class Tour extends Model
     public function reviews()
     {
         return $this->hasMany(\App\Review::class);
+    }
+
+    /**
+     * Get the stats summary relationship.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+    */
+    public function stats()
+    {
+        return $this->hasMany(TourStat::class);
     }
 
     // **********************************************************
@@ -614,5 +634,21 @@ class Tour extends Model
     public function isAdventure()
     {
         return $this->type == TourType::ADVENTURE;
+    }
+
+    /**
+     * Get the total length of the tour and set the length attribute.
+     * Returns bool whether it was able to be updated or not.
+     *
+     * @return bool
+     */
+    public function updateLength()
+    {
+        if ($this->length = $this->calculator()->getTourLength()) {
+            $this->save();
+            return true;
+        }
+
+        return false;
     }
 }

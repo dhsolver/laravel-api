@@ -52,6 +52,7 @@ class AuthController extends Controller
             'name' => $data['name'],
             'email' => strtolower($data['email']),
             'password' => bcrypt($data['password']),
+            'zipcode' => isset($data['zipcode']) ? $data['zipcode'] : null,
         ];
 
         switch ($req->role) {
@@ -102,10 +103,53 @@ class AuthController extends Controller
         return response()->json(new UserSessionResource(auth()->user()));
     }
 
+    public function facebookDetach()
+    {
+        auth()->user()->update([
+            'fb_id' => null,
+            'fb_token' => null,
+        ]);
+
+        return response()->json(['success' => 1]);
+    }
+
     /**
      * Handles user authentication using Facebook access token.
      *
-     * @param FacebookLoginRequestequest $request
+     * @return \Illuminate\Http\Response
+     */
+    public function facebookAttach()
+    {
+        try {
+            $facebook = Socialite::driver('facebook')->userFromToken(request()->token);
+        } catch (\Exception $ex) {
+            return response()->json(['error' => 'invalid_credentials'], 401);
+        }
+
+        // make sure fb object has the required data
+        if (empty($facebook->email) || empty($facebook->id) || empty($facebook->token)) {
+            return response()->json(['error' => 'invalid_credentials'], 401);
+        }
+
+        // first check if user is already linked to Facebook
+        $user = User::findByFacebookId($facebook->id);
+
+        if ($user && $user->id != auth()->id()) {
+            // facebook already attached to another account
+            return response()->json(['error' => 'fb_exists'], 401);
+        }
+
+        auth()->user()->update([
+            'fb_id' => $facebook->id,
+            'fb_token' => $facebook->token,
+        ]);
+
+        return response()->json(['success' => 1]);
+    }
+
+    /**
+     * Handles user authentication using Facebook access token.
+     *
      * @return \Illuminate\Http\Response
      */
     public function facebook()

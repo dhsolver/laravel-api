@@ -71,10 +71,11 @@ class TourController extends Controller
                 $tour->location()->update(Arr::except($data['location'], ['id']));
             }
 
-            // dd($data['route']);
             if ($request->has('route')) {
                 $tour->syncRoute($data['route']);
             }
+
+            $tour->fresh()->updateLength();
 
             \DB::commit();
 

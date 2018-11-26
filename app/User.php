@@ -20,7 +20,7 @@ class User extends Authenticatable implements JWTSubject
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password', 'fb_id', 'fb_token', 'subscribe_override', 'avatar'
+        'name', 'email', 'password', 'fb_id', 'fb_token', 'subscribe_override', 'avatar', 'zipcode'
     ];
 
     /**
@@ -142,6 +142,16 @@ class User extends Authenticatable implements JWTSubject
     public function activity()
     {
         return $this->hasMany(Activity::class);
+    }
+
+    /**
+     * Get the users favorites relationship.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    */
+    public function favorites()
+    {
+        return $this->belongsToMany(Tour::class, 'user_favorites');
     }
 
     // **********************************************************

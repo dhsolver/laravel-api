@@ -2,7 +2,7 @@ swagger: '2.0'
 info:
   title: Junket API
   description: Private API for the wejunket.com mobile apps. 
-  version: 1.0.6
+  version: 1.0.7
 host: api.wejunket.com
 basePath: /mobile
 schemes:
@@ -111,6 +111,11 @@ paths:
                 example: secret
                 description: Confirmation of the user's password.
                 minimum: 6
+              zipcode:
+                type: string
+                example: 12345
+                description: The user's zipcode.
+                maximum: 16
       responses:
         200:
           description: Successful registration
@@ -396,18 +401,17 @@ paths:
           schema:
             required:
               - name
-              - email
             properties:
               name:
                 type: string
                 description: The user's first and/or last name.
                 example: John Doe
                 maximum: 255
-              email:
+              zipcode:
                 type: string
-                example: client@test.com
-                description: The user's email address.
-                maximum: 255
+                example: 12345
+                description: The user's zipcode.
+                maximum: 16
       responses:
         200:
           description: OK
@@ -580,6 +584,91 @@ paths:
         500:
           $ref: '#/responses/UnexpectedError'
 
+  /favorites:
+    get:
+      tags:
+        - favorites
+      summary: Favorites (list)
+      description: A list of all the user's favorite tours
+      operationId: listFavorites
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            type: object
+            properties:
+              favorites:
+                description: Array of Tours.
+                type: array
+                items:
+                  $ref: '#/definitions/Tour'
+        400:
+          $ref: '#/responses/NoToken'
+        401:
+          $ref: '#/responses/Unauthroized'
+        500:
+          $ref: '#/responses/UnexpectedError'
+          
+  /favorites/{tour_id}:
+    post:
+      tags:
+        - favorites
+      summary: Favorites (add)
+      description: Add tour to user's favorites.
+      operationId: addFavorite
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: tour_id
+          description: ID of the Tour to favorite
+          required: true
+          type: integer
+          format: int64
+      responses:
+        200:
+          description: OK
+        400:
+          $ref: '#/responses/NoToken'
+        401:
+          $ref: '#/responses/Unauthroized'
+        404:
+          $ref: '#/responses/NotFound'
+        500:
+          $ref: '#/responses/UnexpectedError'
+    delete:
+      tags:
+        - favorites
+      summary: Favorites (delete)
+      description: Remove the given Tour from the user's favorites.
+      operationId: deleteFavorite
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: tour_id
+          description: ID of the Tour to remove
+          required: true
+          type: integer
+          format: int64
+      responses:
+        200:
+          description: OK
+        400:
+          $ref: '#/responses/NoToken'
+        401:
+          $ref: '#/responses/Unauthroized'
+        404:
+          $ref: '#/responses/NotFound'
+        500:
+          $ref: '#/responses/UnexpectedError'
+
   /scores/start:
     post:
       tags:
@@ -627,7 +716,7 @@ paths:
       tags:
         - scores
       summary: Progress Tour
-      description: Save a Tours progress and get the updated score.  This is used to save a new stop visit.  Returns a the ScoreCard object with updated points and progress.  If the stop was the last stop on the Tour, the score card is "finished" and the finished_at timestamp will reflect this.
+      description: Save a Tours progress and get the updated score.  This is used to save a new stop visit.  Returns a the ScoreCard object with updated points and progress.  If the stop was the last stop on the Tour, the score card is "finished" and the finished_at timestamp will reflect this.  If the user has not answered the question correctly, and has chosen to skip the question, you can track this by setting the skipped_question flag to true.  This has an effect on the user's final score.
       operationId: scoresProgress
       consumes:
         - application/json
@@ -656,8 +745,12 @@ paths:
               timestamp:
                 type: integer
                 format: int32
-                description: UTC UNIX timestamp of when the action occurred.
+                description: UTC UNIX timestamp of when the action occurred.  Defaults to the current time.
                 example: 1538411257
+              skipped_question:
+                type: boolean
+                description: Flag to determine if the user has not answered the question correctly.
+                example: false
       responses:
         200:
           description: OK
@@ -1161,6 +1254,11 @@ definitions:
         type: string
         description: The user's email address. (Only shown for profile of the authenticated user)
         example: user@test.com
+      zipcode:
+        type: string
+        description: The user's zipcode. (Only shown for profile of the authenticated user)
+        example: 12345
+        maximum: 16
       fb_id:
         type: string
         description: The user's Facebook ID (Only shown for profile of the authenticated user)
@@ -1224,6 +1322,11 @@ definitions:
         type: string
         description: The user's email address.
         example: client@test.com
+      zipcode:
+        type: string
+        description: The user's zipcode.
+        example: 12345
+        maxium: 16
       fb_id:
         type: string
         description: The user's Facebook ID (if authorized)
@@ -1403,6 +1506,11 @@ definitions:
         type: string
         description: Background audio MP3 path.
         example: http://media.wejunket.com/images/4fd1b212d98168645c0dce52bdb05189.mp3
+      length:
+        type: integer
+        format: float
+        description: The total length of the Tour.  For adventures, this is the shortest route's length.
+        example: 3.23
       rating:
         type: integer
         format: int32

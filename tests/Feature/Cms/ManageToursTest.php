@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Cms;
 
+use App\TourType;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\Concerns\AttachJwtToken;
@@ -412,5 +413,87 @@ class ManageToursTest extends TestCase
             ->assertJsonFragment($data);
 
         $this->assertEquals($newOrder, $this->tour->fresh()->stopOrder->toArray());
+    }
+
+    /** @test */
+    public function adventure_tour_length_should_be_calculated_on_save()
+    {
+        $this->loginAs($this->client);
+
+        $stop2 = create('App\TourStop', ['tour_id' => $this->tour, 'order' => 2]);
+        $stop2->location->update([
+            'id' => 2610,
+            'address1' => '500 Grand St',       // Grand Vin
+            'address2' => null,
+            'city' => 'Hoboken',
+            'state' => 'NJ',
+            'country' => 'US',
+            'zipcode' => '07030',
+            'latitude' => 40.74331877,
+            'longitude' => -74.03518617,
+        ]);
+
+        $stop1 = create('App\TourStop', ['tour_id' => $this->tour, 'order' => 1,
+            'next_stop_id' => $stop2->id]);
+        $stop1->location->update([
+            'address1' => '77 River St',    // Hoboken Cigars
+            'address2' => null,
+            'city' => 'Hoboken',
+            'state' => 'NJ',
+            'country' => 'US',
+            'zipcode' => '07030',
+            'latitude' => 40.73611847,
+            'longitude' => -74.0290305,
+        ]);
+
+        $this->tour->update([
+            'type' => TourType::ADVENTURE,
+            'start_point_id' => $stop1->id,
+            'end_point_id' => $stop2->id,
+        ]);
+
+        $this->assertTrue($this->tour->fresh()->updateLength());
+        $this->assertEquals(0.59, $this->tour->fresh()->length);
+    }
+
+    /** @test */
+    public function outdoor_tour_length_should_be_calculated_on_save()
+    {
+        $this->loginAs($this->client);
+
+        $stop2 = create('App\TourStop', ['tour_id' => $this->tour, 'order' => 2]);
+        $stop2->location->update([
+            'id' => 2610,
+            'address1' => '500 Grand St',       // Grand Vin
+            'address2' => null,
+            'city' => 'Hoboken',
+            'state' => 'NJ',
+            'country' => 'US',
+            'zipcode' => '07030',
+            'latitude' => 40.74331877,
+            'longitude' => -74.03518617,
+        ]);
+
+        $stop1 = create('App\TourStop', ['tour_id' => $this->tour, 'order' => 1,
+            'next_stop_id' => $stop2->id]);
+        $stop1->location->update([
+            'address1' => '77 River St',    // Hoboken Cigars
+            'address2' => null,
+            'city' => 'Hoboken',
+            'state' => 'NJ',
+            'country' => 'US',
+            'zipcode' => '07030',
+            'latitude' => 40.73611847,
+            'longitude' => -74.0290305,
+        ]);
+
+        $this->tour->update([
+            'type' => TourType::OUTDOOR,
+            'start_point_id' => $stop1->id,
+            'end_point_id' => $stop2->id,
+        ]);
+
+        $this->assertTrue($this->tour->fresh()->updateLength());
+        $this->assertEquals(0.59, $this->tour->fresh()->length);
     }
 }
