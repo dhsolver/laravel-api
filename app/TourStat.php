@@ -28,6 +28,13 @@ class TourStat extends Model
     protected $appends = [];
 
     /**
+     * The attributes that should be specifically cast.
+     *
+     * @var array
+     */
+    protected $casts = ['final' => 'boolean'];
+
+    /**
      * The "booting" method of the model.
      *
      * @return void
