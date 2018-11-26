@@ -144,6 +144,16 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasMany(Activity::class);
     }
 
+    /**
+     * Get the users favorites relationship.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    */
+    public function favorites()
+    {
+        return $this->belongsToMany(Tour::class, 'user_favorites');
+    }
+
     // **********************************************************
     // MUTATORS
     // **********************************************************

@@ -47,6 +47,10 @@ Route::namespace('App\Mobile\Controllers')->middleware(['jwt.auth', 'role:user|c
     Route::get('reviews/{tour}', 'ReviewController@index')->name('mobile.reviews');
     Route::post('reviews/{tour}', 'ReviewController@store')->name('mobile.reviews.store');
     Route::delete('reviews/{tour}', 'ReviewController@destroy')->name('mobile.reviews.destroy');
+
+    Route::get('favorites', 'FavoriteController@index')->name('mobile.favorites');
+    Route::post('favorites/{tour}', 'FavoriteController@store')->name('mobile.favorites.store');
+    Route::delete('favorites/{tour}', 'FavoriteController@destroy')->name('mobile.favorites.destroy');
 });
 
 Route::namespace('App\Http\Controllers')->middleware(['jwt.auth', 'role:user|client|admin|superadmin'])->group(function () {
