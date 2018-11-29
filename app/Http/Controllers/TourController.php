@@ -50,7 +50,7 @@ class TourController extends Controller
      */
     public function show(Tour $tour)
     {
-        return json()->response(new TourResource($tour));
+        return response()->json(new TourResource($tour));
     }
 
     /**
