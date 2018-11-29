@@ -61,6 +61,41 @@ class AnalyticsSummarizer
     }
 
     /**
+     * Re-calculate and set all previous day stats to final.
+     *
+     * @return void
+     */
+    public function finalizePreviousDays()
+    {
+        $stats = DeviceStat::where('yyyymmdd', '<', date('Ymd', strtotime('today')))
+                    ->where('final', false)
+                    ->get();
+
+        foreach ($stats as $summary) {
+            $tour = $summary->tour;
+            $summary->update(array_merge($this->getTourStatsForDevice($tour, strtotime($summary->yyyymmdd), $summary->os, $summary->device_type), ['final' => true]));
+        }
+
+        $stats = TourStat::where('yyyymmdd', '<', date('Ymd', strtotime('today')))
+            ->where('final', false)
+            ->get();
+
+        foreach ($stats as $summary) {
+            $tour = $summary->tour;
+            $summary->update(array_merge($this->getTourStatsForDate($tour, strtotime($summary->yyyymmdd)), ['final' => true]));
+        }
+
+        $stats = StopStat::where('yyyymmdd', '<', date('Ymd', strtotime('today')))
+            ->where('final', false)
+            ->get();
+
+        foreach ($stats as $summary) {
+            $stop = $summary->stop;
+            $summary->update(array_merge($this->getStopStatsForDate($stop, strtotime($summary->yyyymmdd)), ['final' => true]));
+        }
+    }
+
+    /**
      * Create breakdown by device type summary for tours.
      *
      * @param \App\Tour $tour
@@ -104,32 +139,6 @@ class AnalyticsSummarizer
             'actions' => $actions,
             'visitors' => $visitors,
         ];
-    }
-
-    /**
-     * Re-calculate and set all previous day stats to final.
-     *
-     * @return void
-     */
-    public function finalizePreviousDays()
-    {
-        $stats = TourStat::where('yyyymmdd', '<', date('Ymd', strtotime('today')))
-            ->where('final', false)
-            ->get();
-
-        foreach ($stats as $summary) {
-            $tour = $summary->tour;
-            $summary->update(array_merge($this->getTourStatsForDate($tour, strtotime($summary->yyyymmdd)), ['final' => true]));
-        }
-
-        $stats = StopStat::where('yyyymmdd', '<', date('Ymd', strtotime('today')))
-            ->where('final', false)
-            ->get();
-
-        foreach ($stats as $summary) {
-            $stop = $summary->stop;
-            $summary->update(array_merge($this->getStopStatsForDate($stop, strtotime($summary->yyyymmdd)), ['final' => true]));
-        }
     }
 
     /**

@@ -19,7 +19,7 @@ class DeviceDetailsReport extends BaseReport
     protected $end_date;
 
     /**
-     * Filter the reuslts to between two dates.
+     * Filter the results to between two dates.
      *
      * @param string $start
      * @param string $end
@@ -42,7 +42,6 @@ class DeviceDetailsReport extends BaseReport
     {
         // if no date range set, get the first date of stats
         if (empty($this->start_date)) {
-            $firstRecord = $tour->deviceStats()->orderBy('yyyymmdd')->first();
             if (empty($firstRecord)) {
                 return [];
             }
@@ -50,20 +49,11 @@ class DeviceDetailsReport extends BaseReport
             $this->forDates($date, date('m/d/Y', strtotime('now')));
         }
 
-        $results = $tour->deviceStats()
+        return $this->tour->deviceStats()
             ->betweenDates($this->start_date, $this->end_date)
             ->orderBy('yyyymmdd')
+            ->selectRaw('os, device_type, sum(downloads) as downloads, sum(visitors) as visitors, sum(actions) as actions')
+            ->groupBy(['os', 'device_type'])
             ->get();
-
-        dd($results);
-        // return ['data' => $results->map(function ($item) {
-        //     return [
-        //         'yyyymmdd' => $item->yyyymmdd,
-        //         'actions' => (int) $item->actions,
-        //         'downloads' => (int) $item->downloads,
-        //         'time' => (int) $item->time_spent,
-        //         'tour_id' => (int) $item->tour_id,
-        //     ];
-        // })];
     }
 }

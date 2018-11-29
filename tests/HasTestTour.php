@@ -414,8 +414,9 @@ qur;
                 'device_id' => $device->id,
             ]);
 
-            if ($i % 5 == 0 && $i > 0) {
-                $deviceIndex++;
+            $deviceIndex++;
+            if ($deviceIndex > count($devices) - 1) {
+                $deviceIndex = 0;
             }
         }
     }

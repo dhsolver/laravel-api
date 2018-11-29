@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Reports\DeviceDetailsReport;
 use App\Reports\StopOverviewReport;
 use App\Tour;
 use Illuminate\Http\Request;
@@ -50,7 +51,10 @@ class AnalyticsController extends Controller
      */
     public function devices(Request $request, Tour $tour)
     {
-        $data = [];
+        $report = new DeviceDetailsReport($tour);
+        $data = $report->forDates($request->start, $request->end)
+            ->run();
+
         return response()->json($data);
     }
 }
