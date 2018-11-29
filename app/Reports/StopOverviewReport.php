@@ -55,12 +55,14 @@ class StopOverviewReport extends BaseReport
         foreach ($this->tour->stops as $stop) {
             $stat = $stats->where('stop_id', $stop->id)->first();
 
-            $results[$stop->id] = [
+            array_push($results, [
+                'id' => $stop->id,
+                'order' => $stop->order,
                 'title' => $stop->title,
                 'time' => (int) $stat['time_spent'],
                 'visits' => (int) $stat['visits'],
                 'actions' => (int) $stat['actions'],
-            ];
+            ]);
         }
 
         return ['stops' => $results];

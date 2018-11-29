@@ -88,18 +88,18 @@ class ViewAnalyticsTest extends TestCase
         $this->json('GET', route('cms.analytics.overview', ['tour' => $this->tour]))
             ->assertStatus(200)
             ->assertJsonFragment([
-                $this->stops->first()->id => [
-                    'title' => $this->stops->first()->title,
-                    'time' => 25 * 5,
-                    'visits' => 25,
-                    'actions' => 25,
-                ],
-                $this->stops->last()->id => [
-                    'title' => $this->stops->last()->title,
-                    'time' => 25 * 5,
-                    'visits' => 25,
-                    'actions' => 25,
-                ],
+                'id' => $this->stops->first()->id,
+                'title' => $this->stops->first()->title,
+                'time' => 25 * 5,
+                'visits' => 25,
+                'actions' => 25,
+            ])
+            ->assertJsonFragment([
+                'id' => $this->stops->last()->id,
+                'title' => $this->stops->last()->title,
+                'time' => 25 * 5,
+                'visits' => 25,
+                'actions' => 25,
             ]);
     }
 
@@ -112,19 +112,19 @@ class ViewAnalyticsTest extends TestCase
         $this->json('GET', route('cms.analytics.overview', ['tour' => $this->tour]) . "?start=$start&end=$end")
             ->assertStatus(200)
             ->assertJsonFragment([
-                $this->stops->first()->id => [
-                    'title' => $this->stops->first()->title,
-                    'time' => 10,
-                    'visits' => 2,
-                    'actions' => 2,
-                ],
-                $this->stops->last()->id => [
-                    'title' => $this->stops->last()->title,
-                    'time' => 10,
-                    'visits' => 2,
-                    'actions' => 2,
-                ],
-            ]);
+                'id' => $this->stops->first()->id,
+                'title' => $this->stops->first()->title,
+                'time' => 10,
+                'visits' => 2,
+                'actions' => 2,
+            ])
+            ->assertJsonFragment([
+                'id' => $this->stops->last()->id,
+                'title' => $this->stops->last()->title,
+                'time' => 10,
+                'visits' => 2,
+                'actions' => 2,
+                ]);
     }
 
     /** @test */
