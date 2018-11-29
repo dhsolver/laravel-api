@@ -25,7 +25,7 @@ trait HasTours
     public function ownsTour($tourId)
     {
         return Tour::where('id', $tourId)
-            ->where('user_id', $this->id)
+            ->where('user_id', $this->attributes['id'])
             ->exists();
     }
 }
