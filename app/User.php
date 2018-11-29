@@ -161,13 +161,18 @@ class User extends Authenticatable implements JWTSubject
     /**
      * Gets the users role
      *
-     * @return String
+     * @return string
      */
     public function getRoleAttribute()
     {
         return $this->roles()->pluck('name')->first();
     }
 
+    /**
+     * Get the user's first name.
+     *
+     * @return string
+     */
     public function getFirstNameAttribute()
     {
         $names = explode(' ', $this->name, 2);
@@ -175,6 +180,11 @@ class User extends Authenticatable implements JWTSubject
         return $names[0];
     }
 
+    /**
+     * Get the user's last name.
+     *
+     * @return string
+     */
     public function getLastNameAttribute()
     {
         $names = explode(' ', $this->name, 2);
@@ -212,7 +222,7 @@ class User extends Authenticatable implements JWTSubject
      * Lookup User by their Facebook ID
      *
      * @param string $fbId
-     * @return mixed
+     * @return \App\User
      */
     public static function findByFacebookId($fbId)
     {
@@ -220,10 +230,10 @@ class User extends Authenticatable implements JWTSubject
     }
 
     /**
-     * Lookup User by their Facebook ID
+     * Lookup User by their email
      *
      * @param string $email
-     * @return mixed
+     * @return \App\User
      */
     public static function findByEmail($email)
     {
@@ -257,7 +267,7 @@ class User extends Authenticatable implements JWTSubject
     /**
      * Check if the User is an Admin.
      *
-     * @return boolean
+     * @return bool
      */
     public function isAdmin()
     {
@@ -291,22 +301,9 @@ class User extends Authenticatable implements JWTSubject
     }
 
     /**
-     * Get the role user object.
-     *
-     * @return void
-     */
-    public function type()
-    {
-        if ($this->getRoleClassObj()) {
-            return $this->hasOne($this->getRoleClassObj(), 'id', 'id');
-        }
-        return null;
-    }
-
-    /**
      * Send the password reset notification.
      *
-     * @param  string  $token
+     * @param string $token
      * @return void
      */
     public function sendPasswordResetNotification($token)
@@ -317,8 +314,8 @@ class User extends Authenticatable implements JWTSubject
     /**
      * Check whether the User has already joined the given Tour.
      *
-     * @param array|object|int $tour
-     * @return boolean
+     * @param mixed $tour
+     * @return bool
      */
     public function hasJoinedTour($tour)
     {
@@ -330,8 +327,8 @@ class User extends Authenticatable implements JWTSubject
     /**
      * Add user to the given Tour.
      *
-     * @param object|int $tour
-     * @return \Illuminate\Database\Eloquent\Model
+     * @param mixed $tour
+     * @return void
      */
     public function joinTour($tour)
     {
@@ -343,7 +340,7 @@ class User extends Authenticatable implements JWTSubject
     }
 
     /**
-     * Look up the user by the confirmation token and set to confirmed
+     * Look up the user by the confirmation token and set to confirmed.
      *
      * @param string $token
      * @return bool|\App\User

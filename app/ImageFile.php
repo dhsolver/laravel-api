@@ -13,11 +13,20 @@ class ImageFile
      */
     private $image;
 
+    /**
+     * ImageFile constructor.
+     * @param InterventionImage $image
+     */
     public function __construct(InterventionImage $image)
     {
         $this->image = $image;
     }
 
+    /**
+     * Get the image path.
+     *
+     * @return string
+     */
     public function getRealPath()
     {
         return $this->image->basePath();

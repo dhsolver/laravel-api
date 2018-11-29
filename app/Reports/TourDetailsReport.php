@@ -19,7 +19,7 @@ class TourDetailsReport extends BaseReport
     protected $end_date;
 
     /**
-     * Filter the reuslts to between two dates.
+     * Filter the results to between two dates.
      *
      * @param string $start
      * @param string $end

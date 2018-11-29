@@ -13,14 +13,14 @@ class DeviceStat extends Model
      * @var array
      */
     protected $guarded = ['id'];
-    
+
     /**
      * The relations to eager load on every query.
      *
      * @var array
      */
     public $with = [];
-    
+
     /**
      * The accessors to append to the model's array form.
      *
@@ -57,7 +57,7 @@ class DeviceStat extends Model
     // **********************************************************
     // MUTATORS
     // **********************************************************
-    
+
     // **********************************************************
     // QUERY SCOPES
     // **********************************************************

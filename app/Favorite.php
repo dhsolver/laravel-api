@@ -34,8 +34,8 @@ class Favorite extends Model
     /**
      * Get the owning user relationship.
      *
-     * @return \App\User
-     */
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+    */
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -44,7 +44,7 @@ class Favorite extends Model
     /**
      * Get the tour relationship.
      *
-     * @return \App\Tour
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
     public function tour()
     {

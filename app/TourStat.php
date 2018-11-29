@@ -29,7 +29,7 @@ class TourStat extends Model
     protected $appends = [];
 
     /**
-     * The attributes that should be specifically cast.
+     * The attributes that should be cast to native types.
      *
      * @var array
      */

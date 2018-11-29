@@ -62,7 +62,7 @@ class StopChoice extends Model
     /**
      * A stop choice belongs to a tour stop.
      *
-     * @return void
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function stop()
     {
@@ -72,7 +72,7 @@ class StopChoice extends Model
     /**
      * A stop has one next stop.
      *
-     * @return void
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
     public function nextStop()
     {
@@ -95,6 +95,7 @@ class StopChoice extends Model
      * Returns the next free number in the order sequence
      * for the given TourStop's Choices.
      *
+     * @param int $stopId
      * @return int
      */
     public static function getNextOrder($stopId)

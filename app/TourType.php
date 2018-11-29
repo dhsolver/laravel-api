@@ -4,6 +4,16 @@ namespace App;
 
 class TourType
 {
+    /*
+    |--------------------------------------------------------------------------
+    | Tour Type Constants
+    |--------------------------------------------------------------------------
+    |
+    | These constants are helpers for the the 'type' field in
+    | the Tours table.
+    |
+    */
+
     public const ADVENTURE = 'adventure';
     public const OUTDOOR = 'outdoor';
     public const INDOOR = 'indoor';
