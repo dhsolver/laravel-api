@@ -42,6 +42,7 @@ class DeviceDetailsReport extends BaseReport
     {
         // if no date range set, get the first date of stats
         if (empty($this->start_date)) {
+            $firstRecord = $this->tour->deviceStats()->orderBy('yyyymmdd')->first();
             if (empty($firstRecord)) {
                 return [];
             }
