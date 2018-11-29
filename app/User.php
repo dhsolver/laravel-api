@@ -154,6 +154,20 @@ class User extends Authenticatable implements JWTSubject
         return $this->belongsToMany(Tour::class, 'user_favorites');
     }
 
+    /**
+     * Get the role user object, if exists.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function type()
+    {
+        if ($this->getRoleClassObj()) {
+            return $this->hasOne($this->getRoleClassObj(), 'id', 'id');
+        }
+
+        return null;
+    }
+
     // **********************************************************
     // MUTATORS
     // **********************************************************
