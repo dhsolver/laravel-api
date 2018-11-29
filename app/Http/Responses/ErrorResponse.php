@@ -3,7 +3,6 @@
 namespace App\Http\Responses;
 
 use Illuminate\Contracts\Support\Responsable;
-use Illuminate\Http\JsonResponse;
 
 /**
  * Class ErrorResponse
@@ -12,10 +11,34 @@ use Illuminate\Http\JsonResponse;
  */
 class ErrorResponse implements Responsable
 {
+    /**
+     * The HTTP status code for the response.
+     *
+     * @var int
+     */
     protected $statusCode;
+
+    /**
+     * The response message or message array.
+     *
+     * @var mixed
+     */
     protected $messages;
+
+    /**
+     * The data object to return with the response.
+     *
+     * @var array
+     */
     protected $data;
 
+    /**
+     * ErrorResponse constructor.
+     *
+     * @param int $statusCode
+     * @param mixed $messages
+     * @param array $data
+     */
     public function __construct($statusCode, $messages, $data = [])
     {
         $this->messages = $messages;
@@ -42,6 +65,7 @@ class ErrorResponse implements Responsable
         if (count($this->data)) {
             $response['data'] = $this->data;
         }
-        return new JsonResponse($response, $this->statusCode);
+
+        return response()->json($response, $this->statusCode);
     }
 }

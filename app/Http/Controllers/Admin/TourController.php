@@ -13,7 +13,7 @@ class TourController extends BaseTourController
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\Resources\Json\ResourceCollection
      */
     public function index()
     {
@@ -23,7 +23,7 @@ class TourController extends BaseTourController
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param CreateTourRequest $request
      * @return \Illuminate\Http\Response
      */
     public function store(CreateTourRequest $request)

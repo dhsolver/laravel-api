@@ -3,7 +3,6 @@
 namespace App\Http\Responses;
 
 use Illuminate\Contracts\Support\Responsable;
-use Illuminate\Http\JsonResponse;
 
 /**
  * Class SuccessResponse
@@ -12,11 +11,41 @@ use Illuminate\Http\JsonResponse;
  */
 class SuccessResponse implements Responsable
 {
+    /**
+     * The HTTP status code for the response.
+     *
+     * @var int
+     */
     protected $statusCode = 200;
+
+    /**
+     * The response message.
+     *
+     * @var string
+     */
     protected $message;
+
+    /**
+     * The data object to return with the response.
+     *
+     * @var array
+     */
     protected $data;
+
+    /**
+     * The redirect URL to return with the response.
+     *
+     * @var string
+     */
     protected $redirect;
 
+    /**
+     * SuccessResponse constructor.
+     *
+     * @param string $message
+     * @param array $data
+     * @param string $redirect
+     */
     public function __construct($message, $data = [], $redirect = null)
     {
         $this->message = $message;
@@ -39,6 +68,6 @@ class SuccessResponse implements Responsable
             'redirect' => $this->redirect,
         ];
 
-        return new JsonResponse(array_filter($response), $this->statusCode);
+        return response()->json(array_filter($response), $this->statusCode);
     }
 }

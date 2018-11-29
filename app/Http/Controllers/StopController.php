@@ -16,8 +16,8 @@ class StopController extends Controller
     /**
      * Lists all stops for a given tour.
      *
-     * @param Tour $tour
-     * @return StopCollection
+     * @param \App\Tour $tour
+     * @return \Illuminate\Http\Resources\Json\ResourceCollection
      */
     public function index(Tour $tour)
     {
@@ -30,8 +30,8 @@ class StopController extends Controller
      * Stores a new stop for the given tour.
      *
      * @param CreateStopRequest $request
-     * @param Tour $tour
-     * @return StopResource
+     * @param \App\Tour $tour
+     * @return \Illuminate\Http\Response
      */
     public function store(CreateStopRequest $request, Tour $tour)
     {
@@ -62,9 +62,9 @@ class StopController extends Controller
     /**
      * Gets the details of a given tour stop.
      *
-     * @param Tour $tour
-     * @param TourStop $stop
-     * @return StopResource
+     * @param \App\Tour $tour
+     * @param \App\TourStop $stop
+     * @return \Illuminate\Http\Resources\Json\JsonResource
      */
     public function show(Tour $tour, TourStop $stop)
     {
@@ -75,9 +75,9 @@ class StopController extends Controller
      * Updates a tour stop with the given data.
      *
      * @param UpdateStopRequest $request
-     * @param Tour $tour
-     * @param TourStop $stop
-     * @return StopResource
+     * @param \App\Tour $tour
+     * @param \App\TourStop $stop
+     * @return \Illuminate\Http\Response
      */
     public function update(UpdateStopRequest $request, Tour $tour, TourStop $stop)
     {
@@ -106,9 +106,10 @@ class StopController extends Controller
     /**
      * Deletes the given tour stop.
      *
-     * @param Tour $tour
-     * @param TourStop $stop
-     * @return Response
+     * @param \App\Tour $tour
+     * @param \App\TourStop $stop
+     * @return \Illuminate\Http\Response
+     * @throws \Exception
      */
     public function destroy(Tour $tour, TourStop $stop)
     {
@@ -141,9 +142,9 @@ class StopController extends Controller
     /**
      * Sets the order of the given tour stop.
      *
-     * @param Tour $tour
-     * @param TourStop $stop
-     * @return StopCollection
+     * @param \App\Tour $tour
+     * @param \App\TourStop $stop
+     * @return \Illuminate\Http\Response
      */
     public function changeOrder(Tour $tour, TourStop $stop)
     {

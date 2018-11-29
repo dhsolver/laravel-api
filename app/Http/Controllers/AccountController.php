@@ -36,7 +36,7 @@ class AccountController extends Controller
     /**
      * Update the user's profile information.
      *
-     * @param UpdateProfileRequest $request
+     * @param ChangePasswordRequest $request
      * @return \Illuminate\Http\Response
      */
     public function changePassword(ChangePasswordRequest $request)
@@ -48,7 +48,7 @@ class AccountController extends Controller
             'password' => $data['old_password'],
         ];
 
-        if (!Auth::attempt($credentials)) {
+        if (! Auth::attempt($credentials)) {
             return $this->fail(401, 'Your current password was invalid.');
         }
 

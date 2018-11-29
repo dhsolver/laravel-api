@@ -16,7 +16,7 @@ class ResetPasswordController extends Controller
     /**
      * Dispatch the reset password link to the User.
      *
-     * @return void
+     * @return \Illuminate\Http\Response
      */
     public function forgot()
     {
@@ -38,7 +38,7 @@ class ResetPasswordController extends Controller
      *
      * @param \Illuminate\Http\Request $request
      * @param string $response
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\JsonResponse
+     * @return \Illuminate\Http\Response
      */
     protected function sendResetResponse(Request $request, $response)
     {
@@ -48,9 +48,9 @@ class ResetPasswordController extends Controller
     /**
      * Get the response for a failed password reset.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  string  $response
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\JsonResponse
+     * @param \Illuminate\Http\Request $request
+     * @param string $response
+     * @return \Illuminate\Http\Response
      */
     protected function sendResetFailedResponse(Request $request, $response)
     {

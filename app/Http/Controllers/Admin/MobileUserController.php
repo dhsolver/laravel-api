@@ -14,7 +14,7 @@ class MobileUserController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\Resources\Json\ResourceCollection
      */
     public function index()
     {
@@ -24,7 +24,7 @@ class MobileUserController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param CreateMobileUserRequest $request
      * @return \Illuminate\Http\Response
      */
     public function store(CreateMobileUserRequest $request)
@@ -39,8 +39,8 @@ class MobileUserController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param \App\MobileUser $user
+     * @return \Illuminate\Http\Resources\Json\JsonResource
      */
     public function show(MobileUser $user)
     {
@@ -50,8 +50,8 @@ class MobileUserController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param UpdateMobileUserRequest $request
+     * @param \App\MobileUser $user
      * @return \Illuminate\Http\Response
      */
     public function update(UpdateMobileUserRequest $request, MobileUser $user)
@@ -67,8 +67,9 @@ class MobileUserController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param \App\MobileUser $user
      * @return \Illuminate\Http\Response
+     * @throws \Exception
      */
     public function destroy(MobileUser $user)
     {

@@ -14,7 +14,7 @@ class ClientController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\Resources\Json\ResourceCollection
      */
     public function index()
     {
@@ -24,7 +24,7 @@ class ClientController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param CreateClientRequest $request
      * @return \Illuminate\Http\Response
      */
     public function store(CreateClientRequest $request)
@@ -39,8 +39,8 @@ class ClientController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param \App\Client $client
+     * @return \Illuminate\Http\Resources\Json\JsonResource
      */
     public function show(Client $client)
     {
@@ -50,8 +50,8 @@ class ClientController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param UpdateClientRequest $request
+     * @param \App\Client $client
      * @return \Illuminate\Http\Response
      */
     public function update(UpdateClientRequest $request, Client $client)
@@ -67,8 +67,9 @@ class ClientController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param \App\Client $client
      * @return \Illuminate\Http\Response
+     * @throws \Exception
      */
     public function destroy(Client $client)
     {

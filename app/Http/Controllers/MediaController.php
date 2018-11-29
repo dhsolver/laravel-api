@@ -17,7 +17,8 @@ class MediaController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param MediaUploadRequest $request
+     * @param AudioProcessor $audio
      * @return \Illuminate\Http\Response
      */
     public function store(MediaUploadRequest $request, AudioProcessor $audio)
@@ -50,7 +51,5 @@ class MediaController extends Controller
         } catch (InvalidAudioFileException $ex) {
             return $this->fail(422, $ex->message);
         }
-
-        return $this->fail();
     }
 }
