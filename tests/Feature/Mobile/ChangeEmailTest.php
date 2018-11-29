@@ -5,7 +5,7 @@ namespace Tests\Feature\Mobile;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\Concerns\AttachJwtToken;
-use App\ChangeEmailRequest;
+use App\Http\Requests\ChangeEmailRequest;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\ChangeEmailActivation;
 use Carbon\Carbon;

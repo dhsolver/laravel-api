@@ -3,7 +3,7 @@
 namespace App\Mobile\Controllers;
 
 use \Illuminate\Http\Request;
-use App\ChangeEmailRequest;
+use App\Http\Requests\ChangeEmailRequest;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
 use App\Http\Controllers\Controller;
