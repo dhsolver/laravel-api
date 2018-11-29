@@ -46,7 +46,7 @@ class ResetPasswordNotification extends Notification
         $url = config('junket.password_reset_url') . '?token=' . $this->token . '&email=' . $this->email;
 
         return (new MailMessage)
-            ->line('A request has been submited to reset the password for your account.  If you did not submit this request, you can ignore this email.')
+            ->line('A request has been submitted to reset the password for your account.  If you did not submit this request, you can ignore this email.')
             ->action('Reset Your Password', $url);
     }
 }
