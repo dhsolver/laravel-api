@@ -9,7 +9,7 @@ trait HasTours
     /**
      * A user has many tours
      *
-     * @return void
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function tours()
     {
@@ -19,7 +19,7 @@ trait HasTours
     /**
      * Determines if the user owns the given Tour id.
      *
-     * @param [int] $tourId
+     * @param int $tourId
      * @return bool
      */
     public function ownsTour($tourId)

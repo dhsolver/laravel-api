@@ -2,7 +2,6 @@
 
 namespace App\Reports;
 
-use App\Action;
 use App\StopStat;
 
 class StopOverviewReport extends BaseReport

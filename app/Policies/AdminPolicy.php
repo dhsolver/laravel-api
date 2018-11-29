@@ -13,11 +13,11 @@ class AdminPolicy
     /**
      * Master check that runs before all other methods.
      *
-     * @param [type] $user
-     * @param [type] $ability
-     * @return void
+     * @param \App\User $user
+     * @param string $ability
+     * @return bool
      */
-    public function before($user, $ability)
+    public function before(User $user, $ability)
     {
         if ($user->role == 'superadmin') {
             return true;
@@ -27,9 +27,9 @@ class AdminPolicy
     /**
      * Determine whether the user can view the admin.
      *
-     * @param  \App\User  $user
-     * @param  \App\Admin  $admin
-     * @return mixed
+     * @param \App\User $user
+     * @param \App\Admin $admin
+     * @return bool
      */
     public function view(User $user, Admin $admin)
     {
@@ -39,8 +39,8 @@ class AdminPolicy
     /**
      * Determine whether the user can create admins.
      *
-     * @param  \App\User  $user
-     * @return mixed
+     * @param \App\User $user
+     * @return bool
      */
     public function create(User $user)
     {
@@ -50,9 +50,9 @@ class AdminPolicy
     /**
      * Determine whether the user can update the admin.
      *
-     * @param  \App\User  $user
-     * @param  \App\Admin  $admin
-     * @return mixed
+     * @param \App\User $user
+     * @param \App\Admin $admin
+     * @return bool
      */
     public function update(User $user, Admin $admin)
     {
@@ -63,9 +63,9 @@ class AdminPolicy
     /**
      * Determine whether the user can delete the admin.
      *
-     * @param  \App\User  $user
-     * @param  \App\Admin  $admin
-     * @return mixed
+     * @param \App\User $user
+     * @param \App\Admin $admin
+     * @return bool
      */
     public function delete(User $user, Admin $admin)
     {

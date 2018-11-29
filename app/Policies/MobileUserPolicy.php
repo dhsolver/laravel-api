@@ -13,9 +13,9 @@ class MobileUserPolicy
     /**
      * Master check that runs before all other methods.
      *
-     * @param [type] $user
-     * @param [type] $ability
-     * @return void
+     * @param \App\User $user
+     * @param string $ability
+     * @return bool
      */
     public function before($user, $ability)
     {
@@ -27,8 +27,8 @@ class MobileUserPolicy
     /**
      * Determine whether the user can view the mobileUser.
      *
-     * @param  \App\User  $authUser
-     * @param  \App\MobileUser  $user
+     * @param \App\User $authUser
+     * @param \App\MobileUser $user
      * @return mixed
      */
     public function view(User $authUser, MobileUser $user)
@@ -39,7 +39,7 @@ class MobileUserPolicy
     /**
      * Determine whether the user can create mobileUsers.
      *
-     * @param  \App\User  $authUser
+     * @param \App\User $authUser
      * @return mixed
      */
     public function create(User $authUser)
@@ -50,8 +50,8 @@ class MobileUserPolicy
     /**
      * Determine whether the user can update the mobileUser.
      *
-     * @param  \App\User  $authUser
-     * @param  \App\MobileUser  $user
+     * @param \App\User $authUser
+     * @param \App\MobileUser $user
      * @return mixed
      */
     public function update(User $authUser, MobileUser $user)
@@ -62,8 +62,8 @@ class MobileUserPolicy
     /**
      * Determine whether the user can delete the mobileUser.
      *
-     * @param  \App\User  $authUser
-     * @param  \App\MobileUser  $user
+     * @param \App\User $authUser
+     * @param \App\MobileUser $user
      * @return mixed
      */
     public function delete(User $authUser, MobileUser $user)

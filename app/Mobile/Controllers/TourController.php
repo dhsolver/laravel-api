@@ -15,7 +15,7 @@ class TourController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \App\Mobile\Resources\TourCollection
+     * @return \Illuminate\Http\Resources\Json\ResourceCollection|\Illuminate\Http\Response
      */
     public function index()
     {
@@ -47,8 +47,9 @@ class TourController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Tour  $tour
-     * @return \App\Mobile\Resources\TourResource
+     * @param \App\Tour $tour
+     * @return \Illuminate\Http\Response
+     * @throws ModelNotFoundException
      */
     public function show(Tour $tour)
     {
@@ -71,9 +72,9 @@ class TourController extends Controller
     }
 
     /**
-     * Gets all tours without paging
+     * Gets all tours without paging.
      *
-     * @return \App\Mobile\Resources\TourResource
+     * @return \Illuminate\Http\Resources\Json\ResourceCollection
      */
     public function all()
     {

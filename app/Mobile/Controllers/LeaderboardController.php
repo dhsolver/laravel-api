@@ -12,8 +12,8 @@ class LeaderboardController extends Controller
     /**
      * Get the leaderboard for a given Tour.
      *
-     * @param Tour $tour
-     * @return LeaderboardCollection
+     * @param \App\Tour $tour
+     * @return \Illuminate\Http\Resources\Json\ResourceCollection
      */
     public function show(Tour $tour)
     {

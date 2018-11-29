@@ -15,6 +15,12 @@ class RouteServiceProvider extends ServiceProvider
      * @var string
      */
     protected $namespace = 'App\Http\Controllers';
+
+    /**
+     * This namespace is applied to all mobile routes.
+     *
+     * @var string
+     */
     protected $mobileNamespace = 'App\Mobile\Controllers';
 
     /**
@@ -43,6 +49,11 @@ class RouteServiceProvider extends ServiceProvider
         $this->mapAdminRoutes();
     }
 
+    /**
+     * Map routes for the CMS area API.
+     *
+     * @return void
+     */
     protected function mapCmsRoutes()
     {
         Route::prefix('cms')
@@ -51,6 +62,11 @@ class RouteServiceProvider extends ServiceProvider
             ->group(base_path('routes/cms.php'));
     }
 
+    /**
+     * Map routes for the Mobile API.
+     *
+     * @return void
+     */
     protected function mapMobileRoutes()
     {
         Route::prefix('mobile')
@@ -59,6 +75,11 @@ class RouteServiceProvider extends ServiceProvider
             ->group(base_path('routes/mobile.php'));
     }
 
+    /**
+     * Map routes for the Admin Area API.
+     *
+     * @return void
+     */
     protected function mapAdminRoutes()
     {
         Route::prefix('admin')
@@ -67,6 +88,11 @@ class RouteServiceProvider extends ServiceProvider
             ->group(base_path('routes/admin.php'));
     }
 
+    /**
+     * Map routes for the common API.
+     *
+     * @return void
+     */
     protected function mapApiRoutes()
     {
         Route::middleware('api')

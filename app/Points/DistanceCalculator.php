@@ -5,7 +5,6 @@ namespace App\Points;
 use App\StopRoute;
 use App\Exceptions\UntraceableTourException;
 use drupol\phpermutations\Generators\Permutations;
-use Illuminate\Support\Collection;
 
 class DistanceCalculator
 {

@@ -19,7 +19,7 @@ class ScoreCardController extends Controller
     /**
      * Get the user's score for all of their completed Tours.
      *
-     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+     * @return \Illuminate\Http\Resources\Json\ResourceCollection
      */
     public function index()
     {
@@ -34,7 +34,7 @@ class ScoreCardController extends Controller
      * Find all score cards for a given Tour.
      *
      * @param \App\Tour $tour
-     * @return TourScoreCardCollection
+     * @return \Illuminate\Http\Resources\Json\ResourceCollection
      * @throws ModelNotFoundException
      */
     public function find(Tour $tour)
@@ -54,7 +54,7 @@ class ScoreCardController extends Controller
      * Get the user's score for all of their completed Tours.
      *
      * @param StartTourRequest $request
-     * @return \Illuminate\Http\Response|ScoreCardResource
+     * @return \Illuminate\Http\Resources\Json\Resource|\Illuminate\Http\Response
      */
     public function start(StartTourRequest $request)
     {
@@ -77,7 +77,7 @@ class ScoreCardController extends Controller
      *
      * @param TourProgressRequest $request
      * @param ScoreCard $scoreCard
-     * @return \Illuminate\Http\Response|ScoreCardResource
+     * @return \Illuminate\Http\Resources\Json\Resource|\Illuminate\Http\Response
      */
     public function progress(TourProgressRequest $request, ScoreCard $scoreCard)
     {

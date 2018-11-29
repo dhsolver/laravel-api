@@ -13,9 +13,9 @@ class ClientPolicy
     /**
      * Master check that runs before all other methods.
      *
-     * @param [type] $user
-     * @param [type] $ability
-     * @return void
+     * @param \App\User $user
+     * @param string $ability
+     * @return bool
      */
     public function before($user, $ability)
     {
@@ -27,9 +27,9 @@ class ClientPolicy
     /**
      * Determine whether the user can view the client.
      *
-     * @param  \App\User  $user
-     * @param  \App\Client  $client
-     * @return mixed
+     * @param \App\User $user
+     * @param \App\Client $client
+     * @return bool
      */
     public function view(User $user, Client $client)
     {
@@ -39,8 +39,8 @@ class ClientPolicy
     /**
      * Determine whether the user can create clients.
      *
-     * @param  \App\User  $user
-     * @return mixed
+     * @param \App\User $user
+     * @return bool
      */
     public function create(User $user)
     {
@@ -50,9 +50,9 @@ class ClientPolicy
     /**
      * Determine whether the user can update the client.
      *
-     * @param  \App\User  $user
-     * @param  \App\Client  $client
-     * @return mixed
+     * @param \App\User $user
+     * @param \App\Client $client
+     * @return bool
      */
     public function update(User $user, Client $client)
     {
@@ -62,9 +62,9 @@ class ClientPolicy
     /**
      * Determine whether the user can delete the client.
      *
-     * @param  \App\User  $user
-     * @param  \App\Client  $client
-     * @return mixed
+     * @param \App\User $user
+     * @param \App\Client $client
+     * @return bool
      */
     public function delete(User $user, Client $client)
     {

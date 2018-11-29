@@ -17,7 +17,7 @@ class AudioProcessor
     /**
      * Create a new AudioProcessor instance.
      *
-     * @param string $ffmpegConfig
+     * @param array $ffmpegConfig
      */
     public function __construct($ffmpegConfig)
     {
