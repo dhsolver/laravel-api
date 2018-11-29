@@ -21,6 +21,7 @@ class ChangeEmailActivation extends Mailable
     /**
      * Create a new message instance.
      *
+     * @param ChangeEmailRequest $request
      * @return void
      */
     public function __construct(ChangeEmailRequest $request)
