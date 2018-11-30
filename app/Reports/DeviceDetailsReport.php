@@ -52,7 +52,6 @@ class DeviceDetailsReport extends BaseReport
 
         return $this->tour->deviceStats()
             ->betweenDates($this->start_date, $this->end_date)
-            ->orderBy('yyyymmdd')
             ->selectRaw('os, device_type, sum(downloads) as downloads, sum(visitors) as visitors, sum(actions) as actions')
             ->groupBy(['os', 'device_type'])
             ->get();
