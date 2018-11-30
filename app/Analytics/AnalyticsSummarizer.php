@@ -40,7 +40,12 @@ class AnalyticsSummarizer
         // calculate devices stats
         foreach (self::$deviceTypes as $device) {
             $stats = $this->getTourStatsForDevice($tour, $timestamp, $device['os'], $device['type']);
-            DeviceStat::create(array_merge($stats, ['tour_id' => $tour->id, 'yyyymmdd' => $yyyymmdd]));
+
+            if ($tour->deviceStats()->forDate($yyyymmdd)->forDevice($device['os'], $device['type'])->exists()) {
+                $tour->deviceStats()->forDate($yyyymmdd)->forDevice($device['os'], $device['type'])->update($stats);
+            } else {
+                $tour->deviceStats()->create(array_merge($stats, ['yyyymmdd' => $yyyymmdd]));
+            }
         }
 
         // calculate tour stats

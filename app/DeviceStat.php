@@ -63,6 +63,18 @@ class DeviceStat extends Model
     // **********************************************************
 
     /**
+     * Get the stat for a specific date.
+     *
+     * @param \Illuminate\Database\Query\Builder query
+     * @param string $yyyymmdd
+     * @return \Illuminate\Database\Query\Builder
+     */
+    public function scopeForDate($query, $yyyymmdd)
+    {
+        return $query->where('yyyymmdd', $yyyymmdd);
+    }
+
+    /**
      * Add query to get activity between the given dates.
      * Defaults to all results if one of the dates is empty or invalid.
      *
@@ -85,6 +97,21 @@ class DeviceStat extends Model
         } catch (\Exception $ex) {
             return $query;
         }
+    }
+
+    /**
+     * Query for the given device type and operating system.
+     *
+     * @param \Illuminate\Database\Query\Builder query
+     * @return \Illuminate\Database\Query\Builder
+     */
+    public function scopeForDevice($query, $os, $deviceType)
+    {
+        if (empty($os) || empty($deviceType)) {
+            return $query;
+        }
+
+        return $query->where('os', $os)->where('device_type', $deviceType);
     }
 
     // **********************************************************

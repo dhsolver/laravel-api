@@ -110,6 +110,8 @@ class AnalyticsSummaryTest extends TestCase
         $summarizer = new AnalyticsSummarizer();
         $summarizer->summarizeTour($this->tour, strtotime('today'));
 
+        $this->assertCount(4, DeviceStat::all());
+
         $stat = DeviceStat::where('tour_id', $this->tour->id)
             ->where('os', Os::IOS)
             ->where('device_type', DeviceType::PHONE)

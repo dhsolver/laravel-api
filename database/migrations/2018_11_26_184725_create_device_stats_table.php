@@ -26,6 +26,7 @@ class CreateDeviceStatsTable extends Migration
             $table->timestamps();
 
             $table->foreign('tour_id')->references('id')->on('tours')->onDelete('cascade');
+            $table->unique(['tour_id', 'yyyymmdd', 'os', 'device_type']);
         });
     }
 
