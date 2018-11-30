@@ -13,7 +13,7 @@ class SummarizeAnalytics extends Command
      *
      * @var string
      */
-    protected $signature = 'analytics:summary';
+    protected $signature = 'analytics:summary {date?}';
 
     /**
      * The console command description.
@@ -39,12 +39,15 @@ class SummarizeAnalytics extends Command
      */
     public function handle()
     {
+        $this->date = $this->argument('date') ? strtotime($this->argument('date')) : strtotime('today');
+
+        $this->info('Running analytics summary for ' . date('m/d/Y', $this->date));
+
         $summarizer = new AnalyticsSummarizer();
 
         // create temp summaries for the current day
         foreach (Tour::published()->get() as $tour) {
-            $date = strtotime('today');
-            $summarizer->summarizeTour($tour, $date);
+            $summarizer->summarizeTour($tour, $this->date);
         }
 
         // finalize all summaries for previous days
