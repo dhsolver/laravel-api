@@ -3,7 +3,7 @@
 namespace App\Mobile\Controllers;
 
 use \Illuminate\Http\Request;
-use App\ChangeEmailRequest;
+use App\Http\Requests\ChangeEmailRequest;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
 use App\Http\Controllers\Controller;
@@ -14,7 +14,7 @@ class ChangeEmailController extends Controller
      * Log the user's request to change email and send activation code.
      *
      * @param Request $request
-     * @return \Illiminate\Http\Response
+     * @return \Illuminate\Http\Response
      */
     public function request(Request $request)
     {
@@ -25,7 +25,7 @@ class ChangeEmailController extends Controller
             'email.*' => 'A valid email address is required.',
         ]);
 
-        $cer = ChangeEmailRequest::create([
+        ChangeEmailRequest::create([
             'user_id' => auth()->id(),
             'new_email' => strtolower($request->email),
             'activation_code' => strtoupper(Str::random(6)),
@@ -39,7 +39,7 @@ class ChangeEmailController extends Controller
      * Confirm the change email request.
      *
      * @param Request $request
-     * @return \Illiminate\Http\Response
+     * @return \Illuminate\Http\Response
      */
     public function confirm(Request $request)
     {

@@ -128,7 +128,6 @@ class UpdateTourRequest extends FormRequest
             'end_video_url.*' => 'Invalid YouTube URL.',
             'start_message.max' => 'Starting point message is too long.',
             'end_message.max' => 'Starting point message is too long.',
-            'end_message.max' => 'Starting point message is too long.',
             'prize_details.max' => 'Prize details are too long.',
             'prize_instructions.max' => 'Prize instructions are too long.',
             'start_point_id.*' => 'Starting point does not exist.',

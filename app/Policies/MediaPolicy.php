@@ -10,6 +10,13 @@ class MediaPolicy
 {
     use HandlesAuthorization;
 
+    /**
+     * Master check that runs before all other methods.
+     *
+     * @param \App\User $user
+     * @param string $ability
+     * @return bool
+     */
     public function before($user, $ability)
     {
         // if logged into the admin side and is an admin
@@ -22,8 +29,8 @@ class MediaPolicy
     /**
      * Determine whether the user can view the media.
      *
-     * @param  \App\User  $user
-     * @param  \App\Media  $media
+     * @param \App\User $user
+     * @param \App\Media $media
      * @return mixed
      */
     public function view(User $user, Media $media)
@@ -34,7 +41,7 @@ class MediaPolicy
     /**
      * Determine whether the user can create media.
      *
-     * @param  \App\User  $user
+     * @param \App\User $user
      * @return mixed
      */
     public function create(User $user)
@@ -45,8 +52,8 @@ class MediaPolicy
     /**
      * Determine whether the user can update the media.
      *
-     * @param  \App\User  $user
-     * @param  \App\Media  $media
+     * @param \App\User $user
+     * @param \App\Media $media
      * @return mixed
      */
     public function update(User $user, Media $media)
@@ -57,8 +64,8 @@ class MediaPolicy
     /**
      * Determine whether the user can delete the media.
      *
-     * @param  \App\User  $user
-     * @param  \App\Media  $media
+     * @param \App\User $user
+     * @param \App\Media $media
      * @return mixed
      */
     public function delete(User $user, Media $media)

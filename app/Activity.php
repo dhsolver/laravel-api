@@ -21,6 +21,10 @@ class Activity extends Model
      */
     protected $guarded = ['id'];
 
+    // **********************************************************
+    // RELATIONSHIPS
+    // **********************************************************
+
     /**
      * Get all of the owning actionable models.
      *
@@ -30,6 +34,14 @@ class Activity extends Model
     {
         return $this->morphTo();
     }
+
+    // **********************************************************
+    // MUTATORS
+    // **********************************************************
+
+    // **********************************************************
+    // QUERY SCOPES
+    // **********************************************************
 
     /**
      * Get all activity since timestamp.
@@ -66,9 +78,13 @@ class Activity extends Model
             // TODO: handle client timezones?
             $startDate = Carbon::parse($start . ' 00:00:00')->setTimezone('UTC')->toDateTimeString();
             $endDate = Carbon::parse($end . ' 23:59:59')->setTimezone('UTC')->toDateTimeString();
-            return $query->whereBetween('created_at', [$startDate, $endDate]);
+            return $query->whereBetween('activity.created_at', [$startDate, $endDate]);
         } catch (\Exception $ex) {
             return $query;
         }
     }
+
+    // **********************************************************
+    // OTHER FUNCTIONS
+    // **********************************************************
 }

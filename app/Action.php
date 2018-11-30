@@ -4,6 +4,16 @@ namespace App;
 
 class Action
 {
+    /*
+    |--------------------------------------------------------------------------
+    | Action Constants
+    |--------------------------------------------------------------------------
+    |
+    | These constants are helpers for the the 'action' field in
+    | the analytics system.
+    |
+    */
+
     const DOWNLOAD = 'download';
     const START = 'start';
     const STOP = 'stop';

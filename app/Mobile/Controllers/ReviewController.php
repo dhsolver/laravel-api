@@ -6,8 +6,6 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Mobile\Requests\CreateReviewRequest;
 use App\Mobile\Resources\ReviewResource;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Review;
 use App\Tour;
 
 class ReviewController extends Controller
@@ -15,7 +13,8 @@ class ReviewController extends Controller
     /**
      * Display a paginated list of the Tours reviews.
      *
-     * @return \Illuminate\Http\Response
+     * @param \App\Tour $tour
+     * @return \Illuminate\Http\Resources\Json\ResourceCollection
      */
     public function index(Tour $tour)
     {
@@ -27,8 +26,10 @@ class ReviewController extends Controller
     /**
      * Upsert a review for the Tour.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param CreateReviewRequest $request
+     * @param \App\Tour $tour
      * @return \Illuminate\Http\Response
+     * @throws ModelNotFoundException
      */
     public function store(CreateReviewRequest $request, Tour $tour)
     {
@@ -50,7 +51,7 @@ class ReviewController extends Controller
     /**
      * Remove the user's review.
      *
-     * @param  \App\Review  $review
+     * @param \App\Tour $tour
      * @return \Illuminate\Http\Response
      */
     public function destroy(Tour $tour)

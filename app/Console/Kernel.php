@@ -27,8 +27,9 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('media:clean')
-                 ->daily();
+        $schedule->command('media:clean')->daily();
+
+        $schedule->command('analytics:summary')->everyTenMinutes();
     }
 
     /**

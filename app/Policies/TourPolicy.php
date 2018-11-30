@@ -10,6 +10,13 @@ class TourPolicy
 {
     use HandlesAuthorization;
 
+    /**
+     * Master check that runs before all other methods.
+     *
+     * @param \App\User $user
+     * @param string $ability
+     * @return bool
+     */
     public function before($user, $ability)
     {
         // if logged into the admin side and is an admin
@@ -22,8 +29,8 @@ class TourPolicy
     /**
      * Determine whether the user can view the tour.
      *
-     * @param  \App\User  $user
-     * @param  \App\Tour  $tour
+     * @param \App\User $user
+     * @param \App\Tour $tour
      * @return mixed
      */
     public function view(User $user, Tour $tour)
@@ -34,7 +41,7 @@ class TourPolicy
     /**
      * Determine whether the user can create tours.
      *
-     * @param  \App\User  $user
+     * @param \App\User $user
      * @return mixed
      */
     public function create(User $user)
@@ -45,8 +52,8 @@ class TourPolicy
     /**
      * Determine whether the user can update the tour.
      *
-     * @param  \App\User  $user
-     * @param  \App\Tour  $tour
+     * @param \App\User $user
+     * @param \App\Tour $tour
      * @return mixed
      */
     public function update(User $user, Tour $tour)
@@ -57,8 +64,8 @@ class TourPolicy
     /**
      * Determine whether the user can delete the tour.
      *
-     * @param  \App\User  $user
-     * @param  \App\Tour  $tour
+     * @param \App\User $user
+     * @param \App\Tour $tour
      * @return mixed
      */
     public function delete(User $user, Tour $tour)

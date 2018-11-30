@@ -1,10 +1,10 @@
 <?php
 
 use Faker\Generator as Faker;
+use App\StopChoice;
 
-$factory->define(App\StopChoice::class, function (Faker $faker) {
+$factory->define(StopChoice::class, function (Faker $faker) {
     return [
         'answer' => $faker->sentence,
-        // 'order' => 1,
     ];
 });

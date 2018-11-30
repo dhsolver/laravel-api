@@ -16,7 +16,7 @@ class TourController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \App\Http\Resources\TourCollection
+     * @return \Illuminate\Http\Resources\Json\ResourceCollection
      */
     public function index()
     {
@@ -28,8 +28,8 @@ class TourController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \App\Http\Requests\CreateTourRequest  $request
-     * @return \App\Http\Responses\SuccessResponse|App\Http\Responses\ErrorResponse
+     * @param \App\Http\Requests\CreateTourRequest $request
+     * @return \Illuminate\Http\Response
      */
     public function store(CreateTourRequest $request)
     {
@@ -45,20 +45,20 @@ class TourController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Tour  $tour
-     * @return \App\Http\Resources\TourResource
+     * @param \App\Tour $tour
+     * @return \Illuminate\Http\Response
      */
     public function show(Tour $tour)
     {
-        return new TourResource($tour);
+        return response()->json(new TourResource($tour));
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \App\Http\Requests\UpdateTourRequest  $request
-     * @param  \App\Tour  $tour
-     * @return \App\Http\Responses\SuccessResponse|App\Http\Responses\ErrorResponse
+     * @param UpdateTourRequest $request
+     * @param \App\Tour $tour
+     * @return \Illuminate\Http\Response
      */
     public function update(UpdateTourRequest $request, Tour $tour)
     {
@@ -90,8 +90,9 @@ class TourController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Tour  $tour
-     * @return \App\Http\Responses\SuccessResponse|App\Http\Responses\ErrorResponse
+     * @param \App\Tour $tour
+     * @return \Illuminate\Http\Response
+     * @throws \Exception
      */
     public function destroy(Tour $tour)
     {
@@ -105,8 +106,9 @@ class TourController extends Controller
     /**
      * Updates the order of all Tour's stops.
      *
-     * @param  \App\Tour  $tour
-     * @return \App\Http\Responses\SuccessResponse|App\Http\Responses\ErrorResponse
+     * @param UpdateStopOrderRequest $request
+     * @param \App\Tour $tour
+     * @return \Illuminate\Http\Response
      */
     public function stopOrder(UpdateStopOrderRequest $request, Tour $tour)
     {
@@ -123,7 +125,7 @@ class TourController extends Controller
      * Submit tour for publish approval.
      *
      * @param Tour $tour
-     * @return Illuminate\Http\Response
+     * @return \Illuminate\Http\Response
      */
     public function publish(Tour $tour)
     {
@@ -165,10 +167,10 @@ class TourController extends Controller
     }
 
     /**
-     * Unpublish the tour, or cancel a publish request.
+     * Un-publish the tour, or cancel a publish request.
      *
      * @param Tour $tour
-     * @return Illuminate\Http\Response
+     * @return \Illuminate\Http\Response
      */
     public function unpublish(Tour $tour)
     {

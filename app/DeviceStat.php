@@ -2,10 +2,10 @@
 
 namespace App;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Carbon;
 
-class TourStat extends Model
+class DeviceStat extends Model
 {
     /**
      * The attributes that aren't mass assignable.
@@ -37,19 +37,8 @@ class TourStat extends Model
         'final' => 'boolean',
         'actions' => 'integer',
         'downloads' => 'integer',
-        'time_spent' => 'integer',
+        'visitors' => 'integer',
     ];
-
-    /**
-     * The "booting" method of the model.
-     *
-     * @return void
-     */
-    protected static function boot()
-    {
-        //
-        parent::boot();
-    }
 
     // **********************************************************
     // RELATIONSHIPS
@@ -108,6 +97,21 @@ class TourStat extends Model
         } catch (\Exception $ex) {
             return $query;
         }
+    }
+
+    /**
+     * Query for the given device type and operating system.
+     *
+     * @param \Illuminate\Database\Query\Builder query
+     * @return \Illuminate\Database\Query\Builder
+     */
+    public function scopeForDevice($query, $os, $deviceType)
+    {
+        if (empty($os) || empty($deviceType)) {
+            return $query;
+        }
+
+        return $query->where('os', $os)->where('device_type', $deviceType);
     }
 
     // **********************************************************

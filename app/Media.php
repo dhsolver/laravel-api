@@ -33,20 +33,28 @@ class Media extends Model
         'length' => 'float',
     ];
 
+    // **********************************************************
+    // RELATIONSHIPS
+    // **********************************************************
+
     /**
      * Defines the user relationship for who uploaded the media.
      *
-     * @return void
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
+    // **********************************************************
+    // MUTATORS
+    // **********************************************************
+
     /**
      * Get the media's full URL.
      *
-     * @return void
+     * @return string
      */
     public function getPathAttribute()
     {
@@ -56,7 +64,7 @@ class Media extends Model
     /**
      * Get the media's full URL.
      *
-     * @return void
+     * @return string
      */
     public function getSmallPathAttribute()
     {
@@ -66,12 +74,20 @@ class Media extends Model
     /**
      * Get the media's full URL.
      *
-     * @return void
+     * @return string
      */
     public function getIconPathAttribute()
     {
         return config('filesystems.disks.s3.url') . $this->modFilename($this->file, '_ico');
     }
+
+    // **********************************************************
+    // QUERY SCOPES
+    // **********************************************************
+
+    // **********************************************************
+    // OTHER FUNCTIONS
+    // **********************************************************
 
     /**
      * Add string to the end of the filename.

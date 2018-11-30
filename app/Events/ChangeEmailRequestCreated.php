@@ -5,7 +5,7 @@ namespace App\Events;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use App\ChangeEmailRequest;
+use App\Http\Requests\ChangeEmailRequest;
 
 class ChangeEmailRequestCreated
 {

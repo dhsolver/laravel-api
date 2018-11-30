@@ -2,7 +2,7 @@
 
 namespace App\Reports;
 
-use App\Action;
+use App\StopStat;
 
 class StopOverviewReport extends BaseReport
 {
@@ -21,7 +21,7 @@ class StopOverviewReport extends BaseReport
     protected $end_date;
 
     /**
-     * Filter the reuslts to between two dates.
+     * Filter the results to between two dates.
      *
      * @param string $start
      * @param string $end
@@ -43,44 +43,26 @@ class StopOverviewReport extends BaseReport
     public function run()
     {
         $results = [];
+
+        $stops = $this->tour->stops->pluck('id');
+
+        $stats = StopStat::whereIn('stop_id', $stops)
+            ->betweenDates($this->start_date, $this->end_date)
+            ->groupBy('stop_id')
+            ->selectRaw('sum(visits) as visits, sum(time_spent) as time_spent, sum(actions) as actions, stop_id')
+            ->get();
+
         foreach ($this->tour->stops as $stop) {
-            $actions = $stop->activity()->whereIn('action', [Action::LIKE, Action::SHARE])
-                ->betweenDates($this->start_date, $this->end_date)
-                ->count();
+            $stat = $stats->where('stop_id', $stop->id)->first();
 
-            $visits = $stop->activity()->where('action', Action::VISIT)
-                ->betweenDates($this->start_date, $this->end_date)
-                ->count();
-
-            $starts = $stop->activity()->where('action', Action::START)
-                ->betweenDates($this->start_date, $this->end_date)
-                ->get();
-
-            $finishes = $stop->activity()->where('action', Action::STOP)
-                ->betweenDates($this->start_date, $this->end_date)
-                ->get();
-
-            $timeSpent = 0;
-            foreach ($starts as $s) {
-                $f = $finishes->where('user_id', $s->user_id)
-                    ->where('created_at', '>', $s->created_at)
-                    ->sortBy('created_at')
-                    ->first();
-
-                // skip starts that have no finish
-                if (empty($f)) {
-                    continue;
-                }
-
-                $timeSpent += $s->created_at->diffInMinutes($f->created_at);
-            }
-
-            $results[$stop->id] = [
+            array_push($results, [
+                'id' => $stop->id,
+                'order' => $stop->order,
                 'title' => $stop->title,
-                'time' => $timeSpent,
-                'visits' => $visits,
-                'actions' => $actions,
-            ];
+                'time' => (int) $stat['time_spent'],
+                'visits' => (int) $stat['visits'],
+                'actions' => (int) $stat['actions'],
+            ]);
         }
 
         return ['stops' => $results];

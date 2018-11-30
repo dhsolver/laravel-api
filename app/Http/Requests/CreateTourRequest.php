@@ -52,6 +52,11 @@ class CreateTourRequest extends FormRequest
         return $rules;
     }
 
+    /**
+     * Get the validation messages.
+     *
+     * @return array
+     */
     public function messages()
     {
         return [

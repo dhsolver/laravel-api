@@ -121,7 +121,7 @@ class Tour extends Model
     }
 
     /**
-     * Defines the relatioship of all the tours stops
+     * Defines the relationship of all the tours stops
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
@@ -131,61 +131,121 @@ class Tour extends Model
             ->ordered();
     }
 
+    /**
+     * Get the main image relation.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
     public function mainImage()
     {
         return $this->hasOne(Media::class, 'id', 'main_image_id');
     }
 
+    /**
+     * Get the first image relation.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
     public function image1()
     {
         return $this->hasOne(Media::class, 'id', 'image1_id');
     }
 
+    /**
+     * Get the second image relation.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
     public function image2()
     {
         return $this->hasOne(Media::class, 'id', 'image2_id');
     }
 
+    /**
+     * Get the third image relation.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
     public function image3()
     {
         return $this->hasOne(Media::class, 'id', 'image3_id');
     }
 
+    /**
+     * Get the start image relation.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
     public function startImage()
     {
         return $this->hasOne(Media::class, 'id', 'start_image_id');
     }
 
+    /**
+     * Get the end image relation.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
     public function endImage()
     {
         return $this->hasOne(Media::class, 'id', 'end_image_id');
     }
 
+    /**
+     * Get the map pin image relation.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
     public function pinImage()
     {
         return $this->hasOne(Media::class, 'id', 'pin_image_id');
     }
 
+    /**
+     * Get the trophy image relation.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
     public function trophyImage()
     {
         return $this->hasOne(Media::class, 'id', 'trophy_image_id');
     }
 
+    /**
+     * Get the intro audio relation.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
     public function introAudio()
     {
         return $this->hasOne(Media::class, 'id', 'intro_audio_id');
     }
 
+    /**
+     * Get the background audio relation.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
     public function backgroundAudio()
     {
         return $this->hasOne(Media::class, 'id', 'background_audio_id');
     }
 
+    /**
+     * Get the TourStop starting point relation.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
     public function startPoint()
     {
         return $this->hasOne(TourStop::class, 'id', 'start_point_id');
     }
 
+    /**
+     * Get the TourStop end point relation.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
     public function endPoint()
     {
         return $this->hasOne(TourStop::class, 'id', 'end_point_id');
@@ -230,7 +290,7 @@ class Tour extends Model
      */
     public function reviews()
     {
-        return $this->hasMany(\App\Review::class);
+        return $this->hasMany(Review::class);
     }
 
     /**
@@ -243,6 +303,26 @@ class Tour extends Model
         return $this->hasMany(TourStat::class);
     }
 
+    /**
+     * Get the device stats summary relationship.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+    */
+    public function deviceStats()
+    {
+        return $this->hasMany(DeviceStat::class);
+    }
+
+    /**
+     * Get the Tour's participants relation.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function participants()
+    {
+        return $this->belongsToMany(User::class, 'user_joined_tours', 'tour_id', 'user_id');
+    }
+
     // **********************************************************
     // MUTATORS
     // **********************************************************
@@ -250,7 +330,7 @@ class Tour extends Model
     /**
      * Get the tour's status.
      *
-     * @return void
+     * @return string
      */
     public function getStatusAttribute()
     {
@@ -282,7 +362,7 @@ class Tour extends Model
     /**
      * Returns the full facebook url.
      *
-     * @return void
+     * @return string
      */
     public function getFacebookUrlPathAttribute()
     {
@@ -296,7 +376,7 @@ class Tour extends Model
     /**
      * Returns the full twitter url.
      *
-     * @return void
+     * @return string
      */
     public function getTwitterUrlPathAttribute()
     {
@@ -310,7 +390,7 @@ class Tour extends Model
     /**
      * Returns the full instagram url.
      *
-     * @return void
+     * @return string
      */
     public function getInstagramUrlPathAttribute()
     {
@@ -324,7 +404,7 @@ class Tour extends Model
     /**
      * Gets whether the tour has been publishes or not.
      *
-     * @return void
+     * @return bool
      */
     public function getIsPublishedAttribute()
     {
@@ -332,9 +412,9 @@ class Tour extends Model
     }
 
     /**
-     * Mutator for video_url
+     * Mutator for video_url.
      *
-     * @param [String] $value
+     * @param string $value
      * @return void
      */
     public function setVideoUrlAttribute($value)
@@ -343,9 +423,9 @@ class Tour extends Model
     }
 
     /**
-     * Mutator for start_video_url
+     * Mutator for start_video_url.
      *
-     * @param [String] $value
+     * @param string $value
      * @return void
      */
     public function setStartVideoUrlAttribute($value)
@@ -354,9 +434,9 @@ class Tour extends Model
     }
 
     /**
-     * Mutator for end_video_url
+     * Mutator for end_video_url.
      *
-     * @param [String] $value
+     * @param string $value
      * @return void
      */
     public function setEndVideoUrlAttribute($value)
@@ -367,7 +447,7 @@ class Tour extends Model
     /**
      * Mutator for facebook_url.
      *
-     * @param [type] $value
+     * @param string $value
      * @return void
      */
     public function setFacebookUrlAttribute($value)
@@ -382,7 +462,7 @@ class Tour extends Model
     /**
      * Mutator for instagram_url.
      *
-     * @param [type] $value
+     * @param string $value
      * @return void
      */
     public function setInstagramUrlAttribute($value)
@@ -397,7 +477,7 @@ class Tour extends Model
     /**
      * Mutator for twitter_url.
      *
-     * @param [type] $value
+     * @param string $value
      * @return void
      */
     public function setTwitterUrlAttribute($value)
@@ -422,7 +502,7 @@ class Tour extends Model
     /**
      * Get the list of stop ids in order.
      *
-     * @return void
+     * @return array
      */
     public function getStopOrderAttribute()
     {
@@ -451,7 +531,7 @@ class Tour extends Model
 
         $distanceQuery = "round(3959 * acos( cos( radians($lat) ) * cos( radians(locations.latitude) ) * cos( radians(locations.longitude) - radians($lon)) + sin(radians($lat)) * sin( radians(locations.latitude) )), 2)";
 
-        return \App\Tour::leftJoin('locations', function ($join) {
+        return Tour::leftJoin('locations', function ($join) {
             $join->on('tours.id', '=', 'locations.locationable_id')
                 ->where('locations.locationable_type', '=', "App\Tour");
         })
@@ -461,6 +541,13 @@ class Tour extends Model
             ->orderBy('distance');
     }
 
+    /**
+     * Full text search of title and description fields.
+     *
+     * @param Illuminate\Database\Query\Builder $query
+     * @param string $keyword
+     * @return Illuminate\Database\Query\Builder
+     */
     public function scopeSearch($query, $keyword)
     {
         if (empty($keyword)) {
@@ -497,6 +584,11 @@ class Tour extends Model
         return $this->_calculator;
     }
 
+    /**
+     * Run Tour Auditor on current Tour.
+     *
+     * @return array|bool
+     */
     public function audit()
     {
         $auditor = new TourAuditor($this);
@@ -511,11 +603,11 @@ class Tour extends Model
     /**
      * Publishes the tour.
      *
-     * @return void
+     * @return bool
      */
     public function publish()
     {
-        $this->update([
+        return $this->update([
             'published_at' => Carbon::now(),
             'last_published_at' => Carbon::now(),
         ]);
@@ -524,7 +616,7 @@ class Tour extends Model
     /**
      * Creates a publish request for the tour.
      *
-     * @return void
+     * @return bool
      */
     public function submitForPublishing()
     {
@@ -534,13 +626,15 @@ class Tour extends Model
         ])) {
             return true;
         }
+
+        return false;
     }
 
     /**
      * Returns the next free number in the order sequence
      * for the Tour's stops.
      *
-     * @return void
+     * @return int
      */
     public function getNextStopOrder()
     {
@@ -555,7 +649,7 @@ class Tour extends Model
      * Increases the order at the given index for all stops
      * that belong to this tour.
      *
-     * @param [type] $order
+     * @param int $order
      * @return void
      */
     public function increaseOrderAt($order)
@@ -595,16 +689,6 @@ class Tour extends Model
     public function isFree()
     {
         return $this->pricing_type == 'free';
-    }
-
-    /**
-     * Get the Tour's participants relation.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-     */
-    public function participants()
-    {
-        return $this->belongsToMany(User::class, 'user_joined_tours', 'tour_id', 'user_id');
     }
 
     /**

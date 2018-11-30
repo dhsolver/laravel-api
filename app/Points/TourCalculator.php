@@ -7,31 +7,6 @@ use App\ScoreCard;
 class TourCalculator extends DistanceCalculator implements IPointsCalculator
 {
     /**
-     * The adventure Tour.
-     *
-     * @var \App\Tour
-     */
-    public $tour;
-
-    /**
-     * The Tour's stops, in order, with all loaded data.
-     *
-     * @var \App\TourStop
-     */
-    public $stops;
-
-    /**
-     * Create a new instance.
-     *
-     * @param \App\Tour tour
-     */
-    public function __construct($tour)
-    {
-        $this->tour = $tour;
-        $this->stops = $tour->stops()->ordered()->get();
-    }
-
-    /**
      * Get the total number of stops on the Tour.
      *
      * @return int

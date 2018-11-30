@@ -4,7 +4,6 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use App\Media;
-use App\Tour;
 use Carbon\Carbon;
 
 class CleanMedia extends Command
@@ -76,6 +75,13 @@ class CleanMedia extends Command
         echo "Media files cleaned.\r\n";
     }
 
+    /**
+     * Enumerate a collection of media object and remove the files
+     * from cloud storage.
+     *
+     * @param \Illuminate\Support\Collection $media
+     * @return void
+     */
     public function deleteFilesFromStorage($media)
     {
         foreach ($media as $file) {
@@ -83,6 +89,14 @@ class CleanMedia extends Command
         }
     }
 
+    /**
+     * Generic call to get relation IDs based on the table
+     * and field name.
+     *
+     * @param string $table
+     * @param string $field
+     * @return array
+     */
     public function queryIds($table, $field)
     {
         return \DB::table($table)->select($field)->whereNotNull($field)->get()->map(function ($item) use ($field) {
@@ -90,11 +104,23 @@ class CleanMedia extends Command
         })->toArray();
     }
 
+    /**
+     * Get array of Stop IDs that fill the given field name.
+     *
+     * @param string $field
+     * @return array
+     */
     public function getStopIds($field)
     {
         return $this->queryIds('tour_stops', $field);
     }
 
+    /**
+     * Get array of Tour IDs that fill the given field name.
+     *
+     * @param string $field
+     * @return array
+     */
     public function getTourIds($field)
     {
         return $this->queryIds('tours', $field);

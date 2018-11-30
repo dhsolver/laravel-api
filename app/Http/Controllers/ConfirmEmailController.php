@@ -9,8 +9,7 @@ class ConfirmEmailController extends Controller
     /**
      * Validate email confirmation token.
      *
-     * @param string $token
-     * @return void
+     * @return \Illuminate\Http\Response
      */
     public function confirm()
     {

@@ -10,12 +10,25 @@ class ResetPasswordNotification extends Notification
 {
     use Queueable;
 
+    /**
+     * The password reset token.
+     *
+     * @var string
+     */
     public $token;
+
+    /**
+     * The email to send the notification to.
+     *
+     * @var string
+     */
     public $email;
 
     /**
      * Create a new notification instance.
      *
+     * @param string $token
+     * @param string $email
      * @return void
      */
     public function __construct($token, $email)
@@ -46,7 +59,7 @@ class ResetPasswordNotification extends Notification
         $url = config('junket.password_reset_url') . '?token=' . $this->token . '&email=' . $this->email;
 
         return (new MailMessage)
-            ->line('A request has been submited to reset the password for your account.  If you did not submit this request, you can ignore this email.')
+            ->line('A request has been submitted to reset the password for your account.  If you did not submit this request, you can ignore this email.')
             ->action('Reset Your Password', $url);
     }
 }

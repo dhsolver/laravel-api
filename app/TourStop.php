@@ -73,31 +73,61 @@ class TourStop extends Model
             ->orderBy('order');
     }
 
+    /**
+     * Get the main image relation.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
     public function mainImage()
     {
         return $this->hasOne(Media::class, 'id', 'main_image_id');
     }
 
+    /**
+     * Get the first image relation.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
     public function image1()
     {
         return $this->hasOne(Media::class, 'id', 'image1_id');
     }
 
+    /**
+     * Get the second image relation.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
     public function image2()
     {
         return $this->hasOne(Media::class, 'id', 'image2_id');
     }
 
+    /**
+     * Get the third image relation.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
     public function image3()
     {
         return $this->hasOne(Media::class, 'id', 'image3_id');
     }
 
+    /**
+     * Get the intro audio relation.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
     public function introAudio()
     {
         return $this->hasOne(Media::class, 'id', 'intro_audio_id');
     }
 
+    /**
+     * Get the background audio relation.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
     public function backgroundAudio()
     {
         return $this->hasOne(Media::class, 'id', 'background_audio_id');
@@ -117,7 +147,7 @@ class TourStop extends Model
     /**
      * Get all the stops's next routes.
      *
-     * @return void
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function routes()
     {
@@ -155,11 +185,11 @@ class TourStop extends Model
     // **********************************************************
 
     /**
-     * Defines the default ordering for stops using order column.
+     * Order the stops by their order column.
      *
-     * @param [type] $query
-     * @return void
-     */
+     * @param Illuminate\Database\Query\Builder $query
+     * @return Illuminate\Database\Query\Builder
+    */
     public function scopeOrdered($query)
     {
         return $query->orderBy('order', 'ASC');
@@ -172,8 +202,8 @@ class TourStop extends Model
     /**
      * Creates or updates all choices using the given array.
      *
-     * @param [type] $newChoices
-     * @return void
+     * @param array] $newChoices
+     * @return bool
      */
     public function updateChoices($newChoices)
     {
@@ -226,9 +256,9 @@ class TourStop extends Model
     }
 
     /**
-     * Check if this stop is the starting poit for a Tour.
+     * Check if this stop is the starting point for a Tour.
      *
-     * @return boolean
+     * @return bool
      */
     public function isStartingPoint()
     {
@@ -239,7 +269,7 @@ class TourStop extends Model
     /**
      * Check if this stop is the end point for a Tour.
      *
-     * @return boolean
+     * @return bool
      */
     public function isEndingPoint()
     {

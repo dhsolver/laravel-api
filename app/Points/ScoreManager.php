@@ -56,7 +56,7 @@ class ScoreManager
      * Create user score card using the current user and
      * tour on the instance.
      *
-     * @param \App\User $user
+     * @param \App\User|\Illuminate\Contracts\Auth\Authenticatable $user
      * @param \App\Tour $tour
      * @param \Carbon\Carbon $startTime
      * @return mixed

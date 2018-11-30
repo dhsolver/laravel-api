@@ -14,7 +14,7 @@ class TourRoute extends Model
     protected $guarded = ['id'];
 
     /**
-     * Relatioships to always load with the model.
+     * The relationships to always load with the model.
      *
      * @var array
      */
@@ -37,6 +37,8 @@ class TourRoute extends Model
      */
     public static function boot()
     {
+        parent::boot();
+
         // auto-update route order on creation
         self::creating(function ($route) {
             if (empty($route->order)) {
@@ -49,6 +51,11 @@ class TourRoute extends Model
     // RELATIONSHIPS
     // **********************************************************
 
+    /**
+     * Get the Tour relationship.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+    */
     public function tour()
     {
         return $this->belongsTo(Tour::class);
@@ -70,7 +77,8 @@ class TourRoute extends Model
      * Returns the next free number in the order sequence
      * for the given TourStop's Choices.
      *
-     * @return void
+     * @param int $tourId
+     * @return int
      */
     public static function getNextOrder($tourId)
     {

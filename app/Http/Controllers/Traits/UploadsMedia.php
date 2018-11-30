@@ -41,7 +41,7 @@ trait UploadsMedia
      * Generates unique hash based filename.
      *
      * @param string $ext
-     * @return void
+     * @return string
      */
     public function generateFilename($ext = 'jpg')
     {
@@ -63,9 +63,11 @@ trait UploadsMedia
     /**
      * Store the uploaded file to the proper S3 location.
      *
-     * @param [type] $file
-     * @param [type] $dir
-     * @return void
+     * @param \Illuminate\Http\UploadedFile $file
+     * @param string $dir
+     * @param string $ext
+     * @return bool|string
+     * @throws \App\Exceptions\InvalidImageException
      */
     public function storeFile($file, $dir, $ext = null)
     {
@@ -84,9 +86,13 @@ trait UploadsMedia
     /**
      * Process the given image and store all versions.
      *
-     * @param [type] $file
-     * @param [type] $dir
-     * @return void
+     * @param \Illuminate\Http\UploadedFile $file
+     * @param string $dir
+     * @param string $ext
+     * @param bool $sizeUp
+     * @return string|bool
+     * @throws \App\Exceptions\InvalidImageException
+     * @throws \App\Exceptions\ImageTooSmallException
      */
     public function storeImage($file, $dir, $ext = null, $sizeUp = false)
     {
@@ -154,9 +160,12 @@ trait UploadsMedia
     /**
      * Process the given icon image and store all versions.
      *
-     * @param [type] $file
-     * @param [type] $dir
-     * @return void
+     * @param \Illuminate\Http\UploadedFile $file
+     * @param string $dir
+     * @param string $ext
+     * @return string|bool
+     * @throws \App\Exceptions\InvalidImageException
+     * @throws \App\Exceptions\ImageTooSmallException
      */
     public function storeIcon($file, $dir, $ext = null)
     {
@@ -214,8 +223,10 @@ trait UploadsMedia
     /**
      * Process the given avatar image and store.
      *
-     * @param string $file
-     * @return string
+     * @param \Illuminate\Http\UploadedFile $file
+     * @param string $ext
+     * @return string|bool
+     * @throws \App\Exceptions\InvalidImageException
      */
     public function storeAvatar($file, $ext = null)
     {
@@ -246,9 +257,9 @@ trait UploadsMedia
      * Accepts either an object of Image class or a string filename.
      *
      * @param string|Intervention\Image\Image $imageOrFilename
+     * @return bool
      * @param array $mimes
-     * @throws InvalidImageException
-     * @return void
+     * @throws \App\Exceptions\InvalidImageException
      */
     public function validateMime($imageOrFilename, $mimes)
     {

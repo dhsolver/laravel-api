@@ -4,7 +4,6 @@ namespace App\Traits;
 
 use App\User;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Spatie\Permission\Models\Role;
 
 trait IsUserRole
 {
@@ -42,6 +41,11 @@ trait IsUserRole
         $this->appendAttributesToRoleModel();
     }
 
+    /**
+     * Add user model to with array
+     *
+     * @return void
+     */
     protected function alwaysIncludeUserRelationship()
     {
         if (empty($this->with)) {
@@ -49,16 +53,21 @@ trait IsUserRole
         }
     }
 
+    /**
+     * Append user attributes to the model.
+     *
+     * @return void
+     */
     protected function appendAttributesToRoleModel()
     {
         $this->append(['name', 'email', 'role', 'fb_id', 'subscribe_override', 'avatar_url', 'zipcode']);
     }
 
     /**
-     * Forward the magic getter to the related User model if property is not found in the Role model
+     * Forward the magic getter to the related User model if property is not found in the Role model.
      *
      * @param $name
-     * @return null
+     * @return mixed
      */
     public function __get($name)
     {
@@ -150,36 +159,71 @@ trait IsUserRole
         return $role == 'mobileuser' ? 'user' : $role;
     }
 
+    /**
+     * Get the user name attribute.
+     *
+     * @return mixed
+     */
     public function getNameAttribute()
     {
         return $this->user->name;
     }
 
+    /**
+     * Get the user email attribute.
+     *
+     * @return mixed
+     */
     public function getEmailAttribute()
     {
         return $this->user->email;
     }
 
+    /**
+     * Get the user role attribute.
+     *
+     * @return mixed
+     */
     public function getRoleAttribute()
     {
         return $this->user->role;
     }
 
+    /**
+     * Get the user fb_id attribute.
+     *
+     * @return mixed
+     */
     public function getFbIdAttribute()
     {
         return $this->user->fb_id;
     }
 
+    /**
+     * Get the user subscribe_override attribute.
+     *
+     * @return mixed
+     */
     public function getSubscribeOverrideAttribute()
     {
         return $this->user->subscribe_override;
     }
 
+    /**
+     * Get the user avatar_url attribute.
+     *
+     * @return mixed
+     */
     public function getAvatarUrlAttribute()
     {
         return $this->user->avatar_url;
     }
 
+    /**
+     * Get the user zipcode attribute.
+     *
+     * @return mixed
+     */
     public function getZipcodeAttribute()
     {
         return $this->user->zipcode;

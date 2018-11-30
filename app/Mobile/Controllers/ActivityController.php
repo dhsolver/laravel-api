@@ -2,13 +2,11 @@
 
 namespace App\Mobile\Controllers;
 
-use App\Exceptions\MissingScoreCardException;
 use App\Http\Controllers\Controller;
 use App\Tour;
 use App\Http\Requests\RecordActivityRequest;
 use App\TourStop;
 use Carbon\Carbon;
-use App\Activity;
 
 class ActivityController extends Controller
 {
@@ -18,7 +16,6 @@ class ActivityController extends Controller
      * @param Tour $tour
      * @param RecordActivityRequest $request
      * @return \Illuminate\Http\Response
-     * @throws MissingScoreCardException
      */
     public function tour(Tour $tour, RecordActivityRequest $request)
     {
@@ -45,8 +42,9 @@ class ActivityController extends Controller
     /**
      * Track Stop related activity.
      *
+     * @param \App\TourStop $stop
+     * @param RecordActivityRequest $request
      * @return \Illuminate\Http\Response
-     * @throws MissingScoreCardException
      */
     public function stop(TourStop $stop, RecordActivityRequest $request)
     {

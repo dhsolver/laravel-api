@@ -2,7 +2,6 @@
 
 namespace App\Mobile\Controllers;
 
-use Illuminate\Http\Request;
 use App\Mobile\Resources\ProfileResource;
 use App\User;
 use App\Mobile\Requests\UpdateProfileRequest;
@@ -14,31 +13,32 @@ class ProfileController extends Controller
     /**
      * Get the given user's profile.
      *
-     * @param  \App\User  $user
+     * @param \App\User $user
      * @return \Illuminate\Http\Response
      */
     public function show(User $user)
     {
-        return new ProfileResource($user);
+        return response()->json(new ProfileResource($user));
     }
 
     /**
      * Update the current user's profile.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param UpdateProfileRequest $request
      * @return \Illuminate\Http\Response
      */
     public function update(UpdateProfileRequest $request)
     {
         auth()->user()->update($request->validated());
 
-        return new ProfileResource(auth()->user()->fresh());
+        return response()->json(new ProfileResource(auth()->user()->fresh()));
     }
 
     /**
      * Change the user's profile.
      *
-     * @return void
+     * @param UpdatePasswordRequest $request
+     * @return \Illuminate\Http\Response
      */
     public function password(UpdatePasswordRequest $request)
     {

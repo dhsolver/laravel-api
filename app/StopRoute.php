@@ -14,7 +14,7 @@ class StopRoute extends Model
     protected $guarded = ['id'];
 
     /**
-     * Relatioships to always load with the model.
+     * The relationships to always load with the model.
      *
      * @var array
      */
@@ -37,6 +37,8 @@ class StopRoute extends Model
      */
     public static function boot()
     {
+        parent::boot();
+
         // auto-update route order on creation
         self::creating(function ($route) {
             if (empty($route->order)) {
@@ -49,6 +51,11 @@ class StopRoute extends Model
     // RELATIONSHIPS
     // **********************************************************
 
+    /**
+     * Get the TourStop relationship.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
     public function stop()
     {
         return $this->belongsTo(TourStop::class);
@@ -57,7 +64,7 @@ class StopRoute extends Model
     /**
      * A stop has one next stop.
      *
-     * @return void
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
     public function nextStop()
     {
@@ -91,7 +98,9 @@ class StopRoute extends Model
      * Returns the next free number in the order sequence
      * for the given Stop/NextStop order
      *
-     * @return void
+     * @param int $stopId
+     * @param int $nextId
+     * @return int
      */
     public static function getNextOrder($stopId, $nextId)
     {

@@ -103,6 +103,11 @@ class AuthController extends Controller
         return response()->json(new UserSessionResource(auth()->user()));
     }
 
+    /**
+     * Detach FB account information from authenticated user.
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function facebookDetach()
     {
         auth()->user()->update([

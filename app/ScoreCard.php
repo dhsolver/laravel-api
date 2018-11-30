@@ -61,7 +61,7 @@ class ScoreCard extends Model
     */
     public function tour()
     {
-        return $this->belongsTo(\App\Tour::class);
+        return $this->belongsTo(Tour::class);
     }
 
     /**
@@ -71,7 +71,7 @@ class ScoreCard extends Model
     */
     public function user()
     {
-        return $this->belongsTo(\App\User::class);
+        return $this->belongsTo(User::class);
     }
 
     /**
