@@ -28,6 +28,7 @@ class ProfileResource extends JsonResource
             $data['zipcode'] = $this->zipcode;
             $data['fb_id'] = $this->fb_id;
             $data['subscribe_override'] = $this->subscribe_override;
+            $data['favorites'] = $this->favorites->count();
 
             $data['stats'] = [
                 'points' => $this->stats->points,

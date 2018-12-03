@@ -62,4 +62,26 @@ class UserFavoritesTest extends TestCase
             ->assertJsonFragment(['title' => $otherTour->title])
             ->assertJsonCount(2, 'favorites');
     }
+
+    /** @test */
+    public function a_users_profile_should_contain_the_number_of_favorites()
+    {
+        $this->signIn('user');
+
+        $this->getJson(route('mobile.profile.show', ['user' => $this->signInUser]))
+            ->assertStatus(200)
+            ->assertJsonFragment(['favorites' => 0])
+            ->assertSee($this->signInUser->email);
+
+        $tour = factory(Tour::class)->states('published')->create();
+        $this->signInUser->user->favorites()->attach($tour);
+
+        $tour = factory(Tour::class)->states('published')->create();
+        $this->signInUser->user->favorites()->attach($tour);
+
+        $this->getJson(route('mobile.profile.show', ['user' => $this->signInUser]))
+            ->assertStatus(200)
+            ->assertJsonFragment(['favorites' => 2])
+            ->assertSee($this->signInUser->email);
+    }
 }
