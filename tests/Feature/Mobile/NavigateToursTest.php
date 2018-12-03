@@ -198,4 +198,24 @@ class NavigateToursTest extends TestCase
             ->assertJsonFragment(['title' => 'Test Tour'])
             ->assertStatus(200);
     }
+
+    /** @test */
+    public function tour_listings_should_indicate_authenticated_users_favorite_tours()
+    {
+        $this->withoutExceptionHandling();
+
+        $this->signIn('user');
+
+        $tour = factory(Tour::class)->states('published')->create();
+
+        $this->getJson('/mobile/tours/' . $tour->id)
+            ->assertStatus(200)
+            ->assertJsonFragment(['is_favorite' => false]);
+
+        $this->signInUser->user->favorites()->attach($tour);
+
+        $this->getJson('/mobile/tours/' . $tour->id)
+            ->assertStatus(200)
+            ->assertJsonFragment(['is_favorite' => true]);
+    }
 }
