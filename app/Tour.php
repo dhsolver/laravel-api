@@ -560,6 +560,23 @@ class Tour extends Model
         });
     }
 
+    /**
+     * Add query to only show the given user's favorites.
+     *
+     * @param \Illuminate\Database\Query\Builder query
+     * @param mixed $user
+     * @return \Illuminate\Database\Query\Builder
+     */
+    public function scopeFavoritedBy($query, $user)
+    {
+        if (empty($user)) {
+            return $query;
+        }
+
+        $user = User::findOrFail(modelId($user));
+        return $query->whereIn('tours.id', $user->favorites->pluck('id'));
+    }
+
     // **********************************************************
     // OTHER METHODS
     // **********************************************************

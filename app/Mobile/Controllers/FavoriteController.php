@@ -28,7 +28,9 @@ class FavoriteController extends Controller
      */
     public function store(Tour $tour)
     {
-        auth()->user()->favorites()->attach($tour);
+        if (! auth()->user()->favorites()->where('tour_id', $tour->id)->exists()) {
+            auth()->user()->favorites()->attach($tour);
+        }
 
         return $this->success('Tour has been added to favorites.');
     }
@@ -41,7 +43,9 @@ class FavoriteController extends Controller
      */
     public function destroy(Tour $tour)
     {
-        auth()->user()->favorites()->detach($tour);
+        if (auth()->user()->favorites()->where('tour_id', $tour->id)->exists()) {
+            auth()->user()->favorites()->detach($tour);
+        }
 
         return $this->success('Tour has been removed from favorites.');
     }

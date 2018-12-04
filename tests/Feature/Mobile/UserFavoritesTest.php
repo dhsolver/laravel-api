@@ -62,4 +62,49 @@ class UserFavoritesTest extends TestCase
             ->assertJsonFragment(['title' => $otherTour->title])
             ->assertJsonCount(2, 'favorites');
     }
+
+    /** @test */
+    public function a_users_profile_should_contain_the_number_of_favorites()
+    {
+        $this->signIn('user');
+
+        $this->getJson(route('mobile.profile.show', ['user' => $this->signInUser]))
+            ->assertStatus(200)
+            ->assertJsonFragment(['favorites' => 0])
+            ->assertSee($this->signInUser->email);
+
+        $tour = factory(Tour::class)->states('published')->create();
+        $this->signInUser->user->favorites()->attach($tour);
+
+        $tour = factory(Tour::class)->states('published')->create();
+        $this->signInUser->user->favorites()->attach($tour);
+
+        $this->getJson(route('mobile.profile.show', ['user' => $this->signInUser]))
+            ->assertStatus(200)
+            ->assertJsonFragment(['favorites' => 2])
+            ->assertSee($this->signInUser->email);
+    }
+
+    /** @test */
+    public function a_user_can_favorite_a_tour_twice_without_throwing_an_sql_error()
+    {
+        $this->assertCount(0, $this->user->fresh()->favorites);
+
+        $this->postJson(route('mobile.favorites.store', ['tour' => $this->tour]))
+            ->assertStatus(200);
+
+        $this->assertCount(1, $this->user->fresh()->favorites);
+
+        $this->postJson(route('mobile.favorites.store', ['tour' => $this->tour]))
+            ->assertStatus(200);
+
+        $this->assertCount(1, $this->user->fresh()->favorites);
+    }
+
+    /** @test */
+    public function a_user_can_unfavorite_a_tour_twice_without_throwing_an_sql_error()
+    {
+        $this->delete(route('mobile.favorites.destroy', ['tour' => $this->tour]))
+            ->assertStatus(200);
+    }
 }

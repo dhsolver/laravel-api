@@ -198,4 +198,50 @@ class NavigateToursTest extends TestCase
             ->assertJsonFragment(['title' => 'Test Tour'])
             ->assertStatus(200);
     }
+
+    /** @test */
+    public function tour_listings_should_indicate_authenticated_users_favorite_tours()
+    {
+        $this->withoutExceptionHandling();
+
+        $this->signIn('user');
+
+        $tour = factory(Tour::class)->states('published')->create();
+
+        $this->getJson('/mobile/tours/' . $tour->id)
+            ->assertStatus(200)
+            ->assertJsonFragment(['is_favorite' => false]);
+
+        $this->signInUser->user->favorites()->attach($tour);
+
+        $this->getJson('/mobile/tours/' . $tour->id)
+            ->assertStatus(200)
+            ->assertJsonFragment(['is_favorite' => true]);
+    }
+
+    /** @test */
+    public function tour_listings_can_be_filtered_to_show_only_a_users_favorites()
+    {
+        $this->withoutExceptionHandling();
+
+        $this->signIn('user');
+
+        $tour = factory(Tour::class)->states('published')->create();
+        $tour = factory(Tour::class)->states('published')->create();
+        $tour = factory(Tour::class)->states('published')->create();
+
+        $this->getJson('/mobile/tours/')
+            ->assertStatus(200)
+            ->assertJsonCount(3, 'data');
+
+        $this->getJson('/mobile/tours/?favorites=1')
+            ->assertStatus(200)
+            ->assertJsonCount(0, 'data');
+
+        $this->signInUser->user->favorites()->attach($tour);
+
+        $this->getJson('/mobile/tours/?favorites=1')
+            ->assertStatus(200)
+            ->assertJsonCount(1, 'data');
+    }
 }

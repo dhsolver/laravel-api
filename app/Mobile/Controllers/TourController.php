@@ -9,20 +9,22 @@ use App\Mobile\Resources\StopResource;
 use App\Mobile\Resources\TourRouteResource;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Mobile\Resources\ReviewResource;
+use Illuminate\Http\Request;
 
 class TourController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
+     * @param \Illumate\Http\Request
      * @return \Illuminate\Http\Resources\Json\ResourceCollection|\Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         $lat = 0;
         $lon = 0;
-        if (request()->has('nearby')) {
-            $coordinates = request()->nearby;
+        if ($request->has('nearby')) {
+            $coordinates = $request->nearby;
 
             if (! strpos($coordinates, ',')) {
                 return $this->fail(422, 'Invalid nearby coordinates.');
@@ -37,9 +39,10 @@ class TourController extends Controller
         }
 
         return TourResource::collection(
-            Tour::published(request()->debug)
+            Tour::published($request->debug)
                 ->distanceFrom($lat, $lon)
-                ->search(request()->search)
+                ->favoritedBy($request->favorites == 1 ? auth()->id() : null)
+                ->search($request->search)
                 ->paginate()
         );
     }
