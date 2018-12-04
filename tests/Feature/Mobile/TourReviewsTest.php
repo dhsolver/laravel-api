@@ -118,4 +118,45 @@ class TourReviewsTest extends TestCase
             ->assertJsonCount(15, 'data')
             ->assertJsonFragment(['last_page' => 2, 'total' => 30]);
     }
+
+    /** @test */
+    public function a_tours_rating_should_change_with_updated_review()
+    {
+        factory(Review::class)->create(['rating' => 10]);
+        factory(Review::class)->create(['rating' => 20]);
+        factory(Review::class)->create(['rating' => 30]);
+
+        $this->assertEquals(20, $this->tour->fresh()->rating);
+
+        $data = factory(Review::class)->make(['rating' => 40])->toArray();
+        $this->postJson(route('mobile.reviews.store', ['tour' => $this->tour]), $data)
+            ->assertStatus(200);
+
+        $this->assertEquals(25, $this->tour->fresh()->rating);
+
+        $data = factory(Review::class)->make(['rating' => 10])->toArray();
+        $this->postJson(route('mobile.reviews.store', ['tour' => $this->tour]), $data)
+            ->assertStatus(200);
+
+        $this->assertEquals(17, $this->tour->fresh()->rating);
+    }
+
+    /** @test */
+    public function when_a_user_removes_their_review_it_should_update_the_tours_rating()
+    {
+        factory(Review::class)->create(['rating' => 10]);
+        factory(Review::class)->create(['rating' => 20]);
+        factory(Review::class)->create(['rating' => 30]);
+
+        $data = factory(Review::class)->make(['rating' => 40])->toArray();
+        $this->postJson(route('mobile.reviews.store', ['tour' => $this->tour]), $data)
+            ->assertStatus(200);
+
+        $this->assertEquals(25, $this->tour->fresh()->rating);
+
+        $this->deleteJson(route('mobile.reviews.destroy', ['tour' => $this->tour]))
+            ->assertStatus(200);
+
+        $this->assertEquals(20, $this->tour->fresh()->rating);
+    }
 }

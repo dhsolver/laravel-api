@@ -45,8 +45,15 @@ class Review extends Model
      */
     protected static function boot()
     {
-        // always attach a location when a Tour is created.
-        static::created(function ($model) {
+        // update tour rating whenever a review is created
+        static::saved(function ($model) {
+            $rating = Review::where('tour_id', $model->tour->id)
+                ->avg('rating');
+
+            $model->tour->update(['rating' => intval($rating)]);
+        });
+
+        static::deleted(function ($model) {
             $rating = Review::where('tour_id', $model->tour->id)
                 ->avg('rating');
 
