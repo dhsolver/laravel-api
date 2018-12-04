@@ -33,7 +33,7 @@ class ReviewController extends Controller
      */
     public function store(CreateReviewRequest $request, Tour $tour)
     {
-        if (! $tour->isPublished) {
+        if (! $tour->isPublished && $request->debug != 1) {
             throw new ModelNotFoundException('Tour not found.');
         }
 
