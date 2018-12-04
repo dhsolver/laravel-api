@@ -27,6 +27,12 @@ This should display a success message and overwrite the docs/api.html documentat
 
 ### Change Log
 
+v.1.0.8
+- Added new favorites query paramter flag to Tour listing endpoint 
+- Added favorites count to the user profile resource
+- Added is_favorite flag to the Tour resource
+- Added debug flag to submit review endpoint
+
 v.1.0.7
 - Added 'length' property to the Tour model
 - Added zipcode field to signup and edit profile 

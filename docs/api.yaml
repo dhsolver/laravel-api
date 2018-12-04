@@ -266,6 +266,12 @@ paths:
           description: Debug mode flag. This will include the current logged in users unpublished tours in the listing.
           type: boolean
           example: 1
+        - in: query
+          name: favorites
+          required: false
+          description: Display user favorites flag.  Setting favorites=1 will filter the results to show only the current user's favorites.  You can combine this flag with the nearby parameter to get a list of the user's favorites with the distance from the current user.
+          type: boolean
+          example: 1
       security:
         - Bearer: []
       responses:
@@ -922,6 +928,12 @@ paths:
           required: true
           type: integer
           format: int64
+        - in: path
+          name: debug
+          description: Set debug=1 to allow submitting reviews to unpublished tours.
+          requred: false
+          type: integer
+          format: int32
         - in: body
           name: rating
           required: true
@@ -1267,6 +1279,11 @@ definitions:
         type: boolean
         description: A flag set only by the admin to enable site-wide subscription for the user.
         example: false
+      favorites:
+        type: integer
+        format: int32
+        description: The number of favorites that user has.
+        example: 6
       created_at:
         type: string
         format: date-time
@@ -1525,6 +1542,10 @@ definitions:
         maximum: 255
         description: The unique ID used for app store purchases for the Tour.
         example: com.wejunket.tour01
+      is_favorite:
+        type: boolean
+        description: Flag to determine if the Tour is one of the user's favorites.
+        example: true
       created_at:
         type: string
         format: date-time
