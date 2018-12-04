@@ -84,4 +84,27 @@ class UserFavoritesTest extends TestCase
             ->assertJsonFragment(['favorites' => 2])
             ->assertSee($this->signInUser->email);
     }
+
+    /** @test */
+    public function a_user_can_favorite_a_tour_twice_without_throwing_an_sql_error()
+    {
+        $this->assertCount(0, $this->user->fresh()->favorites);
+
+        $this->postJson(route('mobile.favorites.store', ['tour' => $this->tour]))
+            ->assertStatus(200);
+
+        $this->assertCount(1, $this->user->fresh()->favorites);
+
+        $this->postJson(route('mobile.favorites.store', ['tour' => $this->tour]))
+            ->assertStatus(200);
+
+        $this->assertCount(1, $this->user->fresh()->favorites);
+    }
+
+    /** @test */
+    public function a_user_can_unfavorite_a_tour_twice_without_throwing_an_sql_error()
+    {
+        $this->delete(route('mobile.favorites.destroy', ['tour' => $this->tour]))
+            ->assertStatus(200);
+    }
 }
