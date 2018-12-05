@@ -47,9 +47,10 @@ class Tour extends Model
      * @var array
      */
     protected $casts = [
-        'has_prize' => 'bool',
-        'rating' => 'int',
-        'prize_time_limit' => 'int',
+        'has_prize' => 'boolean',
+        'rating' => 'integer',
+        'prize_time_limit' => 'integer',
+        'length' => 'float',
     ];
 
     /**

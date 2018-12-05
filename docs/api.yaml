@@ -1526,7 +1526,7 @@ definitions:
       length:
         type: integer
         format: float
-        description: The total length of the Tour.  For adventures, this is the shortest route's length.
+        description: The total length of the Tour (in miles).  For adventures, this is the shortest route's length.
         example: 3.23
       rating:
         type: integer
