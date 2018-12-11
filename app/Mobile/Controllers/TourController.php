@@ -56,7 +56,7 @@ class TourController extends Controller
      */
     public function show(Tour $tour)
     {
-        if (! $tour->isPublished && ! (request()->debug && $tour->user_id == auth()->user()->id)) {
+        if (! request()->debug && ! $tour->isPublished) {
             if (! empty($tour->last_published_at)) {
                 // tour was published at one time, but it no longer available
                 throw new ModelNotFoundException('Tour no longer available.');
