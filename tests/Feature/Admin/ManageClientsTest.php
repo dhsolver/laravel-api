@@ -42,13 +42,17 @@ class ManageClientsTest extends TestCase
         $data = [
             'name' => 'Test Client',
             'email' => 'test@test.com',
+            'zipcode' => '12345',
             'password' => 'password',
+            'tour_limit' => 5,
         ];
 
         $this->json('post', route('admin.clients.store'), $data)
             ->assertStatus(200)
             ->assertJsonFragment(['email' => 'test@test.com'])
-            ->assertJsonFragment(['role' => 'client']);
+            ->assertJsonFragment(['role' => 'client'])
+            ->assertJsonFragment(['zipcode' => '12345'])
+            ->assertJsonFragment(['tour_limit' => 5]);
 
         $this->assertCount(1, \App\Client::all());
     }
@@ -74,6 +78,8 @@ class ManageClientsTest extends TestCase
         $data = [
             'name' => 'New Name',
             'email' => 'newemail@test.com',
+            'zipcode' => '12345',
+            'tour_limit' => 5,
         ];
 
         $this->json('patch', route('admin.clients.update', ['client' => $client->id]), $data)
@@ -89,5 +95,20 @@ class ManageClientsTest extends TestCase
         $this->json('get', route('admin.clients.update', ['client' => $client->id]))
             ->assertStatus(200)
             ->assertJsonFragment($client->toArray());
+    }
+
+    /** @test */
+    public function a_client_must_have_a_tour_limit()
+    {
+        $client = createUser('client');
+
+        $data = [
+            'name' => 'New Name',
+            'email' => 'newemail@test.com',
+            'zipcode' => '12345',
+        ];
+
+        $this->json('patch', route('admin.clients.update', ['client' => $client->id]), $data)
+            ->assertStatus(422);
     }
 }

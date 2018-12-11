@@ -20,7 +20,7 @@ class User extends Authenticatable implements JWTSubject
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password', 'fb_id', 'fb_token', 'subscribe_override', 'avatar', 'zipcode'
+        'name', 'email', 'password', 'fb_id', 'fb_token', 'subscribe_override', 'avatar', 'zipcode', 'tour_limit'
     ];
 
     /**
@@ -51,7 +51,7 @@ class User extends Authenticatable implements JWTSubject
      *
      * @var array
      */
-    protected $casts = ['subscribe_override' => 'bool'];
+    protected $casts = ['subscribe_override' => 'bool', 'tour_limit' => 'int'];
 
     /**
      * The attributes that should be cast to dates.

@@ -60,7 +60,7 @@ trait IsUserRole
      */
     protected function appendAttributesToRoleModel()
     {
-        $this->append(['name', 'email', 'role', 'fb_id', 'subscribe_override', 'avatar_url', 'zipcode']);
+        $this->append(['name', 'email', 'role', 'fb_id', 'subscribe_override', 'avatar_url', 'zipcode', 'tour_limit']);
     }
 
     /**
@@ -227,5 +227,15 @@ trait IsUserRole
     public function getZipcodeAttribute()
     {
         return $this->user->zipcode;
+    }
+
+    /**
+     * Get the user tour_limit attribute.
+     *
+     * @return mixed
+     */
+    public function getTourLimitAttribute()
+    {
+        return $this->user->tour_limit;
     }
 }

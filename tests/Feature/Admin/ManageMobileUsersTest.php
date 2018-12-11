@@ -40,13 +40,15 @@ class ManageMobileUsersTest extends TestCase
         $data = [
             'name' => 'Test User',
             'email' => 'test@test.com',
+            'zipcode' => '12345',
             'password' => 'password',
         ];
 
         $this->json('post', route('admin.users.store'), $data)
             ->assertStatus(200)
             ->assertJsonFragment(['email' => 'test@test.com'])
-            ->assertJsonFragment(['role' => 'user']);
+            ->assertJsonFragment(['role' => 'user'])
+            ->assertJsonFragment(['zipcode' => '12345']);
 
         $this->assertCount(1, \App\MobileUser::all());
     }
@@ -72,6 +74,7 @@ class ManageMobileUsersTest extends TestCase
         $data = [
             'name' => 'New Name',
             'email' => 'newemail@test.com',
+            'zipcode' => '12345',
         ];
 
         $this->json('patch', route('admin.users.update', ['user' => $user->id]), $data)

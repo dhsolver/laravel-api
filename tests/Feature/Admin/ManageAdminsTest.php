@@ -40,13 +40,15 @@ class ManageAdminsTest extends TestCase
         $data = [
             'name' => 'Test User',
             'email' => 'test@test.com',
+            'zipcode' => '12345',
             'password' => 'password',
         ];
 
         $this->json('post', route('admin.admins.store'), $data)
             ->assertStatus(200)
             ->assertJsonFragment(['email' => 'test@test.com'])
-            ->assertJsonFragment(['role' => 'admin']);
+            ->assertJsonFragment(['role' => 'admin'])
+            ->assertJsonFragment(['zipcode' => '12345']);
 
         $this->assertCount(1, \App\Admin::all());
     }
@@ -76,6 +78,7 @@ class ManageAdminsTest extends TestCase
         $data = [
             'name' => 'New Name',
             'email' => 'newemail@test.com',
+            'zipcode' => '12345',
         ];
 
         $this->json('patch', route('admin.admins.update', ['admin' => $admin->id]), $data)
