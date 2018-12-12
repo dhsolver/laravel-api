@@ -30,6 +30,7 @@ class CreateClientRequest extends FormRequest
             'zipcode' => 'nullable|string|max:16',
             'password' => 'required|string|min:6',
             'tour_limit' => 'required|integer',
+            'subscribe_override' => 'nullable|boolean',
         ];
     }
 }

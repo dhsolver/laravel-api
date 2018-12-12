@@ -28,6 +28,7 @@ class CreateMobileUserRequest extends FormRequest
             'email' => 'required|string|email|max:255|unique:users',
             'zipcode' => 'nullable|string|max:16',
             'password' => 'required|string|min:6',
+            'subscribe_override' => 'nullable|boolean',
         ];
     }
 }
