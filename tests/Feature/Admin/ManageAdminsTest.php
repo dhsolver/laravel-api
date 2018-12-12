@@ -126,4 +126,40 @@ class ManageAdminsTest extends TestCase
         $this->json('post', route('admin.admins.store'), $data)
             ->assertStatus(403);
     }
+
+    /** @test */
+    public function an_admin_can_change_an_admins_role_to_client()
+    {
+        $this->signIn('admin');
+
+        $user = createUser('admin');
+        $id = $user->id;
+
+        $this->assertNull(\App\Client::find($id));
+        $this->assertEquals('admin', $user->role);
+
+        $this->json('patch', route('admin.change-role', ['user' => $id]), ['role' => 'client'])
+            ->assertStatus(200);
+
+        $this->assertEquals('client', \App\User::find($id)->role);
+        $this->assertNull(\App\Admin::find($id));
+    }
+
+    /** @test */
+    public function an_admin_can_change_an_admins_role_to_user()
+    {
+        $this->signIn('admin');
+
+        $user = createUser('admin');
+        $id = $user->id;
+
+        $this->assertNull(\App\MobileUser::find($id));
+        $this->assertEquals('admin', $user->role);
+
+        $this->json('patch', route('admin.change-role', ['user' => $id]), ['role' => 'user'])
+            ->assertStatus(200);
+
+        $this->assertEquals('user', \App\User::find($id)->role);
+        $this->assertNull(\App\Admin::find($id));
+    }
 }

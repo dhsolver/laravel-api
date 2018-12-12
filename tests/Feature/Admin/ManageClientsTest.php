@@ -111,4 +111,36 @@ class ManageClientsTest extends TestCase
         $this->json('patch', route('admin.clients.update', ['client' => $client->id]), $data)
             ->assertStatus(422);
     }
+
+    /** @test */
+    public function an_admin_can_change_a_clients_role_to_user()
+    {
+        $user = createUser('client');
+        $id = $user->id;
+
+        $this->assertNull(\App\MobileUser::find($id));
+        $this->assertEquals('client', $user->role);
+
+        $this->json('patch', route('admin.change-role', ['user' => $id]), ['role' => 'user'])
+            ->assertStatus(200);
+
+        $this->assertEquals('user', \App\User::find($id)->role);
+        $this->assertNull(\App\Client::find($id));
+    }
+
+    /** @test */
+    public function an_admin_can_change_a_clients_role_to_admin()
+    {
+        $user = createUser('client');
+        $id = $user->id;
+
+        $this->assertNull(\App\Admin::find($id));
+        $this->assertEquals('client', $user->role);
+
+        $this->json('patch', route('admin.change-role', ['user' => $id]), ['role' => 'admin'])
+            ->assertStatus(200);
+
+        $this->assertEquals('admin', \App\User::find($id)->role);
+        $this->assertNull(\App\Client::find($id));
+    }
 }
