@@ -31,6 +31,7 @@ Route::middleware(['jwt.auth', 'role:superadmin|admin'])->group(function () {
     Route::get('tours', 'Admin\TourController@index')->name('admin.tours.index');
     Route::post('tours', 'Admin\TourController@store')->name('admin.tours.store')->middleware(['can:create,App\Tour']);
     Route::get('tours/{tour}', 'Admin\TourController@show')->name('admin.tours.show')->middleware(['can:view,tour']);
+    Route::patch('tours/{tour}/transfer', 'Admin\TourController@transfer')->name('admin.tours.transfer')->middleware(['can:update,tour']);
     Route::patch('tours/{tour}', 'Admin\TourController@update')->name('admin.tours.update')->middleware(['can:update,tour']);
     Route::delete('tours/{tour}', 'Admin\TourController@destroy')->name('admin.tours.destroy')->middleware(['can:delete,tour']);
     Route::put('tours/{tour}/media', 'Admin\TourController@uploadMedia')->name('admin.tours.media')->middleware(['can:view,tour']);

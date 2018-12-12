@@ -7,6 +7,7 @@ use App\Client;
 use App\Http\Requests\Admin\CreateClientRequest;
 use App\Http\Resources\ClientResource;
 use App\Http\Requests\Admin\UpdateClientRequest;
+use App\Http\Resources\UserDropdownResource;
 
 class ClientController extends Controller
 {
@@ -17,7 +18,13 @@ class ClientController extends Controller
      */
     public function index()
     {
-        return ClientResource::collection(Client::withCount('tours')->get());
+        $clients = Client::withCount('tours')->get();
+
+        if (request()->has('dropdown')) {
+            return UserDropdownResource::collection($clients->sortBy('name'));
+        }
+
+        return ClientResource::collection($clients);
     }
 
     /**
