@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Resources\TourResource;
 use App\Tour;
 use App\Http\Requests\CreateTourRequest;
-use App\Http\Resources\TourCollection;
 use App\Http\Controllers\TourController as BaseTourController;
 
 class TourController extends BaseTourController
@@ -17,7 +16,9 @@ class TourController extends BaseTourController
      */
     public function index()
     {
-        return new TourCollection(Tour::all());
+        return TourResource::collection(
+            Tour::all()
+        );
     }
 
     /**

@@ -6,7 +6,6 @@ use App\Http\Resources\TourResource;
 use App\Tour;
 use App\Http\Requests\CreateTourRequest;
 use App\Http\Requests\UpdateTourRequest;
-use App\Http\Resources\TourCollection;
 use Illuminate\Support\Arr;
 use App\Http\Requests\UpdateStopOrderRequest;
 use App\TourStop;
@@ -20,7 +19,7 @@ class TourController extends Controller
      */
     public function index()
     {
-        return new TourCollection(
+        return TourResource::collection(
             auth()->user()->type->tours
         );
     }

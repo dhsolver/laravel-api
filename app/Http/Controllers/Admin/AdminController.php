@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Resources\AdminCollection;
 use App\Http\Controllers\Controller;
 use App\Admin;
 use App\Http\Requests\Admin\CreateAdminRequest;
@@ -18,7 +17,7 @@ class AdminController extends Controller
      */
     public function index()
     {
-        return new AdminCollection(Admin::all());
+        return AdminResource::collection(Admin::all());
     }
 
     /**

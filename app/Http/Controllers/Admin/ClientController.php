@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Resources\ClientCollection;
 use App\Http\Controllers\Controller;
 use App\Client;
 use App\Http\Requests\Admin\CreateClientRequest;
@@ -18,7 +17,7 @@ class ClientController extends Controller
      */
     public function index()
     {
-        return new ClientCollection(Client::all());
+        return ClientResource::collection(Client::withCount('tours')->get());
     }
 
     /**
