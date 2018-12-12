@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class ClientResource extends JsonResource
+class UserDropdownResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -14,7 +14,10 @@ class ClientResource extends JsonResource
      */
     public function toArray($request)
     {
-        return array_merge($this->resource->toArray(), [
-        ]);
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+            'email' => $this->email,
+        ];
     }
 }

@@ -19,9 +19,8 @@ class TourPolicy
      */
     public function before($user, $ability)
     {
-        // if logged into the admin side and is an admin
-        if (starts_with(\Route::getCurrentRoute()->getPrefix(), 'admin') &&
-            ($user->role == 'superadmin' || $user->role == 'admin')) {
+        // if user is an admin they can access any tour
+        if ($user->isAdmin()) {
             return true;
         }
     }

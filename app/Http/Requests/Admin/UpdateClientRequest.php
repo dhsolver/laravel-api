@@ -25,7 +25,11 @@ class UpdateClientRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
+            'company_name' => 'nullable|string|max:100',
             'email' => 'required|string|email|max:255|unique:users,email,' . $this->route('client')->id,
+            'zipcode' => 'nullable|string|max:16',
+            'tour_limit' => 'required|integer',
+            'subscribe_override' => 'nullable|boolean',
         ];
     }
 }

@@ -2,9 +2,11 @@
 
 namespace Tests\Feature\Admin;
 
+use App\Client;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\Concerns\AttachJwtToken;
+use App\MobileUser;
 
 class ManageMobileUsersTest extends TestCase
 {
@@ -40,13 +42,15 @@ class ManageMobileUsersTest extends TestCase
         $data = [
             'name' => 'Test User',
             'email' => 'test@test.com',
+            'zipcode' => '12345',
             'password' => 'password',
         ];
 
         $this->json('post', route('admin.users.store'), $data)
             ->assertStatus(200)
             ->assertJsonFragment(['email' => 'test@test.com'])
-            ->assertJsonFragment(['role' => 'user']);
+            ->assertJsonFragment(['role' => 'user'])
+            ->assertJsonFragment(['zipcode' => '12345']);
 
         $this->assertCount(1, \App\MobileUser::all());
     }
@@ -72,6 +76,7 @@ class ManageMobileUsersTest extends TestCase
         $data = [
             'name' => 'New Name',
             'email' => 'newemail@test.com',
+            'zipcode' => '12345',
         ];
 
         $this->json('patch', route('admin.users.update', ['user' => $user->id]), $data)
@@ -87,5 +92,41 @@ class ManageMobileUsersTest extends TestCase
         $this->json('get', route('admin.users.update', ['user' => $user->id]))
             ->assertStatus(200)
             ->assertJsonFragment($user->toArray());
+    }
+
+    /** @test */
+    public function an_admin_can_change_a_users_role_client()
+    {
+        $this->withoutExceptionHandling();
+
+        $user = createUser('user');
+        $id = $user->id;
+
+        $this->assertNull(\App\Client::find($id));
+        $this->assertEquals('user', $user->role);
+
+        $this->json('patch', route('admin.change-role', ['user' => $id]), ['role' => 'client'])
+            ->assertStatus(200);
+
+        $this->assertEquals('client', \App\User::find($id)->role);
+        $this->assertNull(\App\MobileUser::find($id));
+    }
+
+    /** @test */
+    public function an_admin_can_change_a_users_role_admin()
+    {
+        $this->withoutExceptionHandling();
+
+        $user = createUser('user');
+        $id = $user->id;
+
+        $this->assertNull(\App\Admin::find($id));
+        $this->assertEquals('user', $user->role);
+
+        $this->json('patch', route('admin.change-role', ['user' => $id]), ['role' => 'admin'])
+            ->assertStatus(200);
+
+        $this->assertEquals('admin', \App\User::find($id)->role);
+        $this->assertNull(\App\MobileUser::find($id));
     }
 }

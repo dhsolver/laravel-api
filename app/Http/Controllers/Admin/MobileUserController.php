@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Resources\MobileUserCollection;
 use App\Http\Controllers\Controller;
 use App\MobileUser;
 use App\Http\Requests\Admin\CreateMobileUserRequest;
@@ -18,7 +17,7 @@ class MobileUserController extends Controller
      */
     public function index()
     {
-        return new MobileUserCollection(MobileUser::all());
+        return MobileUserResource::collection(MobileUser::all());
     }
 
     /**

@@ -4,7 +4,7 @@ namespace App\Http\Requests\Admin;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateMobileUserRequest extends FormRequest
+class TransferTourRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,10 +24,7 @@ class UpdateMobileUserRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email,' . $this->route('user')->id,
-            'zipcode' => 'nullable|string|max:16',
-            'subscribe_override' => 'nullable|boolean',
+            'user_id' => 'required|numeric|exists:clients,id',
         ];
     }
 }
