@@ -24,7 +24,7 @@ class UserSessionResource extends JsonResource
             'fb_id' => $this->fb_id,
             'role' => $this->role,
             'avatar_url' => $this->avatarUrl,
-            'subscribe_override' => $this->isAdmin() ? true : $this->subscribe_override,
+            'subscribe_override' => in_array($this->role, ['admin', 'superadmin']) ? true : $this->subscribe_override,
             'created_at' => $this->created_at->toDateTimeString(),
         ];
     }

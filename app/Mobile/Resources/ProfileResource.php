@@ -27,7 +27,7 @@ class ProfileResource extends JsonResource
             $data['email'] = $this->email;
             $data['zipcode'] = $this->zipcode;
             $data['fb_id'] = $this->fb_id;
-            $data['subscribe_override'] = $this->isAdmin() ? true : $this->subscribe_override;
+            $data['subscribe_override'] = in_array($this->role, ['admin', 'superadmin']) ? true : $this->subscribe_override;
             $data['favorites'] = $this->favorites->count();
 
             $data['stats'] = [
