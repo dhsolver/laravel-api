@@ -32,8 +32,6 @@ php artisan migrate:fresh
 
 To run the backup script you can use the custom Artisan command itourmobile:restore.  The command requires one parameter, which is the password to reset all of the users to.  This should be secure!
 
-In order to ensure there are no issues with duplicate users, it is best to do this with an empty database.  You should run a fresh migration first.
-
 ```
 php artisan itourmobile:restore {password}
 ```
