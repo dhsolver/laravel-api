@@ -15,6 +15,7 @@ Using Laravel 5.7
 - [Media](docs/Media.md)
 - [API Documentation](docs/Api.md)
 - [iTourMobile Restoration](docs/Restore.md)
+- [Deployment](docs/Deployment.md)
 
 ### 3rd Party 
 - Roles and permissions provided by [spatie/laravel-permission](https://github.com/spatie/laravel-permission)

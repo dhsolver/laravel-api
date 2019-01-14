@@ -10,12 +10,12 @@ Mobile : https://api.wejunket.com/mobile/auth/login
 
 ### Roles and Access
 
-| Role       | Can Access CMS | Can Access Mobile | Can Access Admin |
-|------------|----------------|-------------------|------------------|
-| superadmin |       Yes      |        Yes        |        Yes       |
-| admin      |       Yes      |        Yes        |        Yes       |
-| client     |       Yes      |        Yes        |        No        |
-| user       |       Yes      |         No        |        No        |
+| Role       | Can Access Mobile | Can Access Cms | Can Access Admin |
+|------------|-------------------|----------------|------------------|
+| superadmin |       Yes         |        Yes     |        Yes       |
+| admin      |       Yes         |        Yes     |        Yes       |
+| client     |       Yes         |        Yes     |        No        |
+| user       |       Yes         |        No      |        No        |
 
 
 ### Facebook Login
