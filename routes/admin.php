@@ -41,4 +41,5 @@ Route::middleware(['jwt.auth', 'role:superadmin|admin'])->group(function () {
     Route::put('tours/{tour}/stops/{stop}', 'StopController@uploadMedia')->name('admin.stops.media')->middleware(['can:update,tour']);
 
     Route::patch('change-role/{user}', 'Admin\ChangeRoleController@update')->name('admin.change-role')->middleware(['can:update,user']);
+    Route::patch('change-password/{user}', 'Admin\ChangePasswordController@update')->name('admin.change-password')->middleware(['can:update,user']);
 });
