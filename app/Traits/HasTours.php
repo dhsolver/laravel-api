@@ -28,4 +28,14 @@ trait HasTours
             ->where('user_id', $this->attributes['id'])
             ->exists();
     }
+
+    /**
+     * Get the number of tours left on the user's allowance.
+     *
+     * @return int
+     */
+    public function getToursLeftAttribute()
+    {
+        return ($this->tour_limit - $this->tours()->count());
+    }
 }
