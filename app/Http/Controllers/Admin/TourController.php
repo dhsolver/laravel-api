@@ -18,7 +18,7 @@ class TourController extends BaseTourController
     public function index()
     {
         return TourResource::collection(
-            Tour::all()
+            Tour::with('creator')->get()
         );
     }
 
@@ -38,7 +38,7 @@ class TourController extends BaseTourController
 
         if ($tour = Tour::create($request->validated())) {
             return $this->success("The tour {$tour->name} was created successfully.", new TourResource(
-                $tour->fresh()
+                $tour->fresh()->load(['stops', 'route'])
             ));
         }
 

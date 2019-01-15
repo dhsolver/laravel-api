@@ -14,11 +14,15 @@ class TourResource extends JsonResource
      */
     public function toArray($request)
     {
-        $this->resource->load(['stops', 'route', 'creator']);
+        $data = $this->resource->toArray();
+        if (isset($this->resource->relationsp['stops'])) {
+            $data['stops'] = StopResource::collection($this->resource->stops);
+        }
 
-        return array_merge($this->resource->toArray(), [
-            'route' => RouteResource::collection($this->resource->route),
-            'stops' => StopResource::collection($this->resource->stops),
-        ]);
+        if (isset($this->resource->relationsp['route'])) {
+            $data['route'] = RouteResource::collection($this->resource->route);
+        }
+
+        return $data;
     }
 }

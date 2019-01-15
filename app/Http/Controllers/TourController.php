@@ -38,7 +38,7 @@ class TourController extends Controller
 
         if ($tour = auth()->user()->type->tours()->create($request->validated())) {
             return $this->success("The tour {$tour->title} was created successfully.", new TourResource(
-                $tour->fresh()
+                $tour->fresh()->load(['stops', 'route'])
             ));
         }
 
@@ -53,6 +53,8 @@ class TourController extends Controller
      */
     public function show(Tour $tour)
     {
+        $tour->load(['stops', 'route']);
+
         return response()->json(new TourResource($tour));
     }
 
@@ -82,7 +84,7 @@ class TourController extends Controller
 
             \DB::commit();
 
-            $tour = $tour->fresh();
+            $tour = $tour->fresh()->load(['stops', 'route']);
             return $this->success("{$tour->title} was updated successfully.", new TourResource($tour));
         }
 
@@ -132,6 +134,8 @@ class TourController extends Controller
      */
     public function publish(Tour $tour)
     {
+        $tour->load(['stops', 'route']);
+
         if ($errors = $tour->audit()) {
             return $this->fail(422, 'Cannot publish tour.', [
                 'tour' => new TourResource($tour),
@@ -177,6 +181,8 @@ class TourController extends Controller
      */
     public function unpublish(Tour $tour)
     {
+        $tour->load(['stops', 'route']);
+
         if ($tour->isAwaitingApproval) {
             $tour->publishSubmissions()->pending()->first()->delete();
             $tour = $tour->fresh();
