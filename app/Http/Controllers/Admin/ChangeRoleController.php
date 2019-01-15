@@ -24,6 +24,10 @@ class ChangeRoleController extends Controller
             return $this->success('User is already assigned to this role.');
         }
 
+        if ($user->id == auth()->id()) {
+            return $this->fail(500, 'You cannot change your own role.');
+        }
+
         $this->deleteRoleObject($user->role, $user->id);
         $user->removeRole($user->role);
         $user->assignRole($request->role);
