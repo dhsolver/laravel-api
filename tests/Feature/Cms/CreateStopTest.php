@@ -61,4 +61,23 @@ class CreateStopTest extends TestCase
             ->assertStatus(422)
             ->assertJsonValidationErrors(['title']);
     }
+
+    /** @test */
+    public function indoor_tour_stops_should_not_require_locations()
+    {
+        $this->loginAs($this->client);
+
+        $this->tour->update(['type' => 'indoor']);
+
+        $data = [
+            'title' => 'test',
+            'description' => 'new stop',
+            'location' => '',
+        ];
+
+        $this->json('POST', route('cms.stops.store', ['tour' => $this->tour->id]), $data)
+            ->assertStatus(200);
+
+        $this->assertCount(1, $this->tour->fresh()->stops);
+    }
 }

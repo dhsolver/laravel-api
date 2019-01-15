@@ -42,11 +42,17 @@ class StopController extends Controller
         \DB::beginTransaction();
 
         if ($stop = $tour->stops()->create(Arr::except($data, ['choices', 'location', 'routes']))) {
-            if ($request->has('location')) {
+            if (isset($data['location'])) {
                 $stop->location()->update(Arr::except($data['location'], ['id']));
             }
 
-            $stop->updateChoices($request->choices);
+            if (isset($data['choices'])) {
+                $stop->updateChoices($data['choices']);
+            }
+
+            if (isset($data['routes'])) {
+                $stop->syncRoutes($data['routes']);
+            }
 
             \DB::commit();
 
@@ -86,13 +92,17 @@ class StopController extends Controller
         \DB::beginTransaction();
 
         if ($stop->update(Arr::except($data, ['choices', 'location', 'routes']))) {
-            if ($request->has('location')) {
+            if (isset($data['location'])) {
                 $stop->location()->update(Arr::except($data['location'], ['id']));
             }
 
-            $stop->updateChoices($request->choices);
+            if (isset($data['choices'])) {
+                $stop->updateChoices($data['choices']);
+            }
 
-            $stop->syncRoutes($request->routes);
+            if (isset($data['routes'])) {
+                $stop->syncRoutes($data['routes']);
+            }
 
             \DB::commit();
 
