@@ -32,6 +32,10 @@ class TourController extends Controller
      */
     public function store(CreateTourRequest $request)
     {
+        if (auth()->user()->type->tours()->count() >= auth()->user()->tour_limit) {
+            return $this->fail(422, 'You have reached your maximum number of allowed tours.');
+        }
+
         if ($tour = auth()->user()->type->tours()->create($request->validated())) {
             return $this->success("The tour {$tour->title} was created successfully.", new TourResource(
                 $tour->fresh()

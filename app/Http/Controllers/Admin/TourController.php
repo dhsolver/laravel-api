@@ -30,6 +30,12 @@ class TourController extends BaseTourController
      */
     public function store(CreateTourRequest $request)
     {
+        $client = \App\Client::findOrFail($request->user_id);
+
+        if ($client->tours()->count() >= $client->tour_limit) {
+            return $this->fail(422, 'Tour limit reached.');
+        }
+
         if ($tour = Tour::create($request->validated())) {
             return $this->success("The tour {$tour->name} was created successfully.", new TourResource(
                 $tour->fresh()

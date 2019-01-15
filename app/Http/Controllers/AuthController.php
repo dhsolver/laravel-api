@@ -57,10 +57,12 @@ class AuthController extends Controller
 
         switch ($req->role) {
             case 'client':
+                $attributes['tour_limit'] = 3;
                 $user = \App\Client::create($attributes);
                 break;
             case 'user':
             default:
+                $attributes['tour_limit'] = 0;
                 $user = \App\MobileUser::create($attributes);
                 break;
         }
