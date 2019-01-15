@@ -20,7 +20,7 @@ class User extends Authenticatable implements JWTSubject
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password', 'fb_id', 'fb_token', 'subscribe_override', 'avatar', 'zipcode', 'tour_limit'
+        'name', 'email', 'password', 'fb_id', 'fb_token', 'subscribe_override', 'avatar', 'zipcode', 'tour_limit', 'active'
     ];
 
     /**
@@ -51,7 +51,7 @@ class User extends Authenticatable implements JWTSubject
      *
      * @var array
      */
-    protected $casts = ['subscribe_override' => 'bool', 'tour_limit' => 'int'];
+    protected $casts = ['subscribe_override' => 'bool', 'tour_limit' => 'int', 'active' => 'int'];
 
     /**
      * The attributes that should be cast to dates.
@@ -228,6 +228,17 @@ class User extends Authenticatable implements JWTSubject
     // QUERY SCOPES
     // **********************************************************
 
+    /**
+     * Get only the active users.
+     *
+     * @param \Illuminate\Database\Query\Builder $query
+     * @return \Illuminate\Database\Query\Builder
+     */
+    public function scopeOnlyActive($query)
+    {
+        return $query->where('active', 1);
+    }
+
     // **********************************************************
     // STATIC METHODS
     // **********************************************************
@@ -373,5 +384,25 @@ class User extends Authenticatable implements JWTSubject
         }
 
         return $user;
+    }
+
+    /**
+     * Set user as active.
+     *
+     * @return void
+     */
+    public function activate()
+    {
+        $this->update(['active' => 1]);
+    }
+
+    /**
+     * Set user as not active.
+     *
+     * @return void
+     */
+    public function deactivate()
+    {
+        $this->update(['active' => 0]);
     }
 }

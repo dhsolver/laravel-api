@@ -6,7 +6,7 @@
 |
 */
 
-Route::middleware(['jwt.auth', 'role:client|admin|superadmin'])->group(function () {
+Route::middleware(['jwt.auth', 'role:client|admin|superadmin', 'active'])->group(function () {
     Route::get('session', 'AuthController@userSession');
     Route::get('profile', 'AccountController@show');
     Route::patch('profile', 'AccountController@update');

@@ -129,4 +129,31 @@ class ManageMobileUsersTest extends TestCase
         $this->assertEquals('admin', \App\User::find($id)->role);
         $this->assertNull(\App\MobileUser::find($id));
     }
+
+    /** @test */
+    public function an_admin_can_disable_a_user()
+    {
+        $user = createUser('user');
+
+        $this->assertEquals(1, $user->active);
+
+        $this->json('patch', route('admin.deactivate-user', ['user' => $user->id]))
+            ->assertStatus(200);
+
+        $this->assertEquals(0, $user->fresh()->active);
+    }
+
+    /** @test */
+    public function an_admin_can_reactivate_a_user()
+    {
+        $user = createUser('user');
+
+        $user->user->deactivate();
+        $this->assertEquals(0, $user->fresh()->active);
+
+        $this->json('patch', route('admin.reactivate-user', ['user' => $user->id]))
+            ->assertStatus(200);
+
+        $this->assertEquals(1, $user->fresh()->active);
+    }
 }

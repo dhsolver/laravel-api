@@ -249,4 +249,48 @@ class AuthTest extends TestCase
         $user = User::first();
         $this->assertEquals('12345', $user->zipcode);
     }
+
+    /** @test */
+    public function disabled_users_cannot_login()
+    {
+        $user = createUser('client');
+        $user->user->deactivate();
+
+        $this->json('POST', '/auth/login', [
+            'email' => $user->email,
+            'password' => 'secret',
+        ])->assertStatus(401);
+    }
+
+    /** @test */
+    public function if_an_authenticated_cms_user_is_disabled_they_cannot_complete_any_more_requests()
+    {
+        $this->signIn('client');
+
+        $this->getJson(route('cms.tours.index'))
+            ->assertStatus(200);
+
+        $this->signInUser->user->deactivate();
+
+        $this->assertEquals(0, $this->signInUser->fresh()->active);
+
+        $this->getJson(route('cms.tours.index'))
+            ->assertStatus(401);
+    }
+
+    /** @test */
+    public function if_an_authenticated_mobile_user_is_disabled_they_cannot_complete_any_more_requests()
+    {
+        $this->signIn('user');
+
+        $this->getJson(route('mobile.tours.all'))
+            ->assertStatus(200);
+
+        $this->signInUser->user->deactivate();
+
+        $this->assertEquals(0, $this->signInUser->fresh()->active);
+
+        $this->getJson(route('mobile.tours.all'))
+            ->assertStatus(401);
+    }
 }

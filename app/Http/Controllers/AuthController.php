@@ -31,6 +31,11 @@ class AuthController extends Controller
             return response()->json(['error' => 'could_not_create_token'], 500);
         }
 
+        // don't allow login if user is not active.
+        if (! auth()->user()->active) {
+            return $this->fail(401, 'Your account has been disabled.');
+        }
+
         // all good so return the token
         return response()->json([
             'user' => new UserSessionResource(auth()->user()),
@@ -53,6 +58,7 @@ class AuthController extends Controller
             'email' => strtolower($data['email']),
             'password' => bcrypt($data['password']),
             'zipcode' => isset($data['zipcode']) ? $data['zipcode'] : null,
+            'active' => 1,
         ];
 
         switch ($req->role) {
@@ -178,6 +184,11 @@ class AuthController extends Controller
         // then check if the user exists with the same email
         if (empty($user)) {
             $user = User::where('email', $facebook->email)->first();
+        }
+
+        // don't allow login if user is not active.
+        if (! empty($user) && ! $user->active) {
+            return $this->fail(401, 'Your account has been disabled.');
         }
 
         // if still no user, create one

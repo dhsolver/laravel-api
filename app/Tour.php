@@ -517,6 +517,27 @@ class Tour extends Model
     // **********************************************************
 
     /**
+     * Scope to only show published Tours owned by active users.
+     * Use the debug flag to show unpublished tours.
+     *
+     * @param Illuminate\Database\Query\Builder $query
+     * @param boolean $debug
+     * @return Illuminate\Database\Query\Builder
+     */
+    public function scopePublished($query, $debug = false)
+    {
+        $query->whereHas('creator', function ($q) {
+            $q->where('active', 1);
+        });
+
+        if (! $debug) {
+            return $query->whereNotNull('published_at');
+        }
+
+        return $query;
+    }
+
+    /**
      * Add distance field to the select query and sort by distance.
      *
      * @param Illuminate\Database\Query\Builder $query
@@ -532,7 +553,7 @@ class Tour extends Model
 
         $distanceQuery = "round(3959 * acos( cos( radians($lat) ) * cos( radians(locations.latitude) ) * cos( radians(locations.longitude) - radians($lon)) + sin(radians($lat)) * sin( radians(locations.latitude) )), 2)";
 
-        return Tour::leftJoin('locations', function ($join) {
+        return $query->leftJoin('locations', function ($join) {
             $join->on('tours.id', '=', 'locations.locationable_id')
                 ->where('locations.locationable_type', '=', "App\Tour");
         })
@@ -581,6 +602,28 @@ class Tour extends Model
     // **********************************************************
     // OTHER METHODS
     // **********************************************************
+
+    /**
+     * Check if the Tour is 'live', meaning is is published and
+     * belongs to a user that is active in the system.
+     * Add the debug flag to show unpublished tours.
+     *
+     * @param boolean $debugMode
+     * @return boolean
+     */
+    public function isLive($debugMode = false)
+    {
+        if (! $this->creator->active) {
+            // never show tours from de-activated users.
+            return false;
+        }
+
+        if ($debugMode) {
+            return true;
+        }
+
+        return $this->is_published;
+    }
 
     /**
      * Get the proper points calculator for the Tour.
@@ -707,25 +750,6 @@ class Tour extends Model
     public function isFree()
     {
         return $this->pricing_type == 'free';
-    }
-
-    /**
-     * Scope to only show published Tours.
-     *
-     * @param Illuminate\Database\Query\Builder $query
-     * @param boolean $debug
-     * @return Illuminate\Database\Query\Builder
-     */
-    public function scopePublished($query, $debug = false)
-    {
-        if ($debug) {
-            return $query->where(function ($q) {
-                return $q->whereNotNull('published_at')
-                    ->orWhere('user_id', auth()->user()->id);
-            });
-        }
-
-        return $query->whereNotNull('published_at');
     }
 
     /**

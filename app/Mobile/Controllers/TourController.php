@@ -39,7 +39,7 @@ class TourController extends Controller
         }
 
         return TourResource::collection(
-            Tour::published($request->debug)
+            Tour::published($request->debug == 1)
                 ->distanceFrom($lat, $lon)
                 ->favoritedBy($request->favorites == 1 ? auth()->id() : null)
                 ->search($request->search)
@@ -56,7 +56,7 @@ class TourController extends Controller
      */
     public function show(Tour $tour)
     {
-        if (! request()->debug && ! $tour->isPublished) {
+        if (! $tour->isLive(request()->debug == 1)) {
             if (! empty($tour->last_published_at)) {
                 // tour was published at one time, but it no longer available
                 throw new ModelNotFoundException('Tour no longer available.');

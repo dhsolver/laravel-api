@@ -14,7 +14,7 @@ Route::post('auth/reset-password', 'ResetPasswordController@reset');
 Route::post('confirm-email', 'ConfirmEmailController@confirm')->name('confirm-email');
 // Route::get('test', 'Controller@test');
 
-Route::middleware(['jwt.auth'])->group(function () {
+Route::middleware(['jwt.auth', 'active'])->group(function () {
     Route::get('auth/session', 'AuthController@userSession');
     Route::delete('auth/facebook', 'AuthController@facebookDetach')->name('facebook.detach');
     Route::post('auth/facebook/attach', 'AuthController@facebookAttach')->name('facebook.attach');
