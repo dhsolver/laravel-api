@@ -27,7 +27,7 @@ class UpdateTourRequest extends FormRequest
      */
     public function rules()
     {
-        return [
+        $rules = [
             'title' => [
                 'required',
                 'string',
@@ -98,6 +98,12 @@ class UpdateTourRequest extends FormRequest
 
             'route' => 'nullable',
         ];
+
+        if (auth()->user()->isAdmin()) {
+            $rules['in_app_id'] = 'nullable|string|max:255';
+        }
+
+        return $rules;
     }
 
     /**

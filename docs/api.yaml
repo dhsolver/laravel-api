@@ -2,7 +2,7 @@ swagger: '2.0'
 info:
   title: Junket API
   description: Private API for the wejunket.com mobile apps. 
-  version: 1.0.8
+  version: 1.0.9
 host: api.wejunket.com
 basePath: /mobile
 schemes:
@@ -836,13 +836,41 @@ paths:
         500:
           $ref: '#/responses/UnexpectedError'
 
-  /leaderboard/{tour_id}:
+  /leaderboard:
     get:
       tags:
         - scores
       summary: Leaderboard
-      description: Get the top 100 leaderboard for a given Tour.
+      description: Get the top 100 all-time leaderboard for all Tours.
       operationId: scoresLeaderboard
+      produces:
+        - application/json
+      parameters:
+        - $ref: '#/parameters/AuthToken'
+      responses:
+        200:
+          description: OK
+          schema: 
+            type: object
+            properties:
+              leaders:
+                type: array
+                items:
+                  $ref: '#/definitions/LeaderboardEntry'
+        401:
+          $ref: '#/responses/Unauthroized'
+        404:
+          $ref: '#/responses/NotFound'
+        500:
+          $ref: '#/responses/UnexpectedError'
+
+  /leaderboard/{tour_id}:
+    get:
+      tags:
+        - scores
+      summary: Tour Leaderboard
+      description: Get the top 100 leaderboard for a given Tour.
+      operationId: scoresTourLeaderboard
       produces:
         - application/json
       parameters:

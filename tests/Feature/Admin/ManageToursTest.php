@@ -125,4 +125,52 @@ class ManageToursTest extends TestCase
 
         $this->assertCount(1, Tour::all());
     }
+
+    /** @test */
+    public function an_admin_can_transfer_a_tour_to_another_user()
+    {
+        $this->signIn('admin');
+
+        $user = $this->tour->creator;
+        $otherUser = createUser('client');
+
+        $this->assertCount(1, $user->type->tours);
+        $this->assertCount(0, $otherUser->tours);
+
+        $this->json('PATCH', route('admin.tours.transfer', ['tour' => $this->tour->id]), ['user_id' => $otherUser->id])
+            ->assertStatus(200);
+
+        $this->assertCount(0, $user->fresh()->type->tours);
+        $this->assertCount(1, $otherUser->fresh()->tours);
+    }
+
+    /** @test */
+    public function an_admin_cannot_transfer_a_tour_to_a_user_exceeding_their_tour_limit()
+    {
+        $this->withExceptionHandling();
+
+        $this->signIn('admin');
+
+        $user = $this->tour->creator;
+        $otherUser = createUser('client');
+        $otherUser->update(['tour_limit' => 0]);
+
+        $this->assertCount(1, $user->type->tours);
+        $this->assertCount(0, $otherUser->tours);
+
+        $this->json('PATCH', route('admin.tours.transfer', ['tour' => $this->tour->id]), ['user_id' => $otherUser->id])
+            ->assertStatus(422)
+            ->assertSee('exceed the number of tours');
+
+        $this->assertCount(1, $user->fresh()->type->tours);
+        $this->assertCount(0, $otherUser->fresh()->tours);
+
+        $otherUser->update(['tour_limit' => 1]);
+
+        $this->json('PATCH', route('admin.tours.transfer', ['tour' => $this->tour->id]), ['user_id' => $otherUser->id])
+            ->assertStatus(200);
+
+        $this->assertCount(0, $user->fresh()->type->tours);
+        $this->assertCount(1, $otherUser->fresh()->tours);
+    }
 }

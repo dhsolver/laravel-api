@@ -274,11 +274,11 @@ class TrackAdventuresTest extends TestCase
         $this->visitStop($this->tour->end_point_id);
         $this->assertEquals(200, $this->user->fresh()->stats->points);
 
-        list($otherTour, $stops) = $this->createTestAdventure(false);
+        list($otherTour, $stops) = $this->createTestAdventure(true);
         $this->startTour(strtotime('100 minutes ago'), $otherTour);
         $this->visitStop($otherTour->end_point_id);
 
-        $this->assertEquals(286, $this->user->fresh()->stats->points);
+        $this->assertEquals(302, $this->user->fresh()->stats->points);
     }
 
     /** @test */
@@ -289,7 +289,7 @@ class TrackAdventuresTest extends TestCase
         $this->visitStop($this->tour->end_point_id);
         $this->assertEquals(200, $this->user->fresh()->stats->points);
 
-        list($otherTour, $stops) = $this->createTestAdventure(false);
+        list($otherTour, $stops) = $this->createTestAdventure(true);
         $this->startTour(strtotime('100 minutes ago'), $otherTour);
 
         $this->assertEquals(200, $this->user->fresh()->stats->points);

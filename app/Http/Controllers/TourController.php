@@ -32,9 +32,13 @@ class TourController extends Controller
      */
     public function store(CreateTourRequest $request)
     {
+        if (auth()->user()->type->tours()->count() >= auth()->user()->tour_limit) {
+            return $this->fail(422, 'You have reached your maximum number of allowed tours.');
+        }
+
         if ($tour = auth()->user()->type->tours()->create($request->validated())) {
             return $this->success("The tour {$tour->title} was created successfully.", new TourResource(
-                $tour->fresh()
+                $tour->fresh()->load(['stops', 'route'])
             ));
         }
 
@@ -49,6 +53,8 @@ class TourController extends Controller
      */
     public function show(Tour $tour)
     {
+        $tour->load(['stops', 'route']);
+
         return response()->json(new TourResource($tour));
     }
 
@@ -78,7 +84,7 @@ class TourController extends Controller
 
             \DB::commit();
 
-            $tour = $tour->fresh();
+            $tour = $tour->fresh()->load(['stops', 'route']);
             return $this->success("{$tour->title} was updated successfully.", new TourResource($tour));
         }
 
@@ -128,6 +134,8 @@ class TourController extends Controller
      */
     public function publish(Tour $tour)
     {
+        $tour->load(['stops', 'route']);
+
         if ($errors = $tour->audit()) {
             return $this->fail(422, 'Cannot publish tour.', [
                 'tour' => new TourResource($tour),
@@ -141,9 +149,14 @@ class TourController extends Controller
 
         // auto-approve tour for admins
         if (auth()->user()->isAdmin()) {
+            if (empty($tour->in_app_id)) {
+                return $this->fail(422, 'Cannot publish tour without an In-App ID', new TourResource($tour));
+            }
+
             if ($tour->isAwaitingApproval) {
                 $tour->publishSubmissions()
                     ->pending()
+                    ->first()
                     ->approve();
             } else {
                 $submission = $tour->publishSubmissions()->create([
@@ -153,12 +166,12 @@ class TourController extends Controller
                 $submission->approve();
             }
 
-            $tour = $tour->fresh();
+            $tour = $tour->fresh()->load(['stops', 'route']);
             return $this->success("{$tour->title} has been published.", new TourResource($tour));
         }
 
         if ($tour->submitForPublishing()) {
-            $tour = $tour->fresh();
+            $tour = $tour->fresh()->load(['stops', 'route']);
             return $this->success("{$tour->title} has been submitted for publishing and awaiting approval.", new TourResource($tour));
         }
 
@@ -173,9 +186,11 @@ class TourController extends Controller
      */
     public function unpublish(Tour $tour)
     {
+        $tour->load(['stops', 'route']);
+
         if ($tour->isAwaitingApproval) {
             $tour->publishSubmissions()->pending()->first()->delete();
-            $tour = $tour->fresh();
+            $tour = $tour->fresh()->load(['stops', 'route']);
             return $this->success("{$tour->title} has been removed from the approval queue.", new TourResource($tour));
         }
 

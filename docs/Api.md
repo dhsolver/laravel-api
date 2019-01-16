@@ -27,6 +27,9 @@ This should display a success message and overwrite the docs/api.html documentat
 
 ### Change Log
 
+v.1.0.9
+- Added all-time leaderboard endpoint
+
 v.1.0.8
 - Added new favorites query paramter flag to Tour listing endpoint 
 - Added favorites count to the user profile resource

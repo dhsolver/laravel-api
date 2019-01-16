@@ -62,7 +62,7 @@ class ErrorResponse implements Responsable
         } else {
             $response['message'] = (string) $this->messages;
         }
-        if (count($this->data)) {
+        if (! empty($this->data)) {
             $response['data'] = $this->data;
         }
 

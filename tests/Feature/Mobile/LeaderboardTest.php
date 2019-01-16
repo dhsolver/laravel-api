@@ -55,7 +55,7 @@ class LeaderboardTest extends TestCase
 
         $this->assertCount(3, ScoreCard::all());
 
-        $this->getJson(route('mobile.leaderboard', ['tour' => $this->tour]))
+        $this->getJson(route('mobile.leaderboard.tour', ['tour' => $this->tour]))
             ->assertSuccessful()
             ->assertJsonCount(3, 'leaders')
             ->assertSeeInOrder([$this->user2->name, $this->user3->name, $this->user->name]);
@@ -71,7 +71,7 @@ class LeaderboardTest extends TestCase
             'points' => 1
         ]);
 
-        $this->getJson(route('mobile.leaderboard', ['tour' => $this->tour]))
+        $this->getJson(route('mobile.leaderboard.tour', ['tour' => $this->tour]))
             ->assertSuccessful()
             ->assertJsonCount(3, 'leaders')
             ->assertSeeInOrder([$this->user2->name, $this->user3->name, $this->user->name])
@@ -90,8 +90,38 @@ class LeaderboardTest extends TestCase
             ]);
         });
 
-        $this->getJson(route('mobile.leaderboard', ['tour' => $this->tour]))
+        $this->getJson(route('mobile.leaderboard.tour', ['tour' => $this->tour]))
             ->assertSuccessful()
             ->assertJsonCount(100, 'leaders');
+    }
+
+    /** @test */
+    public function a_user_can_view_the_all_time_leaderboard()
+    {
+        ScoreCard::where('id', '>', 0)->delete();
+
+        $tours = [
+            $this->tour,
+            factory(Tour::class)->create(['type' => TourType::ADVENTURE]),
+            factory(Tour::class)->create(['type' => TourType::ADVENTURE])
+        ];
+
+        for ($i = 0; $i < 105; $i++) {
+            $user = factory(MobileUser::class)->create();
+            $tour = (195 / ($i + 1)) > 3 ? $tours[0] : (195 / ($i + 1)) > 2 ? $tours[1] : $tours[2];
+            factory(ScoreCard::class)->create([
+                'user_id' => $user->id,
+                'tour_id' => $tour->id,
+                'points' => (200 - $i),
+            ]);
+        }
+
+        $this->assertEquals(105, ScoreCard::count());
+
+        $this->getJson(route('mobile.leaderboard'))
+            ->assertStatus(200)
+            ->assertJsonFragment(['points' => '200'])
+            ->assertJsonFragment(['points' => '101'])
+            ->assertJsonMissing(['points' => '100']);
     }
 }

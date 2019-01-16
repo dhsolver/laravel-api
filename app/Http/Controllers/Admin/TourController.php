@@ -18,7 +18,7 @@ class TourController extends BaseTourController
     public function index()
     {
         return TourResource::collection(
-            Tour::all()
+            Tour::with('creator')->get()
         );
     }
 
@@ -30,9 +30,15 @@ class TourController extends BaseTourController
      */
     public function store(CreateTourRequest $request)
     {
+        $client = \App\Client::findOrFail($request->user_id);
+
+        if ($client->tours()->count() >= $client->tour_limit) {
+            return $this->fail(422, 'Tour limit reached.');
+        }
+
         if ($tour = Tour::create($request->validated())) {
             return $this->success("The tour {$tour->name} was created successfully.", new TourResource(
-                $tour->fresh()
+                $tour->fresh()->load(['stops', 'route'])
             ));
         }
 
@@ -48,6 +54,12 @@ class TourController extends BaseTourController
      */
     public function transfer(TransferTourRequest $request, Tour $tour)
     {
+        $newClient = \App\Client::findOrFail($request->user_id);
+
+        if ($newClient->tours_left == 0) {
+            return $this->fail(422, 'Operation failed.  This would exceed the number of tours for the selected client.');
+        }
+
         $tour->update(['user_id' => $request->user_id]);
 
         return $this->success('Tour was successfully transfered.');

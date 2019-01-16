@@ -8,6 +8,7 @@ Using Laravel 5.7
 - [ffmpeg](https://www.ffmpeg.org)
 
 ### Code Documentation
+- [Structure](docs/Structure.md)
 - [AccessPoints](docs/AccessPoints.md)
 - [Authentication](docs/Authentication.md)
 - [Development Setup](docs/Development.md)
