@@ -146,4 +146,47 @@ class PublishToursTest extends TestCase
             ->assertJsonStructure(['data' => ['errors', 'tour']])
             ->assertSee('The tour has no description');
     }
+
+    /** @test */
+    public function an_admin_can_approve_a_pending_tour()
+    {
+        $this->tour->submitForPublishing();
+        $this->assertTrue($this->tour->fresh()->isAwaitingApproval);
+        $this->assertFalse($this->tour->fresh()->isPublished);
+
+        $this->signIn('admin');
+
+        $this->putJson(route('cms.tours.publish', ['tour' => $this->tour]))
+            ->assertStatus(200);
+
+        $this->assertFalse($this->tour->fresh()->isAwaitingApproval);
+        $this->assertTrue($this->tour->fresh()->isPublished);
+    }
+
+    /** @test */
+    public function a_tour_must_have_an_in_app_id_to_approve_publishing()
+    {
+        $this->tour->submitForPublishing();
+        $this->assertTrue($this->tour->fresh()->isAwaitingApproval);
+        $this->assertFalse($this->tour->fresh()->isPublished);
+
+        $this->signIn('admin');
+
+        $this->tour->update(['in_app_id' => '']);
+
+        $this->putJson(route('cms.tours.publish', ['tour' => $this->tour]))
+            ->assertStatus(422)
+            ->assertSee('In-App ID');
+
+        $this->assertTrue($this->tour->fresh()->isAwaitingApproval);
+        $this->assertFalse($this->tour->fresh()->isPublished);
+
+        $this->tour->update(['in_app_id' => 'test']);
+
+        $this->putJson(route('cms.tours.publish', ['tour' => $this->tour]))
+            ->assertStatus(200);
+
+        $this->assertFalse($this->tour->fresh()->isAwaitingApproval);
+        $this->assertTrue($this->tour->fresh()->isPublished);
+    }
 }

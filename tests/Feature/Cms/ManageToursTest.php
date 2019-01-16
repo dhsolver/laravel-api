@@ -496,4 +496,23 @@ class ManageToursTest extends TestCase
         $this->assertTrue($this->tour->fresh()->updateLength());
         $this->assertEquals(0.59, $this->tour->fresh()->length);
     }
+
+    /** @test */
+    public function only_an_admin_can_update_a_tours_in_app_id()
+    {
+        $this->signIn('admin');
+
+        $this->updateTour(['in_app_id' => 'com.test.yeah'])
+            ->assertStatus(200);
+
+        $this->assertEquals('com.test.yeah', $this->tour->fresh()->in_app_id);
+
+        $this->signIn('client');
+        $this->tour->update(['user_id' => $this->signInUser->id]);
+
+        $this->updateTour(['in_app_id' => 'other'])
+            ->assertStatus(200);
+
+        $this->assertEquals('com.test.yeah', $this->tour->fresh()->in_app_id);
+    }
 }

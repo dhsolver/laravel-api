@@ -149,9 +149,14 @@ class TourController extends Controller
 
         // auto-approve tour for admins
         if (auth()->user()->isAdmin()) {
+            if (empty($tour->in_app_id)) {
+                return $this->fail(422, 'Cannot publish tour without an In-App ID', new TourResource($tour));
+            }
+
             if ($tour->isAwaitingApproval) {
                 $tour->publishSubmissions()
                     ->pending()
+                    ->first()
                     ->approve();
             } else {
                 $submission = $tour->publishSubmissions()->create([
@@ -161,12 +166,12 @@ class TourController extends Controller
                 $submission->approve();
             }
 
-            $tour = $tour->fresh();
+            $tour = $tour->fresh()->load(['stops', 'route']);
             return $this->success("{$tour->title} has been published.", new TourResource($tour));
         }
 
         if ($tour->submitForPublishing()) {
-            $tour = $tour->fresh();
+            $tour = $tour->fresh()->load(['stops', 'route']);
             return $this->success("{$tour->title} has been submitted for publishing and awaiting approval.", new TourResource($tour));
         }
 
@@ -185,7 +190,7 @@ class TourController extends Controller
 
         if ($tour->isAwaitingApproval) {
             $tour->publishSubmissions()->pending()->first()->delete();
-            $tour = $tour->fresh();
+            $tour = $tour->fresh()->load(['stops', 'route']);
             return $this->success("{$tour->title} has been removed from the approval queue.", new TourResource($tour));
         }
 
