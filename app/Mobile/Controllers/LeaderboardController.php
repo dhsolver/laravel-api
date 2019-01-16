@@ -10,12 +10,36 @@ use App\Tour;
 class LeaderboardController extends Controller
 {
     /**
+     * Get the all time leaderboard.
+     *
+     * @return \Illuminate\Http\Resources\Json\ResourceCollection
+     */
+    public function index()
+    {
+        $scores = ScoreCard::with(['user'])
+            ->orderBy('points', 'desc')
+            ->where(function ($query) {
+                return $query->where(function ($q) {
+                    return $q->forAdventures()
+                          ->finished();
+                })
+                ->orWhere(function ($q) {
+                    return $q->forRegularTours();
+                });
+            })
+            ->limit(100)
+            ->get();
+
+        return new LeaderboardCollection($scores);
+    }
+
+    /**
      * Get the leaderboard for a given Tour.
      *
      * @param \App\Tour $tour
      * @return \Illuminate\Http\Resources\Json\ResourceCollection
      */
-    public function show(Tour $tour)
+    public function tour(Tour $tour)
     {
         $scores = ScoreCard::with(['user'])
             ->where('tour_id', modelId($tour))
