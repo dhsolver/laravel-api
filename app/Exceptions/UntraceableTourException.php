@@ -11,6 +11,8 @@ class UntraceableTourException extends Exception
     public const NO_NEXT_STOP = 3;
     public const MISSING_NEXT_STOP = 4;
     public const STOP_MISSING_LOCATION = 5;
+    public const STOP_MISSING_ROUTE = 6;
+    public const TOUR_MISSING_ROUTE = 7;
 
     /**
      * The error message.

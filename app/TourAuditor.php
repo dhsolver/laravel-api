@@ -2,6 +2,8 @@
 
 namespace App;
 
+use App\Exceptions\UntraceableTourException;
+
 class TourAuditor
 {
     /**
@@ -124,6 +126,9 @@ class TourAuditor
      */
     public function outdoor()
     {
+        if (empty($this->tour->route) || $this->tour->route->count() == 0) {
+            $this->error('The tour does not have a route.');
+        }
     }
 
     /**
@@ -133,5 +138,10 @@ class TourAuditor
      */
     public function adventure()
     {
+        try {
+            list($route, $length) = $this->tour->calculator()->getShortestRoute();
+        } catch (UntraceableTourException $ex) {
+            $this->error('Unable to calculate the length of the tour.  Please check all next stops are configured with routes.');
+        }
     }
 }

@@ -214,9 +214,21 @@ trait HasTestTour
 
         $stop4->update(['next_stop_id' => $stop5->id]);
 
+        // set main image for publishable tour
+        $media = factory('App\Media')->create(['user_id' => $user->id]);
+
         $tour->update([
             'start_point_id' => $stop1->id,
             'end_point_id' => $stop5->id,
+            'main_image_id' => $media->id,
+        ]);
+
+        // create random location for tour
+        // this should not affect the distances
+        $tour->location()->delete();
+        factory('App\Location')->create([
+            'locationable_type' => 'App\Tour',
+            'locationable_id' => $tour->id,
         ]);
 
         if ($withRoutes) {

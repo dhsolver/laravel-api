@@ -24,12 +24,14 @@ class AdventureCalculatorTest extends TestCase
     }
 
     /** @test */
-    public function it_can_calculate_the_distance_between_two_stops_if_there_is_no_route_data()
+    public function it_cannot_calculate_the_distance_between_two_stops_if_there_is_no_route_data()
     {
+        $this->expectException(UntraceableTourException::class);
+
         $ac = new AdventureCalculator($this->tour);
         $distance = $ac->getDistanceBetweenStops($this->stops[0], $this->stops[1]);
 
-        $this->assertEquals(0.5927164968112091, $distance);
+        $this->assertEquals(0, $distance);
     }
 
     /** @test */
@@ -147,13 +149,15 @@ class AdventureCalculatorTest extends TestCase
     }
 
     /** @test */
-    public function it_can_determine_the_shortest_route_for_a_tour_when_there_are_no_stop_routes()
+    public function it_cannot_determine_the_shortest_route_for_a_tour_when_there_are_no_stop_routes()
     {
+        $this->expectException(UntraceableTourException::class);
+
         $ac = new AdventureCalculator($this->tour);
 
         list($route, $distance) = $ac->getShortestRoute();
 
-        $this->assertEquals(1.6110865039252085, $distance);
+        $this->assertEquals(0, $distance);
         $this->assertEquals([1, 2, 4, 5], $route);
     }
 

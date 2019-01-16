@@ -7,13 +7,13 @@ use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\Concerns\AttachJwtToken;
 use App\Tour;
 use Illuminate\Support\Carbon;
+use App\TourType;
+use Tests\HasTestTour;
 
 class PublishToursTest extends TestCase
 {
-    use DatabaseMigrations;
-    use AttachJwtToken;
+    use DatabaseMigrations, AttachJwtToken, HasTestTour;
 
-    public $tour;
     public $client;
 
     public function setUp()
@@ -22,26 +22,29 @@ class PublishToursTest extends TestCase
 
         $this->client = createUser('client');
 
-        $this->tour = create('App\Tour', ['user_id' => $this->client->id]);
+        [$this->tour, $this->stops] = $this->createTestAdventure(true, $this->client);
+        $this->tour->update(['published_at' => null]);
 
-        $stop = $this->tour->stops()->create(factory('App\TourStop')->make()->toArray());
-        $media = factory('App\Media')->create(['user_id' => $this->client->id]);
+        // $this->tour = create('App\Tour', ['user_id' => $this->client->id]);
 
-        $this->tour->update(['main_image_id' => $media->id]);
-        $stop->update(['main_image_id' => $media->id]);
+        // $stop = $this->tour->stops()->create(factory('App\TourStop')->make()->toArray());
+        // $media = factory('App\Media')->create(['user_id' => $this->client->id]);
 
-        $this->tour->location()->delete();
-        $stop->location()->delete();
+        // $this->tour->update(['main_image_id' => $media->id]);
+        // $stop->update(['main_image_id' => $media->id]);
 
-        factory('App\Location')->create([
-            'locationable_type' => 'App\Tour',
-            'locationable_id' => $this->tour->id,
-        ]);
+        // $this->tour->location()->delete();
+        // $stop->location()->delete();
 
-        factory('App\Location')->create([
-            'locationable_type' => 'App\TourStop',
-            'locationable_id' => $this->tour->stops()->first()->id,
-        ]);
+        // factory('App\Location')->create([
+        //     'locationable_type' => 'App\Tour',
+        //     'locationable_id' => $this->tour->id,
+        // ]);
+
+        // factory('App\Location')->create([
+        //     'locationable_type' => 'App\TourStop',
+        //     'locationable_id' => $this->tour->stops()->first()->id,
+        // ]);
     }
 
     /**
@@ -188,5 +191,50 @@ class PublishToursTest extends TestCase
 
         $this->assertFalse($this->tour->fresh()->isAwaitingApproval);
         $this->assertTrue($this->tour->fresh()->isPublished);
+    }
+
+    /** @test */
+    public function a_tour_must_have_routes_in_order_to_be_publish()
+    {
+        $this->loginAs($this->client);
+
+        $this->tour->update(['type' => TourType::OUTDOOR]);
+        $this->tour->syncRoute([]);
+
+        $this->putJson(route('cms.tours.publish', ['tour' => $this->tour]))
+            ->assertStatus(422);
+
+        $this->assertFalse($this->tour->fresh()->isAwaitingApproval);
+        $this->assertFalse($this->tour->fresh()->isPublished);
+    }
+
+    /** @test */
+    public function an_adveture_must_have_all_the_stop_routes_to_be_published()
+    {
+        $this->loginAs($this->client);
+
+        [$this->tour, $this->stops] = $this->createTestAdventure(false, $this->client);
+        $this->tour->update(['published_at' => null]);
+
+        $media = factory('App\Media')->create(['user_id' => $this->client->id]);
+        $this->tour->update(['main_image_id' => $media->id]);
+        $this->tour->location()->delete();
+        factory('App\Location')->create([
+            'locationable_type' => 'App\Tour',
+            'locationable_id' => $this->tour->id,
+        ]);
+
+        $this->putJson(route('cms.tours.publish', ['tour' => $this->tour]))
+            ->assertStatus(422);
+
+        $this->assertFalse($this->tour->fresh()->isAwaitingApproval);
+        $this->assertFalse($this->tour->fresh()->isPublished);
+
+        $this->insertStopRouteData($this->tour->fresh());
+        $this->putJson(route('cms.tours.publish', ['tour' => $this->tour]))
+            ->assertStatus(200);
+
+        $this->assertTrue($this->tour->fresh()->isAwaitingApproval);
+        $this->assertFalse($this->tour->fresh()->isPublished);
     }
 }

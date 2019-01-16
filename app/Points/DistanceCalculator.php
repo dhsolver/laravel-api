@@ -53,7 +53,9 @@ class DistanceCalculator
             if ($this->tour->route->count() > 0) {
                 return round($this->getLengthOfTourRoute($this->tour->route), 2);
             } else {
-                return round($this->getDistanceBetweenAllStops(), 2);
+                // distances could not be calculated because there is no route
+                // throw new UntraceableTourException($this->tour, $stop1, UntraceableTourException::TOUR_MISSING_ROUTE);
+                return 0;
             }
         }
     }
@@ -304,24 +306,11 @@ class DistanceCalculator
      */
     public function getDistanceBetweenStops($stop1, $stop2)
     {
-        if (! $path = $this->getRouteBetweenStops($stop1, $stop2)) {
-            // if there is no path, just get the straight line distance
-            // between the two stops coordinates.
-
-            if (empty($stop1->location)) {
-                throw new UntraceableTourException($this->tour, $stop1, UntraceableTourException::STOP_MISSING_LOCATION);
-            }
-
-            if (empty($stop2->location)) {
-                throw new UntraceableTourException($this->tour, $stop2, UntraceableTourException::STOP_MISSING_LOCATION);
-            }
-
-            return $this->getDistance(
-                $stop1->location->latitude,
-                $stop1->location->longitude,
-                $stop2->location->latitude,
-                $stop2->location->longitude
-            );
+        $path = $this->getRouteBetweenStops($stop1, $stop2);
+        if (! $path || $path->count() == 0) {
+            // fail if there is no route path, all tours should have
+            // the stop routes set
+            throw new UntraceableTourException($this->tour, $stop1, UntraceableTourException::STOP_MISSING_ROUTE);
         }
 
         // get every point along the route and get the sum of the distance

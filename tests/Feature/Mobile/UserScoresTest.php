@@ -92,6 +92,8 @@ class UserScoresTest extends TestCase
     {
         $this->assertCount(10, $this->user->fresh()->scoreCards);
 
+        $this->insertStopRouteData($this->tour);
+
         $this->startTour(strtotime('100 minutes ago'));
 
         $this->visitStop($this->tour->end_point_id);
