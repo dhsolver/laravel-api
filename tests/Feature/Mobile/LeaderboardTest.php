@@ -115,6 +115,16 @@ class LeaderboardTest extends TestCase
     }
 
     /** @test */
+    public function fetching_an_empty_leader_board_should_show_no_results()
+    {
+        ScoreCard::where('id', '>', 0)->delete();
+
+        $this->getJson(route('mobile.leaderboard.tour', ['tour' => $this->tour]))
+            ->assertSuccessful()
+            ->assertJsonCount(0, 'leaders');
+    }
+
+    /** @test */
     public function a_leaderboard_should_order_the_entries_by_points()
     {
         $tour = $this->tour;
