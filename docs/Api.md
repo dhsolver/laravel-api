@@ -27,6 +27,10 @@ This should display a success message and overwrite the docs/api.html documentat
 
 ### Change Log
 
+v.1.1.0
+- Added tour_id to the leaderboard
+- Fixed issue with multiple scores of the same user showing on leaderboards
+
 v.1.0.9
 - Added all-time leaderboard endpoint
 
