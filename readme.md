@@ -6,6 +6,7 @@ Using Laravel 5.7
 - Fileinfo Extension
 - [Imagick PHP extension](http://php.net/manual/en/book.imagick.php) (>=6.5.7)
 - [ffmpeg](https://www.ffmpeg.org)
+- [ffprobe](https://www.ffmpeg.org)
 
 ### Code Documentation
 - [Structure](docs/Structure.md)

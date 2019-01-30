@@ -2002,6 +2002,11 @@ definitions:
         format: int32
         description: The number of point the user received.  Max points value is 200, minimum is 50.
         example: 200
+      tour_id:
+        type: integer
+        format: int32
+        description: The tour that the score is for.
+        example: 100934
       user:
         type: object
         $ref: '#/definitions/Profile'
