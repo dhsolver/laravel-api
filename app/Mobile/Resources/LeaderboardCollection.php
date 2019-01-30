@@ -15,9 +15,10 @@ class LeaderboardCollection extends ResourceCollection
     public function toArray($request)
     {
         return [
-            'leaders' => $this->collection->map(function ($item) {
+            'leaders' => $this->collection->sortByDesc('points')->map(function ($item) {
                 return [
-                    'points' => $item->points,
+                    'tour_id' => (int) $item->tour_id,
+                    'points' => (int) $item->points,
                     'user' => new ProfileResource($item->user),
                 ];
             })

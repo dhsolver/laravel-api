@@ -75,16 +75,16 @@ class LeaderboardTest extends TestCase
             ->assertSuccessful()
             ->assertJsonCount(3, 'leaders')
             ->assertSeeInOrder([$this->user2->name, $this->user3->name, $this->user->name])
-            ->assertJsonMissing(['points' => '1']);
+            ->assertJsonMissing(['points' => 1]);
     }
 
     /** @test */
     public function a_leaderboard_only_lists_the_top_100()
     {
         $tour = $this->tour;
-        factory(MobileUser::class, 100)->create()->each(function ($user) use ($tour) {
+        factory(MobileUser::class, 101)->create()->each(function ($user) use ($tour) {
             factory(ScoreCard::class)->create([
-                'user_id' => $this->user->id,
+                'user_id' => $user->id,
                 'tour_id' => $tour->id,
                 'points' => 200,
             ]);
@@ -93,6 +93,34 @@ class LeaderboardTest extends TestCase
         $this->getJson(route('mobile.leaderboard.tour', ['tour' => $this->tour]))
             ->assertSuccessful()
             ->assertJsonCount(100, 'leaders');
+    }
+
+    /** @test */
+    public function a_leaderboard_should_only_show_one_entry_per_user()
+    {
+        $tour = $this->tour;
+        factory(ScoreCard::class)->create([
+            'user_id' => $this->user->id,
+            'tour_id' => $tour->id,
+            'points' => 5,
+        ]);
+
+        $this->getJson(route('mobile.leaderboard.tour', ['tour' => $tour]))
+            ->assertSuccessful()
+            ->assertJsonCount(3, 'leaders')
+            ->assertJsonMissing(['points' => 5])
+            ->assertJsonFragment(['points' => 150])
+            ->assertJsonFragment(['points' => 200])
+            ->assertJsonFragment(['points' => 187]);
+    }
+
+    /** @test */
+    public function a_leaderboard_should_order_the_entries_by_points()
+    {
+        $tour = $this->tour;
+        $this->getJson(route('mobile.leaderboard.tour', ['tour' => $tour]))
+            ->assertSuccessful()
+            ->assertSeeInOrder([200, 187, 150]);
     }
 
     /** @test */
@@ -120,8 +148,43 @@ class LeaderboardTest extends TestCase
 
         $this->getJson(route('mobile.leaderboard'))
             ->assertStatus(200)
-            ->assertJsonFragment(['points' => '200'])
-            ->assertJsonFragment(['points' => '101'])
-            ->assertJsonMissing(['points' => '100']);
+            ->assertJsonFragment(['points' => 200])
+            ->assertJsonFragment(['points' => 101])
+            ->assertJsonMissing(['points' => 100]);
+    }
+
+    /** @test */
+    public function the_all_time_leaderboard_should_order_the_entries_by_points()
+    {
+        $this->getJson(route('mobile.leaderboard'))
+            ->assertStatus(200)
+            ->assertSeeInOrder([200, 187, 150]);
+    }
+
+    /** @test */
+    public function the_all_time_leaderboard_should_only_show_one_entry_per_user_tour_combo()
+    {
+        $tour = $this->tour;
+        factory(ScoreCard::class)->create([
+            'user_id' => $this->user->id,
+            'tour_id' => $tour->id,
+            'points' => 5,
+        ]);
+
+        $otherTour = factory(Tour::class)->create(['type' => TourType::ADVENTURE]);
+        factory(ScoreCard::class)->create([
+            'user_id' => $this->user->id,
+            'tour_id' => $otherTour->id,
+            'points' => 10,
+        ]);
+
+        $this->getJson(route('mobile.leaderboard'))
+            ->assertSuccessful()
+            ->assertJsonCount(4, 'leaders')
+            ->assertJsonMissing(['points' => 5])
+            ->assertJsonFragment(['points' => 10, 'tour_id' => $otherTour->id])
+            ->assertJsonFragment(['points' => 150, 'tour_id' => $this->tour->id])
+            ->assertJsonFragment(['points' => 200, 'tour_id' => $this->tour->id])
+            ->assertJsonFragment(['points' => 187, 'tour_id' => $this->tour->id]);
     }
 }

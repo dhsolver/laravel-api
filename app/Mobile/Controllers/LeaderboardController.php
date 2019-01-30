@@ -17,6 +17,8 @@ class LeaderboardController extends Controller
     public function index()
     {
         $scores = ScoreCard::with(['user'])
+            ->selectRaw('tour_id, user_id, MAX(points) as points')
+            ->groupBy(['user_id', 'tour_id'])
             ->orderBy('points', 'desc')
             ->where(function ($query) {
                 return $query->where(function ($q) {
@@ -42,6 +44,8 @@ class LeaderboardController extends Controller
     public function tour(Tour $tour)
     {
         $scores = ScoreCard::with(['user'])
+            ->selectRaw('tour_id, user_id, MAX(points) as points')
+            ->groupBy('user_id')
             ->where('tour_id', modelId($tour))
             ->orderBy('points', 'desc')
             ->where(function ($query) {
