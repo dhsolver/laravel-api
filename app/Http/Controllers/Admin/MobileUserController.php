@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\MobileUser;
+use App\User;
 use App\Http\Requests\Admin\CreateMobileUserRequest;
 use App\Http\Resources\MobileUserResource;
 use App\Http\Requests\Admin\UpdateMobileUserRequest;
@@ -70,7 +71,7 @@ class MobileUserController extends Controller
      * @return \Illuminate\Http\Response
      * @throws \Exception
      */
-    public function destroy(MobileUser $user)
+    public function destroy(User $user)
     {
         if ($user->delete()) {
             return $this->success("{$user->name} was archived successfully.");
