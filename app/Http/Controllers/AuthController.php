@@ -59,6 +59,7 @@ class AuthController extends Controller
             'password' => bcrypt($data['password']),
             'zipcode' => isset($data['zipcode']) ? $data['zipcode'] : null,
             'active' => 1,
+            'user_type' => $req->role == 'client' ? 1 : 2
         ];
 
         switch ($req->role) {

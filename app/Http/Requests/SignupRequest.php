@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class SignupRequest extends FormRequest
 {
@@ -25,7 +26,16 @@ class SignupRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
+            'email' => [
+                'required',
+                'string',
+                'email',
+                'max:255',
+                Rule::unique('users')->where(function($query) {
+                    $user_type = $this->input('role') == 'client' ? 1 : 2;
+                    $query->where('user_type', $user_type);
+                })
+            ],
             'password' => 'required|string|min:6|confirmed',
             'zipcode' => 'nullable|string|max:16',
         ];

@@ -31,6 +31,7 @@ class AdminController extends Controller
         $data = $request->validated();
 
         $data['tour_limit'] = 999;
+        $data['user_type'] = 1;
         if ($admin = Admin::create($data)) {
             return $this->success("{$admin->name} was added successfully.", new AdminResource($admin));
         }

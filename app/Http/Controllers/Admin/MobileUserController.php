@@ -29,7 +29,9 @@ class MobileUserController extends Controller
      */
     public function store(CreateMobileUserRequest $request)
     {
-        if ($user = MobileUser::create($request->validated())) {
+        $data = $request->validated();
+        $data['user_type'] = 2;
+        if ($user = MobileUser::create($data)) {
             return $this->success("{$user->name} was added successfully.", new MobileUserResource($user));
         }
 

@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Admin;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateMobileUserRequest extends FormRequest
 {
@@ -25,7 +26,15 @@ class UpdateMobileUserRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email,' . $this->route('user')->id,
+            'email' => [
+                'required',
+                'string',
+                'email',
+                'max:255',
+                Rule::unique('users')->ignore($this->route('user')->id)->where(function($query) {
+                    $query->where('user_type', 2);
+                })
+            ],
             'zipcode' => 'nullable|string|max:16',
             'subscribe_override' => 'nullable|boolean',
         ];
