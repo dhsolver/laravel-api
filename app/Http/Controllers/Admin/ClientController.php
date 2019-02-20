@@ -35,7 +35,9 @@ class ClientController extends Controller
      */
     public function store(CreateClientRequest $request)
     {
-        if ($client = Client::create($request->validated())) {
+        $data = $request->validated();
+        $data['user_type'] = 1;
+        if ($client = Client::create($data)) {
             return $this->success("{$client->name} was added successfully.", new ClientResource($client));
         }
 

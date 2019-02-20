@@ -7,6 +7,7 @@ use App\Http\Requests\ChangeEmailRequest;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
 use App\Http\Controllers\Controller;
+use Illuminate\Validation\Rule;
 
 class ChangeEmailController extends Controller
 {
@@ -19,7 +20,15 @@ class ChangeEmailController extends Controller
     public function request(Request $request)
     {
         $request->validate([
-            'email' => 'required|confirmed|email|max:255|unique:users',
+            'email' => [
+                'required',
+                'confirmed',
+                'email',
+                'max:255',
+                Rule::unique('users')->where(function($query) {
+                    $query->where('user_type', 2);
+                })
+            ],
         ], [
             'email.unique' => 'A user with that email already exists.',
             'email.*' => 'A valid email address is required.',

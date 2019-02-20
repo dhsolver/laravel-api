@@ -31,7 +31,9 @@ class UpdateProfileRequest extends FormRequest
                 'required',
                 'email',
                 'max:255',
-                Rule::unique('users', 'email')->ignore(auth()->user()->id),
+                Rule::unique('users')->ignore(auth()->user()->id)->where(function($query) {
+                    $query->where('user_type', 1);
+                })
             ],
         ];
     }
