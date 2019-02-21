@@ -166,7 +166,7 @@ trait IsUserRole
      */
     public function getNameAttribute()
     {
-        return $this->user->name;
+        return $this->user['name'];
     }
 
     /**
@@ -176,7 +176,7 @@ trait IsUserRole
      */
     public function getEmailAttribute()
     {
-        return $this->user->email;
+        return $this->user['email'];
     }
 
     /**
@@ -186,7 +186,7 @@ trait IsUserRole
      */
     public function getRoleAttribute()
     {
-        return $this->user->role;
+        return $this->user['role'];
     }
 
     /**
@@ -196,7 +196,7 @@ trait IsUserRole
      */
     public function getFbIdAttribute()
     {
-        return $this->user->fb_id;
+        return $this->user['fb_id'];
     }
 
     /**
@@ -206,7 +206,7 @@ trait IsUserRole
      */
     public function getSubscribeOverrideAttribute()
     {
-        return $this->user->subscribe_override;
+        return $this->user['subscribe_override'];
     }
 
     /**
@@ -216,7 +216,7 @@ trait IsUserRole
      */
     public function getAvatarUrlAttribute()
     {
-        return $this->user->avatar_url;
+        return $this->user['avatar_url'];
     }
 
     /**
@@ -226,7 +226,7 @@ trait IsUserRole
      */
     public function getZipcodeAttribute()
     {
-        return $this->user->zipcode;
+        return $this->user['zipcode'];
     }
 
     /**
@@ -236,7 +236,7 @@ trait IsUserRole
      */
     public function getTourLimitAttribute()
     {
-        return $this->user->tour_limit;
+        return $this->user['tour_limit'];
     }
 
     /**
@@ -246,6 +246,6 @@ trait IsUserRole
      */
     public function getActiveAttribute()
     {
-        return $this->user->active;
+        return $this->user['active'];
     }
 }
