@@ -17,7 +17,6 @@ class LeaderboardCollection extends ResourceCollection
         return [
             'leaders' => $this->collection->sortByDesc('points')->map(function ($item) {
                 return [
-                    'tour_id' => (int) $item->tour_id,
                     'points' => (int) $item->points,
                     'user' => new ProfileResource($item->user),
                 ];
