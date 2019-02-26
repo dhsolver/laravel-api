@@ -24,18 +24,24 @@ class LeaderboardCollection extends ResourceCollection
         // ];
         $leaders = [];
         $i = 1;
-        foreach ($this->collection->sortByDesc('points') as $leader) {
-            if ($i >= 100) continue;
+        $collection = $this->collection->sortByDesc('points');
+        $user_rank = 0;
+        $current_user_id = auth()->user()->id;
+        foreach ($collection as $leader) {
+            $user = new ProfileResource($leader->user);
             $leaders[] = [
                 'points' => (int) $leader->points,
-                'user' => new ProfileResource($leader->user),
-                'user_rank' => $i,
-                'total_users' => count($this->collection->sortByDesc('points'))
+                'user' => $user
             ];
+            if ($user->id == $current_user_id) {
+                $user_rank = $i;
+            }
             $i ++;
         }
         return [
-            'leaders' => $leaders
+            'leaders' => array_splice($leaders, 0, 100),
+            'total_users' => count($collection),
+            'user_rank' => $user_rank
         ];
     }
 }
