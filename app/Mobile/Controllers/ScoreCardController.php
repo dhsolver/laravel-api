@@ -7,6 +7,7 @@ use App\Mobile\Resources\ScoreCardResource;
 use App\Mobile\Resources\TourScoreCardCollection;
 use App\ScoreCard;
 use App\Tour;
+use App\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Http\Requests\StartTourRequest;
@@ -21,12 +22,11 @@ class ScoreCardController extends Controller
      *
      * @return \Illuminate\Http\Resources\Json\ResourceCollection
      */
-    public function index()
+    public function index(User $user)
     {
-        $scores = auth()->user()->scoreCards()
+        $scores = $user->scoreCards()
             ->with('tour')
             ->onlyBest();
-
         return ScoreCardResource::collection($scores);
     }
 

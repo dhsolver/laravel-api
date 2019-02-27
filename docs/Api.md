@@ -27,6 +27,13 @@ This should display a success message and overwrite the docs/api.html documentat
 
 ### Change Log
 
+v.1.1.1
+- Added user_rank, total_users to the leaderboard
+- Deleted tour_id from the leaderboard
+- Fixed issue with showing single user multiple times on leaderboards
+- Changed mobile/scores to mobile/scores/{user_id} endpoint to show scores of specific user
+- Changed mobile/favorites to mobile/favories/{user_id} to show favorited tours of specific user
+
 v.1.1.0
 - Added tour_id to the leaderboard
 - Fixed issue with multiple scores of the same user showing on leaderboards

@@ -3,6 +3,7 @@
 namespace App\Mobile\Controllers;
 
 use App\Tour;
+use App\User;
 use App\Http\Controllers\Controller;
 use App\Mobile\Resources\TourResource;
 
@@ -13,10 +14,10 @@ class FavoriteController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(User $user)
     {
         return response()->json(['favorites' => TourResource::collection(
-            auth()->user()->favorites
+            $user->favorites
         )]);
     }
 

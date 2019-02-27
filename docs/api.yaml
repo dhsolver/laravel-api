@@ -1,12 +1,12 @@
 swagger: '2.0'
 info:
   title: Junket API
-  description: Private API for the wejunket.com mobile apps. 
-  version: 1.0.9
+  description: Private API for the wejunket.com mobile apps.
+  version: 1.1.1
 host: api.wejunket.com
 basePath: /mobile
 schemes:
- - https
+  - https
 securityDefinitions:
   Bearer:
     type: apiKey
@@ -15,7 +15,6 @@ securityDefinitions:
 tags:
   - name: auth
   - name: tours
-
 paths:
   /auth/session:
     get:
@@ -31,17 +30,16 @@ paths:
       security:
         - Bearer: []
       responses:
-        200:
+        '200':
           description: OK
           schema:
             $ref: '#/definitions/User'
-        400:
+        '400':
           $ref: '#/responses/NoToken'
-        401:
+        '401':
           $ref: '#/responses/Unauthroized'
-        500:
+        '500':
           $ref: '#/responses/UnexpectedError'
-      
   /auth/refresh:
     get:
       tags:
@@ -56,19 +54,18 @@ paths:
       security:
         - Bearer: []
       responses:
-        204:
+        '204':
           description: OK
           headers:
             Authorization:
               type: string
               description: The new JWT bearer auth token.
-        400:
+        '400':
           $ref: '#/responses/NoToken'
-        401:
+        '401':
           $ref: '#/responses/Unauthroized'
-        500:
+        '500':
           $ref: '#/responses/UnexpectedError'
-
   /auth/signup:
     post:
       tags:
@@ -117,9 +114,9 @@ paths:
                 description: The user's zipcode.
                 maximum: 16
       responses:
-        200:
+        '200':
           description: Successful registration
-          schema: 
+          schema:
             type: object
             properties:
               user:
@@ -127,13 +124,12 @@ paths:
               token:
                 type: string
                 description: JWT Auth token to be used for Bearer authentication header.
-        422:
-          $ref: '#/responses/ValidationError'
-        401:
+        '401':
           $ref: '#/responses/Unauthroized'
-        500:
+        '422':
+          $ref: '#/responses/ValidationError'
+        '500':
           $ref: '#/responses/UnexpectedError'
-
   /auth/login:
     post:
       tags:
@@ -163,9 +159,9 @@ paths:
                 example: secret
                 description: The user's password.
       responses:
-        200:
+        '200':
           description: Successful login
-          schema: 
+          schema:
             type: object
             properties:
               user:
@@ -173,13 +169,12 @@ paths:
               token:
                 type: string
                 description: JWT Auth token to be used for Bearer authentication header.
-        422:
-          $ref: '#/responses/ValidationError'
-        401:
+        '401':
           $ref: '#/responses/Unauthroized'
-        500:
+        '422':
+          $ref: '#/responses/ValidationError'
+        '500':
           $ref: '#/responses/UnexpectedError'
-          
   /auth/login/facebook:
     post:
       tags:
@@ -204,21 +199,22 @@ paths:
                 example: ___access_token___
                 description: Facebook Access Token.
       responses:
-        200:
+        '200':
           description: OK
           schema:
             $ref: '#/definitions/User'
-        401:
+        '401':
           $ref: '#/responses/Unauthroized'
-        500:
+        '500':
           $ref: '#/responses/UnexpectedError'
-  
   /auth/forgot-password:
     post:
       tags:
         - auth
       summary: Forgot password
-      description: Submit a forgot password request and dispatch an email to the user on how to reset their password.
+      description: >-
+        Submit a forgot password request and dispatch an email to the user on
+        how to reset their password.
       operationId: forgotPassword
       consumes:
         - application/json
@@ -236,13 +232,12 @@ paths:
                 example: test@test.com
                 description: The user's email.
       responses:
-        200:
+        '200':
           description: OK - Email has been sent
-        401:
+        '401':
           $ref: '#/responses/Unauthroized'
-        500:
+        '500':
           $ref: '#/responses/UnexpectedError'
-
   /tours:
     get:
       tags:
@@ -263,19 +258,25 @@ paths:
         - in: query
           name: debug
           required: false
-          description: Debug mode flag. This will include the current logged in users unpublished tours in the listing.
+          description: >-
+            Debug mode flag. This will include the current logged in users
+            unpublished tours in the listing.
           type: boolean
           example: 1
         - in: query
           name: favorites
           required: false
-          description: Display user favorites flag.  Setting favorites=1 will filter the results to show only the current user's favorites.  You can combine this flag with the nearby parameter to get a list of the user's favorites with the distance from the current user.
+          description: >-
+            Display user favorites flag.  Setting favorites=1 will filter the
+            results to show only the current user's favorites.  You can combine
+            this flag with the nearby parameter to get a list of the user's
+            favorites with the distance from the current user.
           type: boolean
           example: 1
       security:
         - Bearer: []
       responses:
-        200:
+        '200':
           description: OK
           schema:
             type: object
@@ -291,19 +292,20 @@ paths:
               meta:
                 description: Pagination meta
                 $ref: '#/definitions/PaginationMeta'
-        400:
+        '400':
           $ref: '#/responses/NoToken'
-        401:
+        '401':
           $ref: '#/responses/Unauthroized'
-        500:
+        '500':
           $ref: '#/responses/UnexpectedError'
-          
-  /tours/{tour_id}:
+  '/tours/{tour_id}':
     get:
       tags:
         - tours
       summary: Get Tour details
-      description: Returns all of the information for the given tour, including the route points and the stops.
+      description: >-
+        Returns all of the information for the given tour, including the route
+        points and the stops.
       operationId: tour
       produces:
         - application/json
@@ -318,13 +320,15 @@ paths:
         - in: query
           name: debug
           required: false
-          description: Debug mode flag. This will allow viewing the current logged in users unpublished tours.
+          description: >-
+            Debug mode flag. This will allow viewing the current logged in users
+            unpublished tours.
           type: boolean
           example: 1
       security:
         - Bearer: []
       responses:
-        200:
+        '200':
           description: OK
           schema:
             type: object
@@ -343,20 +347,21 @@ paths:
                 items:
                   $ref: '#/definitions/TourRoutePoint'
               latest_reviews:
-                description: The last 5 reviews for that tour that contain a review comment.
+                description: >-
+                  The last 5 reviews for that tour that contain a review
+                  comment.
                 type: array
                 items:
                   $ref: '#/definitions/Review'
-        400:
+        '400':
           $ref: '#/responses/NoToken'
-        401:
+        '401':
           $ref: '#/responses/Unauthroized'
-        404:
+        '404':
           $ref: '#/responses/NotFound'
-        500:
+        '500':
           $ref: '#/responses/UnexpectedError'
-
-  /profile/{user_id}:
+  '/profile/{user_id}':
     get:
       tags:
         - profile
@@ -376,19 +381,18 @@ paths:
       security:
         - Bearer: []
       responses:
-        200:
+        '200':
           description: OK
           schema:
             $ref: '#/definitions/Profile'
-        400:
+        '400':
           $ref: '#/responses/NoToken'
-        401:
+        '401':
           $ref: '#/responses/Unauthroized'
-        404:
+        '404':
           $ref: '#/responses/NotFound'
-        500:
+        '500':
           $ref: '#/responses/UnexpectedError'
-          
   /profile:
     post:
       tags:
@@ -419,25 +423,27 @@ paths:
                 description: The user's zipcode.
                 maximum: 16
       responses:
-        200:
+        '200':
           description: OK
           schema:
             $ref: '#/definitions/Profile'
-        422:
-          $ref: '#/responses/ValidationError'
-        400:
+        '400':
           $ref: '#/responses/NoToken'
-        401:
+        '401':
           $ref: '#/responses/Unauthroized'
-        500:
+        '422':
+          $ref: '#/responses/ValidationError'
+        '500':
           $ref: '#/responses/UnexpectedError'
-
   /profile/avatar:
     post:
       tags:
         - profile
       summary: Set Avatar
-      description: Upload and set the user's avatar image.  Images are automatically resized into 750x750 squares.  It is expected that cropping is handled on the client side before submitting the image.
+      description: >-
+        Upload and set the user's avatar image.  Images are automatically
+        resized into 750x750 squares.  It is expected that cropping is handled
+        on the client side before submitting the image.
       operationId: updateAvatar
       consumes:
         - multipart/form-data
@@ -450,19 +456,18 @@ paths:
           required: true
           description: The image to upload.
       responses:
-        200:
+        '200':
           description: OK
           schema:
             $ref: '#/definitions/Profile'
-        422:
-          $ref: '#/responses/ValidationError'
-        400:
+        '400':
           $ref: '#/responses/NoToken'
-        401:
+        '401':
           $ref: '#/responses/Unauthroized'
-        500:
+        '422':
+          $ref: '#/responses/ValidationError'
+        '500':
           $ref: '#/responses/UnexpectedError'
-
   /profile/password:
     patch:
       tags:
@@ -494,23 +499,24 @@ paths:
                 description: Confirmation of the user's password.
                 minimum: 6
       responses:
-        200:
+        '200':
           description: OK
-        422:
-          $ref: '#/responses/ValidationError'
-        400:
+        '400':
           $ref: '#/responses/NoToken'
-        401:
+        '401':
           $ref: '#/responses/Unauthroized'
-        500:
+        '422':
+          $ref: '#/responses/ValidationError'
+        '500':
           $ref: '#/responses/UnexpectedError'
-
   /profile/change-email:
     post:
       tags:
         - profile
       summary: Change Email (request)
-      description: Submit request to update the current user's email.  Upon successfull request, the user will be sent an email with an activation code.
+      description: >-
+        Submit request to update the current user's email.  Upon successfull
+        request, the user will be sent an email with an activation code.
       operationId: changeEmail
       consumes:
         - application/json
@@ -536,23 +542,24 @@ paths:
                 description: The user's new email (repeated).
                 maximum: 255
       responses:
-        200:
+        '200':
           description: OK
-        422:
-          $ref: '#/responses/ValidationError'
-        400:
+        '400':
           $ref: '#/responses/NoToken'
-        401:
+        '401':
           $ref: '#/responses/Unauthroized'
-        500:
+        '422':
+          $ref: '#/responses/ValidationError'
+        '500':
           $ref: '#/responses/UnexpectedError'
-
   /profile/change-email/confirm:
     post:
       tags:
         - profile
       summary: Change Email (confirm)
-      description: "Submit a an activation code to reset the user's email.  Activation codes are case-insensitive and expire after 30 minutes."
+      description: >-
+        Submit a an activation code to reset the user's email.  Activation codes
+        are case-insensitive and expire after 30 minutes.
       operationId: changeEmailConfirm
       consumes:
         - application/json
@@ -569,28 +576,27 @@ paths:
               code:
                 type: string
                 example: ABC123
-                description: Activation code (with or without dash, case-insensitive)
+                description: 'Activation code (with or without dash, case-insensitive)'
                 maximum: 7
                 minimum: 6
       responses:
-        200:
+        '200':
           description: OK
-        422:
-          $ref: '#/responses/ValidationError'
-        400:
+        '400':
           $ref: '#/responses/NoToken'
-        401:
+        '401':
           $ref: '#/responses/Unauthroized'
-        403:
+        '403':
           description: User does not own the activation code.
-        404:
+        '404':
           description: Invalid activation code.
-        419:
+        '419':
           description: Activation code has expired or has already been used.
-        500:
+        '422':
+          $ref: '#/responses/ValidationError'
+        '500':
           $ref: '#/responses/UnexpectedError'
-
-  /favorites:
+  '/favorites/{user_id}':
     get:
       tags:
         - favorites
@@ -601,8 +607,16 @@ paths:
         - application/json
       produces:
         - application/json
+      parameters:
+        - in: path
+          name: user_id
+          description: ID of the User
+          required: true
+          type: integer
+          format: int64
+        - $ref: '#/parameters/AuthToken'
       responses:
-        200:
+        '200':
           description: OK
           schema:
             type: object
@@ -612,14 +626,13 @@ paths:
                 type: array
                 items:
                   $ref: '#/definitions/Tour'
-        400:
+        '400':
           $ref: '#/responses/NoToken'
-        401:
+        '401':
           $ref: '#/responses/Unauthroized'
-        500:
+        '500':
           $ref: '#/responses/UnexpectedError'
-          
-  /favorites/{tour_id}:
+  '/favorites/{tour_id}':
     post:
       tags:
         - favorites
@@ -638,15 +651,15 @@ paths:
           type: integer
           format: int64
       responses:
-        200:
+        '200':
           description: OK
-        400:
+        '400':
           $ref: '#/responses/NoToken'
-        401:
+        '401':
           $ref: '#/responses/Unauthroized'
-        404:
+        '404':
           $ref: '#/responses/NotFound'
-        500:
+        '500':
           $ref: '#/responses/UnexpectedError'
     delete:
       tags:
@@ -664,23 +677,24 @@ paths:
           type: integer
           format: int64
       responses:
-        200:
+        '200':
           description: OK
-        400:
+        '400':
           $ref: '#/responses/NoToken'
-        401:
+        '401':
           $ref: '#/responses/Unauthroized'
-        404:
+        '404':
           $ref: '#/responses/NotFound'
-        500:
+        '500':
           $ref: '#/responses/UnexpectedError'
-
   /scores/start:
     post:
       tags:
         - scores
       summary: Start Tour
-      description: Create new entry for scoring a Tour.  This is used whenever a user beings a Tour in the App.  Returns a fresh ScoreCard object.
+      description: >-
+        Create new entry for scoring a Tour.  This is used whenever a user
+        beings a Tour in the App.  Returns a fresh ScoreCard object.
       operationId: scoresStart
       consumes:
         - application/json
@@ -706,23 +720,29 @@ paths:
                 description: UTC UNIX timestamp of when the action occurred.
                 example: 1538411257
       responses:
-        200:
+        '200':
           description: OK
-          schema: 
+          schema:
             $ref: '#/definitions/ScoreCard'
-        422:
-          $ref: '#/responses/ValidationError'
-        401:
+        '401':
           $ref: '#/responses/Unauthroized'
-        500:
+        '422':
+          $ref: '#/responses/ValidationError'
+        '500':
           $ref: '#/responses/UnexpectedError'
-
-  /scores/{score_card_id}/progress:
+  '/scores/{score_card_id}/progress':
     post:
       tags:
         - scores
       summary: Progress Tour
-      description: Save a Tours progress and get the updated score.  This is used to save a new stop visit.  Returns a the ScoreCard object with updated points and progress.  If the stop was the last stop on the Tour, the score card is "finished" and the finished_at timestamp will reflect this.  If the user has not answered the question correctly, and has chosen to skip the question, you can track this by setting the skipped_question flag to true.  This has an effect on the user's final score.
+      description: >-
+        Save a Tours progress and get the updated score.  This is used to save a
+        new stop visit.  Returns a the ScoreCard object with updated points and
+        progress.  If the stop was the last stop on the Tour, the score card is
+        "finished" and the finished_at timestamp will reflect this.  If the user
+        has not answered the question correctly, and has chosen to skip the
+        question, you can track this by setting the skipped_question flag to
+        true.  This has an effect on the user's final score.
       operationId: scoresProgress
       consumes:
         - application/json
@@ -751,57 +771,73 @@ paths:
               timestamp:
                 type: integer
                 format: int32
-                description: UTC UNIX timestamp of when the action occurred.  Defaults to the current time.
+                description: >-
+                  UTC UNIX timestamp of when the action occurred.  Defaults to
+                  the current time.
                 example: 1538411257
               skipped_question:
                 type: boolean
-                description: Flag to determine if the user has not answered the question correctly.
+                description: >-
+                  Flag to determine if the user has not answered the question
+                  correctly.
                 example: false
       responses:
-        200:
+        '200':
           description: OK
-          schema: 
+          schema:
             $ref: '#/definitions/ScoreCard'
-        401:
+        '401':
           $ref: '#/responses/Unauthroized'
-        403:
-          description: 'User has already completed the Tour using this ScoreCard.'
-          schema: 
+        '403':
+          description: User has already completed the Tour using this ScoreCard.
+          schema:
             $ref: '#/responses/GeneralError'
-        422:
+        '422':
           $ref: '#/responses/ValidationError'
-        500:
+        '500':
           $ref: '#/responses/UnexpectedError'
-
-  /scores:
+  '/scores/{user_id}':
     get:
       tags:
         - scores
       summary: User Scores
-      description: Get a list of the user's scores for all Tours they have taken.  This includes all regular tours that have been started, but only the finished adventure tours.  The scores are sorted by the total number of points and only the top score is returned for each tour.
+      description: >-
+        Get a list of the user's scores for all Tours they have taken.  This
+        includes all regular tours that have been started, but only the finished
+        adventure tours.  The scores are sorted by the total number of points
+        and only the top score is returned for each tour.
       operationId: scoresGet
       produces:
         - application/json
       parameters:
+        - in: path
+          name: user_id
+          description: ID of the User
+          required: true
+          type: integer
+          format: int64
         - $ref: '#/parameters/AuthToken'
       responses:
-        200:
+        '200':
           description: OK
-          schema: 
+          schema:
             type: array
             items:
               $ref: '#/definitions/ScoreCard'
-        401:
+        '401':
           $ref: '#/responses/Unauthroized'
-        500:
+        '500':
           $ref: '#/responses/UnexpectedError'
-
-  /scores/find/{tour_id}:
+  '/scores/find/{tour_id}':
     get:
       tags:
         - scores
       summary: Find ScoreCard
-      description: Get all of the users scores for a specific tour.  This can be used to look up if the user currently has a tour in progress, to look up their best score for a tour, or to look up the history of how many times they took the Tour.
+      description: >-
+        Get all of the users scores for a specific tour.  This can be used to
+        look up if the user currently has a tour in progress, to look up their
+        best score for a tour, or to look up the history of how many times they
+        took the Tour.
       operationId: scoresFind
       produces:
         - application/json
@@ -814,9 +850,9 @@ paths:
           type: integer
           format: int64
       responses:
-        200:
+        '200':
           description: OK
-          schema: 
+          schema:
             type: object
             properties:
               best:
@@ -829,47 +865,53 @@ paths:
                 type: array
                 items:
                   $ref: '#/definitions/ScoreCard'
-        401:
+        '401':
           $ref: '#/responses/Unauthroized'
-        404:
+        '404':
           $ref: '#/responses/NotFound'
-        500:
+        '500':
           $ref: '#/responses/UnexpectedError'
-
   /leaderboard:
     get:
       tags:
         - scores
       summary: Leaderboard
-      description: Get the top 100 all-time leaderboard for all Tours.
+      description: Get the top 100 all-time leaderboard for all Tours. Get logged in user's rank of total users
       operationId: scoresLeaderboard
       produces:
         - application/json
       parameters:
         - $ref: '#/parameters/AuthToken'
       responses:
-        200:
+        '200':
           description: OK
-          schema: 
+          schema:
             type: object
             properties:
               leaders:
                 type: array
                 items:
                   $ref: '#/definitions/LeaderboardEntry'
-        401:
+              total_users:
+                type: integer
+                format: int32
+                example: 1000
+              user_rank:
+                type: integer
+                format: int32
+                example: 10
+        '401':
           $ref: '#/responses/Unauthroized'
-        404:
+        '404':
           $ref: '#/responses/NotFound'
-        500:
+        '500':
           $ref: '#/responses/UnexpectedError'
-
-  /leaderboard/{tour_id}:
+  '/leaderboard/{tour_id}':
     get:
       tags:
         - scores
       summary: Tour Leaderboard
-      description: Get the top 100 leaderboard for a given Tour.
+      description: Get the top 100 leaderboard for a given Tour. Get logged in user's rank of total users
       operationId: scoresTourLeaderboard
       produces:
         - application/json
@@ -882,28 +924,35 @@ paths:
           type: integer
           format: int64
       responses:
-        200:
+        '200':
           description: OK
-          schema: 
+          schema:
             type: object
             properties:
               leaders:
                 type: array
                 items:
                   $ref: '#/definitions/LeaderboardEntry'
-        401:
+              total_users:
+                type: integer
+                format: int32
+                example: 1000
+              user_rank:
+                type: integer
+                format: int32
+                example: 10
+        '401':
           $ref: '#/responses/Unauthroized'
-        404:
+        '404':
           $ref: '#/responses/NotFound'
-        500:
+        '500':
           $ref: '#/responses/UnexpectedError'
-
-  /reviews/{tour_id}:
+  '/reviews/{tour_id}':
     get:
       tags:
         - reviews
       summary: Review (list)
-      description: A paginated list of the given Tour's reviews, sorted by most recent.
+      description: 'A paginated list of the given Tour''s reviews, sorted by most recent.'
       operationId: listReview
       consumes:
         - application/json
@@ -917,7 +966,7 @@ paths:
           type: integer
           format: int64
       responses:
-        200:
+        '200':
           description: OK
           schema:
             type: object
@@ -933,17 +982,19 @@ paths:
               meta:
                 description: Pagination meta
                 $ref: '#/definitions/PaginationMeta'
-        400:
+        '400':
           $ref: '#/responses/NoToken'
-        401:
+        '401':
           $ref: '#/responses/Unauthroized'
-        500:
+        '500':
           $ref: '#/responses/UnexpectedError'
     post:
       tags:
         - reviews
       summary: Review (create/update)
-      description: Submit a rating or review for the given Tour.  If the user has previous submitted a rating or review, it will updated to the new values.
+      description: >-
+        Submit a rating or review for the given Tour.  If the user has previous
+        submitted a rating or review, it will updated to the new values.
       operationId: createReview
       consumes:
         - application/json
@@ -965,7 +1016,10 @@ paths:
         - in: body
           name: rating
           required: true
-          description: The rating value of the review.  This is based on a 5 star rating system, but uses whole numbers instead of decimals.  For example 25 = 2.5 stars.
+          description: >-
+            The rating value of the review.  This is based on a 5 star rating
+            system, but uses whole numbers instead of decimals.  For example 25
+            = 2.5 stars.
           schema:
             required:
               - rating
@@ -973,27 +1027,30 @@ paths:
               rating:
                 type: integer
                 format: int32
-                description: The rating value of the review.  This is based on a 5 star rating system, but uses whole numbers instead of decimals.  For example 25 = 2.5 stars.
+                description: >-
+                  The rating value of the review.  This is based on a 5 star
+                  rating system, but uses whole numbers instead of decimals. 
+                  For example 25 = 2.5 stars.
                 example: 25
                 minimum: 0
                 maximum: 50
               review:
                 type: string
                 example: Great tour!  We had a nice time.
-                description: A short text review of the Tour 
+                description: A short text review of the Tour
                 maximum: 255
       responses:
-        200:
+        '200':
           description: OK
           schema:
             $ref: '#/definitions/Review'
-        422:
-          $ref: '#/responses/ValidationError'
-        400:
+        '400':
           $ref: '#/responses/NoToken'
-        401:
+        '401':
           $ref: '#/responses/Unauthroized'
-        500:
+        '422':
+          $ref: '#/responses/ValidationError'
+        '500':
           $ref: '#/responses/UnexpectedError'
     delete:
       tags:
@@ -1011,17 +1068,16 @@ paths:
           type: integer
           format: int64
       responses:
-        200:
+        '200':
           description: OK
-        422:
-          $ref: '#/responses/ValidationError'
-        400:
+        '400':
           $ref: '#/responses/NoToken'
-        401:
+        '401':
           $ref: '#/responses/Unauthroized'
-        500:
+        '422':
+          $ref: '#/responses/ValidationError'
+        '500':
           $ref: '#/responses/UnexpectedError'
-
   /device:
     post:
       tags:
@@ -1051,16 +1107,27 @@ paths:
                 example: 2b6f0cc904d137be2e1730235f5664094b831186
               os:
                 type: string
-                enum: [ios, android, windows, linux, mac, other]
+                enum:
+                  - ios
+                  - android
+                  - windows
+                  - linux
+                  - mac
+                  - other
                 description: The operating system of the device.
                 example: ios
               type:
                 type: string
                 description: The type of device.
-                enum: [phone, tablet, web, mobile_web, unknown]
+                enum:
+                  - phone
+                  - tablet
+                  - web
+                  - mobile_web
+                  - unknown
                 example: phone
       responses:
-        200:
+        '200':
           description: OK
           type: object
           schema:
@@ -1069,21 +1136,24 @@ paths:
                 type: string
                 description: The device's unique ID in the backend.
                 example: a7388bf0-c596-11e8-aa6c-b56b5a718890
-        422:
-          $ref: '#/responses/ValidationError'
-        400:
+        '400':
           $ref: '#/responses/NoToken'
-        401:
+        '401':
           $ref: '#/responses/Unauthroized'
-        500:
+        '422':
+          $ref: '#/responses/ValidationError'
+        '500':
           $ref: '#/responses/UnexpectedError'
-  
-  /tours/{tour_id}/track:
+  '/tours/{tour_id}/track':
     post:
       tags:
         - analytics
       summary: Track Tour Activity
-      description: Track users activity for a given tour.  This is used solely for analytics purposes. You can track the length of time the user has been at a tour by logging START and STOP activity.  Downloads and any sharing activity should also be logged.
+      description: >-
+        Track users activity for a given tour.  This is used solely for
+        analytics purposes. You can track the length of time the user has been
+        at a tour by logging START and STOP activity.  Downloads and any sharing
+        activity should also be logged.
       operationId: trackTour
       consumes:
         - application/json
@@ -1103,25 +1173,28 @@ paths:
           schema:
             type: array
             items:
-                $ref: '#/definitions/TourActivity'
+              $ref: '#/definitions/TourActivity'
       responses:
-        200:
+        '200':
           description: OK
-        422:
-          $ref: '#/responses/ValidationError'
-        400:
+        '400':
           $ref: '#/responses/NoToken'
-        401:
+        '401':
           $ref: '#/responses/Unauthroized'
-        500:
+        '422':
+          $ref: '#/responses/ValidationError'
+        '500':
           $ref: '#/responses/UnexpectedError'
-  
-  /stops/{stop_id}/track:
+  '/stops/{stop_id}/track':
     post:
       tags:
         - analytics
       summary: Track Stop Activity
-      description: Track users activity for a given stop.  This is used solely for analytics purposes. You can track the length of time the user has been at a stop by logging START and STOP activity.  DOWNLOAD action does not apply to stops, but sharing actions should be tracked.
+      description: >-
+        Track users activity for a given stop.  This is used solely for
+        analytics purposes. You can track the length of time the user has been
+        at a stop by logging START and STOP activity.  DOWNLOAD action does not
+        apply to stops, but sharing actions should be tracked.
       operationId: trackStop
       consumes:
         - application/json
@@ -1141,42 +1214,40 @@ paths:
           schema:
             type: array
             items:
-                $ref: '#/definitions/StopActivity'
+              $ref: '#/definitions/StopActivity'
       responses:
-        200:
+        '200':
           description: OK
-        422:
-          $ref: '#/responses/ValidationError'
-        400:
+        '400':
           $ref: '#/responses/NoToken'
-        401:
+        '401':
           $ref: '#/responses/Unauthroized'
-        500:
+        '422':
+          $ref: '#/responses/ValidationError'
+        '500':
           $ref: '#/responses/UnexpectedError'
-  
 parameters:
   AuthToken:
     in: header
     name: Authorization
     type: string
     required: true
-    description: |
-      JTW auth bearer token in the format of "Authorization: Bearer {token_here}"
-
+    description: >
+      JTW auth bearer token in the format of "Authorization: Bearer
+      {token_here}"
 responses:
   ValidationError:
     description: Validation errors in the request body.
     schema:
       type: object
       properties:
-          message:
-            type: string
-            description: The error message.
-            example: The given data was invalid.
-          errors:
-            type: object
-            description: A list of fields and their corresponding errors.
-
+        message:
+          type: string
+          description: The error message.
+          example: The given data was invalid.
+        errors:
+          type: object
+          description: A list of fields and their corresponding errors.
   NotFound:
     description: Object not found.
     schema:
@@ -1186,45 +1257,40 @@ responses:
           type: string
           description: The error message.
           example: Object not found
-          
   NoToken:
     description: Invalid auth token provided.
     schema:
       type: object
       properties:
-        message: 
+        message:
           type: string
           description: The error message.
           example: token_not_provided
-          
   Unauthroized:
     description: Unauthorized.  Invalid or expired auth token or credentials provided.
     schema:
       type: object
       properties:
-        message: 
+        message:
           type: string
           description: The error message.
           example: token_invalid
-    
   UnexpectedError:
     description: An unexpected error occurred.
     schema:
       type: object
       properties:
-        message: 
+        message:
           type: string
           description: The error message.
-
   GeneralError:
     type: object
     properties:
-      message: 
+      message:
         type: string
         description: The error message.
-
 definitions:
-  StopActivity: 
+  StopActivity:
     type: object
     required:
       - action
@@ -1233,7 +1299,12 @@ definitions:
     properties:
       action:
         type: string
-        enum: [start, stop, share, like, visit]
+        enum:
+          - start
+          - stop
+          - share
+          - like
+          - visit
         description: The action to record.
         example: start
       device_id:
@@ -1245,8 +1316,7 @@ definitions:
         format: int32
         description: UTC UNIX timestamp of when the action occurred.
         example: 1538411257
-        
-  TourActivity: 
+  TourActivity:
     type: object
     required:
       - action
@@ -1255,7 +1325,13 @@ definitions:
     properties:
       action:
         type: string
-        enum: [download, start, stop, share, like, visit]
+        enum:
+          - download
+          - start
+          - stop
+          - share
+          - like
+          - visit
         description: The action to record.
         example: start
       device_id:
@@ -1267,7 +1343,6 @@ definitions:
         format: int32
         description: UTC UNIX timestamp of when the action occurred.
         example: 1538411257
-        
   Profile:
     type: object
     properties:
@@ -1289,10 +1364,13 @@ definitions:
       avatar_url:
         type: string
         description: The URL for the user's avatar image.
-        example: 'https://media.wejunket.com/avatars/387ec13e14f96854ed64aca99a477c70.jpg'
+        example: >-
+          https://media.wejunket.com/avatars/387ec13e14f96854ed64aca99a477c70.jpg
       email:
         type: string
-        description: The user's email address. (Only shown for profile of the authenticated user)
+        description: >-
+          The user's email address. (Only shown for profile of the authenticated
+          user)
         example: user@test.com
       zipcode:
         type: string
@@ -1301,11 +1379,15 @@ definitions:
         maximum: 16
       fb_id:
         type: string
-        description: The user's Facebook ID (Only shown for profile of the authenticated user)
+        description: >-
+          The user's Facebook ID (Only shown for profile of the authenticated
+          user)
         example: 100000000059
       subscribe_override:
         type: boolean
-        description: A flag set only by the admin to enable site-wide subscription for the user.
+        description: >-
+          A flag set only by the admin to enable site-wide subscription for the
+          user.
         example: false
       favorites:
         type: integer
@@ -1320,7 +1402,6 @@ definitions:
       stats:
         $ref: '#/definitions/UserStats'
         description: The users stats totals.
-
   UserStats:
     type: object
     properties:
@@ -1344,7 +1425,6 @@ definitions:
         format: int32
         description: The total number of trophies the user has won.
         example: 8
-
   User:
     type: object
     properties:
@@ -1378,27 +1458,37 @@ definitions:
         example: 100000000059
       role:
         type: string
-        enum: [user, client, admin]
-        description: |
+        enum:
+          - user
+          - client
+          - admin
+        description: >
           The user's role in the system.
+
           user - Regular mobile user
-          client - Tour creator, has access to the CMS but can also be a mobile user.
-          admin - System admin, has access to the Admin Panel but can also be a mobile user. 
+
+          client - Tour creator, has access to the CMS but can also be a mobile
+          user.
+
+          admin - System admin, has access to the Admin Panel but can also be a
+          mobile user. 
         example: user
       subscribe_override:
         type: boolean
-        description: A flag set only by the admin to enable site-wide subscription for the user.
+        description: >-
+          A flag set only by the admin to enable site-wide subscription for the
+          user.
         example: false
       avatar_url:
         type: string
         description: The URL for the user's avatar image.
-        example: 'https://media.wejunket.com/avatars/387ec13e14f96854ed64aca99a477c70.jpg'
+        example: >-
+          https://media.wejunket.com/avatars/387ec13e14f96854ed64aca99a477c70.jpg
       created_at:
         type: string
         format: date-time
         description: Timestamp of when the User registered.
         example: '2018-07-21 13:53:20'
-        
   Tour:
     type: object
     required:
@@ -1423,22 +1513,20 @@ definitions:
       description:
         type: string
         description: The full text description of the Tour.
-        example: Explore the haunted history of Williamsburg with this guided audio tour app from www.colonialghosts.com ! Listen to the tour on your mobile device with a friend, or all alone...if you dare!
+        example: >-
+          Explore the haunted history of Williamsburg with this guided audio
+          tour app from www.colonialghosts.com ! Listen to the tour on your
+          mobile device with a friend, or all alone...if you dare!
         maximum: 65535
       pricing_type:
         type: string
-        format: enum
-          - free
-          - premium
-        description: Pricing model for the Tour, either free or premium (paid).
+        format: enum - free - premium
+        description: 'Pricing model for the Tour, either free or premium (paid).'
         example: premium
         maximum: 10
       type:
         type: string
-        format: enum
-          - indoor
-          - outdoor
-          - adventure
+        format: enum - indoor - outdoor - adventure
         description: The type of Tour.
         example: adventure
       stops_count:
@@ -1448,28 +1536,30 @@ definitions:
         example: 31
       location:
         $ref: '#/definitions/Location'
-        description: The location of the Tour, including GPS coordinates.
+        description: 'The location of the Tour, including GPS coordinates.'
       distance:
         type: integer
         format: float
-        description: The distance from the supplied coordinates in miles.  Only appears when getting a Tour listing with a set nearby cooridnates parameter.
+        description: >-
+          The distance from the supplied coordinates in miles.  Only appears
+          when getting a Tour listing with a set nearby cooridnates parameter.
         example: 3.23
-      facebook_url: 
+      facebook_url:
         type: string
         description: Facebook URL
-        example: https://www.facebook.com/example-page
-      twitter_url: 
+        example: 'https://www.facebook.com/example-page'
+      twitter_url:
         type: string
         description: Twitter URL
-        example: https://www.twitter.com/example-page
-      instagram_url: 
+        example: 'https://www.twitter.com/example-page'
+      instagram_url:
         type: string
         description: Instagram URL
-        example: https://www.instagram.com/example-page
+        example: 'https://www.instagram.com/example-page'
       video_url:
         type: string
         description: Youtube video URL for the tour.
-        example: https://youtu.be/Bey4XXJAqS8
+        example: 'https://youtu.be/Bey4XXJAqS8'
       has_prize:
         type: boolean
         description: Whether the Tour offers a prize or not.
@@ -1487,12 +1577,14 @@ definitions:
       prize_time_limit:
         type: integer
         format: int32
-        description: The time (in hours) that the tour's prize is available after the the user wins the trophy.
+        description: >-
+          The time (in hours) that the tour's prize is available after the the
+          user wins the trophy.
         example: 48
       trophy_image:
         type: string
         description: Custom trophy image.
-        example: http://media.wejunket.com/images/4fd1b212d98168645c0dce52bdb05189.png
+        example: 'http://media.wejunket.com/images/4fd1b212d98168645c0dce52bdb05189.png'
       start_point:
         type: integer
         format: int32
@@ -1505,12 +1597,14 @@ definitions:
         maximum: 1000
       start_video_url:
         type: string
-        description: The Youtube video URL of the video that is to be displayed when a User starts the Tour.
-        example: https://youtu.be/Bey4XXJAqS8
+        description: >-
+          The Youtube video URL of the video that is to be displayed when a User
+          starts the Tour.
+        example: 'https://youtu.be/Bey4XXJAqS8'
       start_image:
         type: string
         description: The image to be displayed when a User starts the Tour.
-        example: http://media.wejunket.com/images/4fd1b212d98168645c0dce52bdb05189.jpg
+        example: 'http://media.wejunket.com/images/4fd1b212d98168645c0dce52bdb05189.jpg'
       end_point:
         type: integer
         format: int32
@@ -1523,38 +1617,44 @@ definitions:
         maximum: 1000
       end_video_url:
         type: string
-        description: The Youtube video URL of the video that is to be displayed when a User completes the Tour.
-        example: https://youtu.be/Bey4XXJAqS8
+        description: >-
+          The Youtube video URL of the video that is to be displayed when a User
+          completes the Tour.
+        example: 'https://youtu.be/Bey4XXJAqS8'
       end_image:
         type: string
         description: The image to be displayed when a User completes the Tour.
-        example: http://media.wejunket.com/images/4fd1b212d98168645c0dce52bdb05189.jpg
+        example: 'http://media.wejunket.com/images/4fd1b212d98168645c0dce52bdb05189.jpg'
       main_image:
         type: string
         description: Tour cover image.
-        example: http://media.wejunket.com/images/4fd1b212d98168645c0dce52bdb05189.jpg
+        example: 'http://media.wejunket.com/images/4fd1b212d98168645c0dce52bdb05189.jpg'
       images:
         type: array
         items:
           type: string
         description: Array of additional image paths.
-        example: ['http://media.wejunket.com/images/4fd1b212d98168645c0dce52bdb05189.jpg']
+        example:
+          - >-
+            http://media.wejunket.com/images/4fd1b212d98168645c0dce52bdb05189.jpg
       pin_image:
         type: string
         description: Custom map pin icon.
-        example: http://media.wejunket.com/images/4fd1b212d98168645c0dce52bdb05189.png
+        example: 'http://media.wejunket.com/images/4fd1b212d98168645c0dce52bdb05189.png'
       intro_audio:
         type: string
         description: Intro audio MP3 path.
-        example: http://media.wejunket.com/images/4fd1b212d98168645c0dce52bdb05189.mp3
+        example: 'http://media.wejunket.com/images/4fd1b212d98168645c0dce52bdb05189.mp3'
       background_audio:
         type: string
         description: Background audio MP3 path.
-        example: http://media.wejunket.com/images/4fd1b212d98168645c0dce52bdb05189.mp3
+        example: 'http://media.wejunket.com/images/4fd1b212d98168645c0dce52bdb05189.mp3'
       length:
         type: integer
         format: float
-        description: The total length of the Tour (in miles).  For adventures, this is the shortest route's length.
+        description: >-
+          The total length of the Tour (in miles).  For adventures, this is the
+          shortest route's length.
         example: 3.23
       rating:
         type: integer
@@ -1562,8 +1662,10 @@ definitions:
         default: 0
         minimum: 0
         maximum: 50
-        description: |
-          The rating value of the review.  This is based on a 5 star rating system, but uses whole numbers instead of decimals.  For example 25 = 2.5 stars
+        description: >
+          The rating value of the review.  This is based on a 5 star rating
+          system, but uses whole numbers instead of decimals.  For example 25 =
+          2.5 stars
         example: 25
       in_app_id:
         type: string
@@ -1589,7 +1691,6 @@ definitions:
         format: date-time
         description: Timestamp of when the Tour was published.
         example: '2018-07-21 13:53:20'
-  
   Stop:
     type: object
     required:
@@ -1624,62 +1725,83 @@ definitions:
       description:
         type: string
         description: The description of the Stop.
-        example: Welcome to the Tyler Garden. The Tyler Garden was dedicated in 2004 and shows three busts of prominent members of the Tyler family.
+        example: >-
+          Welcome to the Tyler Garden. The Tyler Garden was dedicated in 2004
+          and shows three busts of prominent members of the Tyler family.
       play_radius:
         type: number
         format: double
-        description: The radius (in meters) that should trigger being 'near' a stop and media should start playing.
+        description: >-
+          The radius (in meters) that should trigger being 'near' a stop and
+          media should start playing.
         example: 15.5
       main_image:
         type: string
         description: Stop cover image.
-        example: http://media.wejunket.com/images/4fd1b212d98168645c0dce52bdb05189.jpg
+        example: 'http://media.wejunket.com/images/4fd1b212d98168645c0dce52bdb05189.jpg'
       images:
         type: array
         items:
           type: string
         description: Array of additional stop image paths.
-        example: ['http://media.wejunket.com/images/4fd1b212d98168645c0dce52bdb05189.jpg']
+        example:
+          - >-
+            http://media.wejunket.com/images/4fd1b212d98168645c0dce52bdb05189.jpg
       intro_audio:
         type: string
         description: Intro audio MP3 path.
-        example: http://media.wejunket.com/images/4fd1b212d98168645c0dce52bdb05189.mp3
+        example: 'http://media.wejunket.com/images/4fd1b212d98168645c0dce52bdb05189.mp3'
       background_audio:
         type: string
         description: Background audio MP3 path.
-        example: http://media.wejunket.com/images/4fd1b212d98168645c0dce52bdb05189.mp3
+        example: 'http://media.wejunket.com/images/4fd1b212d98168645c0dce52bdb05189.mp3'
       is_multiple_choice:
         type: boolean
-        description: Boolean to determine whether the stop question is multiple choice or simple text answer.  Only for 'adventure' Tours.
+        description: >-
+          Boolean to determine whether the stop question is multiple choice or
+          simple text answer.  Only for 'adventure' Tours.
         example: true
       question:
         type: string
-        description: The question to prompt the User to allow access to the next stop on the Tour.  Only for 'adventure' Tours.
-        example: 'What did you see?'
+        description: >-
+          The question to prompt the User to allow access to the next stop on
+          the Tour.  Only for 'adventure' Tours.
+        example: What did you see?
         maximum: 500
       question_answer:
         type: string
-        description: The correct answer to the question (non multiple choice).  Only for 'adventure' Tours.
+        description: >-
+          The correct answer to the question (non multiple choice).  Only for
+          'adventure' Tours.
         example: A Ghost
         maximum: 500
       question_success:
         type: string
-        description: The message to prompt the User when the question is answered successfully.  Only for 'adventure' Tours.
+        description: >-
+          The message to prompt the User when the question is answered
+          successfully.  Only for 'adventure' Tours.
         example: Correct!  Proceed to the next stop.
         maximum: 500
       next_stop:
         type: integer
         format: int32
-        description: The ID of the next stop on the Tour to give the User when a question (non multiple choice) is successfully answered.  Only for 'adventure' Tours.
+        description: >-
+          The ID of the next stop on the Tour to give the User when a question
+          (non multiple choice) is successfully answered.  Only for 'adventure'
+          Tours.
         example: 5
       choices:
         type: array
-        description: The multiple choice questions.  Only for 'adventure' Tours that are marked multiple choice.
+        description: >-
+          The multiple choice questions.  Only for 'adventure' Tours that are
+          marked multiple choice.
         items:
           $ref: '#/definitions/StopChoice'
       routes:
         type: array
-        description: An array of points that make up the route to the next Stop from this Stop.
+        description: >-
+          An array of points that make up the route to the next Stop from this
+          Stop.
         items:
           $ref: '#/definitions/StopRoutePoint'
       created_at:
@@ -1692,7 +1814,6 @@ definitions:
         format: date-time
         description: Timestamp of when the Stop was updated.
         example: '2018-07-21 13:53:20'
-
   StopChoice:
     type: object
     required:
@@ -1708,13 +1829,12 @@ definitions:
       answer:
         type: string
         description: The multiple choice answer.
-        example: 'A Ghost'
+        example: A Ghost
       next_stop:
         type: integer
         format: int32
         description: The ID of the next stop on the Tour if the User selects this choice.
         example: 5
-
   StopRoutePoint:
     type: object
     required:
@@ -1740,7 +1860,6 @@ definitions:
         type: number
         format: float
         example: -73.9913727
-
   TourRoutePoint:
     type: object
     required:
@@ -1761,7 +1880,6 @@ definitions:
         type: number
         format: float
         example: -73.9913727
-
   Location:
     type: object
     properties:
@@ -1799,27 +1917,25 @@ definitions:
         format: float
         description: Longitude coordinate
         example: -73.9913727
-
   PaginationLinks:
     type: object
     properties:
       first:
         type: string
         description: URL to fetch the first page of records.
-        example: http://api.wejunket.com/mobile/tours?page=1
+        example: 'http://api.wejunket.com/mobile/tours?page=1'
       last:
         type: string
         description: URL to fetch the last page of records.
-        example: http://api.wejunket.com/mobile/tours?page=99
+        example: 'http://api.wejunket.com/mobile/tours?page=99'
       prev:
         type: string
         description: URL to fetch the previous page of records.
-        example: http://api.wejunket.com/mobile/tours?page=1
+        example: 'http://api.wejunket.com/mobile/tours?page=1'
       next:
         type: string
         description: URL to fetch the next page of records.
-        example: http://api.wejunket.com/mobile/tours?page=2
-
+        example: 'http://api.wejunket.com/mobile/tours?page=2'
   PaginationMeta:
     type: object
     properties:
@@ -1841,7 +1957,7 @@ definitions:
       path:
         type: string
         description: The base URL for the resource.
-        example: http://api.wejunket.com/mobile/tours
+        example: 'http://api.wejunket.com/mobile/tours'
       per_page:
         type: integer
         format: int32
@@ -1857,7 +1973,6 @@ definitions:
         format: int32
         description: The total number of records.
         example: 1481
-        
   Review:
     type: object
     required:
@@ -1879,15 +1994,17 @@ definitions:
         default: 0
         minimum: 0
         maximum: 50
-        description: |
-          The rating value of the review.  This is based on a 5 star rating system, but uses whole numbers instead of decimals.  For example 25 = 2.5 stars
+        description: >
+          The rating value of the review.  This is based on a 5 star rating
+          system, but uses whole numbers instead of decimals.  For example 25 =
+          2.5 stars
         example: 25
-      review: 
+      review:
         type: string
         maximum: 255
         description: A short text review of the Tour.
-        example: This was a great Tour, and free too!
-      user_id: 
+        example: 'This was a great Tour, and free too!'
+      user_id:
         type: integer
         format: int32
         description: The creating user's invalid.
@@ -1909,7 +2026,6 @@ definitions:
         example: '2018-07-21 13:53:20'
       user:
         $ref: '#/definitions/User'
-
   Prize:
     type: object
     properties:
@@ -1926,14 +2042,17 @@ definitions:
       time_limit:
         type: integer
         format: int32
-        description: The time (in hours) that the tour's prize is available after the the user wins the trophy.
+        description: >-
+          The time (in hours) that the tour's prize is available after the the
+          user wins the trophy.
         example: 48
       expires_at:
         type: string
         format: date-time
-        description: The time when the prize should be considered expired, based on the time limit and the time the user won the prize.
+        description: >-
+          The time when the prize should be considered expired, based on the
+          time limit and the time the user won the prize.
         example: '2018-07-21 13:53:20'
-
   ScoreCard:
     type: object
     properties:
@@ -1945,7 +2064,10 @@ definitions:
       par:
         type: integer
         format: int32
-        description: For adventure tours.  The average number of minutes it should take a user to complete the tour.  This is used for calculating users point in the backend, and probably is not needed for the mobile application.
+        description: >-
+          For adventure tours.  The average number of minutes it should take a
+          user to complete the tour.  This is used for calculating users point
+          in the backend, and probably is not needed for the mobile application.
         example: 66
       is_adventure:
         type: boolean
@@ -1962,7 +2084,11 @@ definitions:
       points:
         type: integer
         format: int32
-        description: The users current points.  For regular tours, this is updated for every stop the user visits.  For adventure tours, this is only calculated and finalized once a user has visited the last stop on the Tour. 
+        description: >-
+          The users current points.  For regular tours, this is updated for
+          every stop the user visits.  For adventure tours, this is only
+          calculated and finalized once a user has visited the last stop on the
+          Tour.
       won_trophy:
         type: boolean
         description: Identifies if the user should be awarded a trophy.
@@ -1970,11 +2096,13 @@ definitions:
       trophy_url:
         type: string
         format: string
-        description: The URL for the custom trophy image, if any.
-        example: https://media.wejunket.com/images/4fd1b212d98168645c0dce52bdb05189.jpg
+        description: 'The URL for the custom trophy image, if any.'
+        example: 'https://media.wejunket.com/images/4fd1b212d98168645c0dce52bdb05189.jpg'
       prize:
         $ref: '#/definitions/Prize'
-        description: The prize information that was awarded with the trophy.  This is only populated if the user has won a trophy.
+        description: >-
+          The prize information that was awarded with the trophy.  This is only
+          populated if the user has won a trophy.
       started_at:
         type: string
         format: date-time
@@ -1983,7 +2111,11 @@ definitions:
       finished_at:
         type: string
         format: date-time
-        description: The time the user finished the last stop on the Tour.  For regular tours, this only occurs once they have visited every stop on the Tour.  For adventure tours, this occurs when they have visited the stop that is designated to be the end point of a Tour.
+        description: >-
+          The time the user finished the last stop on the Tour.  For regular
+          tours, this only occurs once they have visited every stop on the
+          Tour.  For adventure tours, this occurs when they have visited the
+          stop that is designated to be the end point of a Tour.
         example: '2018-07-21 13:53:20'
       tour_id:
         type: integer
@@ -1993,14 +2125,15 @@ definitions:
       tour:
         $ref: '#/definitions/Tour'
         description: The tour the score card is referencing.
-
   LeaderboardEntry:
     type: object
     properties:
       points:
         type: integer
         format: int32
-        description: The number of point the user received.  Max points value is 200, minimum is 50.
+        description: >-
+          The number of point the user received.  Max points value is 200,
+          minimum is 50.
         example: 200
       tour_id:
         type: integer

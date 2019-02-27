@@ -39,7 +39,7 @@ Route::namespace('App\Mobile\Controllers')->middleware(['jwt.auth', 'role:user|c
 
     Route::post('scores/start', 'ScoreCardController@start')->name('mobile.scores.start');
     Route::post('scores/{scoreCard}/progress', 'ScoreCardController@progress')->name('mobile.scores.progress');
-    Route::get('scores', 'ScoreCardController@index')->name('mobile.scores.index');
+    Route::get('scores/{user}', 'ScoreCardController@index')->name('mobile.scores.index');
     Route::get('scores/find/{tour}', 'ScoreCardController@find')->name('mobile.scores.find');
 
     Route::get('leaderboard/{tour}', 'LeaderboardController@tour')->name('mobile.leaderboard.tour');
@@ -49,7 +49,7 @@ Route::namespace('App\Mobile\Controllers')->middleware(['jwt.auth', 'role:user|c
     Route::post('reviews/{tour}', 'ReviewController@store')->name('mobile.reviews.store');
     Route::delete('reviews/{tour}', 'ReviewController@destroy')->name('mobile.reviews.destroy');
 
-    Route::get('favorites', 'FavoriteController@index')->name('mobile.favorites');
+    Route::get('favorites/{user}', 'FavoriteController@index')->name('mobile.favorites');
     Route::post('favorites/{tour}', 'FavoriteController@store')->name('mobile.favorites.store');
     Route::delete('favorites/{tour}', 'FavoriteController@destroy')->name('mobile.favorites.destroy');
 });
