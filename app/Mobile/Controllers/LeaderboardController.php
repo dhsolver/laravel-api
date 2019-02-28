@@ -29,7 +29,6 @@ class LeaderboardController extends Controller
                     return $q->forRegularTours();
                 });
             })
-            // ->limit(100)
             ->get();
 
         return new LeaderboardCollection($scores);

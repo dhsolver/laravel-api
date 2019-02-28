@@ -222,8 +222,7 @@ class ScoreCard extends Model
                 }
                 return $query->where('tour_id', modelid($tour));
             })
-            ->get()
-            ->unique('tour_id');
+            ->get();
     }
 
     // **********************************************************
