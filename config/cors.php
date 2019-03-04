@@ -12,12 +12,13 @@ return [
     */
 
     'supportsCredentials' => false,
-    'allowedOrigins' => [
-        env('APP_URL'),
-        env('CMS_URL'),
-        env('SUPPORT_URL'),
-    ],
-    'allowedOriginsPatterns' => [],
+    // 'allowedOrigins' => [
+    //     env('APP_URL'),
+    //     env('CMS_URL'),
+    //     env('SUPPORT_URL'),
+    // ],
+    'allowedOrigins' => ['*'],
+    // 'allowedOriginsPatterns' => [],
     'allowedHeaders' => ['*'],
     'allowedMethods' => ['*'],
     'exposedHeaders' => [],
