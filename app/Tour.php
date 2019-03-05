@@ -39,7 +39,7 @@ class Tour extends Model
      *
      * @var array
      */
-    protected $with = ['location', 'image1', 'image2', 'image3', 'mainImage', 'startImage', 'endImage', 'pinImage', 'trophyImage', 'introAudio', 'backgroundAudio'];
+    protected $with = ['location', 'image1', 'image2', 'image3', 'mainImage', 'startImage', 'endImage', 'pinImage', 'trophyImage', 'introAudio', 'backgroundAudio', 'prizeLocation'];
 
     /**
      * The attributes that should be cast to native types.
@@ -81,6 +81,10 @@ class Tour extends Model
                 'locationable_id' => $model->id,
                 'locationable_type' => 'App\Tour',
             ]);
+            $model->location()->create([
+                'locationable_id' => $model->id,
+                'locationable_type' => 'App\TourPrize',
+            ]);
         });
 
         parent::boot();
@@ -119,6 +123,17 @@ class Tour extends Model
     {
         return $this->hasOne('App\Location', 'locationable_id', 'id')
             ->where('locationable_type', 'App\Tour');
+    }
+
+    /**
+     * Defines the prize_location relationship.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function prizeLocation()
+    {
+        return $this->hasOne('App\Location', 'locationable_id', 'id')
+            ->where('locationable_type', 'App\TourPrize');
     }
 
     /**

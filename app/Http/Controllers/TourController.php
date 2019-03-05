@@ -71,13 +71,18 @@ class TourController extends Controller
 
         \DB::beginTransaction();
 
-        if ($tour->update(Arr::except($data, ['location', 'route']))) {
+        if ($tour->update(Arr::except($data, ['location', 'route', 'prize_location']))) {
             if ($request->has('location')) {
                 $tour->location()->update(Arr::except($data['location'], ['id']));
             }
 
             if ($request->has('route')) {
                 $tour->syncRoute($data['route']);
+            }
+
+            if ($request->has('prize_location')) {
+                // var_dump($data);exit;
+                $tour->prizeLocation()->update(Arr::except($data['prize_location'], ['id']));
             }
 
             $tour->fresh()->updateLength();

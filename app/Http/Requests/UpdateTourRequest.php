@@ -69,6 +69,14 @@ class UpdateTourRequest extends FormRequest
             'prize_details' => 'nullable|string|max:1000',
             'prize_instructions' => 'nullable|string|max:1000',
             'prize_time_limit' => 'nullable|numeric',
+            'prize_location.address1' => 'nullable|string|max:255',
+            'prize_location.address2' => 'nullable|string|max:255',
+            'prize_location.city' => 'nullable|string|max:155',
+            'prize_location.state' => 'nullable|string|max:155',
+            'prize_location.country' => 'nullable|string|max:2',
+            'prize_location.zipcode' => 'nullable|string|max:12',
+            'prize_location.latitude' => ['nullable', 'regex:/^[-]?(([0-8]?[0-9])\.(\d+))|(90(\.0+)?)$/'],
+            'prize_location.longitude' => ['nullable', 'regex:/^[-]?((((1[0-7][0-9])|([0-9]?[0-9]))\.(\d+))|180(\.0+)?)$/'],
 
             'start_point_id' => [
                 'nullable',
@@ -136,6 +144,9 @@ class UpdateTourRequest extends FormRequest
             'end_message.max' => 'Starting point message is too long.',
             'prize_details.max' => 'Prize details are too long.',
             'prize_instructions.max' => 'Prize instructions are too long.',
+            'prize_location.latitude.*' => 'Invalid coordinates.',
+            'prize_location.longitude.*' => 'Invalid coordinates.',
+            'prize_location.*' => 'Invalid address.',
             'start_point_id.*' => 'Starting point does not exist.',
             'end_point_id.*' => 'End point does not exist.',
 
