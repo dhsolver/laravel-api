@@ -67,7 +67,7 @@ class TourController extends Controller
         $reviews = $tour->reviews()->whereNotNull('review')->with('user')->latest()->limit(5)->get();
 
         return response()->json([
-            'tour' => new TourResource($tour),
+            'tour' => new TourResource($tour, 'detail'),
             'stops' => StopResource::collection($tour->stops),
             'route' => TourRouteResource::collection($tour->route),
             'latest_reviews' => ReviewResource::collection($reviews),

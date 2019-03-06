@@ -7,6 +7,26 @@ use Illuminate\Http\Resources\Json\JsonResource;
 class TourResource extends JsonResource
 {
     /**
+     * @var
+     */
+    private $detail;
+
+    /**
+     * Create a new resource instance.
+     *
+     * @param  mixed  $resource
+     * @return void
+     */
+    public function __construct($resource, $detail)
+    {
+        // Ensure you call the parent constructor
+        parent::__construct($resource);
+        $this->resource = $resource;
+        $this->detail = $detail;
+    }
+
+
+    /**
      * Transform the resource into an array.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -24,7 +44,6 @@ class TourResource extends JsonResource
         if (! empty($this->image3)) {
             array_push($images, $this->image3->path);
         }
-
         $data = [
             'id' => $this->id,
             'user_id' => $this->user_id,
@@ -75,6 +94,10 @@ class TourResource extends JsonResource
             'updated_at' => $this->updated_at ? $this->updated_at->toDateTimeString() : null,
             'published_at' => $this->published_at ? $this->published_at->toDateTimeString() : null,
         ];
+
+        if ($this->detail === 'detail') {
+            $data['prize_location'] = new LocationResource($this->prizeLocation);
+        }
 
         if (isset($this->distance)) {
             $data['distance'] = $this->distance;

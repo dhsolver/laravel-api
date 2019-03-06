@@ -20,6 +20,7 @@ class ScoreCardResource extends JsonResource
                 'instructions' => $this->tour->prize_instructions,
                 'time_limit' => (int) $this->tour->prize_time_limit,
                 'expires_at' => $this->prize_expires_at->toDateTimeString(),
+                'prize_location' => new LocationResource($this->tour->prizeLocation)
             ];
         }
 
