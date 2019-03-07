@@ -1332,6 +1332,7 @@ definitions:
           - share
           - like
           - visit
+          - redeemed_prize
         description: The action to record.
         example: start
       device_id:
