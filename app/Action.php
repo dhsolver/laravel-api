@@ -20,6 +20,7 @@ class Action
     const SHARE = 'share';
     const LIKE = 'like';
     const VISIT = 'visit';
+    const REDEEMED_PRIZE = 'redeemed_prize';
 
     /**
      * Get array of all the Action types.
@@ -29,7 +30,7 @@ class Action
     public static function all()
     {
         return [
-            self::DOWNLOAD, self::START, self::STOP, self::SHARE, self::LIKE, self::VISIT,
+            self::DOWNLOAD, self::START, self::STOP, self::SHARE, self::LIKE, self::VISIT, self.REDEEMED_PRIZE
         ];
     }
 }
