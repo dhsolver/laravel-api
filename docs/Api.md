@@ -26,6 +26,9 @@ php artisan docs:generate
 This should display a success message and overwrite the docs/api.html documentation file.
 
 ### Change Log
+v.1.1.2
+- Added prize_location to mobile/tours/{tour_id} endpoint
+- Added 'redeemed_prize' action to mobile/tours/{tour_id}/track endpoint
 
 v.1.1.1
 - Added user_rank, total_users to the leaderboard
