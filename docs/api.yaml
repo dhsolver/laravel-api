@@ -2,7 +2,7 @@ swagger: '2.0'
 info:
   title: Junket API
   description: Private API for the wejunket.com mobile apps.
-  version: 1.1.1
+  version: 1.1.2
 host: api.wejunket.com
 basePath: /mobile
 schemes:
