@@ -3,6 +3,7 @@
 namespace App\Mobile\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\ScoreCard;
 
 class ScoreCardResource extends JsonResource
 {
@@ -23,12 +24,18 @@ class ScoreCardResource extends JsonResource
                 'prize_location' => new LocationResource($this->tour->prizeLocation)
             ];
         }
+        
+        $visited_stops = ScoreCard::find($this->id)->stops()->get();
+        $visited_stop_ids = [];
+        foreach ($visited_stops as $visited_stop) {
+            $visited_stop_ids[] = $visited_stop['id'];
+        }
 
         return [
             'id' => $this->id,
             'par' => $this->par,
             'is_adventure' => $this->is_adventure,
-            'stops_visited' => (int) $this->stops_visited,
+            'stops_visited' => $visited_stop_ids,
             'total_stops' => (int) $this->total_stops,
             'points' => (int) $this->points,
             'won_trophy' => $this->won_trophy,

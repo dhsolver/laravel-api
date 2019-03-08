@@ -2,7 +2,7 @@ swagger: '2.0'
 info:
   title: Junket API
   description: Private API for the wejunket.com mobile apps.
-  version: 1.1.2
+  version: 1.1.1
 host: api.wejunket.com
 basePath: /mobile
 schemes:
@@ -2075,9 +2075,15 @@ definitions:
         description: Identifies if the score card is referencing an adventure tour or not.
         example: true
       stops_visited:
-        type: integer
-        format: int32
-        description: The number of stops visited.
+        type: array
+        items:
+          type: integer
+          format: int32
+        description: Array of visited stop ids.
+        example:
+          - >-
+            100021380,
+            100021384
       total_stops:
         type: integer
         format: int32
