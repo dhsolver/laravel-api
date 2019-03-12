@@ -405,4 +405,20 @@ class User extends Authenticatable implements JWTSubject
     {
         $this->update(['active' => 0]);
     }
+
+    /**
+     * Reset user's process.
+     *
+     * @return void
+     */
+    public function reset()
+    {
+        $this->scoreCards()->delete();
+        $this->stats()->update([
+            'points' => 0,
+            'tours_completed' => 0,
+            'stops_visited' => 0,
+            'trophies' => 0
+        ]);
+    }
 }

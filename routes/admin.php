@@ -44,4 +44,5 @@ Route::middleware(['jwt.auth', 'role:superadmin|admin'])->group(function () {
     Route::patch('change-password/{user}', 'Admin\ChangePasswordController@update')->name('admin.change-password')->middleware(['can:update,user']);
     Route::patch('deactivate/{user}', 'Admin\ActivateAccountController@deactivate')->name('admin.deactivate-user')->middleware(['can:update,user']);
     Route::patch('reactivate/{user}', 'Admin\ActivateAccountController@reactivate')->name('admin.reactivate-user')->middleware(['can:update,user']);
+    Route::patch('reset/{user}', 'Admin\ResetScoresController@reset')->name('admin.reset-user')->middleware(['can:update,user']);
 });
