@@ -420,5 +420,6 @@ class User extends Authenticatable implements JWTSubject
             'stops_visited' => 0,
             'trophies' => 0
         ]);
+        $this->favorites()->detach();
     }
 }

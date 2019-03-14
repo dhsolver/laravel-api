@@ -32,7 +32,7 @@ class ProfileResource extends JsonResource
 
             $data['stats'] = [
                 'points' => $this->stats->points,
-                'tours_completed' => $this->stats->points,
+                'tours_completed' => $this->stats->tours_completed,
                 'stops_visited' => $this->stats->stops_visited,
                 'trophies' => $this->stats->trophies,
             ];
