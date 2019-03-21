@@ -52,7 +52,7 @@ class UpdateProfileRequest extends FormRequest
             'company_name.*' => 'Invalid company name.',
             'email.unique' => 'This email address is already in use by another user.',
             'email.max' => 'Email address must be less than 255 characters.',
-            'email.*' => 'A valid email address is required.',
+            'email.*' => 'A valid email address is required.'
         ];
     }
 }

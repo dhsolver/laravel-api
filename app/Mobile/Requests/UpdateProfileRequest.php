@@ -25,7 +25,7 @@ class UpdateProfileRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
-            'zipcode' => 'nullable|string|max:16',
+            'zipcode' => 'nullable|string|max:16'
         ];
     }
 
@@ -38,7 +38,7 @@ class UpdateProfileRequest extends FormRequest
     {
         return [
             'name.max' => 'Name must be less than 255 characters.',
-            'name.*' => 'Your name is required.',
+            'name.*' => 'Your name is required.'
         ];
     }
 }

@@ -17,7 +17,7 @@ class StopResource extends JsonResource
         $this->resource->load(['routes']);
 
         return array_merge($this->resource->toArray(), [
-            'routes' => new StopRouteResource($this->resource->routes),
+            'routes' => new StopRouteResource($this->resource->routes)
         ]);
     }
 }

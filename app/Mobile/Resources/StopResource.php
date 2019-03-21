@@ -37,9 +37,6 @@ class StopResource extends JsonResource
 
             'main_image' => $this->mainImage ? $this->mainImage->path : null,
             'images' => $images,
-            // 'image1' => $this->image1 ? $this->image1->path : null,
-            // 'image2' => $this->image2 ? $this->image2->path : null,
-            // 'image3' => $this->image3 ? $this->image3->path : null,
             'intro_audio' => $this->introAudio ? $this->introAudio->path : null,
             'background_audio' => $this->backgroundAudio ? $this->backgroundAudio->path : null,
 
@@ -54,7 +51,7 @@ class StopResource extends JsonResource
             'routes' => StopRouteResource::collection($this->routes),
 
             'created_at' => $this->created_at->toDateTimeString(),
-            'updated_at' => $this->updated_at ? $this->updated_at->toDateTimeString() : null,
+            'updated_at' => $this->updated_at ? $this->updated_at->toDateTimeString() : null
         ];
     }
 }

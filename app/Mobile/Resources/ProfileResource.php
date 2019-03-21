@@ -20,7 +20,7 @@ class ProfileResource extends JsonResource
             'first_name' => $this->firstName,
             'last_name' => $this->lastName,
             'avatar_url' => $this->avatarUrl,
-            'created_at' => $this->created_at->toDateTimeString(),
+            'created_at' => $this->created_at->toDateTimeString()
         ];
 
         if ($this->id === auth()->user()->id) {
@@ -34,7 +34,7 @@ class ProfileResource extends JsonResource
                 'points' => $this->stats->points,
                 'tours_completed' => $this->stats->tours_completed,
                 'stops_visited' => $this->stats->stops_visited,
-                'trophies' => $this->stats->trophies,
+                'trophies' => $this->stats->trophies
             ];
         }
 

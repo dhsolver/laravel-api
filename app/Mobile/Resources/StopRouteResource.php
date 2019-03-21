@@ -18,7 +18,7 @@ class StopRouteResource extends JsonResource
             'next_stop' => $this->next_stop_id,
             'order' => $this->order,
             'latitude' => $this->latitude,
-            'longitude' => $this->longitude,
+            'longitude' => $this->longitude
         ];
     }
 }

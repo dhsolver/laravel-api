@@ -104,7 +104,7 @@ class UpdateTourRequest extends FormRequest
             'intro_audio_id' => 'nullable|integer|exists:media,id',
             'background_audio_id' => 'nullable|integer|exists:media,id',
 
-            'route' => 'nullable',
+            'route' => 'nullable'
         ];
 
         if (auth()->user()->isAdmin()) {
@@ -159,7 +159,7 @@ class UpdateTourRequest extends FormRequest
             'trophy_image_id.*' => 'Trophy Image file not found.',
             'start_image_id.*' => 'Starting point image file not found.',
             'end_image_id.*' => 'End point image file not found.',
-            'pin_image_id.*' => 'Custom pin image file not found.',
+            'pin_image_id.*' => 'Custom pin image file not found.'
         ];
     }
 }

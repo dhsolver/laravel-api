@@ -15,7 +15,7 @@ class JoinedTourCollection extends ResourceCollection
     public function toArray($request)
     {
         return [
-            'data' => $this->collection->pluck('id'),
+            'data' => $this->collection->pluck('id')
         ];
     }
 }

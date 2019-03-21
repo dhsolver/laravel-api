@@ -17,7 +17,7 @@ class ImageResource extends JsonResource
         return [
             'file' => $this->file,
             'path' => $this->path,
-            'small_path' => $this->small_path,
+            'small_path' => $this->small_path
         ];
     }
 }

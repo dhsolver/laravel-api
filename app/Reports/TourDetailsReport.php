@@ -61,7 +61,7 @@ class TourDetailsReport extends BaseReport
                 'actions' => (int) $item->actions,
                 'downloads' => (int) $item->downloads,
                 'time' => (int) $item->time_spent,
-                'tour_id' => (int) $item->tour_id,
+                'tour_id' => (int) $item->tour_id
             ];
         })];
     }

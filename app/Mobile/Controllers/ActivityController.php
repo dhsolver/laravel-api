@@ -61,7 +61,7 @@ class ActivityController extends Controller
                 'user_id' => auth()->user()->id,
                 'action' => $item['action'],
                 'device_id' => $item['device_id'],
-                'created_at' => $ts,
+                'created_at' => $ts
             ]);
         }
 

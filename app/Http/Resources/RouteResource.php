@@ -16,7 +16,7 @@ class RouteResource extends JsonResource
     {
         return [
             'lat' => $this->resource->latitude,
-            'lng' => $this->resource->longitude,
+            'lng' => $this->resource->longitude
         ];
     }
 }

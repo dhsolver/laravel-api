@@ -25,7 +25,7 @@ class CreateReviewRequest extends FormRequest
     {
         return [
             'rating' => 'in:0,5,10,15,20,25,30,35,40,45,50',
-            'review' => 'nullable|max:255',
+            'review' => 'nullable|max:255'
         ];
     }
 
@@ -38,7 +38,7 @@ class CreateReviewRequest extends FormRequest
     {
         return [
             'review.max' => 'Review must be less than 255 characters.',
-            'rating.*' => 'Invalid rating value.',
+            'rating.*' => 'Invalid rating value.'
         ];
     }
 }

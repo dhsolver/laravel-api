@@ -15,7 +15,7 @@ class ClientResource extends JsonResource
     public function toArray($request)
     {
         return array_merge($this->resource->toArray(), [
-            'tours_count' => $this->tours()->count(),
+            'tours_count' => $this->tours()->count()
         ]);
     }
 }

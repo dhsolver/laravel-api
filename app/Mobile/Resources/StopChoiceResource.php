@@ -17,7 +17,7 @@ class StopChoiceResource extends JsonResource
         return [
             'order' => $this->order,
             'answer' => $this->answer,
-            'next_stop' => $this->next_stop_id,
+            'next_stop' => $this->next_stop_id
         ];
     }
 }

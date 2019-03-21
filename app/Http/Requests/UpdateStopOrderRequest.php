@@ -24,7 +24,7 @@ class UpdateStopOrderRequest extends FormRequest
     public function rules()
     {
         return [
-            'order' => 'required|array',
+            'order' => 'required|array'
         ];
     }
 }

@@ -16,7 +16,7 @@ class AudioResource extends JsonResource
     {
         return [
             'file' => $this->file,
-            'path' => $this->path,
+            'path' => $this->path
         ];
     }
 }

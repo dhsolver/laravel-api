@@ -25,8 +25,7 @@ class StartTourRequest extends FormRequest
     {
         return [
             'tour_id' => 'required|exists:tours,id',
-            // 'device_id' => 'required|exists:devices,id',
-            'timestamp' => 'required|date_format:U',
+            'timestamp' => 'required|date_format:U'
         ];
     }
 }

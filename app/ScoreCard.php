@@ -207,6 +207,8 @@ class ScoreCard extends Model
     public static function scopeOnlyBest($query, $tour = null)
     {
         return $query->orderBy('points', 'desc')
+            ->orderBy('finished_at', 'desc')
+            ->orderBy('tour_id', 'asc')
             ->where(function ($query) {
                 return $query->where(function ($q) {
                     return $q->forAdventures()

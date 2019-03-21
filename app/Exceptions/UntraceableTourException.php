@@ -74,7 +74,6 @@ class UntraceableTourException extends Exception
                 $message = 'Untraceable Tour.';
                 break;
         }
-
         parent::__construct($message, $code);
     }
 

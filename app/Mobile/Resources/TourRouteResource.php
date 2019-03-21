@@ -17,7 +17,7 @@ class TourRouteResource extends JsonResource
         return [
             'order' => $this->order,
             'latitude' => $this->latitude,
-            'longitude' => $this->longitude,
+            'longitude' => $this->longitude
         ];
     }
 }

@@ -27,7 +27,7 @@ class TourScoreCardCollection extends ResourceCollection
             'in_progress' => ScoreCardResource::collection(
                 $this->collection->where('finished_at', null)
                     ->sortByDesc('started_at')
-            ),
+            )
         ];
     }
 }

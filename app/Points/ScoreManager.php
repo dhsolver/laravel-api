@@ -72,7 +72,7 @@ class ScoreManager
             'total_stops' => $tour->calculator()->getTotalStops(),
             'stops_visited' => 0,
             'started_at' => $startTime,
-            'won_trophy_at' => null,
+            'won_trophy_at' => null
         ])) {
             return $scoreCard;
         }
@@ -149,7 +149,7 @@ class ScoreManager
             'points' => $points,
             'tours_completed' => $completedTours,
             'stops_visited' => $totalStops,
-            'trophies' => $trophies,
+            'trophies' => $trophies
         ]);
 
         return true;

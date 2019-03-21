@@ -31,14 +31,14 @@ class ChangeEmailController extends Controller
             ],
         ], [
             'email.unique' => 'A user with that email already exists.',
-            'email.*' => 'A valid email address is required.',
+            'email.*' => 'A valid email address is required.'
         ]);
 
         ChangeEmailRequest::create([
             'user_id' => auth()->id(),
             'new_email' => strtolower($request->email),
             'activation_code' => strtoupper(Str::random(6)),
-            'expires_at' => Carbon::now()->addMinutes(30),
+            'expires_at' => Carbon::now()->addMinutes(30)
         ]);
 
         return $this->success('Activation code sent');
@@ -53,9 +53,10 @@ class ChangeEmailController extends Controller
     public function confirm(Request $request)
     {
         $request->validate([
-            'code' => 'required|string|max:7|min:6',
-        ], [
-            'code.*' => 'Invalid activation code.',
+            'code' => 'required|string|max:7|min:6'
+        ],
+        [
+            'code.*' => 'Invalid activation code.'
         ]);
 
         $cer = ChangeEmailRequest::where('activation_code', str_replace('-', '', strtoupper($request->code)))->first();

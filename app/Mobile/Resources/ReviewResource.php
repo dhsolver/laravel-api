@@ -22,7 +22,7 @@ class ReviewResource extends JsonResource
             'tour_id' => $this->tour_id,
             'created_at' => $this->created_at->toDateTimeString(),
             'updated_at' => $this->updated_at->toDateTimeString(),
-            'user' => new ProfileResource($this->user),
+            'user' => new ProfileResource($this->user)
         ];
     }
 }

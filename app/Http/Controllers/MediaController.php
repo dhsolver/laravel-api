@@ -42,14 +42,13 @@ class MediaController extends Controller
             } else {
                 return $this->fail();
             }
-
             return $this->success('Media was uploaded successfully.', $media->toArray());
-        } catch (ImageTooSmallException $ex) {
-            return $this->fail(422, $ex->message);
-        } catch (InvalidImageException $ex) {
-            return $this->fail(422, $ex->message);
-        } catch (InvalidAudioFileException $ex) {
-            return $this->fail(422, $ex->message);
+        } catch (ImageTooSmallException $e) {
+            return $this->fail(422, $e->message);
+        } catch (InvalidImageException $e) {
+            return $this->fail(422, $e->message);
+        } catch (InvalidAudioFileException $e) {
+            return $this->fail(422, $e->message);
         }
     }
 }

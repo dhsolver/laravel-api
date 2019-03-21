@@ -125,7 +125,7 @@ class TourController extends Controller
         $order = 1;
         foreach ($request->order as $key => $id) {
             TourStop::where('id', $id)->update(['order' => $order]);
-            $order++;
+            $order ++;
         }
 
         return $this->success('Stop order successfully saved.', ['order' => $request->order]);

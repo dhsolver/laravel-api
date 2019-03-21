@@ -17,7 +17,7 @@ class IconResource extends JsonResource
         return [
             'file' => $this->file,
             'path' => $this->path,
-            'icon_path' => $this->icon_path,
+            'icon_path' => $this->icon_path
         ];
     }
 }

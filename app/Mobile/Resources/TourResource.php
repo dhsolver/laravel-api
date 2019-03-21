@@ -77,9 +77,6 @@ class TourResource extends JsonResource
 
             'main_image' => $this->mainImage ? $this->mainImage->path : null,
             'images' => $images,
-            // 'image1' => $this->image1 ? $this->image1->path : null,
-            // 'image2' => $this->image2 ? $this->image2->path : null,
-            // 'image3' => $this->image3 ? $this->image3->path : null,
             'pin_image' => $this->pinImage ? $this->pinImage->path : null,
 
             'intro_audio' => $this->introAudio ? $this->introAudio->path : null,
@@ -92,7 +89,7 @@ class TourResource extends JsonResource
             'is_favorite' => auth()->user()->favorites->pluck('id')->contains($this->id),
             'created_at' => $this->created_at->toDateTimeString(),
             'updated_at' => $this->updated_at ? $this->updated_at->toDateTimeString() : null,
-            'published_at' => $this->published_at ? $this->published_at->toDateTimeString() : null,
+            'published_at' => $this->published_at ? $this->published_at->toDateTimeString() : null
         ];
 
         if ($this->detail === 'detail') {

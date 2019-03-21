@@ -57,10 +57,6 @@ class Handler extends ExceptionHandler
             ], 404);
         }
 
-        // if ($exception instanceof ValidationException) {
-        //     return parent::render($request, $exception);
-        // }
-
         if ($exception instanceof UnauthorizedHttpException) {
             return response()->json([
                 'message' => $exception->getMessage(),

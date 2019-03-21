@@ -19,7 +19,7 @@ class TourCollection extends ResourceCollection
             'status' => 1,
             'data' => $this->collection->map(function ($item) {
                 return new TourResource($item);
-            }),
+            })
         ];
     }
 }

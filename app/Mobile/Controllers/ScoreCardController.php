@@ -27,7 +27,17 @@ class ScoreCardController extends Controller
         $scores = $user->scoreCards()
             ->with('tour')
             ->onlyBest();
-        return ScoreCardResource::collection($scores);
+        
+        $scoreCards = ScoreCardResource::collection($scores);
+        $returnScores = array();
+        for ($i = 0; $i < count($scoreCards); $i ++) {
+            if ($i == 0) {
+                $returnScores[] = $scoreCards[$i];
+            } else if ($scoreCards[$i-1]->tour_id != $scoreCards[$i]->tour_id) {
+                $returnScores[] = $scoreCards[$i];
+            }
+        }
+        return $returnScores;
     }
 
     /**

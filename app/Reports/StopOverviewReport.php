@@ -61,7 +61,7 @@ class StopOverviewReport extends BaseReport
                 'title' => $stop->title,
                 'time' => (int) $stat['time_spent'],
                 'visits' => (int) $stat['visits'],
-                'actions' => (int) $stat['actions'],
+                'actions' => (int) $stat['actions']
             ]);
         }
 

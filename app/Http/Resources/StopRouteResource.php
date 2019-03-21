@@ -18,7 +18,7 @@ class StopRouteResource extends JsonResource
         foreach ($this->groupByNextStop() as $key => $val) {
             array_push($routes, [
                 'next_stop_id' => $key,
-                'route' => $val,
+                'route' => $val
             ]);
         }
 

@@ -25,7 +25,7 @@ class UserSessionResource extends JsonResource
             'role' => $this->role,
             'avatar_url' => $this->avatarUrl,
             'subscribe_override' => in_array($this->role, ['admin', 'superadmin']) ? true : $this->subscribe_override,
-            'created_at' => $this->created_at->toDateTimeString(),
+            'created_at' => $this->created_at->toDateTimeString()
         ];
     }
 }

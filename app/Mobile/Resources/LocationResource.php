@@ -22,7 +22,7 @@ class LocationResource extends JsonResource
             'country' => $this->country,
             'zipcode' => $this->zipcode,
             'latitude' => $this->latitude,
-            'longitude' => $this->longitude,
+            'longitude' => $this->longitude
         ];
     }
 }

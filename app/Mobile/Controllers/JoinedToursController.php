@@ -60,16 +60,13 @@ class JoinedToursController extends Controller
             $response = $validator->setReceiptData(request()->receipt_data)->validate();
         } catch (Exception $e) {
             return false;
-            // return $this->fail(402, 'Could not validate purchase receipt.');
         }
 
         if ($response->isValid()) {
             return true;
-            // return $this->success('Valid');
         }
 
         return false;
-        // return $this->fail(402, 'Could not validate purchase receipt.');
     }
 
     public function validateGooglePurchase()
