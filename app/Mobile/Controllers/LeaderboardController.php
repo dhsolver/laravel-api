@@ -23,7 +23,7 @@ class LeaderboardController extends Controller
             ->where(function ($query) {
                 return $query->where(function ($q) {
                     return $q->forAdventures()
-                          ->finished();
+                        ->finished();
                 })
                 ->orWhere(function ($q) {
                     return $q->forRegularTours();
