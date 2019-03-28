@@ -34,7 +34,7 @@ class Os
             self::WINDOWS,
             self::MAC,
             self::LINUX,
-            self::OTHER,
+            self::OTHER
         ];
     }
 }

@@ -27,7 +27,7 @@ class TourStop extends Model
      */
     protected $casts = [
         'is_multiple_choice' => 'bool',
-        'play_radius' => 'float',
+        'play_radius' => 'float'
     ];
 
     /**
@@ -41,7 +41,7 @@ class TourStop extends Model
         static::created(function ($model) {
             $model->location()->create([
                 'locationable_id' => $model->id,
-                'locationable_type' => 'App\TourStop',
+                'locationable_type' => 'App\TourStop'
             ]);
         });
 
@@ -249,7 +249,7 @@ class TourStop extends Model
                     'stop_id' => $this->id,
                     'next_stop_id' => $nextStop['next_stop_id'],
                     'latitude' => $item['lat'],
-                    'longitude' => $item['lng'],
+                    'longitude' => $item['lng']
                 ]);
             }
         }

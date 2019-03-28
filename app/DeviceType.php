@@ -32,7 +32,7 @@ class DeviceType
             self::TABLET,
             self::WEB,
             self::MOBILE_WEB,
-            self::UNKNOWN,
+            self::UNKNOWN
         ];
     }
 }

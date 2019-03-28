@@ -39,7 +39,20 @@ class Tour extends Model
      *
      * @var array
      */
-    protected $with = ['location', 'image1', 'image2', 'image3', 'mainImage', 'startImage', 'endImage', 'pinImage', 'trophyImage', 'introAudio', 'backgroundAudio', 'prizeLocation'];
+    protected $with = [
+        'location',
+        'image1',
+        'image2',
+        'image3',
+        'mainImage',
+        'startImage',
+        'endImage',
+        'pinImage',
+        'trophyImage',
+        'introAudio',
+        'backgroundAudio',
+        'prizeLocation'
+    ];
 
     /**
      * The attributes that should be cast to native types.
@@ -50,7 +63,7 @@ class Tour extends Model
         'has_prize' => 'boolean',
         'rating' => 'integer',
         'prize_time_limit' => 'integer',
-        'length' => 'float',
+        'length' => 'float'
     ];
 
     /**
@@ -79,11 +92,11 @@ class Tour extends Model
         static::created(function ($model) {
             $model->location()->create([
                 'locationable_id' => $model->id,
-                'locationable_type' => 'App\Tour',
+                'locationable_type' => 'App\Tour'
             ]);
             $model->location()->create([
                 'locationable_id' => $model->id,
-                'locationable_type' => 'App\TourPrize',
+                'locationable_type' => 'App\TourPrize'
             ]);
         });
 
@@ -685,7 +698,7 @@ class Tour extends Model
     {
         return $this->update([
             'published_at' => Carbon::now(),
-            'last_published_at' => Carbon::now(),
+            'last_published_at' => Carbon::now()
         ]);
     }
 
@@ -698,7 +711,7 @@ class Tour extends Model
     {
         if ($this->isAwaitingApproval || $this->publishSubmissions()->create([
             'tour_id' => $this->id,
-            'user_id' => $this->user_id,
+            'user_id' => $this->user_id
         ])) {
             return true;
         }
@@ -752,7 +765,7 @@ class Tour extends Model
         foreach ($coordinates as $latLng) {
             $this->route()->create([
                 'latitude' => $latLng['lat'],
-                'longitude' => $latLng['lng'],
+                'longitude' => $latLng['lng']
             ]);
         }
     }

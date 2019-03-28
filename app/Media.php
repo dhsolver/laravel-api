@@ -30,7 +30,7 @@ class Media extends Model
      * @var array
      */
     protected $casts = [
-        'length' => 'float',
+        'length' => 'float'
     ];
 
     // **********************************************************

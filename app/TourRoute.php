@@ -27,7 +27,7 @@ class TourRoute extends Model
      */
     protected $casts = [
         'longitude' => 'float',
-        'latitude' => 'float',
+        'latitude' => 'float'
     ];
 
     /**

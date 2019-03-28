@@ -39,7 +39,7 @@ class TourType
         return [
             self::ADVENTURE,
             self::OUTDOOR,
-            self::INDOOR,
+            self::INDOOR
         ];
     }
 }

@@ -37,7 +37,7 @@ class TourStat extends Model
         'final' => 'boolean',
         'actions' => 'integer',
         'downloads' => 'integer',
-        'time_spent' => 'integer',
+        'time_spent' => 'integer'
     ];
 
     /**

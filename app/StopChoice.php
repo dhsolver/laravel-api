@@ -35,7 +35,7 @@ class StopChoice extends Model
     protected $casts = [
         'tour_stop_id' => 'int',
         'next_stop_id' => 'int',
-        'order' => 'int',
+        'order' => 'int'
     ];
 
     /**

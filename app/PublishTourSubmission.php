@@ -58,7 +58,7 @@ class PublishTourSubmission extends Model
     {
         $this->update([
             'approved_at' => \Carbon\Carbon::now(),
-            'denied_at' => null,
+            'denied_at' => null
         ]);
 
         $this->tour->publish();

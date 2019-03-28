@@ -35,7 +35,7 @@ class Review extends Model
     protected $casts = [
         'rating' => 'int',
         'tour_id' => 'int',
-        'user_id' => 'int',
+        'user_id' => 'int'
     ];
 
     /**

@@ -37,7 +37,7 @@ class DeviceStat extends Model
         'final' => 'boolean',
         'actions' => 'integer',
         'downloads' => 'integer',
-        'visitors' => 'integer',
+        'visitors' => 'integer'
     ];
 
     // **********************************************************
