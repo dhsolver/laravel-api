@@ -34,9 +34,16 @@ class ActivityController extends Controller
                 'device_id' => $item['device_id'],
                 'created_at' => $ts
             ]);
+
+            $data[] = [
+                'user_id' => auth()->user()->id,
+                'action' => $item['action'],
+                'device_id' => $item['device_id']
+            ];
         }
 
-        return response()->json(['result' => 1, 'data' => $data]);
+        // return response()->json(['data' => $data]);
+        return response('OK', 200);
     }
 
     /**
@@ -63,8 +70,15 @@ class ActivityController extends Controller
                 'device_id' => $item['device_id'],
                 'created_at' => $ts
             ]);
+
+            $data[] = [
+                'user_id' => auth()->user()->id,
+                'action' => $item['action'],
+                'device_id' => $item['device_id'],
+            ];
         }
 
-        return response()->json(['result' => 1, 'data' => $data]);
+        // return response()->json(['data' => $data]);
+        return response('OK', 200);
     }
 }

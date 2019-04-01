@@ -30,7 +30,7 @@ class Action
     public static function all()
     {
         return [
-            self::DOWNLOAD, self::START, self::STOP, self::SHARE, self::LIKE, self::VISIT, self.REDEEMED_PRIZE
+            self::DOWNLOAD, self::START, self::STOP, self::SHARE, self::LIKE, self::VISIT, self::REDEEMED_PRIZE
         ];
     }
 }

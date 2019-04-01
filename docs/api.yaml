@@ -1168,12 +1168,12 @@ paths:
           type: integer
           format: int64
         - in: body
-          name: activity
-          required: true
           schema:
-            type: array
-            items:
-              $ref: '#/definitions/TourActivity'
+            properties:
+              activity:
+                type: array
+                items:
+                  $ref: '#/definitions/TourActivity'
       responses:
         '200':
           description: OK
@@ -1209,12 +1209,12 @@ paths:
           type: integer
           format: int64
         - in: body
-          name: activity
-          required: true
           schema:
-            type: array
-            items:
-              $ref: '#/definitions/StopActivity'
+            properties:
+              activity:
+                type: array
+                items:
+                  $ref: '#/definitions/StopActivity'
       responses:
         '200':
           description: OK
