@@ -29,6 +29,7 @@ This should display a success message and overwrite the docs/api.html documentat
 v.1.1.3
 - Changed mobile/tours/{tour_id}/track endpoint schema
 - Changed mobile/stops/{stop_id}/track endpoint schema
+- Changed 'device_uuid' to 'device_id'
 
 v.1.1.2
 - Added prize_location to mobile/tours/{tour_id} endpoint

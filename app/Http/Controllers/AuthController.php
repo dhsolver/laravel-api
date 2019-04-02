@@ -200,6 +200,7 @@ class AuthController extends Controller
                 'fb_id' => $facebook->id,
                 'fb_token' => $facebook->token,
                 'password' => bcrypt($facebook->token),
+                'user_type' => request()->role == 'client' ? 1 : 2
             ];
 
             switch (request()->role) {
