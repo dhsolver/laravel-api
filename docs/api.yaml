@@ -1177,6 +1177,12 @@ paths:
       responses:
         '200':
           description: OK
+          type: object
+          schema:
+            properties:
+              message:
+                type: string
+                example: 'OK'
         '400':
           $ref: '#/responses/NoToken'
         '401':
@@ -1218,6 +1224,12 @@ paths:
       responses:
         '200':
           description: OK
+          type: object
+          schema:
+            properties:
+              message:
+               type: string
+               example: 'OK'
         '400':
           $ref: '#/responses/NoToken'
         '401':

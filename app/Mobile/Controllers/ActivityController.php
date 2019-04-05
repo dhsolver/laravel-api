@@ -42,8 +42,7 @@ class ActivityController extends Controller
             ];
         }
 
-        // return response()->json(['data' => $data]);
-        return response('OK', 200);
+        return response()->json(['message' => 'OK']);
     }
 
     /**
@@ -78,7 +77,6 @@ class ActivityController extends Controller
             ];
         }
 
-        // return response()->json(['data' => $data]);
-        return response('OK', 200);
+        return response()->json(['message' => 'OK']);
     }
 }
