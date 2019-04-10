@@ -2,7 +2,7 @@ swagger: '2.0'
 info:
   title: Junket API
   description: Private API for the wejunket.com mobile apps.
-  version: 1.1.3
+  version: 1.1.4
 host: api.wejunket.com
 basePath: /mobile
 schemes:
@@ -202,7 +202,13 @@ paths:
         '200':
           description: OK
           schema:
-            $ref: '#/definitions/User'
+            type: object
+            properties:
+              user:
+                $ref: '#/definitions/User'
+              token:
+                type: string
+                description: JWT Auth token to be used for Bearer authentication header.
         '401':
           $ref: '#/responses/Unauthroized'
         '500':
@@ -1177,12 +1183,6 @@ paths:
       responses:
         '200':
           description: OK
-          type: object
-          schema:
-            properties:
-              message:
-                type: string
-                example: 'OK'
         '400':
           $ref: '#/responses/NoToken'
         '401':
@@ -1224,12 +1224,6 @@ paths:
       responses:
         '200':
           description: OK
-          type: object
-          schema:
-            properties:
-              message:
-               type: string
-               example: 'OK'
         '400':
           $ref: '#/responses/NoToken'
         '401':
@@ -1498,10 +1492,10 @@ definitions:
         example: >-
           https://media.wejunket.com/avatars/387ec13e14f96854ed64aca99a477c70.jpg
       created_at:
-        type: string
-        format: date-time
-        description: Timestamp of when the User registered.
-        example: '2018-07-21 13:53:20'
+        type: integer
+        format: int32
+        description: UTC UNIX timestamp of when the action occurred.
+        example: 1538411257
   Tour:
     type: object
     required:
