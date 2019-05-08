@@ -82,6 +82,13 @@ v.1.0.6
 v.1.0.5
 - Updated change password route to PATCH instead of POST
 
+v 1.0.2
+- Added subscribe_override boolean field to user profile model
+- Added created_at, avatar_url, subscribe_override fields to the user session model (to match profile)
+- Added in_app_id to Tour model
+- Added analytics endpoints for tracking tour and stop activity
+- Added debug query parameter for tours (allows you to see the current logged in users unpublished tours)
+
 v 1.0.1
 - fb_id field added to auth user response
 - Previous auth endpoint named 'Profile' changed to 'User Session'
@@ -93,10 +100,3 @@ v 1.0.1
 - Added 'latest_reviews' collection to single tour endpoint
 - Added endpoint to paginate Tour's reviews
 - Added endpoint for user to change their password
-
-v 1.0.2
-- Added subscribe_override boolean field to user profile model
-- Added created_at, avatar_url, subscribe_override fields to the user session model (to match profile)
-- Added in_app_id to Tour model
-- Added analytics endpoints for tracking tour and stop activity
-- Added debug query parameter for tours (allows you to see the current logged in users unpublished tours)
