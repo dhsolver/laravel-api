@@ -1352,6 +1352,15 @@ definitions:
         example: 1538411257
   Profile:
     type: object
+    required:
+     - id
+     - name
+     - first_name
+     - last_name
+     - avatar_url
+     - crreated_at
+     - favorites
+     - stats
     properties:
       id:
         type: integer
@@ -1698,6 +1707,9 @@ definitions:
         format: date-time
         description: Timestamp of when the Tour was published.
         example: '2018-07-21 13:53:20'
+      prize_location:
+        $ref: '#/definitions/Location'
+        description: 'The location of the Prize, including GPS coordinates.'
   Stop:
     type: object
     required:

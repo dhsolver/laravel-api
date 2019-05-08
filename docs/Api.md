@@ -26,6 +26,10 @@ php artisan docs:generate
 This should display a success message and overwrite the docs/api.html documentation file.
 
 ### Change Log
+v.1.1.5
+- Added prize_location field to mobile/tours/{tour_id} endpoint
+- Maded required fields for mobile/profile/{user_id} endpoint
+
 v.1.1.4
 - Changed created_at from date-time to timestamp for User object
 - Added access token field for facebook login endpoint
