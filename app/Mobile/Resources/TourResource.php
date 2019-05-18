@@ -86,7 +86,7 @@ class TourResource extends JsonResource
             'rating' => $this->rating,
             'in_app_id' => $this->in_app_id,
 
-            'is_favorite' => auth()->user()->favorites->pluck('id')->contains($this->id),
+            'is_favorite' => (auth()->user()) ? auth()->user()->favorites->pluck('id')->contains($this->id) : false,
             'created_at' => $this->created_at->toDateTimeString(),
             'updated_at' => $this->updated_at ? $this->updated_at->toDateTimeString() : null,
             'published_at' => $this->published_at ? $this->published_at->toDateTimeString() : null
