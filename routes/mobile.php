@@ -30,6 +30,7 @@ Route::namespace('App\Mobile\Controllers')->group(function () {
         Route::post('tours/{tour}/track', 'ActivityController@tour');
         Route::post('stops/{stop}/track', 'ActivityController@stop');
         Route::post('device', 'DeviceController@store')->name('mobile.device.store');
+        Route::get('tours/{tour}', 'TourController@show')->name('mobile.tours.show');
 
         Route::post('profile', 'ProfileController@update')->name('mobile.profile.update');
         Route::patch('profile/password', 'ProfileController@password')->name('mobile.profile.password');
@@ -56,7 +57,7 @@ Route::namespace('App\Mobile\Controllers')->group(function () {
     });
 
     // No-Authorization Endpoints
-    Route::get('tours/{tour}', 'TourController@show')->name('mobile.tours.show');
+    Route::get('tours/anon/{tour}', 'TourController@show')->name('mobile.tours.show');
 });
 
 
