@@ -2,6 +2,8 @@
 
 namespace App\Reports;
 
+use App\Activity;
+
 class TourDetailsReport extends BaseReport
 {
     /**
@@ -56,10 +58,17 @@ class TourDetailsReport extends BaseReport
             ->get();
 
         return ['data' => $results->map(function ($item) {
+            $downloads = Activity::select('device_id')
+                ->distinct()
+                ->where('action', 'start')
+                ->where('actionable_id', $item->tour_id)
+                ->where('actionable_type', 'App\Tour')
+                ->where('created_at', 'like', date('Y-m-d', strtotime($item->yyyymmdd)) . '%')
+                ->get();
             return [
                 'yyyymmdd' => $item->yyyymmdd,
                 'actions' => (int) $item->actions,
-                'downloads' => (int) $item->downloads,
+                'downloads' => count($downloads),
                 'time' => (int) $item->time_spent,
                 'tour_id' => (int) $item->tour_id
             ];

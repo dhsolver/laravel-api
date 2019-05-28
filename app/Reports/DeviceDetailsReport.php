@@ -2,6 +2,11 @@
 
 namespace App\Reports;
 
+use App\Activity;
+use App\Device;
+use App\Os;
+use App\DeviceType;
+
 class DeviceDetailsReport extends BaseReport
 {
     /**
@@ -50,10 +55,39 @@ class DeviceDetailsReport extends BaseReport
             $this->forDates($date, date('m/d/Y', strtotime('now')));
         }
 
-        return $this->tour->deviceStats()
+        // calcuating downloads by OS and Device Type
+        $downloads = Activity::betweenDates($this->start_date, $this->end_date)
+            ->select('device_id')
+            ->distinct()
+            ->where('action', 'start')
+            ->where('actionable_id', $this->tour->id)
+            ->where('actionable_type', 'App\Tour')
+            ->get();
+
+        $oses = Os::all();
+        $deviceTypes = DeviceType::all();
+        $downloadsByType = [];
+        foreach ($oses as $os) {
+            foreach ($deviceTypes as $deviceType) {
+                $downloadsByType[$os][$deviceType] = 0;
+            }
+        }
+
+        foreach ($downloads as $download) {
+            $device = Device::find($download->device_id);
+            $downloadsByType[$device->os][$device->type] ++;
+        }
+
+        $stats = $this->tour->deviceStats()
             ->betweenDates($this->start_date, $this->end_date)
-            ->selectRaw('os, device_type, sum(downloads) as downloads, sum(visitors) as visitors, sum(actions) as actions')
+            ->selectRaw('os, device_type')
             ->groupBy(['os', 'device_type'])
             ->get();
+        
+        foreach ($stats as &$stat) {
+            $stat->downloads = $downloadsByType[$stat->os][$stat->device_type];
+        }
+
+        return $stats;
     }
 }
