@@ -2,7 +2,7 @@ swagger: '2.0'
 info:
   title: Junket API
   description: Private API for the wejunket.com mobile apps.
-  version: 1.1.4
+  version: 1.1.5
 host: api.wejunket.com
 basePath: /mobile
 schemes:
@@ -363,6 +363,66 @@ paths:
           $ref: '#/responses/NoToken'
         '401':
           $ref: '#/responses/Unauthroized'
+        '404':
+          $ref: '#/responses/NotFound'
+        '500':
+          $ref: '#/responses/UnexpectedError'
+  '/tours/anon/{tour_id}':
+    get:
+      tags:
+        - tours
+      summary: Get Tour details(Non Authorization Header)
+      description: >-
+        Returns all of the information for the given tour, including the route without authorization header
+        points and the stops.
+      operationId: anonTour
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: tour_id
+          description: ID of the desired Tour
+          required: true
+          type: integer
+          format: int64
+        - in: query
+          name: debug
+          required: false
+          description: >-
+            Debug mode flag. This will allow viewing the current logged in users
+            unpublished tours.
+          type: boolean
+          example: 1
+      security:
+        - Bearer: []
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              tour:
+                description: The information for the Tour.
+                $ref: '#/definitions/Tour'
+              stops:
+                description: All of the Stops on the Tour.
+                type: array
+                items:
+                  $ref: '#/definitions/Stop'
+              route:
+                description: An array of points that make up the Tour's route.
+                type: array
+                items:
+                  $ref: '#/definitions/TourRoutePoint'
+              latest_reviews:
+                description: >-
+                  The last 5 reviews for that tour that contain a review
+                  comment.
+                type: array
+                items:
+                  $ref: '#/definitions/Review'
+        '400':
+          $ref: '#/responses/NoToken'
         '404':
           $ref: '#/responses/NotFound'
         '500':

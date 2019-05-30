@@ -27,6 +27,7 @@ This should display a success message and overwrite the docs/api.html documentat
 
 ### Change Log
 v.1.1.5
+- Added mobile/tours/anon/{tour_id} endpoint for standalone apps
 - Added prize_location field to mobile/tours/{tour_id} endpoint
 - Maded required fields for mobile/profile/{user_id} endpoint
 
