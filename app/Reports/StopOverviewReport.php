@@ -63,27 +63,14 @@ class StopOverviewReport extends BaseReport
 
             $visits = 0;
             $timeSeconds = 0;
-            for ($i = 0; $i < count($activities); $i ++) {
-                if ($i == count($activities) - 1) {
-                    if ($activities[$i]->action == 'start') {
-                        $timeSeconds += 600;
-                    }
-                    continue;
-                }
-                if ($activities[$i]->action == 'start' && $activities[$i + 1]->action == 'start') {
+            foreach ($activities as $activity) {
+                if (empty($activity->begin_at) || empty($activity->end_at)) {
                     $timeSeconds += 600;
                 }
-                else if ($activities[$i]->action == 'stop' && $activities[$i + 1]->action == 'stop') {
-                    $timeSeconds += 600;
-                }
-                else if ($activities[$i]->action == 'start' && $activities[$i + 1]->action == 'stop') {
-                    $end = strtotime($activities[$i + 1]->created_at);
-                    $start = strtotime($activities[$i]->created_at);
+                else {
+                    $end = strtotime($activity->begin_at);
+                    $start = strtotime($activity->end_at);
                     $timeSeconds += $end - $start;
-                }
-
-                if ($activities[$i]->action == 'start') {
-                    $visits ++;
                 }
             }
             $minutes = round($timeSeconds / 60);

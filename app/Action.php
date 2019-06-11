@@ -17,6 +17,7 @@ class Action
     const DOWNLOAD = 'download';
     const START = 'start';
     const STOP = 'stop';
+    const START_STOP = 'start_stop';
     const SHARE = 'share';
     const LIKE = 'like';
     const VISIT = 'visit';
@@ -30,7 +31,7 @@ class Action
     public static function all()
     {
         return [
-            self::DOWNLOAD, self::START, self::STOP, self::SHARE, self::LIKE, self::VISIT, self::REDEEMED_PRIZE
+            self::DOWNLOAD, self::START, self::STOP, self::START_STOP, self::SHARE, self::LIKE, self::VISIT, self::REDEEMED_PRIZE
         ];
     }
 }

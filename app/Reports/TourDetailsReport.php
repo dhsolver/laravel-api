@@ -60,10 +60,10 @@ class TourDetailsReport extends BaseReport
         return ['data' => $results->map(function ($item) {
             $downloads = Activity::select('device_id')
                 ->distinct()
-                ->where('action', 'start')
+                ->where('action', 'start_stop')
                 ->where('actionable_id', $item->tour_id)
                 ->where('actionable_type', 'App\Tour')
-                ->where('created_at', 'like', date('Y-m-d', strtotime($item->yyyymmdd)) . '%')
+                ->where('begin_at', 'like', date('Y-m-d', strtotime($item->yyyymmdd)) . '%')
                 ->get();
             return [
                 'yyyymmdd' => $item->yyyymmdd,

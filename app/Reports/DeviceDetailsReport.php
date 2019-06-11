@@ -59,7 +59,7 @@ class DeviceDetailsReport extends BaseReport
         $downloads = Activity::betweenDates($this->start_date, $this->end_date)
             ->select('device_id')
             ->distinct()
-            ->where('action', 'start')
+            ->where('action', 'start_stop')
             ->where('actionable_id', $this->tour->id)
             ->where('actionable_type', 'App\Tour')
             ->get();

@@ -19,20 +19,16 @@ class ActivityController extends Controller
      */
     public function tour(Tour $tour, RecordActivityRequest $request)
     {
-        $data = [];
-
         foreach ($request->activity as $item) {
-            $ts = Carbon::createFromTimestampUTC($item['timestamp']);
-
-            if ($ts > Carbon::now()) {
-                $ts = Carbon::now();
-            }
+            $beginTs = Carbon::createFromTimestampUTC($item['begin_timestamp']);
+            $endTs = Carbon::createFromTimestampUTC($item['end_timestamp']);
 
             $tour->activity()->create([
                 'user_id' => auth()->user()->id,
                 'action' => $item['action'],
                 'device_id' => $item['device_id'],
-                'created_at' => $ts
+                'begin_at' => $beginTs,
+                'end_at' => $endTs
             ]);
 
             $data[] = [
@@ -57,17 +53,15 @@ class ActivityController extends Controller
         $data = [];
 
         foreach ($request->activity as $item) {
-            $ts = Carbon::createFromTimestampUTC($item['timestamp']);
-
-            if ($ts > Carbon::now()) {
-                $ts = Carbon::now();
-            }
+            $beginTs = Carbon::createFromTimestampUTC($item['begin_timestamp']);
+            $endTs = Carbon::createFromTimestampUTC($item['end_timestamp']);
 
             $stop->activity()->create([
                 'user_id' => auth()->user()->id,
                 'action' => $item['action'],
                 'device_id' => $item['device_id'],
-                'created_at' => $ts
+                'begin_at' => $beginTs,
+                'end_at' => $endTs
             ]);
 
             $data[] = [

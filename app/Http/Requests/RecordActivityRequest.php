@@ -28,7 +28,8 @@ class RecordActivityRequest extends FormRequest
             'activity' => 'array',
             'activity.*.device_id' => 'required|exists:devices,id',
             'activity.*.action' => 'required|in:' . implode(',', Action::all()),
-            'activity.*.timestamp' => 'required|date_format:U',
+            'activity.*.begin_timestamp' => 'required|date_format:U',
+            'activity.*.end_timestamp' => 'required|date_format:U',
         ];
     }
 }
