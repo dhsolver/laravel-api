@@ -2,7 +2,7 @@ swagger: '2.0'
 info:
   title: Junket API
   description: Private API for the wejunket.com mobile apps.
-  version: 1.1.5
+  version: 1.1.6
 host: api.wejunket.com
 basePath: /mobile
 schemes:
@@ -1361,13 +1361,15 @@ definitions:
     required:
       - action
       - device_id
-      - timestamp
+      - begin_timestamp
+      - end_timestamp
     properties:
       action:
         type: string
         enum:
           - start
           - stop
+          - start_stop
           - share
           - like
           - visit
@@ -1377,17 +1379,23 @@ definitions:
         type: string
         description: Device identifier assigned from the backend.
         example: a7388bf0-c596-11e8-aa6c-b56b5a718890
-      timestamp:
+      begin_timestamp:
         type: integer
         format: int32
         description: UTC UNIX timestamp of when the action occurred.
+        example: 1538411257
+      end_timestamp:
+        type: integer
+        format: int32
+        description: UTC UNIX timestamp of when the action finished.
         example: 1538411257
   TourActivity:
     type: object
     required:
       - action
       - device_id
-      - timestamp
+      - begin_timestamp
+      - end_timestamp
     properties:
       action:
         type: string
@@ -1395,6 +1403,7 @@ definitions:
           - download
           - start
           - stop
+          - start_stop
           - share
           - like
           - visit
@@ -1405,10 +1414,15 @@ definitions:
         type: string
         description: Device identifier assigned from the backend.
         example: a7388bf0-c596-11e8-aa6c-b56b5a718890
-      timestamp:
+      begin_timestamp:
         type: integer
         format: int32
         description: UTC UNIX timestamp of when the action occurred.
+        example: 1538411257
+      end_timestamp:
+        type: integer
+        format: int32
+        description: UTC UNIX timestamp of when the action finished.
         example: 1538411257
   Profile:
     type: object
@@ -2197,7 +2211,7 @@ definitions:
           stop that is designated to be the end point of a Tour.
         example: '2018-07-21 13:53:20'
       tour_id:
-        type: intege
+        type: integer
         format: int32
         description: The ID of the tour the score card is referencing.
         example: 100003

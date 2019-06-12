@@ -26,6 +26,11 @@ php artisan docs:generate
 This should display a success message and overwrite the docs/api.html documentation file.
 
 ### Change Log
+v.1.1.6
+ - Updated mobile/tours/{tour_id}/track endpoint (added begin_timestamp, end_timestamp)
+ - Updated mobile/stops/{stop_id}/track endpoint (added begin_timestamp, end_timestamp)
+ - Fixed minor syntax errors in documentation
+
 v.1.1.5
 - Added mobile/tours/anon/{tour_id} endpoint for standalone apps
 - Added prize_location field to mobile/tours/{tour_id} endpoint
